@@ -117,8 +117,7 @@ const DOCUMENTS = [
    "Study Plan"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/core/giai-doan-1-nen-tang-ngon-ngu",
@@ -137,8 +136,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/core/phase1-deep-theory",
@@ -157,8 +155,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 2,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/core/phase1-java-fundamentals",
@@ -177,8 +174,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 3,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/core/phase2-deep-theory",
@@ -196,8 +192,7 @@ const DOCUMENTS = [
    "Class Loading"
   ],
   "order": 4,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/core/phase2-oop-class-design",
@@ -215,8 +210,7 @@ const DOCUMENTS = [
    "Class Loading"
   ],
   "order": 5,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/collections-streams/giai-doan-2-collections-lambda-stream",
@@ -234,8 +228,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/collections-streams/phase3-core-apis",
@@ -253,8 +246,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 2,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/collections-streams/phase3-deep-theory",
@@ -272,8 +264,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 3,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/collections-streams/phase4-deep-theory",
@@ -292,8 +283,7 @@ const DOCUMENTS = [
    "Spliterator"
   ],
   "order": 4,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/collections-streams/phase4-functional-programming",
@@ -312,8 +302,7 @@ const DOCUMENTS = [
    "Spliterator"
   ],
   "order": 5,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/concurrency/giai-doan-3-concurrency-io-module-l10n",
@@ -332,8 +321,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/concurrency/phase5-advanced-topics",
@@ -352,8 +340,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 2,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/concurrency/phase5-deep-theory",
@@ -372,8 +359,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 3,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/new-features/phase6-deep-theory",
@@ -391,8 +377,7 @@ const DOCUMENTS = [
    "Unnamed vars"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/new-features/phase6-java22-25-new-features",
@@ -410,8 +395,7 @@ const DOCUMENTS = [
    "Unnamed vars"
   ],
   "order": 2,
-  "updatedDate": "2026-09-02",
-  "questions": 15
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/java25-complete-code-workbook",
@@ -430,8 +414,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/giai-doan-4-mock-chien-thuat",
@@ -450,8 +433,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 2,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/ocp-java25-master-question-bank",
@@ -470,8 +452,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 3,
-  "updatedDate": "2026-09-02",
-  "questions": 10
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/ocp-java25-ultimate-handbook",
@@ -490,8 +471,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 4,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/phase7-mock-exam",
@@ -510,8 +490,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 5,
-  "updatedDate": "2026-09-02",
-  "questions": 12
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "java/master/tong-quan-bach-khoa",
@@ -529,8 +508,7 @@ const DOCUMENTS = [
    "Architecture"
   ],
   "order": 6,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "javascript/co-ban/bai-viet-dau-tien",
@@ -543,8 +521,7 @@ const DOCUMENTS = [
   "phase": "",
   "tags": [],
   "order": 999,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "dsa/roadmap/dsa-roadmap",
@@ -562,8 +539,7 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "dsa/foundations/giai-doan-1-mang-chuoi-stack-linkedlist",
@@ -581,8 +557,7 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "dsa/foundations/bai-viet-dau-tien",
@@ -595,8 +570,7 @@ const DOCUMENTS = [
   "phase": "",
   "tags": [],
   "order": 999,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "dsa/foundations/demo-v1",
@@ -609,8 +583,7 @@ const DOCUMENTS = [
   "phase": "",
   "tags": [],
   "order": 999,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  },
  {
   "id": "dsa/master/master-bible-ocp-va-dsa",
@@ -628,7 +601,6 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
-  "updatedDate": "2026-09-02",
-  "questions": 0
+  "updatedDate": "2026-09-02"
  }
 ];

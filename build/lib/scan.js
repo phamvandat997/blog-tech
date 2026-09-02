@@ -90,13 +90,8 @@ function scanContent(contentDir) {
 
         if (!data.title) warnings.push(`${id} thiếu "title" trong frontmatter`);
 
-        const quizPath = path.join(categoryDir, `${slug}.quiz.json`);
-        let questions = 0, quiz = null;
-        if (fs.existsSync(quizPath)) {
-          try { quiz = JSON.parse(fs.readFileSync(quizPath, "utf8")); }
-          catch (e) { throw new Error(`${quizPath} sai cú pháp JSON: ${e.message}`); }
-          questions = (quiz.quizzes || []).length;
-        }
+        // File <slug>.quiz.json vẫn nằm cạnh bài nhưng build cố tình bỏ qua —
+        // tính năng quiz đang tạm gỡ, dữ liệu giữ nguyên để bật lại sau.
 
         docs.push({
           id, section: sectionId, category: categoryId, slug,
@@ -108,9 +103,7 @@ function scanContent(contentDir) {
           tags: Array.isArray(data.tags) ? data.tags : [],
           order: typeof data.order === "number" ? data.order : 999,
           updatedDate: fs.statSync(filePath).mtime.toISOString().slice(0, 10),
-          questions,
           _body: body,
-          _quiz: quiz,
         });
         count++;
       }

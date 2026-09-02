@@ -1,6 +1,7 @@
 "use strict";
-// Trình dựng Markdown tối giản, đủ cho nội dung của blog: heading + mục lục,
+// Trình dựng Markdown tối giản, đủ cho nội dung của blog: heading có id,
 // khối mã có nút chép, GitHub alerts, bảng, danh sách, in đậm/nghiêng.
+// Mục lục do trang đọc dựng từ DOM đã render (xem reader.js).
 //
 // Nguyên tắc an toàn: thoát `&` và `<` trên toàn bộ văn bản TRƯỚC khi biến đổi,
 // nên `List<String>` trong nội dung hiển thị đúng thay vì bị trình duyệt nuốt
@@ -29,25 +30,8 @@ function renderInlineCode(text) {
   return escapeText(text).replace(/`([^`]+)`/g, (_, code) => `<code>${code}</code>`);
 }
 
-function buildToc(body) {
-  const headings = [];
-  for (const line of body.split("\n")) {
-    const m = line.match(/^(#{2,3})\s+(.+)$/);
-    if (m) headings.push({ level: m[1].length, title: m[2].trim() });
-  }
-  if (headings.length <= 3) return "";
-  const items = headings.map((h) =>
-    `<li class="toc-item-h${h.level}"><a href="#${escapeHtml(headingSlug(h.title))}">• ${renderInlineCode(h.title)}</a></li>`
-  ).join("");
-  return `<div class="toc-box">
-    <div class="toc-title">📑 Mục lục nhanh (${headings.length} phần)</div>
-    <ul class="toc-list">${items}</ul>
-  </div>`;
-}
-
 function renderMarkdown(md) {
   if (!md) return "";
-  const toc = buildToc(md);
 
   // 1. Rút khối mã ra trước, thay bằng chốt có dấu đóng ở cả hai đầu.
   //    (Bản cũ dùng "code_placeholder_1" nên bị "code_placeholder_10" nuốt mất
@@ -112,7 +96,7 @@ function renderMarkdown(md) {
   // 9. Trả khối mã về chỗ cũ (dùng hàm nên "$&" trong mã không bị hiểu nhầm).
   text = text.replace(/%%CODE(\d+)%%/g, (_, i) => blocks[Number(i)] || "");
 
-  return toc + `<div class="markdown-content"><p>${text}</p></div>`;
+  return `<div class="markdown-content"><p>${text}</p></div>`;
 }
 
 // Nút "Sao chép mã" — uỷ nhiệm một lần cho toàn trang.

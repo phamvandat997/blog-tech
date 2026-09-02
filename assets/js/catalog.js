@@ -10,8 +10,6 @@ const getSection = (id) => ALL_SECTIONS.find((s) => s.id === id) || null;
 const docsOfSection = (id) => ALL_DOCUMENTS.filter((d) => d.section === id);
 const getDoc = (id) => ALL_DOCUMENTS.find((d) => d.id === id) || null;
 
-const countQuestions = (docs) => docs.reduce((n, d) => n + d.questions, 0);
-
 /**
  * Lọc bài theo mảng, chuyên mục và từ khoá. Thứ tự luôn là thứ tự trong
  * catalog (chuyên mục theo _section.json, bài theo `order`).

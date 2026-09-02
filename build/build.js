@@ -37,7 +37,7 @@ function main() {
   fs.rmSync(OUT, { recursive: true, force: true });
 
   // 1. catalog.js — metadata, nhẹ, mọi trang đều nạp.
-  const meta = docs.map(({ _body, _quiz, ...rest }) => rest);
+  const meta = docs.map(({ _body, ...rest }) => rest);
   writeFile("catalog.js",
     `const SECTIONS = ${JSON.stringify(sections, null, 1)};\n` +
     `const DOCUMENTS = ${JSON.stringify(meta, null, 1)};\n`);
@@ -49,21 +49,7 @@ function main() {
       `window.__docLoaded && window.__docLoaded(${JSON.stringify(doc.id)}, ${JSON.stringify(doc._body)});\n`);
   }
 
-  // 3. Một file quiz cho mỗi mảng — hub tab Quiz cần cả mảng cùng lúc.
-  for (const section of sections) {
-    const bank = {};
-    docs.filter((d) => d.section === section.id && d._quiz)
-        .forEach((d) => {
-          // Bỏ trường "file" cũ: khoá câu hỏi giờ suy ra từ id bài + số câu.
-          const quizzes = (d._quiz.quizzes || []).map(({ file, ...q }) => q);
-          bank[d.id] = { docId: d.id, title: d._quiz.title || d.title, quizzes };
-        });
-    writeFile(`quiz-${section.id}.js`,
-      `window.__quizLoaded && window.__quizLoaded(${JSON.stringify(section.id)}, ${JSON.stringify(bank)});\n`);
-  }
-
-  const questions = docs.reduce((n, d) => n + d.questions, 0);
-  console.log(`✓ ${sections.length} mảng · ${docs.length} bài · ${questions} câu quiz`);
+  console.log(`✓ ${sections.length} mảng · ${docs.length} bài`);
   console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
   console.log(`✓ generated/docs/       ${docs.length} file, ${(contentBytes / 1024).toFixed(0)} KB tổng ` +
               `(reader chỉ nạp 1 file mỗi lần)`);

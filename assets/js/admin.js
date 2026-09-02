@@ -26,8 +26,7 @@ const admin = {
   /** @type {GitHubRepo|null} */ gh: null,
   sections: [],    // [{ id, name, meta, categories: [{id, name}] }]
   posts: [],       // [{ path, section, category, slug, title, status, pr }]
-  quizFile: null,  // { name, content }
-  /** null khi tạo mới; { path, quizPath, hasQuiz } khi đang sửa bài có sẵn */
+  /** null khi tạo mới; { path, quizPath, quizContent } khi đang sửa bài có sẵn */
   editing: null,
   busy: false,
 };
@@ -363,27 +362,6 @@ function handleMarkdownFile(file) {
   reader.readAsText(file);
 }
 
-function handleQuizFile(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    const text = String(reader.result);
-    try {
-      const parsed = JSON.parse(text);
-      const count = (parsed.quizzes || []).length;
-      if (!count) throw new Error('không thấy mảng "quizzes" nào có câu hỏi');
-      admin.quizFile = { name: file.name, content: text };
-      qs("#file-quiz-name").textContent = `${file.name} — ${count} câu`;
-      qs("#file-quiz-clear").hidden = false;
-      showAlert(qs("#post-error"), "");
-    } catch (err) {
-      admin.quizFile = null;
-      qs("#file-quiz-name").textContent = "Chưa chọn file";
-      showAlert(qs("#post-error"), `File quiz không hợp lệ: ${err.message}`);
-    }
-  };
-  reader.readAsText(file);
-}
-
 /* ------------------------------------------------------- dựng thay đổi */
 
 /** @returns {{files, message, sectionId, categoryId, slug, path, action, title}} */
@@ -428,13 +406,17 @@ function buildChange() {
   const dir = `content/${sectionId}/${categoryId}`;
   const path = `${dir}/${slug}.md`;
   const files = [{ path, content: markdown }];
-  if (admin.quizFile) files.push({ path: `${dir}/${slug}.quiz.json`, content: admin.quizFile.content });
 
   // Sửa bài mà đổi chỗ hoặc đổi tên file → xoá đường dẫn cũ trong cùng commit,
   // nếu không sẽ thành hai bài trùng nội dung.
   if (admin.editing && admin.editing.path !== path) {
     files.push({ path: admin.editing.path, remove: true });
-    if (admin.editing.hasQuiz) files.push({ path: admin.editing.quizPath, remove: true });
+    // Tính năng quiz đang tạm gỡ nhưng file .quiz.json vẫn nằm trên kho —
+    // đổi tên bài thì mang nó theo, đừng để mất dữ liệu hay bỏ lại file mồ côi.
+    if (admin.editing.quizContent !== null) {
+      files.push({ path: `${dir}/${slug}.quiz.json`, content: admin.editing.quizContent });
+      files.push({ path: admin.editing.quizPath, remove: true });
+    }
   }
 
   const newCategory = {
@@ -560,7 +542,7 @@ async function startEdit(post) {
     const quizRaw = await source.readFile(quizPath);
 
     const { data, body } = parseFrontmatter(raw);
-    admin.editing = { path: post.path, quizPath, hasQuiz: quizRaw !== null };
+    admin.editing = { path: post.path, quizPath, quizContent: quizRaw };
 
     qs("#field-section").value = post.section;
     renderCategorySelect(post.category);
@@ -568,12 +550,6 @@ async function startEdit(post) {
     qs("#field-slug").dataset.touched = "1";
     fillEditor(data, body, { overwrite: true });
 
-    if (quizRaw !== null) {
-      admin.quizFile = { name: quizPath.split("/").pop(), content: quizRaw };
-      const count = (JSON.parse(quizRaw).quizzes || []).length;
-      qs("#file-quiz-name").textContent = `${admin.quizFile.name} — ${count} câu (giữ nguyên nếu không đổi)`;
-      qs("#file-quiz-clear").hidden = false;
-    }
 
     updatePathPreview();
     showAlert(banner,
@@ -635,11 +611,7 @@ function resetForm() {
    "#new-category-id", "#new-category-name"].forEach((id) => { qs(id).value = ""; });
   ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
 
-  admin.quizFile = null;
   admin.editing = null;
-  qs("#file-quiz").value = "";
-  qs("#file-quiz-name").textContent = "Chưa chọn file";
-  qs("#file-quiz-clear").hidden = true;
   qs("#file-markdown").value = "";
   qs("#file-markdown-name").textContent = "Hoặc gõ thẳng vào ô bên dưới";
   qs("#edit-banner").hidden = true;
@@ -710,16 +682,6 @@ function bindEvents() {
   qs("#file-markdown").addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file) handleMarkdownFile(file);
-  });
-  qs("#file-quiz").addEventListener("change", (event) => {
-    const file = event.target.files[0];
-    if (file) handleQuizFile(file);
-  });
-  qs("#file-quiz-clear").addEventListener("click", () => {
-    admin.quizFile = null;
-    qs("#file-quiz").value = "";
-    qs("#file-quiz-name").textContent = "Chưa chọn file";
-    qs("#file-quiz-clear").hidden = true;
   });
 
   qsa("[data-editor-tab]").forEach((btn) => btn.addEventListener("click", () => {

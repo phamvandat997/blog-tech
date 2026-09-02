@@ -9,10 +9,7 @@ const KIND_GROUPS = [
 
 function sectionCard(section) {
   const docs = docsOfSection(section.id);
-  const questions = countQuestions(docs);
-  const meta = docs.length
-    ? `${docs.length} bài` + (questions ? ` · ${questions} câu quiz` : "")
-    : "Sắp có nội dung";
+  const meta = docs.length ? `${docs.length} bài` : "Sắp có nội dung";
 
   return `<a class="section-card ${docs.length ? "" : "is-empty"}" href="${attr(hubUrl(section.id))}"
        style="--section-color: ${attr(section.color)}">

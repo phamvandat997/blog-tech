@@ -22,7 +22,7 @@ tags: [Java, OOP]                      # không hiện ra, chỉ giúp tìm ki�
 ---
 ```
 
-Ngày cập nhật và số câu quiz do build tự tính. `description` tự sinh thường
+Ngày cập nhật do build tự tính. `description` tự sinh thường
 đủ dùng; bài nào mở đầu bằng bảng, sơ đồ hay callout thì nên viết tay một câu.
 
 ## Thêm một mảng nội dung mới (Python, JavaScript, System Design…)
@@ -49,40 +49,12 @@ Thẻ Python xuất hiện ngay trên trang chủ. Không phải sửa dòng Jav
 - `kind: "language"` → thẻ nằm ở khu **Ngôn ngữ**; `"topic"` → khu **Chủ đề**.
 - Thư mục con chưa khai báo trong `categories` vẫn hiện (lấy tên thư mục), build chỉ cảnh báo.
 
-## Thêm quiz cho một bài
+## Quiz — đang tạm gỡ
 
-Đặt file `<tên-bài>.quiz.json` cạnh file `.md`:
-
-```json
-{
-  "title": "Phase 1: Java Fundamentals",
-  "quizzes": [
-    {
-      "number": 1,
-      "question": "Nội dung câu hỏi, hỗ trợ ```java ... ``` và `mã inline`",
-      "isMulti": false,
-      "options": [{ "key": "A", "text": "..." }, { "key": "B", "text": "..." }],
-      "correctAnswers": ["B"],
-      "explanation": "Vì sao đáp án B đúng."
-    }
-  ]
-}
-```
-
-Quiz hiện ở cuối bài viết và trong tab **Luyện quiz** của mảng đó. Mảng không có
-câu hỏi nào thì tab **Luyện quiz** tự ẩn.
-
-## Chạy
-
-```bash
-npm run build   # sinh generated/ từ content/
-npm test        # 19 test cho parser frontmatter và scanner
-npm run serve   # http://localhost:8080
-```
-
-`generated/` được commit vào repo để mở thử ở máy (và để deploy tĩnh kiểu GitHub Pages)
-không cần chạy build trước. Vercel tự build lại từ `content/` nên không bắt buộc, nhưng
-nên chạy `npm run build` và commit lại `generated/` mỗi khi sửa nội dung cho khỏi lệch.
+Tính năng quiz đã được gỡ khỏi giao diện (cả trang đọc lẫn trang admin) để làm sau.
+**Dữ liệu vẫn còn nguyên**: 8 file `<tên-bài>.quiz.json` với 112 câu hỏi nằm y chỗ cũ
+trong `content/`. Build cố tình bỏ qua chúng; đổi tên hay xoá bài qua trang admin vẫn
+mang theo hoặc dọn file quiz đi kèm, nên không mất dữ liệu và không sinh file mồ côi.
 
 ## Trang /admin — quản lý bài viết
 
@@ -116,7 +88,7 @@ Merge PR → lần tải danh sách sau, bài chuyển sang **Đang đăng**. Kh
 
 ### Sửa và xoá
 
-- **Sửa**: nạp nội dung và quiz của bài vào form. Bài đang chờ duyệt thì đọc từ chính
+- **Sửa**: nạp nội dung bài vào form. Bài đang chờ duyệt thì đọc từ chính
   nhánh PR của nó. Đổi tên file hoặc chuyển chuyên mục cũng được — đường dẫn cũ được
   xoá trong cùng commit nên không sinh ra bài trùng.
 - **Xoá**: mở PR xoá file `.md` và file `.quiz.json` đi kèm (nếu có).
@@ -219,15 +191,14 @@ thiết kế trong `docs/` **không** lên production.
 content/                     nguồn duy nhất — chỉ sửa ở đây
   <mảng>/_section.json       tên, icon, màu, chuyên mục, lộ trình
   <mảng>/<chuyên-mục>/*.md   bài viết
-  <mảng>/<chuyên-mục>/*.quiz.json
+  <mảng>/<chuyên-mục>/*.quiz.json   (giữ nguyên, build đang bỏ qua)
 build/                       script sinh dữ liệu, đóng gói dist, test
 generated/                   sản phẩm build (đừng sửa tay)
   catalog.js                 metadata mọi bài (~16 KB, mọi trang đều nạp)
   docs/<id>.js               nội dung một bài (reader chỉ nạp bài đang mở)
-  quiz-<mảng>.js             ngân hàng câu hỏi của một mảng
-assets/css/base.css          bảng màu, navbar, thẻ bài, quiz, markdown
-assets/css/blog.css          trang chủ, breadcrumb, điều hướng bài
-assets/js/                   dom · state · catalog · frontmatter · markdown · quiz
+assets/css/base.css          bảng màu, navbar, thẻ bài, markdown (còn CSS quiz để dùng lại)
+assets/css/blog.css          trang chủ, mục lục cột trái, breadcrumb, điều hướng bài
+assets/js/                   dom · state · catalog · frontmatter · markdown
                              landing · hub · reader · github · admin
 404.html                     trang không tìm thấy (Vercel dùng tự động)
 admin.html                   quản lý bài viết qua pull request (route /admin)
@@ -236,14 +207,18 @@ hub.html?s=<mảng>            danh mục bài viết của một mảng
 reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
 ```
 
-Bài quiz đang làm dở và lựa chọn giao diện sáng/tối lưu ở `localStorage` của trình duyệt.
+Lựa chọn giao diện sáng/tối lưu ở `localStorage` của trình duyệt.
 
 ## Phạm vi giao diện
 
-Giao diện cố ý chỉ phục vụ hai việc: **đọc bài** và **làm quiz**. Không có thống kê,
-không theo dõi tiến độ đọc, không đánh dấu yêu thích, không icon, không sắp xếp hay
-lọc nhiều tầng.
+Giao diện cố ý chỉ phục vụ việc **đọc bài**. Không có thống kê, không theo dõi tiến độ
+đọc, không đánh dấu yêu thích, không icon, không sắp xếp hay lọc nhiều tầng.
 Điều hướng chỉ gồm: chọn mảng → chọn chuyên mục → chọn bài, cộng một ô tìm kiếm.
+
+Trang đọc có **mục lục ở cột trái**, dựng từ heading `##`/`###` của bài:
+từ 1101px trở lên hiện sẵn và dính theo màn hình; hẹp hơn thì ẩn đi, mở bằng nút ☰
+trên thanh trên. Cuộn tới đâu mục lục tô sáng tới đó; bấm một mục ở chế độ ngăn kéo
+thì ngăn kéo tự đóng. Bài có từ 3 heading trở xuống thì không hiện mục lục.
 
 ### Về việc mở bằng `file://`
 

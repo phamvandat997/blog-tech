@@ -34,13 +34,14 @@ test("dựng id từ đường dẫn và suy ra ngày cập nhật", () => {
   assert.match(docs[0].updatedDate, /^\d{4}-\d{2}-\d{2}$/);
 });
 
-test("không mang theo số liệu file đã bỏ khỏi giao diện", () => {
+test("không mang theo trường đã bỏ khỏi giao diện", () => {
   const dir = fixture({
     "java/_section.json": SECTION,
-    "java/core/a.md": "---\ntitle: A\ndifficulty: Expert\n---\nx",
+    "java/core/a.md": "---\ntitle: A\ndifficulty: Expert\nicon: 🧱\n---\nx",
+    "java/core/a.quiz.json": JSON.stringify({ quizzes: [{ q: 1 }] }),
   });
   const { docs } = scanContent(dir);
-  for (const field of ["lines", "size", "difficulty"]) {
+  for (const field of ["lines", "size", "difficulty", "icon", "questions"]) {
     assert.equal(docs[0][field], undefined, `catalog vẫn còn trường "${field}"`);
   }
 });
@@ -90,18 +91,6 @@ test("link markdown trong mô tả chỉ còn phần chữ", () => {
   assert.equal(scanContent(dir).docs[0].description, "Xem tài liệu Oracle để rõ hơn.");
 });
 
-test("đếm câu quiz từ file .quiz.json nằm cạnh", () => {
-  const dir = fixture({
-    "java/_section.json": SECTION,
-    "java/core/a.md": "---\ntitle: A\n---\nx",
-    "java/core/a.quiz.json": JSON.stringify({ quizzes: [{ q: 1 }, { q: 2 }] }),
-    "java/core/b.md": "---\ntitle: B\n---\nx",
-  });
-  const { docs } = scanContent(dir);
-  assert.equal(docs.find((d) => d.slug === "a").questions, 2);
-  assert.equal(docs.find((d) => d.slug === "b").questions, 0);
-});
-
 test("thư mục chưa khai báo vẫn hiện, kèm cảnh báo", () => {
   const dir = fixture({
     "java/_section.json": SECTION,
@@ -144,13 +133,23 @@ test("tên file sai quy ước làm build dừng", () => {
   assert.throws(() => scanContent(dir), /không hợp lệ/);
 });
 
-test("JSON hỏng làm build dừng, báo rõ đường dẫn", () => {
+test("_section.json hỏng làm build dừng, báo rõ đường dẫn", () => {
+  const dir = fixture({
+    "java/_section.json": "{ hỏng",
+    "java/core/a.md": "---\ntitle: A\n---\nx",
+  });
+  assert.throws(() => scanContent(dir), /_section\.json sai cú pháp JSON/);
+});
+
+test("file .quiz.json cạnh bài được giữ nguyên nhưng build bỏ qua", () => {
   const dir = fixture({
     "java/_section.json": SECTION,
     "java/core/a.md": "---\ntitle: A\n---\nx",
-    "java/core/a.quiz.json": "{ hỏng",
+    "java/core/a.quiz.json": "{ hỏng cũng không sao",
   });
-  assert.throws(() => scanContent(dir), /a\.quiz\.json sai cú pháp JSON/);
+  const { docs } = scanContent(dir);
+  assert.equal(docs.length, 1, "quiz hỏng không được làm dừng build");
+  assert.equal(docs[0].questions, undefined);
 });
 
 test("id phẳng hoá không đụng nhau", () => {

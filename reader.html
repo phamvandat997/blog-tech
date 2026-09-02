@@ -15,12 +15,16 @@
 
   <header class="navbar">
     <div class="navbar-inner">
+      <button class="btn-icon btn-toc-toggle" id="btn-toc-toggle" type="button"
+              aria-label="Mở mục lục" aria-expanded="false" aria-controls="reader-toc" hidden>☰</button>
+
       <a href="index.html" class="brand">
         <div class="brand-logo">📘</div>
         <div class="brand-text">
           <h1>Blog kỹ thuật</h1>
         </div>
       </a>
+
       <div class="nav-actions">
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
         <a class="viewer-nav-back" id="reader-back" href="index.html">⬅ Về danh mục</a>
@@ -28,20 +32,30 @@
     </div>
   </header>
 
-  <main class="reader-layout">
-    <nav class="reader-breadcrumb" id="reader-breadcrumb"></nav>
+  <div class="reader-shell">
+    <!-- Mục lục: cột trái ở desktop, ngăn kéo ở tablet/mobile -->
+    <div class="toc-backdrop" id="toc-backdrop" hidden></div>
+    <aside class="reader-toc" id="reader-toc" hidden aria-label="Mục lục bài viết">
+      <div class="toc-head">
+        <span class="toc-title" id="toc-title">Mục lục</span>
+        <button class="btn-icon toc-close" id="btn-toc-close" type="button" aria-label="Đóng mục lục">✕</button>
+      </div>
+      <nav class="toc-nav" id="toc-nav"></nav>
+    </aside>
 
-    <header class="reader-head">
-      <h1 class="reader-title" id="reader-title">Đang tải…</h1>
-      <p class="reader-date" id="reader-date"></p>
-    </header>
+    <main class="reader-layout">
+      <nav class="reader-breadcrumb" id="reader-breadcrumb"></nav>
 
-    <article class="reader-content-card markdown-body" id="reader-body"></article>
+      <header class="reader-head">
+        <h1 class="reader-title" id="reader-title">Đang tải…</h1>
+        <p class="reader-date" id="reader-date"></p>
+      </header>
 
-    <div id="reader-quiz"></div>
+      <article class="reader-content-card markdown-body" id="reader-body"></article>
 
-    <nav class="reader-neighbours" id="reader-neighbours"></nav>
-  </main>
+      <nav class="reader-neighbours" id="reader-neighbours"></nav>
+    </main>
+  </div>
 
 </div>
 
@@ -52,7 +66,6 @@
 <script src="assets/js/state.js"></script>
 <script src="assets/js/catalog.js"></script>
 <script src="assets/js/markdown.js"></script>
-<script src="assets/js/quiz.js"></script>
 <script src="assets/js/reader.js"></script>
 </body>
 </html>
