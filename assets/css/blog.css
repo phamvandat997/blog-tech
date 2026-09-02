@@ -1129,7 +1129,8 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr) var(--related-
   .site-footer,
   .code-copy-btn,
   .heading-anchor-btn,
-  .viewer-nav-back {
+  .viewer-nav-back,
+  .reader-comments-section {
     display: none !important;
   }
   .reader-shell {
@@ -1340,4 +1341,75 @@ body.zen-mode #btn-zen-mode {
   background: var(--primary);
   color: #ffffff;
   box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+/* === GISCUS COMMENTS SECTION === */
+.reader-comments-section {
+  margin-top: 2.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+[data-theme="dark"] .reader-comments-section {
+  background: rgba(17, 24, 39, 0.86);
+  border-color: rgba(99, 102, 241, 0.22);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .reader-comments-section {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+}
+
+.comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comments-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comments-title h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.comments-icon {
+  font-size: 1.3rem;
+}
+
+.comments-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.giscus-container {
+  min-height: 180px;
+}
+
+@media (max-width: 768px) {
+  .reader-comments-section {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-lg);
+  }
 }

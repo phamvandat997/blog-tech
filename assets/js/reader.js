@@ -470,6 +470,45 @@ function setupHeadingAnchors() {
   });
 }
 
+function setupGiscus(doc) {
+  const container = qs("#giscus-container");
+  if (!container || !doc) return;
+
+  container.innerHTML = "";
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const giscusTheme = isDark ? "dark" : "light";
+
+  const script = document.createElement("script");
+  script.src = "https://giscus.app/client.js";
+  script.setAttribute("data-repo", "phamvandat997/blog-tech");
+  script.setAttribute("data-repo-id", "R_kgDOULiDYw");
+  script.setAttribute("data-category", "General");
+  script.setAttribute("data-category-id", "DIC_kwDOULiDY84CnaB7");
+  script.setAttribute("data-mapping", "specific");
+  script.setAttribute("data-term", doc.id);
+  script.setAttribute("data-strict", "0");
+  script.setAttribute("data-reactions-enabled", "1");
+  script.setAttribute("data-emit-metadata", "0");
+  script.setAttribute("data-input-position", "top");
+  script.setAttribute("data-theme", giscusTheme);
+  script.setAttribute("data-lang", "vi");
+  script.setAttribute("data-loading", "lazy");
+  script.crossOrigin = "anonymous";
+  script.async = true;
+
+  container.appendChild(script);
+}
+
+function updateGiscusTheme(theme) {
+  const iframe = document.querySelector("iframe.giscus-frame");
+  if (!iframe) return;
+  const giscusTheme = theme === "dark" ? "dark" : "light";
+  iframe.contentWindow.postMessage(
+    { giscus: { setConfig: { theme: giscusTheme } } },
+    "https://giscus.app"
+  );
+}
+
 function showError(title, text, action) {
   document.body.classList.add("no-toc");
   qs("#reader-root").innerHTML = emptyState("🔍", title, text, action);
@@ -484,8 +523,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFontSizeAdjuster();
   setupZenMode();
 
-  window.addEventListener("theme-changed", () => {
+  window.addEventListener("theme-changed", (e) => {
     initMermaidDiagrams();
+    updateGiscusTheme(e.detail.theme);
   });
 
   const params = readParams();
@@ -535,5 +575,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupToc();
   setupReadingProgress();
   setupCompletionWidget(doc);
+  setupGiscus(doc);
   initMermaidDiagrams();
 });
