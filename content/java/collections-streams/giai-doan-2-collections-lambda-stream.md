@@ -1,6 +1,6 @@
 ---
 title: "Giai đoạn 2 — Collections, Lambda & Stream (Tuần 7–12)"
-order: 1
+order: 5
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]
 ---

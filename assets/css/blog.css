@@ -2,7 +2,23 @@
    base.css giữ bảng màu, navbar, quiz và markdown. File này định hình
    giao diện tối giản: chọn mảng → chọn bài → đọc → làm quiz. */
 
-:root { --section-color: var(--primary); }
+:root {
+  --section-color: var(--primary);
+  /* Ba số này quyết định bố cục trang đọc. Công thức căn mục lục bên dưới
+     suy ra từ chính chúng, nên đổi ở đây là mọi thứ vẫn khớp. */
+  --toc-w: 260px;
+  --toc-gap: 2rem;
+  --content-w: 820px;
+  --page-pad: 1.25rem;
+}
+
+/* base.css đặt .app-container { overflow-x: hidden }. Với overflow-y để mặc
+   định, trình duyệt nâng overflow-y thành "auto" và biến .app-container thành
+   MỘT VÙNG CUỘN — mà nó cao đúng bằng nội dung nên không bao giờ cuộn. Hệ quả:
+   mọi position:sticky bên trong (navbar lẫn mục lục) bám vào nó và không bao
+   giờ dính. `clip` cắt tràn y hệt nhưng KHÔNG tạo vùng cuộn, nên sticky bám
+   đúng vào trang. */
+.app-container { overflow-x: clip; }
 
 /* base.css đặt display cho .sidebar, .quiz-player-container, .nav-tab-btn…
    nên quy tắc display:none của thuộc tính `hidden` (nằm ở sheet trình duyệt)
@@ -318,25 +334,28 @@
    Dưới 1100px: mục lục thành ngăn kéo, mở bằng nút ☰ trên navbar. */
 .reader-shell {
   display: grid;
-  grid-template-columns: 260px minmax(0, 820px);
-  gap: 2rem;
+  grid-template-columns: var(--toc-w) minmax(0, var(--content-w));
+  gap: var(--toc-gap);
   justify-content: center;
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 var(--page-pad);
   box-sizing: border-box;
 }
-body.no-toc .reader-shell { grid-template-columns: minmax(0, 820px); }
+body.no-toc .reader-shell { grid-template-columns: minmax(0, var(--content-w)); }
 
+/* Mục lục CỐ ĐỊNH: cuộn trang chỉ làm nội dung bên phải chạy, mục lục đứng yên.
+   Dùng `fixed` chứ không `sticky` vì sticky bám vào tổ tiên cuộn gần nhất —
+   một thứ dễ vỡ khi có ai đó đặt overflow ở giữa (đúng chuyện đã xảy ra).
+   Lưới đã căn giữa nên mép trái của cột đầu chính là công thức dưới đây. */
 .reader-toc {
-  position: sticky;
-  top: 1.5rem;
-  align-self: start;
-  max-height: calc(100vh - 3rem);
+  position: fixed;
+  top: calc(var(--navbar-h, 65px) + 1.25rem);
+  left: max(var(--page-pad),
+            calc(50% - (var(--toc-w) + var(--toc-gap) + var(--content-w)) / 2));
+  width: var(--toc-w);
+  max-height: calc(100vh - var(--navbar-h, 65px) - 2.5rem);
   display: flex;
   flex-direction: column;
-  margin-top: 1.25rem;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -389,7 +408,9 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 820px); }
 }
 
 /* Heading không bị navbar dính che khi nhảy từ mục lục. */
-.markdown-body h2[id], .markdown-body h3[id] { scroll-margin-top: 5rem; }
+.markdown-body h2[id], .markdown-body h3[id] {
+  scroll-margin-top: calc(var(--navbar-h, 65px) + 1rem);
+}
 
 .btn-toc-toggle { display: none; }
 .toc-backdrop { display: none; }

@@ -1,6 +1,6 @@
 ---
 title: "Giai đoạn 4 — Ôn tập & Mock (Tuần 19–24)"
-order: 2
+order: 4
 phase: "Phase 7"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]
 ---

@@ -1,6 +1,6 @@
 ---
 title: "OCP Java SE 25 (1Z0-831) - Phase 5: Advanced Topics (Deep Theory Supplement)"
-order: 3
+order: 2
 phase: "Phase 5"
 tags: ["Virtual Threads", "Concurrency", "JMM", "NIO.2", "JPMS Modules"]
 ---

@@ -50,6 +50,37 @@ const SECTIONS = [
   "docCount": 22
  },
  {
+  "id": "dsa",
+  "name": "Cấu trúc dữ liệu & Giải thuật",
+  "color": "#2563eb",
+  "kind": "topic",
+  "order": 2,
+  "tagline": "Lộ trình luyện thuật toán cho phỏng vấn FAANG / Big Tech.",
+  "categories": [
+   {
+    "id": "roadmap",
+    "name": "Lộ trình",
+    "order": 1,
+    "docCount": 1
+   },
+   {
+    "id": "foundations",
+    "name": "Nền tảng",
+    "order": 2,
+    "docCount": 1
+   },
+   {
+    "id": "master",
+    "name": "Bách khoa toàn thư",
+    "order": 3,
+    "docCount": 1
+   }
+  ],
+  "phases": [],
+  "phaseDetails": [],
+  "docCount": 3
+ },
+ {
   "id": "javascript",
   "name": "Javascript",
   "color": "#669c35",
@@ -67,37 +98,6 @@ const SECTIONS = [
   "phases": [],
   "phaseDetails": [],
   "docCount": 1
- },
- {
-  "id": "dsa",
-  "name": "Cấu trúc dữ liệu & Giải thuật",
-  "color": "#2563eb",
-  "kind": "topic",
-  "order": 10,
-  "tagline": "Lộ trình luyện thuật toán cho phỏng vấn FAANG / Big Tech.",
-  "categories": [
-   {
-    "id": "roadmap",
-    "name": "Lộ trình",
-    "order": 1,
-    "docCount": 1
-   },
-   {
-    "id": "foundations",
-    "name": "Nền tảng",
-    "order": 2,
-    "docCount": 3
-   },
-   {
-    "id": "master",
-    "name": "Bách khoa toàn thư",
-    "order": 3,
-    "docCount": 1
-   }
-  ],
-  "phases": [],
-  "phaseDetails": [],
-  "docCount": 5
  }
 ];
 const DOCUMENTS = [
@@ -120,13 +120,13 @@ const DOCUMENTS = [
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/core/giai-doan-1-nen-tang-ngon-ngu",
+  "id": "java/core/phase1-java-fundamentals",
   "section": "java",
   "category": "core",
-  "slug": "giai-doan-1-nen-tang-ngon-ngu",
-  "contentFile": "java__core__giai-doan-1-nen-tang-ngon-ngu",
-  "title": "Giai đoạn 1 — Nền tảng ngôn ngữ Java 25 (Tuần 1–6)",
-  "description": "Cách dùng: đọc lý thuyết ở Phần A → gõ lại code bằng tay → làm bài tập Phần B mà không xem đáp án → đối chiếu Phần C → ghi mọi câu sai vào gotchas.md.",
+  "slug": "phase1-java-fundamentals",
+  "contentFile": "java__core__phase1-java-fundamentals",
+  "title": "Phase 1: Nền tảng Java (Java Fundamentals) - Luyện thi OCP Java SE 25 (1Z0-831)",
+  "description": "Tài liệu này bao gồm các kiến thức nền tảng của Java, được thiết kế đặc biệt để giúp bạn vượt qua kỳ thi OCP Java SE 25. Trọng tâm sẽ là các chi tiết kỹ thuật, các…",
   "phase": "Phase 1",
   "tags": [
    "Primitives",
@@ -158,13 +158,13 @@ const DOCUMENTS = [
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/core/phase1-java-fundamentals",
+  "id": "java/core/giai-doan-1-nen-tang-ngon-ngu",
   "section": "java",
   "category": "core",
-  "slug": "phase1-java-fundamentals",
-  "contentFile": "java__core__phase1-java-fundamentals",
-  "title": "Phase 1: Nền tảng Java (Java Fundamentals) - Luyện thi OCP Java SE 25 (1Z0-831)",
-  "description": "Tài liệu này bao gồm các kiến thức nền tảng của Java, được thiết kế đặc biệt để giúp bạn vượt qua kỳ thi OCP Java SE 25. Trọng tâm sẽ là các chi tiết kỹ thuật, các…",
+  "slug": "giai-doan-1-nen-tang-ngon-ngu",
+  "contentFile": "java__core__giai-doan-1-nen-tang-ngon-ngu",
+  "title": "Giai đoạn 1 — Nền tảng ngôn ngữ Java 25 (Tuần 1–6)",
+  "description": "Cách dùng: đọc lý thuyết ở Phần A → gõ lại code bằng tay → làm bài tập Phần B mà không xem đáp án → đối chiếu Phần C → ghi mọi câu sai vào gotchas.md.",
   "phase": "Phase 1",
   "tags": [
    "Primitives",
@@ -174,24 +174,6 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 3,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "java/core/phase2-deep-theory",
-  "section": "java",
-  "category": "core",
-  "slug": "phase2-deep-theory",
-  "contentFile": "java__core__phase2-deep-theory",
-  "title": "Phase 2: OOP & Class Design — Deep Theory Supplement",
-  "description": "Tài liệu này đi sâu vào kiến trúc bên trong (internal mechanisms) của JVM và Java Language Specification (JLS) liên quan đến OOP. Thay vì chỉ học \"cái gì\" (what), chúng…",
-  "phase": "Phase 2",
-  "tags": [
-   "Records",
-   "Sealed Classes",
-   "Pattern Matching",
-   "Class Loading"
-  ],
-  "order": 4,
   "updatedDate": "2026-09-02"
  },
  {
@@ -209,25 +191,25 @@ const DOCUMENTS = [
    "Pattern Matching",
    "Class Loading"
   ],
-  "order": 5,
+  "order": 4,
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/collections-streams/giai-doan-2-collections-lambda-stream",
+  "id": "java/core/phase2-deep-theory",
   "section": "java",
-  "category": "collections-streams",
-  "slug": "giai-doan-2-collections-lambda-stream",
-  "contentFile": "java__collections-streams__giai-doan-2-collections-lambda-stream",
-  "title": "Giai đoạn 2 — Collections, Lambda & Stream (Tuần 7–12)",
-  "description": "Đây là phần chiếm tỷ trọng lớn nhất trong đề 1Z0-831 và cũng là phần bạn dùng hằng ngày khi làm DSA. Học kỹ ở đây sẽ tiết kiệm thời gian cho cả hai track.",
-  "phase": "Phase 3",
+  "category": "core",
+  "slug": "phase2-deep-theory",
+  "contentFile": "java__core__phase2-deep-theory",
+  "title": "Phase 2: OOP & Class Design — Deep Theory Supplement",
+  "description": "Tài liệu này đi sâu vào kiến trúc bên trong (internal mechanisms) của JVM và Java Language Specification (JLS) liên quan đến OOP. Thay vì chỉ học \"cái gì\" (what), chúng…",
+  "phase": "Phase 2",
   "tags": [
-   "Collections",
-   "Generics",
-   "HashMap Treeify",
-   "Date/Time"
+   "Records",
+   "Sealed Classes",
+   "Pattern Matching",
+   "Class Loading"
   ],
-  "order": 1,
+  "order": 5,
   "updatedDate": "2026-09-02"
  },
  {
@@ -245,7 +227,7 @@ const DOCUMENTS = [
    "HashMap Treeify",
    "Date/Time"
   ],
-  "order": 2,
+  "order": 1,
   "updatedDate": "2026-09-02"
  },
  {
@@ -262,6 +244,25 @@ const DOCUMENTS = [
    "Generics",
    "HashMap Treeify",
    "Date/Time"
+  ],
+  "order": 2,
+  "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "java/collections-streams/phase4-functional-programming",
+  "section": "java",
+  "category": "collections-streams",
+  "slug": "phase4-functional-programming",
+  "contentFile": "java__collections-streams__phase4-functional-programming",
+  "title": "Tài Liệu Ôn Thi OCP Java SE 25 (1Z0-831) - Giai Đoạn 4: Functional Programming",
+  "description": "Giai đoạn này tập trung vào Lập Trình Hàm (Functional Programming) trong Java, bao gồm Functional Interfaces, Lambda Expressions, Stream API, Collectors, Optional và…",
+  "phase": "Phase 4",
+  "tags": [
+   "Lambdas",
+   "Stream API",
+   "Collectors",
+   "invokedynamic",
+   "Spliterator"
   ],
   "order": 3,
   "updatedDate": "2026-09-02"
@@ -286,41 +287,21 @@ const DOCUMENTS = [
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/collections-streams/phase4-functional-programming",
+  "id": "java/collections-streams/giai-doan-2-collections-lambda-stream",
   "section": "java",
   "category": "collections-streams",
-  "slug": "phase4-functional-programming",
-  "contentFile": "java__collections-streams__phase4-functional-programming",
-  "title": "Tài Liệu Ôn Thi OCP Java SE 25 (1Z0-831) - Giai Đoạn 4: Functional Programming",
-  "description": "Giai đoạn này tập trung vào Lập Trình Hàm (Functional Programming) trong Java, bao gồm Functional Interfaces, Lambda Expressions, Stream API, Collectors, Optional và…",
-  "phase": "Phase 4",
+  "slug": "giai-doan-2-collections-lambda-stream",
+  "contentFile": "java__collections-streams__giai-doan-2-collections-lambda-stream",
+  "title": "Giai đoạn 2 — Collections, Lambda & Stream (Tuần 7–12)",
+  "description": "Đây là phần chiếm tỷ trọng lớn nhất trong đề 1Z0-831 và cũng là phần bạn dùng hằng ngày khi làm DSA. Học kỹ ở đây sẽ tiết kiệm thời gian cho cả hai track.",
+  "phase": "Phase 3",
   "tags": [
-   "Lambdas",
-   "Stream API",
-   "Collectors",
-   "invokedynamic",
-   "Spliterator"
+   "Collections",
+   "Generics",
+   "HashMap Treeify",
+   "Date/Time"
   ],
   "order": 5,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "java/concurrency/giai-doan-3-concurrency-io-module-l10n",
-  "section": "java",
-  "category": "concurrency",
-  "slug": "giai-doan-3-concurrency-io-module-l10n",
-  "contentFile": "java__concurrency__giai-doan-3-concurrency-io-module-l10n",
-  "title": "Giai đoạn 3 — Concurrency, I/O, Module, Localization (Tuần 13–18)",
-  "description": "Đây là giai đoạn nhiều người rớt nhất. Lý do đơn giản: đi làm bạn dùng Spring, hiếm khi đụng trực tiếp ExecutorService, gần như không bao giờ viết module-info.java, và…",
-  "phase": "Phase 5",
-  "tags": [
-   "Virtual Threads",
-   "Concurrency",
-   "JMM",
-   "NIO.2",
-   "JPMS Modules"
-  ],
-  "order": 1,
   "updatedDate": "2026-09-02"
  },
  {
@@ -339,7 +320,7 @@ const DOCUMENTS = [
    "NIO.2",
    "JPMS Modules"
   ],
-  "order": 2,
+  "order": 1,
   "updatedDate": "2026-09-02"
  },
  {
@@ -358,7 +339,44 @@ const DOCUMENTS = [
    "NIO.2",
    "JPMS Modules"
   ],
+  "order": 2,
+  "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "java/concurrency/giai-doan-3-concurrency-io-module-l10n",
+  "section": "java",
+  "category": "concurrency",
+  "slug": "giai-doan-3-concurrency-io-module-l10n",
+  "contentFile": "java__concurrency__giai-doan-3-concurrency-io-module-l10n",
+  "title": "Giai đoạn 3 — Concurrency, I/O, Module, Localization (Tuần 13–18)",
+  "description": "Đây là giai đoạn nhiều người rớt nhất. Lý do đơn giản: đi làm bạn dùng Spring, hiếm khi đụng trực tiếp ExecutorService, gần như không bao giờ viết module-info.java, và…",
+  "phase": "Phase 5",
+  "tags": [
+   "Virtual Threads",
+   "Concurrency",
+   "JMM",
+   "NIO.2",
+   "JPMS Modules"
+  ],
   "order": 3,
+  "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "java/new-features/phase6-java22-25-new-features",
+  "section": "java",
+  "category": "new-features",
+  "slug": "phase6-java22-25-new-features",
+  "contentFile": "java__new-features__phase6-java22-25-new-features",
+  "title": "Giai đoạn 6: Các tính năng mới của Java 22 - 25 (OCP Java SE 25 - 1Z0-831)",
+  "description": "Tài liệu này bao gồm tất cả các tính năng mới từ Java 22 đến Java 25 có thể xuất hiện trong bài thi chứng chỉ OCP Java SE 25 Developer (1Z0-831).",
+  "phase": "Phase 6",
+  "tags": [
+   "Flexible Constructors",
+   "Gatherers",
+   "Scoped Values",
+   "Unnamed vars"
+  ],
+  "order": 1,
   "updatedDate": "2026-09-02"
  },
  {
@@ -376,23 +394,42 @@ const DOCUMENTS = [
    "Scoped Values",
    "Unnamed vars"
   ],
+  "order": 2,
+  "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "java/master/tong-quan-bach-khoa",
+  "section": "java",
+  "category": "master",
+  "slug": "tong-quan-bach-khoa",
+  "contentFile": "java__master__tong-quan-bach-khoa",
+  "title": "🏛️ BÁCH KHOA TOÀN THƯ OCP JAVA SE 25 (1Z0-831) & DSA ROADMAP",
+  "description": "Bản đồ tổng quan bốn trụ cột tài liệu: lộ trình, lý thuyết theo phase, lý thuyết chuyên sâu và đề thi thử — đọc trước để biết nên bắt đầu từ đâu.",
+  "phase": "Master",
+  "tags": [
+   "Master Bible",
+   "All-in-One",
+   "Summary",
+   "Architecture"
+  ],
   "order": 1,
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/new-features/phase6-java22-25-new-features",
+  "id": "java/master/ocp-java25-ultimate-handbook",
   "section": "java",
-  "category": "new-features",
-  "slug": "phase6-java22-25-new-features",
-  "contentFile": "java__new-features__phase6-java22-25-new-features",
-  "title": "Giai đoạn 6: Các tính năng mới của Java 22 - 25 (OCP Java SE 25 - 1Z0-831)",
-  "description": "Tài liệu này bao gồm tất cả các tính năng mới từ Java 22 đến Java 25 có thể xuất hiện trong bài thi chứng chỉ OCP Java SE 25 Developer (1Z0-831).",
-  "phase": "Phase 6",
+  "category": "master",
+  "slug": "ocp-java25-ultimate-handbook",
+  "contentFile": "java__master__ocp-java25-ultimate-handbook",
+  "title": "OCP Java SE 25 (1Z0-831): THE ULTIMATE MASTER HANDBOOK",
+  "description": "Kiến trúc Java Virtual Machine chia làm 3 thành phần chính: Class Loader Subsystem, Runtime Data Areas, và Execution Engine.",
+  "phase": "Master",
   "tags": [
-   "Flexible Constructors",
-   "Gatherers",
-   "Scoped Values",
-   "Unnamed vars"
+   "Mock Exam",
+   "Handbook",
+   "Labs",
+   "Traps",
+   "Master Question Bank"
   ],
   "order": 2,
   "updatedDate": "2026-09-02"
@@ -413,7 +450,7 @@ const DOCUMENTS = [
    "Traps",
    "Master Question Bank"
   ],
-  "order": 1,
+  "order": 3,
   "updatedDate": "2026-09-02"
  },
  {
@@ -425,44 +462,6 @@ const DOCUMENTS = [
   "title": "Giai đoạn 4 — Ôn tập & Mock (Tuần 19–24)",
   "description": "Ba file trước tách theo chủ đề để bạn học. File này cố tình làm ngược lại: mỗi câu trộn 2–4 chủ đề, code dài hơn, đáp án gần giống nhau — vì đó chính là hình dạng thật…",
   "phase": "Phase 7",
-  "tags": [
-   "Mock Exam",
-   "Handbook",
-   "Labs",
-   "Traps",
-   "Master Question Bank"
-  ],
-  "order": 2,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "java/master/ocp-java25-master-question-bank",
-  "section": "java",
-  "category": "master",
-  "slug": "ocp-java25-master-question-bank",
-  "contentFile": "java__master__ocp-java25-master-question-bank",
-  "title": "MASTER QUESTION BANK: OCP Java SE 25 (1Z0-831)",
-  "description": "Ngân hàng câu hỏi trắc nghiệm cực khó mô phỏng đề 1Z0-831, tập trung vào các tính năng Java 22–25: Flexible Constructors, Module Imports, Scoped Values, Virtual Threads, Pattern Matching.",
-  "phase": "Master",
-  "tags": [
-   "Mock Exam",
-   "Handbook",
-   "Labs",
-   "Traps",
-   "Master Question Bank"
-  ],
-  "order": 3,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "java/master/ocp-java25-ultimate-handbook",
-  "section": "java",
-  "category": "master",
-  "slug": "ocp-java25-ultimate-handbook",
-  "contentFile": "java__master__ocp-java25-ultimate-handbook",
-  "title": "OCP Java SE 25 (1Z0-831): THE ULTIMATE MASTER HANDBOOK",
-  "description": "Kiến trúc Java Virtual Machine chia làm 3 thành phần chính: Class Loader Subsystem, Runtime Data Areas, và Execution Engine.",
-  "phase": "Master",
   "tags": [
    "Mock Exam",
    "Handbook",
@@ -493,34 +492,22 @@ const DOCUMENTS = [
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "java/master/tong-quan-bach-khoa",
+  "id": "java/master/ocp-java25-master-question-bank",
   "section": "java",
   "category": "master",
-  "slug": "tong-quan-bach-khoa",
-  "contentFile": "java__master__tong-quan-bach-khoa",
-  "title": "🏛️ BÁCH KHOA TOÀN THƯ OCP JAVA SE 25 (1Z0-831) & DSA ROADMAP",
-  "description": "Bản đồ tổng quan bốn trụ cột tài liệu: lộ trình, lý thuyết theo phase, lý thuyết chuyên sâu và đề thi thử — đọc trước để biết nên bắt đầu từ đâu.",
+  "slug": "ocp-java25-master-question-bank",
+  "contentFile": "java__master__ocp-java25-master-question-bank",
+  "title": "MASTER QUESTION BANK: OCP Java SE 25 (1Z0-831)",
+  "description": "Ngân hàng câu hỏi trắc nghiệm cực khó mô phỏng đề 1Z0-831, tập trung vào các tính năng Java 22–25: Flexible Constructors, Module Imports, Scoped Values, Virtual Threads, Pattern Matching.",
   "phase": "Master",
   "tags": [
-   "Master Bible",
-   "All-in-One",
-   "Summary",
-   "Architecture"
+   "Mock Exam",
+   "Handbook",
+   "Labs",
+   "Traps",
+   "Master Question Bank"
   ],
   "order": 6,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "javascript/co-ban/bai-viet-dau-tien",
-  "section": "javascript",
-  "category": "co-ban",
-  "slug": "bai-viet-dau-tien",
-  "contentFile": "javascript__co-ban__bai-viet-dau-tien",
-  "title": "Giai đoạn 5: Các Chủ đề Nâng cao (Advanced Topics) - OCP Java SE 25 (1Z0-831)",
-  "description": "Tài liệu này bao quát các chủ đề nâng cao quan trọng thường xuất hiện trong bài thi OCP Java SE 25. Bạn cần nắm vững không chỉ cú pháp mà còn cách các thư viện tiêu…",
-  "phase": "",
-  "tags": [],
-  "order": 999,
   "updatedDate": "2026-09-02"
  },
  {
@@ -560,32 +547,6 @@ const DOCUMENTS = [
   "updatedDate": "2026-09-02"
  },
  {
-  "id": "dsa/foundations/bai-viet-dau-tien",
-  "section": "dsa",
-  "category": "foundations",
-  "slug": "bai-viet-dau-tien",
-  "contentFile": "dsa__foundations__bai-viet-dau-tien",
-  "title": "Tài Liệu Ôn Thi OCP Java SE 25 (1Z0-831) - Giai Đoạn 4: Functional Programming",
-  "description": "Giai đoạn này tập trung vào Lập Trình Hàm (Functional Programming) trong Java, bao gồm Functional Interfaces, Lambda Expressions, Stream API, Collectors, Optional và…",
-  "phase": "",
-  "tags": [],
-  "order": 999,
-  "updatedDate": "2026-09-02"
- },
- {
-  "id": "dsa/foundations/demo-v1",
-  "section": "dsa",
-  "category": "foundations",
-  "slug": "demo-v1",
-  "contentFile": "dsa__foundations__demo-v1",
-  "title": "Giai đoạn 6: Các tính năng mới của Java 22 - 25 (OCP Java SE 25 - 1Z0-831)",
-  "description": "Tài liệu này bao gồm tất cả các tính năng mới từ Java 22 đến Java 25 có thể xuất hiện trong bài thi chứng chỉ OCP Java SE 25 Developer (1Z0-831).",
-  "phase": "",
-  "tags": [],
-  "order": 999,
-  "updatedDate": "2026-09-02"
- },
- {
   "id": "dsa/master/master-bible-ocp-va-dsa",
   "section": "dsa",
   "category": "master",
@@ -599,6 +560,23 @@ const DOCUMENTS = [
    "Algorithms",
    "LeetCode",
    "FAANG"
+  ],
+  "order": 1,
+  "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "javascript/co-ban/bai-viet-dau-tien",
+  "section": "javascript",
+  "category": "co-ban",
+  "slug": "bai-viet-dau-tien",
+  "contentFile": "javascript__co-ban__bai-viet-dau-tien",
+  "title": "JavaScript Cơ Bản — Nhập Môn & Tổng Quan",
+  "description": "Tài liệu này bao quát các chủ đề nâng cao quan trọng thường xuất hiện trong bài thi OCP Java SE 25. Bạn cần nắm vững không chỉ cú pháp mà còn cách các thư viện tiêu…",
+  "phase": "",
+  "tags": [
+   "JavaScript",
+   "Basics",
+   "Fundamentals"
   ],
   "order": 1,
   "updatedDate": "2026-09-02"

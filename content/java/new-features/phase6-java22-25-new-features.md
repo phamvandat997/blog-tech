@@ -1,6 +1,6 @@
 ---
 title: "Giai đoạn 6: Các tính năng mới của Java 22 - 25 (OCP Java SE 25 - 1Z0-831)"
-order: 2
+order: 1
 phase: "Phase 6"
 tags: ["Flexible Constructors", "Gatherers", "Scoped Values", "Unnamed vars"]
 ---

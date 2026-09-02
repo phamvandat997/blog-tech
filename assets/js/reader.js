@@ -32,6 +32,21 @@ function renderNeighbours(doc) {
   return link(siblings[index - 1], "⬅ Bài trước", "prev") + link(siblings[index + 1], "Bài sau ➔", "next");
 }
 
+/**
+ * Đo chiều cao navbar vào biến --navbar-h. Mục lục dính ngay dưới nó và
+ * heading chừa chỗ cho nó, nên con số này không được đoán bừa: cỡ chữ, thu
+ * phóng hay dòng tiêu đề dài đều làm navbar cao thấp khác nhau.
+ */
+function trackNavbarHeight() {
+  const navbar = qs(".navbar");
+  if (!navbar) return;
+  const apply = () => document.documentElement.style.setProperty(
+    "--navbar-h", `${Math.round(navbar.getBoundingClientRect().height)}px`);
+  apply();
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(apply).observe(navbar);
+  else window.addEventListener("resize", apply);
+}
+
 /* ---------------------------------------------------------------- mục lục */
 
 /**
@@ -171,6 +186,7 @@ function showError(title, text, action) {
 document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initBackToTop();
+  trackNavbarHeight();
 
   const params = readParams();
   const home = '<a class="btn-primary-link" href="index.html">⬅ Về trang chủ</a>';

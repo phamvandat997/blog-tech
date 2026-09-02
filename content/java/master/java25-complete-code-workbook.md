@@ -1,6 +1,6 @@
 ---
 title: "SỔ TAY THỰC HÀNH MÃ NGUỒN & PHÒNG THÍ NGHIỆM THỰC THI OCP JAVA SE 25 (1Z0-831)"
-order: 1
+order: 3
 phase: "Master"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]
 ---

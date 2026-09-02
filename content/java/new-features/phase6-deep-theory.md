@@ -1,6 +1,6 @@
 ---
 title: "Phase 6: Java 22-25 New Features - Deep Theory Supplement"
-order: 1
+order: 2
 phase: "Phase 6"
 tags: ["Flexible Constructors", "Gatherers", "Scoped Values", "Unnamed vars"]
 ---

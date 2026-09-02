@@ -1,6 +1,6 @@
 ---
 title: "Phase 2: OOP & Class Design — Deep Theory Supplement"
-order: 4
+order: 5
 phase: "Phase 2"
 tags: ["Records", "Sealed Classes", "Pattern Matching", "Class Loading"]
 ---

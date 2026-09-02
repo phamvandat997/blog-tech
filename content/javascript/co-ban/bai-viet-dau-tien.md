@@ -1,5 +1,7 @@
 ---
-title: "Giai đoạn 5: Các Chủ đề Nâng cao (Advanced Topics) - OCP Java SE 25 (1Z0-831)"
+title: "JavaScript Cơ Bản — Nhập Môn & Tổng Quan"
+order: 1
+tags: ["JavaScript", "Basics", "Fundamentals"]
 ---
 
 # Giai đoạn 5: Các Chủ đề Nâng cao (Advanced Topics) - OCP Java SE 25 (1Z0-831)

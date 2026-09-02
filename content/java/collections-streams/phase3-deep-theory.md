@@ -1,6 +1,6 @@
 ---
 title: "Phase 3: Core APIs - Deep Theory Supplement"
-order: 3
+order: 2
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]
 ---

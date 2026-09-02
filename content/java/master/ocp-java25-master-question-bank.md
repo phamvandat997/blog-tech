@@ -1,7 +1,7 @@
 ---
 title: "MASTER QUESTION BANK: OCP Java SE 25 (1Z0-831)"
 description: "Ngân hàng câu hỏi trắc nghiệm cực khó mô phỏng đề 1Z0-831, tập trung vào các tính năng Java 22–25: Flexible Constructors, Module Imports, Scoped Values, Virtual Threads, Pattern Matching."
-order: 3
+order: 6
 phase: "Master"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]
 ---

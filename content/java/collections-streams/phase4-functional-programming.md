@@ -1,6 +1,6 @@
 ---
 title: "Tài Liệu Ôn Thi OCP Java SE 25 (1Z0-831) - Giai Đoạn 4: Functional Programming"
-order: 5
+order: 3
 phase: "Phase 4"
 tags: ["Lambdas", "Stream API", "Collectors", "invokedynamic", "Spliterator"]
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Phase 2: Lập trình Hướng đối tượng (OOP) & Thiết kế Lớp"
-order: 5
+order: 4
 phase: "Phase 2"
 tags: ["Records", "Sealed Classes", "Pattern Matching", "Class Loading"]
 ---
