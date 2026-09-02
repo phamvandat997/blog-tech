@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCP Java 25 & DSA Knowledge Hub | Trình Xem Chi Tiết & Luyện Thi Quiz Tương Tác</title>
+  <!-- Google Fonts Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="brand" id="brand-home">
+        <div class="brand-logo">☕</div>
+        <div class="brand-text">
+          <h1>OCP Java 25 & DSA Hub</h1>
+          <p>Bách Khoa Toàn Thư & Lộ Trình Ôn Luyện Chuyên Sâu</p>
+        </div>
+      </a>
+
+      <!-- Navigation Main Tabs -->
+      <div class="nav-tabs-group">
+        <button id="tab-docs-btn" class="nav-tab-btn active" title="Xem danh sách tài liệu">
+          <span>📑</span> Danh mục tài liệu
+        </button>
+        <button id="tab-phases-btn" class="nav-tab-btn" title="Xem chi tiết lộ trình từng Phase">
+          <span>🧭</span> Chi tiết từng Phase
+        </button>
+        <button id="tab-quizzes-btn" class="nav-tab-btn quiz-tab" title="Luyện thi Quiz trắc nghiệm tương tác">
+          <span>🎯</span> Luyện thi Quiz
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Tìm theo tên bài, phase, bytecode, keywords..."
+          autocomplete="off"
+        >
+        <button id="search-clear-btn" class="search-clear" title="Xóa tìm kiếm">✕</button>
+      </div>
+
+      <!-- Action Icons -->
+      <div class="nav-actions">
+        <button id="btn-theme-toggle" class="btn-icon" title="Chuyển đổi Sáng / Tối">🌙</button>
+        <button id="btn-reset-filters" class="btn-icon" title="Đặt lại bộ lọc">🔄</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Stats Hero -->
+  <section class="stats-banner">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">📚</div>
+        <div class="stat-info" style="width: 100%;">
+          <div class="stat-value" id="stat-total-docs">19</div>
+          <div class="stat-label">Tổng số Tài liệu</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(225, 29, 72, 0.1); color: var(--accent-rose);">🎯</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-total-questions">210+</div>
+          <div class="stat-label">Câu hỏi Trắc nghiệm & Mock</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(217, 119, 6, 0.1); color: var(--accent-amber);">⚡</div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-total-lines">~7,336</div>
+          <div class="stat-label">Dòng Lý thuyết & Code Labs</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald);">✅</div>
+        <div class="stat-info" style="width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="stat-value" id="stat-progress-text">0 / 19</div>
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald);" id="stat-progress-pct">0%</span>
+          </div>
+          <div class="stat-label">Tiến độ Hoàn thành</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="stat-progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="main-wrapper">
+    <!-- Left Sidebar: Filters & Navigation -->
+    <aside class="sidebar">
+      <!-- Categories Filter -->
+      <div class="filter-section">
+        <div class="filter-title">
+          <span>Chuyên mục chính</span>
+        </div>
+        <div class="category-list" id="category-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Phase Filter -->
+      <div class="filter-section">
+        <div class="filter-title">
+          <span>Lọc theo Phase</span>
+        </div>
+        <div class="phase-pills" id="phase-pills-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Quick Status Filter -->
+      <div class="filter-section">
+        <div class="filter-title">
+          <span>Trạng thái học tập</span>
+        </div>
+        <label class="checkbox-filter">
+          <input type="checkbox" id="filter-favorite">
+          <span>⭐ Đã đánh dấu yêu thích</span>
+        </label>
+        <label class="checkbox-filter">
+          <input type="checkbox" id="filter-completed">
+          <span>✅ Đã đọc hoàn thành</span>
+        </label>
+        <label class="checkbox-filter">
+          <input type="checkbox" id="filter-uncompleted">
+          <span>⏳ Chưa hoàn thành</span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- Right Main Area: Document List & Controls -->
+    <section class="content-area">
+      <!-- Toolbar for Document View -->
+      <div class="toolbar" id="main-toolbar">
+        <div class="results-count" id="results-counter">
+          Đang hiển thị <b>19</b> tài liệu
+        </div>
+
+        <div class="toolbar-controls">
+          <!-- Sort Selector -->
+          <div class="select-wrapper">
+            <select id="sort-select" title="Sắp xếp danh sách">
+              <option value="default">Sắp xếp: Mặc định theo Lộ trình</option>
+              <option value="title-asc">Tên tài liệu (A ➔ Z)</option>
+              <option value="title-desc">Tên tài liệu (Z ➔ A)</option>
+              <option value="lines-desc">Số lượng dòng (Nhiều nhất)</option>
+              <option value="lines-asc">Số lượng dòng (Ít nhất)</option>
+              <option value="questions-desc">Số lượng Quiz & Bài tập</option>
+            </select>
+          </div>
+
+          <!-- View Switcher -->
+          <div class="view-modes">
+            <button id="view-grid-btn" class="view-btn active" title="Chế độ Lưới (Grid)">
+              <span>🔲</span> Lưới
+            </button>
+            <button id="view-list-btn" class="view-btn" title="Chế độ Danh sách (List)">
+              <span>📋</span> Danh sách
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 1: Standard Document Container -->
+      <div class="docs-container grid-view" id="docs-container">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+      <!-- View 2: Phase Explorer Container (Detail Phase View) -->
+      <div class="phase-explorer-container" id="phase-explorer-container" style="display: none;">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+      <!-- View 3: Interactive Quiz Player Container -->
+      <div class="quiz-player-container" id="quiz-player-container" style="display: none;">
+        <!-- Dashboard Header -->
+        <div class="quiz-dashboard-header">
+          <div class="quiz-meta-info">
+            <h2 id="quiz-header-title">🎯 Phòng Luyện Thi Quiz Tương Tác</h2>
+            <p id="quiz-header-subtitle">Chọn đáp án và bấm "Kiểm tra" để xem ngay đánh giá đúng/sai cùng lời giải chi tiết</p>
+          </div>
+
+          <div class="quiz-actions-toolbar">
+            <div class="quiz-score-badge" id="quiz-live-score">
+              Điểm: <b id="quiz-score-num">0</b> / <span id="quiz-total-num">0</span> (<span id="quiz-score-pct">0%</span>)
+            </div>
+            <button class="btn-quiz-secondary" id="btn-reset-quiz">🔄 Làm lại</button>
+            <button class="btn-quiz-primary" id="btn-submit-all-quiz">📝 Chấm điểm toàn bộ</button>
+          </div>
+        </div>
+
+        <!-- Quiz Filter Tabs (Phase Selectors) -->
+        <div class="quiz-filter-bar" id="quiz-phase-tabs">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Questions List -->
+        <div class="quiz-cards-wrapper" id="quiz-cards-wrapper" style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Slide-over Preview Drawer / Full Reader Modal -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<div class="drawer-container" id="drawer-container" role="dialog" aria-modal="true">
+  <div class="drawer-header">
+    <div class="drawer-title-group">
+      <h2 id="drawer-title">Tên tài liệu</h2>
+      <div class="drawer-meta-badges" id="drawer-meta-badges">
+        <!-- Badges rendered by JS -->
+      </div>
+    </div>
+
+    <div class="drawer-header-actions">
+      <a class="btn-icon" id="drawer-newtab-btn" href="#" target="_blank" title="Mở trong tab mới (Full Page Reader)" style="text-decoration: none;">🔗</a>
+      <button class="btn-icon" id="drawer-fullscreen-btn" title="Phóng to toàn màn hình">⛶</button>
+      <button class="btn-icon" id="drawer-star-btn" title="Đánh dấu yêu thích">⭐</button>
+      <button class="btn-icon" id="drawer-check-btn" title="Đánh dấu đã đọc">✅</button>
+      <button class="btn-icon" id="drawer-copy-btn" title="Sao chép tên file">📋</button>
+      <button class="btn-icon" id="drawer-close-btn" title="Đóng bảng xem">✕</button>
+    </div>
+  </div>
+
+  <div class="drawer-body markdown-body" id="drawer-body">
+    <!-- Rendered Markdown Content or Outline -->
+  </div>
+</div>
+
+<!-- Floating Back to Top Button -->
+<button class="btn-back-to-top" id="btn-back-to-top" title="Cuộn lên đầu trang" aria-label="Cuộn lên đầu trang">
+  ▲
+</button>
+
+<!-- Scripts (Tất cả chạy hoàn toàn offline không cần server) -->
+<script src="data.js"></script>
+<script src="doc_contents.js"></script>
+<script src="quizzes_data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

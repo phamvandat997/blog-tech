@@ -1,0 +1,3232 @@
+// Ngân hàng câu hỏi trắc nghiệm tương tác đầy đủ
+const QUIZZES_DATABASE = {
+  "phase1_java_fundamentals.md": {
+    "title": "Phase 1: Java Fundamentals & Operators",
+    "phase": "Phase 1",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 1,
+        "question": "Xem xét đoạn mã sau:\n```java\nint val = 012;\nSystem.out.println(val);\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "12"
+          },
+          {
+            "key": "B",
+            "text": "012"
+          },
+          {
+            "key": "C",
+            "text": "10"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "`012` bắt đầu bằng `0` nên là hệ bát phân (octal). 1*8^1 + 2*8^0 = 8 + 2 = 10."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 2,
+        "question": "Biểu thức nào sau đây gây lỗi biên dịch? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`long x = 10; int y = 2 * (int)x;`"
+          },
+          {
+            "key": "B",
+            "text": "`short s = 5; s = s * 2;`"
+          },
+          {
+            "key": "C",
+            "text": "`float f = 3.14;`"
+          },
+          {
+            "key": "D",
+            "text": "`double d = 3.14f;`"
+          },
+          {
+            "key": "E",
+            "text": "`char c = 65;`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "C"
+        ],
+        "explanation": "(B) `s * 2` trả về `int`, không thể gán lại cho `short` nếu không ép kiểu hoặc dùng `*=`. (C) `3.14` mặc định là `double`, không thể gán cho `float` mà không có hậu tố `f`."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 3,
+        "question": "Đoạn mã sau có kết quả gì?\n```java\nInteger a = 100;\nInteger b = 100;\nInteger c = 500;\nInteger d = 500;\nSystem.out.println((a == b) + \" \" + (c == d));\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "true true"
+          },
+          {
+            "key": "B",
+            "text": "false false"
+          },
+          {
+            "key": "C",
+            "text": "true false"
+          },
+          {
+            "key": "D",
+            "text": "false true"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Cache của `Integer` chỉ lưu giá trị từ -128 đến 127. 100 nằm trong khoảng này nên cùng tham chiếu (`a == b` là true). 500 nằm ngoài, tạo 2 object mới (`c == d` là false)."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 4,
+        "question": "Dòng nào sau đây khởi tạo biến bằng `var` hợp lệ? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`var name = null;`"
+          },
+          {
+            "key": "B",
+            "text": "`var list = new ArrayList<String>();`"
+          },
+          {
+            "key": "C",
+            "text": "`var nums = {1, 2, 3};`"
+          },
+          {
+            "key": "D",
+            "text": "`var text = \"\"\"\n    Hello\n    \"\"\";`"
+          },
+          {
+            "key": "E",
+            "text": "`var x = 10, y = 20;`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D"
+        ],
+        "explanation": "(A) Không thể gán null cho `var`. (C) Cần `new int[]{1,2,3}`. (E) Không thể khai báo nhiều biến trên một dòng với `var`."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 5,
+        "question": "Kết quả của đoạn mã sau?\n```java\nString s1 = \"Java\";\ns1.concat(\" 25\");\ns1.toUpperCase();\nSystem.out.println(s1);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Java"
+          },
+          {
+            "key": "B",
+            "text": "Java 25"
+          },
+          {
+            "key": "C",
+            "text": "JAVA"
+          },
+          {
+            "key": "D",
+            "text": "JAVA 25"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "`String` là bất biến. Các phương thức `concat` và `toUpperCase` trả về một chuỗi mới, nhưng không được gán lại cho `s1`. Giá trị `s1` vẫn là \"Java\"."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 6,
+        "question": "Khai báo số nguyên nào sau đây hợp lệ?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`int a = _1000;`"
+          },
+          {
+            "key": "B",
+            "text": "`int b = 10_00.00_0;`"
+          },
+          {
+            "key": "C",
+            "text": "`int c = 1_000_000;`"
+          },
+          {
+            "key": "D",
+            "text": "`int d = 1000_;`"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Dấu gạch dưới ở đầu (A), ở cuối (D), và trong số thập phân nhưng khai báo là int (B) đều lỗi. C hợp lệ."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 7,
+        "question": "Xem xét đoạn mã sau.\n```java\nint a = 5;\nint b = 10;\nboolean result = (a++ > 5) && (++b > 10);\nSystem.out.println(a + \" \" + b);\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "6 11"
+          },
+          {
+            "key": "B",
+            "text": "6 10"
+          },
+          {
+            "key": "C",
+            "text": "5 10"
+          },
+          {
+            "key": "D",
+            "text": "5 11"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Toán tử `&&` bị short-circuit. `a++` trả về 5, so sánh `5 > 5` là false. Do đó vế sau `++b > 10` KHÔNG ĐƯỢC CHẠY. `a` tăng lên 6, `b` giữ nguyên 10."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 8,
+        "question": "Cú pháp `switch` nào sau đây hợp lệ trong Java 21+?\n```java\nint x = 2;\nint y = switch (x) {\n    case 1 -> 10;\n    case 2 -> { yield 20; }\n    default -> 30;\n};\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Hợp lệ, `y` nhận giá trị 20."
+          },
+          {
+            "key": "B",
+            "text": "Lỗi biên dịch ở `yield 20;`."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch vì thiếu `break;`."
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch ở mũi tên `->`."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "Cú pháp hoàn toàn hợp lệ. Khi dùng khối `{}` trong switch expression, phải dùng `yield` để trả về giá trị thay vì `return`."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 9,
+        "question": "Chuyện gì xảy ra với đoạn mã sau?\n```java\nObject obj = \"Hello\";\nif (obj instanceof String s && s.length() > 3) {\n    System.out.println(s.substring(1));\n} else {\n    System.out.println(s);\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "In ra \"ello\""
+          },
+          {
+            "key": "B",
+            "text": "In ra \"Hello\""
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "Ném ngoại lệ RuntimeException"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Lỗi biên dịch ở khối `else`. Biến `s` được tạo ra trong câu lệnh `if` do Pattern Matching, nhưng theo quy tắc scoping (phạm vi), nó chỉ tồn tại trong nhánh mà điều kiện đúng (khối `if`). Trong `else`, `s` không tồn tại."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 10,
+        "question": "Cho đoạn mã sau:\n```java\nStringBuilder sb = new StringBuilder(\"123\");\nsb.append(\"45\").reverse().delete(1, 3);\nSystem.out.println(sb);\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "521"
+          },
+          {
+            "key": "B",
+            "text": "543"
+          },
+          {
+            "key": "C",
+            "text": "541"
+          },
+          {
+            "key": "D",
+            "text": "12345"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "Ban đầu \"123\". Sau `append` -> \"12345\". Sau `reverse()` -> \"54321\". `delete(1, 3)` xóa ký tự ở index 1 và 2 ('4' và '3'). Kết quả còn \"521\"."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 11,
+        "question": "Khai báo Text Block nào sau đây bị LỖI biên dịch?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "```java\nString a = \"\"\"\n  hello\"\"\";\n```"
+          },
+          {
+            "key": "B",
+            "text": "```java\nString b = \"\"\"hello\n\"\"\";\n```"
+          },
+          {
+            "key": "C",
+            "text": "```java\nString c = \"\"\"\n    hello \\\n    world\"\"\";\n```"
+          },
+          {
+            "key": "D",
+            "text": "```java\nString d = \"\"\"\n    \"\"\";\n```"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Mở block `\"\"\"` bắt buộc phải được theo sau ngay lập tức bởi một dòng mới (newline). Không thể có ký tự nào cùng dòng với `\"\"\"` mở (ngoại trừ khoảng trắng có thể bỏ qua)."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 12,
+        "question": "Vòng lặp nào sau đây là vòng lặp vô hạn hợp lệ? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`for(;;) {}`"
+          },
+          {
+            "key": "B",
+            "text": "`while() {}`"
+          },
+          {
+            "key": "C",
+            "text": "`do {} while (true);`"
+          },
+          {
+            "key": "D",
+            "text": "`for(int i=0; i<10;) {}`"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          "C"
+        ],
+        "explanation": "(B) `while()` thiếu điều kiện là lỗi cú pháp. (D) không lặp vô hạn vì điều kiện `i<10` sẽ kết thúc nếu i được thay đổi trong thân. A và C là cú pháp hợp lệ cho lặp vô hạn."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 13,
+        "question": "Đoạn mã sau in ra gì?\n```java\nint x = 10;\nlong y = 10L;\nSystem.out.println(x == y);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "true"
+          },
+          {
+            "key": "B",
+            "text": "false"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch vì khác kiểu"
+          },
+          {
+            "key": "D",
+            "text": "Ném ngoại lệ"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "Toán tử `==` tự động gán kiểu mở rộng (widening) `x` thành `long` để so sánh với `y`. `10L == 10L` trả về `true`."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 14,
+        "question": "Khi sử dụng Pattern Matching for switch (Java 21+), nguyên tắc thứ tự các case là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Không quan trọng thứ tự."
+          },
+          {
+            "key": "B",
+            "text": "Các case hẹp (ràng buộc nhiều hơn) phải đứng TRƯỚC các case rộng hơn."
+          },
+          {
+            "key": "C",
+            "text": "Các case rộng hơn phải đứng trước các case hẹp."
+          },
+          {
+            "key": "D",
+            "text": "Các case phải sắp xếp theo thứ tự bảng chữ cái của tên lớp."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Switch pattern matching yêu cầu \"Dominance checking\". Các case chung chung (như `Object` hoặc `Integer i`) phải để ở dưới cùng. Nếu để case chung lên trước, các case hẹp hơn bên dưới sẽ thành \"Unreachable code\" và gây lỗi biên dịch."
+      },
+      {
+        "file": "phase1_java_fundamentals.md",
+        "number": 15,
+        "question": "Đoạn mã sau in ra gì?\n```java\nInteger x = null;\nif (x > 0) {\n    System.out.println(\"Positive\");\n} else {\n    System.out.println(\"Not positive\");\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Positive"
+          },
+          {
+            "key": "B",
+            "text": "Not positive"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "Ném NullPointerException tại runtime\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": "Cố gắng so sánh `x > 0`. `x` là một `Integer` và có giá trị `null`. Để thực hiện so sánh số học `>`, Java sẽ tự động unbox `x` thành `int`. Việc gọi unboxing trên một đối tượng `null` ném ra `NullPointerException`."
+      }
+    ]
+  },
+  "phase2_oop_class_design.md": {
+    "title": "Phase 2: OOP & Modern Class Design",
+    "phase": "Phase 2",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 1,
+        "question": "Xem đoạn mã sau mô phỏng Flexible Constructor Bodies trong Java 22.\n```java\nclass Vehicle {\n    Vehicle(int wheels) { System.out.print(\"V\" + wheels + \" \"); }\n}\nclass Car extends Vehicle {\n    static int base = 4;\n    int extra = 1;\n    \n    Car(int extraWheels) {\n        int total = base + extraWheels;\n        super(total);\n        System.out.print(\"C\" + this.extra + \" \");\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Car(2);\n    }\n}\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`V4 C1`"
+          },
+          {
+            "key": "B",
+            "text": "`V6 C1`"
+          },
+          {
+            "key": "C",
+            "text": "Compile error tại dòng `int total = base + extraWheels;`"
+          },
+          {
+            "key": "D",
+            "text": "Compile error vì `super()` không phải là lệnh đầu tiên."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Java 22 cho phép Flexible Constructor Bodies. Lệnh tính toán `int total = base + extraWheels;` được chạy trước `super(6)`. Do `base` là static field, có thể truy cập được. In ra `V6`. Sau khi `super()` xong, tiếp tục in ra `C1`."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 2,
+        "question": "Cho các lớp sau:\n```java\nsealed class A permits B, C {}\nfinal class B extends A {}\nsealed class C extends A permits D {}\nnon-sealed class D extends C {}\nclass E extends D {}\n```\nClass nào bị lỗi biên dịch?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Class A"
+          },
+          {
+            "key": "B",
+            "text": "Class B"
+          },
+          {
+            "key": "C",
+            "text": "Class C"
+          },
+          {
+            "key": "D",
+            "text": "Class D"
+          },
+          {
+            "key": "E",
+            "text": "Không có class nào lỗi."
+          }
+        ],
+        "correctAnswers": [
+          "E"
+        ],
+        "explanation": "Mã hoàn toàn hợp lệ. A là lớp `sealed` permit B và C. B dùng `final` (hợp lệ). C dùng `sealed` (hợp lệ, C lại permit D). D dùng `non-sealed` (hợp lệ, do đó D mở hoàn toàn). E extend D là hợp lệ vì D là `non-sealed`."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 3,
+        "question": "Chọn HAI đáp án đúng về Records:",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Record có thể kế thừa (extend) một class thông thường."
+          },
+          {
+            "key": "B",
+            "text": "Bạn có thể thêm instance variables bên trong thân của Record (không nằm trong header)."
+          },
+          {
+            "key": "C",
+            "text": "Compact constructor không cần khai báo danh sách tham số đầu vào."
+          },
+          {
+            "key": "D",
+            "text": "Các class tạo từ Record là final một cách ngầm định."
+          },
+          {
+            "key": "E",
+            "text": "Các field của Record là mutable một cách ngầm định."
+          }
+        ],
+        "correctAnswers": [
+          "C",
+          "D"
+        ],
+        "explanation": "Record sinh ra các class `final` ngầm định (D đúng). Compact constructor không cần danh sách tham số (C đúng). A sai vì record không extend class khác. B sai vì không được có thêm instance variables ngoài các thành phần khai báo. E sai vì fields là `final` (immutable)."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 4,
+        "question": "Đoạn mã sau bị lỗi ở dòng nào?\n```java\n1: interface Walkable {\n2:     default void walk() { System.out.println(\"Walking\"); }\n3: }\n4: interface Runnable {\n5:     default void walk() { System.out.println(\"Running\"); }\n6: }\n7: class Robot implements Walkable, Runnable {\n8:     public void walk() {\n9:         Walkable.super.walk();\n10:    }\n11: }\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Dòng 2 và 5"
+          },
+          {
+            "key": "B",
+            "text": "Dòng 7"
+          },
+          {
+            "key": "C",
+            "text": "Dòng 9"
+          },
+          {
+            "key": "D",
+            "text": "Không có lỗi biên dịch."
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": "Diamond problem xảy ra ở dòng 7, nhưng class `Robot` đã giải quyết xung đột bằng cách chủ động override hàm `walk()` ở dòng 8-10. Cú pháp `Walkable.super.walk()` hợp lệ."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 5,
+        "question": "Kết quả khi chạy đoạn mã:\n```java\nclass Alpha {\n    String type = \"A\";\n    public Alpha() { print(); }\n    public void print() { System.out.print(type + \" \"); }\n}\nclass Beta extends Alpha {\n    String type = \"B\";\n    public Beta() { print(); }\n    public void print() { System.out.print(type + \" \"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Beta();\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`A B `"
+          },
+          {
+            "key": "B",
+            "text": "`B B `"
+          },
+          {
+            "key": "C",
+            "text": "`null B `"
+          },
+          {
+            "key": "D",
+            "text": "`A A `"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Trap kinh điển về initialization order.\n- Khi gọi `new Beta()`, `super()` (hàm tạo của Alpha) được gọi trước.\n- Biến `type` của Alpha bằng \"A\". Nhưng hàm `print()` bị override bởi Beta!\n- Hàm `print()` của Beta được gọi (Virtual Method Invocation), nó lấy biến `type` của Beta.\n- Lúc này `type` của Beta CHƯA được khởi tạo (vì các instance variables của con chỉ khởi tạo sau khi constructor của cha hoàn tất). Nên `type` mang giá trị mặc định là `null`. In ra `null `.\n- Xong `super()`, Beta khởi tạo `type = \"B\"`, gọi `print()` ở hàm tạo của Beta in ra `B `."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 6,
+        "question": "Khi áp dụng switch pattern matching, đoạn code nào sau đây là KHÔNG HỢP LỆ? (Giả sử Object o được truyền vào)",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`case Integer i when i > 0 -> \"Positive\";`"
+          },
+          {
+            "key": "B",
+            "text": "`case String s && s.length() > 5 -> \"Long string\";`"
+          },
+          {
+            "key": "C",
+            "text": "`case String _ -> \"Just a string\";`"
+          },
+          {
+            "key": "D",
+            "text": "`case null, default -> \"Empty or unknown\";`"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Từ Java 21+, từ khóa được sử dụng trong Guarded Patterns là `when` chứ không phải toán tử `&&`. Cấu trúc B dùng `&&` là sai cú pháp. Các đáp án khác A, C, D đều đúng cú pháp Java 21+. `_` (unnamed variables) là chuẩn thức."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 7,
+        "question": "Xem đoạn mã Enum sau:\n```java\nenum TrafficLight {\n    RED(\"Stop\"), GREEN(\"Go\"), YELLOW(\"Wait\");\n    public String message;\n    private TrafficLight(String message) {\n        this.message = message;\n    }\n}\n```\nKhẳng định nào đúng? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Lỗi biên dịch vì hằng số Enum phải ở cuối cùng."
+          },
+          {
+            "key": "B",
+            "text": "Hàm tạo của Enum chỉ có thể gọi thông qua nội bộ class Enum."
+          },
+          {
+            "key": "C",
+            "text": "Cấu trúc `TrafficLight t = new TrafficLight(\"Slow\");` là hợp lệ ở hàm main."
+          },
+          {
+            "key": "D",
+            "text": "Code biên dịch hoàn toàn hợp lệ."
+          },
+          {
+            "key": "E",
+            "text": "`message` phải là hằng số (`final`)."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D"
+        ],
+        "explanation": "Constructor của enum mặc định là `private` và không thể tạo đối tượng enum bên ngoài class (C sai). Hằng số enum phải khai báo ở dòng đầu tiên, nhưng các dòng code vẫn hợp lệ (A sai, D đúng). `message` không nhất thiết phải final (E sai). Code biên dịch hoàn toàn hợp lệ."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 8,
+        "question": "Xem xét tính năng Pattern Matching:\n```java\nrecord Point(int x, int y) {}\nObject obj = new Point(10, 20);\nif (obj instanceof Point(int a, int b)) {\n    System.out.println(a + b);\n}\n```\nKhẳng định nào sau đây là đúng?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Code in ra 30."
+          },
+          {
+            "key": "B",
+            "text": "Lỗi biên dịch vì cần dùng `Point p` rồi mới gọi `p.x()` và `p.y()`."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch vì tên biến `a` và `b` không khớp với `x` và `y` trong Record."
+          },
+          {
+            "key": "D",
+            "text": "Ném ra exception lúc chạy."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "Đây là tính năng Record Patterns (Destructuring). Biến `a` và `b` nhận giá trị trích xuất (extract) từ `x` và `y` tương ứng của point. Tên biến không cần trùng với field của record. Kết quả in ra là 30 (10+20)."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 9,
+        "question": "Để sử dụng Flexible Constructor Bodies hợp lệ, dòng code nào KHÔNG được phép đặt trước lệnh `this()` hoặc `super()`?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`int x = 5;`"
+          },
+          {
+            "key": "B",
+            "text": "`System.out.println(\"Init\");`"
+          },
+          {
+            "key": "C",
+            "text": "`if (Math.random() > 0.5) throw new Exception();`"
+          },
+          {
+            "key": "D",
+            "text": "`System.out.println(this.toString());`"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": "Với Flexible Constructor Bodies, không được phép truy cập/tham chiếu đến bản thân object (`this`) hoặc superclass object thông qua instance methods/variables trước khi constructor của superclass (lệnh `super()` hoặc `this()`) thực thi xong. A, B, C đều là biến cục bộ/static hoặc code tĩnh hợp lệ."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 10,
+        "question": "Cho đoạn mã:\n```java\nclass Outer {\n    private int x = 10;\n    class Inner {\n        private int x = 20;\n        void print() {\n            int x = 30;\n            System.out.print(x + \" \"); // (1)\n            System.out.print(this.x + \" \"); // (2)\n            System.out.print(Outer.this.x); // (3)\n        }\n    }\n}\n```\nKết quả khi khởi tạo `Inner` và gọi `print()` là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`30 20 10`"
+          },
+          {
+            "key": "B",
+            "text": "`10 20 30`"
+          },
+          {
+            "key": "C",
+            "text": "`30 30 10`"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch vì Inner truy cập biến private."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "Shadowing ở Nested class:\n- `x` cục bộ in ra 30.\n- `this.x` (biến của class Inner) in ra 20.\n- `Outer.this.x` (biến của class Outer) in ra 10."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 11,
+        "question": "Trong các thành phần sau của Java, thành phần nào KHÔNG THỂ khai báo biến (fields) kiểu instance (không phải static)?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Enum"
+          },
+          {
+            "key": "B",
+            "text": "Abstract Class"
+          },
+          {
+            "key": "C",
+            "text": "Interface"
+          },
+          {
+            "key": "D",
+            "text": "Record (ở phần body của class)"
+          }
+        ],
+        "correctAnswers": [
+          "C",
+          "D"
+        ],
+        "explanation": "Interface chỉ cho phép `public static final` fields. Trong phần thân `{}` của một Record, bạn cũng không được phép khai báo thêm các instance variables (nhưng static thì được). (Câu này mang tính khái niệm chung, có thể hiểu là Interface và Record Body)."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 12,
+        "question": "Khi thực hiện ghi đè (overriding), luật nào đúng?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Access modifier có thể thu hẹp (VD: từ `protected` xuống `default`)."
+          },
+          {
+            "key": "B",
+            "text": "Kiểu trả về (return type) có thể là lớp cha của kiểu ban đầu."
+          },
+          {
+            "key": "C",
+            "text": "Phương thức overriding có thể ném thêm RuntimeException bất kỳ."
+          },
+          {
+            "key": "D",
+            "text": "Phương thức overriding có thể ném thêm Checked Exception bất kỳ."
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Khi override, bạn có thể ném thêm bất kỳ Unchecked Exception (RuntimeException) nào mà không gây lỗi (C đúng). A sai vì access modifier chỉ được mở rộng, không thu hẹp. B sai vì return type chỉ được là covariant (lớp con), không được là lớp cha. D sai vì không được ném checked exception mới/rộng hơn."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 13,
+        "question": "Xét đoạn code:\n```java\nclass X {\n    static void m() { System.out.print(\"X\"); }\n}\nclass Y extends X {\n    static void m() { System.out.print(\"Y\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        X obj = new Y();\n        obj.m();\n        ((Y)obj).m();\n    }\n}\n```\nKết quả in ra là:",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`XX`"
+          },
+          {
+            "key": "B",
+            "text": "`YY`"
+          },
+          {
+            "key": "C",
+            "text": "`XY`"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Static methods bị HIDING (ẩn), không bị OVERRIDING (ghi đè đa hình). Trình biên dịch dựa vào kiểu biến tham chiếu (Reference Type) để quyết định phương thức static nào được gọi. `obj` có kiểu tham chiếu là `X` -> in ra `X`. Khi ép kiểu `((Y)obj)` -> tham chiếu là `Y` -> in ra `Y`."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 14,
+        "question": "Khi sử dụng `switch` expression trong Java 25 (với pattern matching), điều gì bắt buộc đối với kiểu của argument nếu nó là một lớp `sealed`?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Phải có case `default`."
+          },
+          {
+            "key": "B",
+            "text": "Nếu các case đã kiểm tra (cover) toàn bộ các permitted subclasses, không cần `default`."
+          },
+          {
+            "key": "C",
+            "text": "`default` luôn bị cấm."
+          },
+          {
+            "key": "D",
+            "text": "Không thể dùng pattern matching trên lớp `sealed`."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Switch expressions đòi hỏi Exhaustiveness (tính bao phủ hoàn toàn). Nếu type của argument là `sealed`, và switch có đầy đủ tất cả `case` cho mọi permitted subclasses, compiler tự hiểu là exhaustive và bạn KHÔNG CẦN (và đôi khi không nên) thêm `default`."
+      },
+      {
+        "file": "phase2_oop_class_design.md",
+        "number": 15,
+        "question": "Cho phương thức sau chứa một local class:\n```java\nvoid doSomething() {\n    int count = 10;\n    class LocalTask {\n        void run() { System.out.println(count); }\n    }\n    count = 20; // Dòng 5\n    new LocalTask().run();\n}\n```\nĐiều gì sẽ xảy ra?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Code chạy và in ra 10."
+          },
+          {
+            "key": "B",
+            "text": "Code chạy và in ra 20."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch tại dòng 5 vì count bị thay đổi, làm mất tính effectively final."
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch ở dòng in ra `count` vì local class không được truy cập biến của hàm bao ngoài.\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Local Class hoặc Anonymous Class chỉ có thể sử dụng các biến cục bộ (local variables) của phương thức bao ngoài nếu biến đó là `final` hoặc `effectively final`. Vì dòng 5 biến `count` bị gán lại giá trị 20, nó không còn effectively final, gây lỗi biên dịch ở class bên trong khi cố truy cập `count`."
+      }
+    ]
+  },
+  "phase3_core_apis.md": {
+    "title": "Phase 3: Core APIs & Collections",
+    "phase": "Phase 3",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase3_core_apis.md",
+        "number": 1,
+        "question": "Xem đoạn mã sau:\n```java\nimport java.util.Arrays;\npublic class Test {\n    public static void main(String[] args) {\n        int[] arr = {4, 1, 3, 5};\n        System.out.print(Arrays.binarySearch(arr, 3));\n    }\n}\n```\nĐoạn mã sẽ in ra kết quả gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "2"
+          },
+          {
+            "key": "B",
+            "text": "-2"
+          },
+          {
+            "key": "C",
+            "text": "Không thể xác định được (Kết quả không đoán trước do mảng chưa sort)"
+          },
+          {
+            "key": "D",
+            "text": "Does not compile"
+          },
+          {
+            "key": "E",
+            "text": "Throws exception at runtime"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "`Arrays.binarySearch()` yêu cầu mảng phải được sắp xếp trước (bằng `Arrays.sort()`). Mảng `{4, 1, 3, 5}` chưa sắp xếp nên kết quả trả về là không thể dự đoán được (unpredictable). Không bị lỗi biên dịch và không ném Exception."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 2,
+        "question": "Cho danh sách các lớp:\n```java\nList<String> list1 = List.of(\"A\", \"B\");\nList<String> list2 = Arrays.asList(\"C\", \"D\");\nlist1.set(0, \"X\");\nlist2.set(0, \"Y\");\n```\nDòng mã nào sẽ ném ra ngoại lệ tại Runtime?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`list1.set(0, \"X\");`"
+          },
+          {
+            "key": "B",
+            "text": "`list2.set(0, \"Y\");`"
+          },
+          {
+            "key": "C",
+            "text": "Cả 2 dòng `set()` đều ném ngoại lệ"
+          },
+          {
+            "key": "D",
+            "text": "Không dòng nào ném ngoại lệ"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "`List.of()` tạo ra một Immutable collection thật sự, gọi `set()` sẽ ném `UnsupportedOperationException`.\n- `Arrays.asList()` tạo ra một list có kích thước cố định (fixed-size). Bạn không thể `add()` hay `remove()`, nhưng BẠN ĐƯỢC PHÉP gọi `set()` để thay đổi phần tử đã có."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 3,
+        "question": "Bạn có khai báo sau `Map<String, String> map = Map.of(\"1\", \"A\", \"2\", \"B\");`. \nHành động nào sẽ biên dịch và chạy thành công mà KHÔNG ném ngoại lệ?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`map.put(\"3\", \"C\");`"
+          },
+          {
+            "key": "B",
+            "text": "`map.putIfAbsent(\"1\", \"X\");`"
+          },
+          {
+            "key": "C",
+            "text": "`map.replace(\"1\", \"A\");`"
+          },
+          {
+            "key": "D",
+            "text": "`map.get(\"1\");`"
+          },
+          {
+            "key": "E",
+            "text": "`map.computeIfAbsent(\"1\", k -> \"A\");`"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": "`Map.of()` tạo ra map immutable. Các phương thức thay đổi nội dung như `put`, `putIfAbsent`, `replace`, `computeIfAbsent` đều ném `UnsupportedOperationException`, cho dù key chưa có hoặc giá trị không thay đổi. Chỉ có phương thức đọc `get()` là an toàn."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 4,
+        "question": "(Chọn HAI phương án đúng)\nNhững phát biểu nào về TreeSet là đúng?",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "TreeSet cho phép lưu một phần tử null."
+          },
+          {
+            "key": "B",
+            "text": "TreeSet không duy trì thứ tự chèn của các phần tử."
+          },
+          {
+            "key": "C",
+            "text": "Các phần tử thêm vào TreeSet phải thực thi interface Comparable hoặc phải cung cấp Comparator."
+          },
+          {
+            "key": "D",
+            "text": "TreeSet cung cấp thời gian truy cập (O(1)) cho phương thức `contains`."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "C"
+        ],
+        "explanation": "TreeSet được hỗ trợ bởi TreeMap, sử dụng cấu trúc cây Đỏ-Đen. Nó không duy trì thứ tự chèn mà tự động sắp xếp. (B đúng)\n- Để sắp xếp, nó dựa vào `Comparable` của đối tượng hoặc `Comparator`. (C đúng)\n- Kể từ Java 7, `TreeSet` không cho phép null, ném `NullPointerException`. Truy cập là O(log n), không phải O(1)."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 5,
+        "question": "Xem đoạn mã Generics:\n```java\nList<? super Number> list = new ArrayList<Object>();\nlist.add(Integer.valueOf(5)); // (1)\nlist.add(new Object());       // (2)\nNumber n = list.get(0);       // (3)\n```\nDòng code nào gây ra lỗi biên dịch? (Chọn HAI dòng)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Dòng (1)"
+          },
+          {
+            "key": "B",
+            "text": "Dòng (2)"
+          },
+          {
+            "key": "C",
+            "text": "Dòng (3)"
+          },
+          {
+            "key": "D",
+            "text": "Không dòng nào lỗi, biên dịch thành công."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "C"
+        ],
+        "explanation": "`<? super Number>` nghĩa là list này chứa các đối tượng từ `Number` trở lên (ví dụ Object). Ta có thể thêm `Number` hoặc các lớp con của `Number` (như Integer) vào list (Dòng 1 OK).\n- Không thể thêm `Object` vì list có thể đang được khởi tạo là `ArrayList<Number>`, sẽ gây ra ClassCastException. Trình biên dịch cấm điều này (Dòng 2 lỗi).\n- Khi lấy ra, ta chỉ biết nó chắc chắn là một `Object`. Gán vào tham chiếu `Number n = ...` sẽ bị lỗi biên dịch vì yêu cầu cast tường minh (Dòng 3 lỗi)."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 6,
+        "question": "Khai báo nào sau đây là hợp lệ trong Java? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`List<?> list = new ArrayList<String>();`"
+          },
+          {
+            "key": "B",
+            "text": "`List<? extends Object> list = new ArrayList<?>();`"
+          },
+          {
+            "key": "C",
+            "text": "`List<? super String> list = new ArrayList<Object>();`"
+          },
+          {
+            "key": "D",
+            "text": "`List<Object> list = new ArrayList<String>();`"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          "C"
+        ],
+        "explanation": "A đúng: Wildcard `<?>` chấp nhận mọi List.\n- C đúng: Khởi tạo List kiểu Object tương thích với reference `<? super String>`.\n- B sai: `new ArrayList<?>()` không được phép (Không thể instantiate với wildcard).\n- D sai: Không có tính đa hình trong generic parameter, `List<Object>` không thể chứa `ArrayList<String>`."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 7,
+        "question": "```java\nLocalDate d = LocalDate.of(2025, 2, 28);\nd.plusDays(1);\nSystem.out.println(d.plusMonths(1));\n```\nKết quả in ra là:",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "2025-03-01"
+          },
+          {
+            "key": "B",
+            "text": "2025-03-28"
+          },
+          {
+            "key": "C",
+            "text": "2025-03-31"
+          },
+          {
+            "key": "D",
+            "text": "2025-04-01"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Date API là immutable. Lệnh `d.plusDays(1)` sinh ra ngày mới nhưng không gán lại cho biến `d`. Do đó `d` vẫn là 28/02/2025.\n- `d.plusMonths(1)` sẽ thành 2025-03-28."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 8,
+        "question": "Xem xét phương thức sau:\n```java\npublic static <T> void print(T t) {\n    if (t instanceof String) {\n        System.out.println(\"String\");\n    }\n}\n```\nPhát biểu nào là đúng về phương thức này?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Lỗi biên dịch vì không thể dùng `instanceof` với Generic parameter T."
+          },
+          {
+            "key": "B",
+            "text": "Biên dịch thành công vì type erasure chỉ xóa T, nhưng `t` vẫn giữ thuộc tính đối tượng lúc runtime."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch vì `T` chưa được giới hạn bound (bound type)."
+          },
+          {
+            "key": "D",
+            "text": "Báo lỗi ClassCastException lúc runtime."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Kiểu `T` được thay thế bằng `Object` khi compile (type erasure). Nhưng `instanceof` chạy lúc runtime kiểm tra đối tượng thực sự tham chiếu bởi `t` (không phải kiểm tra kiểu generic gốc), nên đoạn mã này hoàn toàn hợp lệ và chạy tốt."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 9,
+        "question": "```java\nMap<Integer, String> map = new HashMap<>();\nmap.put(1, \"A\");\nmap.put(2, \"B\");\nmap.merge(1, \"C\", (v1, v2) -> null);\nmap.merge(2, \"C\", (v1, v2) -> v1 + v2);\nSystem.out.println(map);\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`{1=C, 2=BC}`"
+          },
+          {
+            "key": "B",
+            "text": "`{1=null, 2=BC}`"
+          },
+          {
+            "key": "C",
+            "text": "`{2=BC}`"
+          },
+          {
+            "key": "D",
+            "text": "Throws NullPointerException"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "`map.merge()`: Nếu Bi-Function trả về `null`, key đó sẽ bị XÓA khỏi Map. Nên key 1 bị xóa. Key 2 giá trị \"B\" kết hợp \"C\" thành \"BC\". Kết quả map chỉ còn `{2=BC}`."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 10,
+        "question": "Xem xét mã sau về Date/Time:\n```java\nPeriod p = Period.ofMonths(1).ofDays(5);\nLocalDate date = LocalDate.of(2025, 1, 1);\nSystem.out.println(date.plus(p));\n```\nKết quả?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "2025-02-06"
+          },
+          {
+            "key": "B",
+            "text": "2025-01-06"
+          },
+          {
+            "key": "C",
+            "text": "2025-02-05"
+          },
+          {
+            "key": "D",
+            "text": "Báo lỗi biên dịch ở khai báo Period"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "`Period.ofMonths(1).ofDays(5)`: `.ofDays(5)` là phương thức static, nó tạo ra một đối tượng Period mới chỉ chứa 5 ngày (ghi đè và bỏ qua đối tượng có 1 tháng trước đó). \n- `2025-01-01` cộng thêm 5 ngày là `2025-01-06`. (Trap cực kì phổ biến trong kỳ thi)."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 11,
+        "question": "Để sắp xếp một List chứa các đối tượng class `Dog` theo độ tuổi giảm dần bằng Java 8 Comparator, cú pháp nào sau đây đúng? \n(`Dog` có method `getAge()`)",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`list.sort(Comparator.comparing(Dog::getAge).reversed());`"
+          },
+          {
+            "key": "B",
+            "text": "`list.sort(Comparator.reversed(Dog::getAge));`"
+          },
+          {
+            "key": "C",
+            "text": "`list.sort((d1, d2) -> d1.getAge().compareTo(d2.getAge()));`"
+          },
+          {
+            "key": "D",
+            "text": "`list.sort(Comparator.comparing(Dog::getAge).descending());`"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "`Comparator.comparing()` là cách tốt nhất trong Java 8. Gọi `.reversed()` sẽ đảo ngược thứ tự (giảm dần). Cú pháp A chuẩn xác. C sai cú pháp vì lambda trả int chứ không phải gọi compareTo lên primitives."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 12,
+        "question": "Giao diện (Interface) nào định nghĩa phương thức `poll()`? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "List"
+          },
+          {
+            "key": "B",
+            "text": "Queue"
+          },
+          {
+            "key": "C",
+            "text": "Deque"
+          },
+          {
+            "key": "D",
+            "text": "Set"
+          },
+          {
+            "key": "E",
+            "text": "Map"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "C"
+        ],
+        "explanation": "`poll()` (lấy và xóa phần tử đầu tiên, trả về null nếu rỗng) thuộc về interface `Queue` và interface con của nó là `Deque`."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 13,
+        "question": "Mảng hai chiều nào được khởi tạo HỢP LỆ? (Chọn BA)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`int[][] a = new int[2][2];`"
+          },
+          {
+            "key": "B",
+            "text": "`int[][] b = new int[2][];`"
+          },
+          {
+            "key": "C",
+            "text": "`int[][] c = new int[][2];`"
+          },
+          {
+            "key": "D",
+            "text": "`int[] d[] = new int[2][2];`"
+          },
+          {
+            "key": "E",
+            "text": "`int[][] e = {{1,2}, {3,4,5}};`"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          "B",
+          "D",
+          "E"
+        ],
+        "explanation": "A: Mảng vuông 2x2.\n- B: Mảng rỗng dòng, có 2 dòng (asymmetric array hợp lệ).\n- C: SAI cú pháp, chiều đầu tiên bắt buộc phải có độ dài.\n- D: Khai báo c-style hợp lệ.\n- E: Khởi tạo trực tiếp (array literal) hợp lệ."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 14,
+        "question": "Chuyện gì xảy ra với đoạn mã:\n```java\nint[] arr1 = {1, 2, 3};\nint[] arr2 = {1, 2, 3};\nSystem.out.println(arr1.equals(arr2));\nSystem.out.println(Arrays.equals(arr1, arr2));\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "in ra: true, true"
+          },
+          {
+            "key": "B",
+            "text": "in ra: false, true"
+          },
+          {
+            "key": "C",
+            "text": "in ra: false, false"
+          },
+          {
+            "key": "D",
+            "text": "in ra: true, false"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "`arr1.equals(arr2)` dùng phương thức `equals` của Object (kiểm tra tham chiếu ==), nên là `false`.\n- `Arrays.equals(arr1, arr2)` kiểm tra nội dung từng phần tử của mảng, nên là `true`."
+      },
+      {
+        "file": "phase3_core_apis.md",
+        "number": 15,
+        "question": "```java\nimport java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        var queue = new PriorityQueue<String>();\n        queue.add(\"C\");\n        queue.add(\"A\");\n        queue.add(\"B\");\n        System.out.print(queue.peek() + \" \");\n        System.out.print(queue.poll() + \" \");\n        System.out.print(queue.peek());\n    }\n}\n```\nKết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "C C A"
+          },
+          {
+            "key": "B",
+            "text": "A A B"
+          },
+          {
+            "key": "C",
+            "text": "A C B"
+          },
+          {
+            "key": "D",
+            "text": "C A B\n\n---\n---"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "PriorityQueue sắp xếp phần tử theo Natural Order (A, B, C).\n- `peek()` trả về \"A\".\n- `poll()` xóa và trả về \"A\". Phần tử tiếp theo đầu hàng đợi là \"B\".\n- `peek()` trả về \"B\".\n- Do đó in ra `A A B`."
+      }
+    ]
+  },
+  "phase4_functional_programming.md": {
+    "title": "Phase 4: Functional & Stream API",
+    "phase": "Phase 4",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 1,
+        "question": "Đoạn mã sau có kết quả là gì?\n```java\nPredicate<String> p1 = s -> s.length() > 3;\nPredicate<String> p2 = Predicate.not(String::isEmpty);\nSystem.out.println(p1.and(p2).test(\"\"));\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "true"
+          },
+          {
+            "key": "B",
+            "text": "false"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch (Compilation error)"
+          },
+          {
+            "key": "D",
+            "text": "Ném ngoại lệ RuntimeException"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ".** Hàm `p1` đòi hỏi độ dài > 3, \" \" rỗng nên sai. Dù kết hợp bằng `and` (cả 2 đều đúng), điều kiện 1 đã sai nên kết quả là `false` mà không cần quan tâm điều kiện 2. Short-circuit logic."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 2,
+        "question": "Lựa chọn nào có thể thay thế để đoạn mã sau biên dịch thành công? (Chọn HAI)\n```java\nvar map = new HashMap<String, Integer>();\n// INSERT HERE\n```",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`BiConsumer<String, Integer> b = map::put;`"
+          },
+          {
+            "key": "B",
+            "text": "`BiFunction<String, Integer, Integer> b = map::put;`"
+          },
+          {
+            "key": "C",
+            "text": "`Consumer<String, Integer> b = map::put;`"
+          },
+          {
+            "key": "D",
+            "text": "`BiPredicate<String, Integer> b = map::put;`"
+          },
+          {
+            "key": "E",
+            "text": "`BiConsumer<String, Integer> b = (k, v) -> map.put(k, v);`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "E"
+        ],
+        "explanation": ".** Hàm `map.put(K, V)` nhận 2 tham số và trả về V (giá trị cũ). `BiFunction` biểu diễn thao tác nhận 2 tham số, trả về 1 kết quả (vừa khớp `put`). Lựa chọn A sai vì `BiConsumer` mong đợi không trả về giá trị (void), nhưng cơ chế Method Reference vẫn chấp nhận được nếu ta bỏ qua kết quả trả về? Tuy nhiên theo spec, nếu Method Reference trả về giá trị khác void, nó có thể dùng cho functional interface có kiểu trả về void. NHƯNG, B và E hoàn toàn an toàn và chắc chắn đúng cú pháp."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 3,
+        "question": "Kết quả là gì?\n```java\nList<Integer> list = List.of(1, 2, 3);\nint total = list.stream()\n    .peek(System.out::print)\n    .mapToInt(x -> x)\n    .sum();\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "123"
+          },
+          {
+            "key": "B",
+            "text": "6"
+          },
+          {
+            "key": "C",
+            "text": "Không in ra gì cả, `total` bằng 6."
+          },
+          {
+            "key": "D",
+            "text": "In ra 123, `total` bằng 6."
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": ".** Dòng `.peek` là intermediate operation, nhưng do stream được gọi hàm terminal `sum()`, toàn bộ stream sẽ chạy. `peek` sẽ in 1, 2, 3 và `sum` trả về 6."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 4,
+        "question": "Cú pháp Lambda nào là HỢP LỆ? (Chọn BA)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`(var x, y) -> x + y`"
+          },
+          {
+            "key": "B",
+            "text": "`(String x, String y) -> { return x + y; }`"
+          },
+          {
+            "key": "C",
+            "text": "`x, y -> x + y`"
+          },
+          {
+            "key": "D",
+            "text": "`(var x, var y) -> x + y`"
+          },
+          {
+            "key": "E",
+            "text": "`(x, y) -> x + y`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D",
+          "E"
+        ],
+        "explanation": ".** A sai vì không thể trộn `var` và không kiểu. C sai vì nhiều tham số không có kiểu thì phải bọc trong `(x, y)`."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 5,
+        "question": "Kết quả là gì?\n```java\nStream<String> s = Stream.of(\"apple\", \"banana\", \"cherry\");\ns.filter(x -> x.startsWith(\"a\"));\nlong count = s.count();\nSystem.out.println(count);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "1"
+          },
+          {
+            "key": "B",
+            "text": "3"
+          },
+          {
+            "key": "C",
+            "text": "0"
+          },
+          {
+            "key": "D",
+            "text": "Ném ngoại lệ IllegalStateException"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": ".** Lệnh `s.filter(...)` trả về 1 stream mới, nó KHÔNG thay đổi stream `s`. Ngay sau đó `s.count()` được gọi trên stream `s` - hợp lệ vì stream chưa bị duyệt. KHOAN! `s.filter` được gọi tức là stream `s` đã được operate upon! Gọi tiếp `s.count()` sẽ ném `IllegalStateException`."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 6,
+        "question": "Phương thức nào của `Stream` KHÔNG trả về một stream mới?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "filter()"
+          },
+          {
+            "key": "B",
+            "text": "flatMap()"
+          },
+          {
+            "key": "C",
+            "text": "map()"
+          },
+          {
+            "key": "D",
+            "text": "reduce()"
+          },
+          {
+            "key": "E",
+            "text": "takeWhile()"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": ".** `reduce()` là một Terminal Operation, trả về một giá trị (`Optional` hoặc primitive), không phải Stream."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 7,
+        "question": "Biến nào có thể được truy cập bên trong biểu thức lambda? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Biến cục bộ (local variable) không có từ khóa `final` nhưng giá trị không bao giờ thay đổi."
+          },
+          {
+            "key": "B",
+            "text": "Biến cục bộ bị thay đổi giá trị trong một phần khác của method (sau khi lambda được định nghĩa)."
+          },
+          {
+            "key": "C",
+            "text": "Biến instance của lớp chứa lambda (class instance variable)."
+          },
+          {
+            "key": "D",
+            "text": "Bất kỳ biến cục bộ nào."
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          "C"
+        ],
+        "explanation": ".** Local variables phải là final hoặc effectively final. Instance variables có thể truy cập và thay đổi tự do bên trong lambda."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 8,
+        "question": "Kết quả là gì?\n```java\nOptional<String> opt = Optional.ofNullable(null);\nString result = opt.orElseGet(() -> \"Empty\");\nSystem.out.println(result);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "null"
+          },
+          {
+            "key": "B",
+            "text": "Empty"
+          },
+          {
+            "key": "C",
+            "text": "Ném NullPointerException"
+          },
+          {
+            "key": "D",
+            "text": "Ném NoSuchElementException"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ".** `Optional.ofNullable(null)` tạo ra một optional rỗng. Lệnh `orElseGet` sẽ thực thi Supplier và trả về chuỗi \"Empty\"."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 9,
+        "question": "Chuyện gì xảy ra với đoạn mã sau?\n```java\nStream<Integer> s = Stream.of(1, 2, 3);\ns.map(i -> i * 2).forEach(System.out::print);\ns.map(i -> i * 3).forEach(System.out::print);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "246369"
+          },
+          {
+            "key": "B",
+            "text": "246"
+          },
+          {
+            "key": "C",
+            "text": "Ném IllegalStateException tại runtime"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ".** Stream không thể được sử dụng lại sau khi một Terminal Operation được thực hiện. Ở dòng 2, `forEach` đã đóng stream `s`. Dòng 3 gọi lại `s.map()` sẽ ném `IllegalStateException`."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 10,
+        "question": "Collector nào dùng để nhóm dữ liệu theo một đặc điểm và chia thành đúng 2 tập hợp dựa trên điều kiện boolean?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Collectors.groupingBy()"
+          },
+          {
+            "key": "B",
+            "text": "Collectors.partitioningBy()"
+          },
+          {
+            "key": "C",
+            "text": "Collectors.mapping()"
+          },
+          {
+            "key": "D",
+            "text": "Collectors.teeing()"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ".** `partitioningBy()` nhóm các phần tử thành Map có key là Boolean (chia thành 2 nhóm đúng và sai)."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 11,
+        "question": "Kết quả là gì?\n```java\nIntStream stream = IntStream.rangeClosed(1, 5);\nSystem.out.println(stream.average().getAsDouble());\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "3.0"
+          },
+          {
+            "key": "B",
+            "text": "3"
+          },
+          {
+            "key": "C",
+            "text": "15.0"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch do getAsDouble() không tồn tại"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": ".** `IntStream.rangeClosed(1, 5)` sinh ra các phần tử 1, 2, 3, 4, 5. Tổng là 15, trung bình là 3.0. Hàm `average()` trả về `OptionalDouble`, gọi `getAsDouble()` sẽ lấy ra số `double` là `3.0`."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 12,
+        "question": "Điều nào đúng về `Parallel Streams`? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Luôn luôn nhanh hơn sequential streams."
+          },
+          {
+            "key": "B",
+            "text": "Có thể làm thay đổi thứ tự in ra khi dùng `forEach`."
+          },
+          {
+            "key": "C",
+            "text": "Hàm `reduce` trên parallel stream bắt buộc phải có identity value để hoạt động chính xác."
+          },
+          {
+            "key": "D",
+            "text": "Dùng stateful lambda expressions trong parallel stream luôn an toàn."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "C"
+        ],
+        "explanation": ".** Không phải luôn nhanh hơn (overhead cấp phát luồng). Hàm `reduce` dạng nhiều luồng yêu cầu kết hợp kết quả (combiner) và Identity value rất quan trọng. Dùng lambda thay đổi trạng thái (stateful) trong parallel cực kỳ nguy hiểm."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 13,
+        "question": "Lựa chọn `Downstream Collector` nào có thể truyền vào hàm `groupingBy` để vừa nhóm vừa lấy giá trị lớn nhất trong mỗi nhóm?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Collectors.maxBy()"
+          },
+          {
+            "key": "B",
+            "text": "Collectors.maximal()"
+          },
+          {
+            "key": "C",
+            "text": "Collectors.summarizingInt()"
+          },
+          {
+            "key": "D",
+            "text": "Không thể thực hiện được."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": ".** Hàm `Collectors.maxBy(Comparator)` thường được truyền làm tham số thứ 2 của `groupingBy` để tìm phần tử lớn nhất trong nhóm."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 14,
+        "question": "Hàm nào trên `Optional` thực thi đoạn mã của tham số Runnable nếu Optional rỗng và thực thi Consumer nếu có giá trị?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "ifPresent()"
+          },
+          {
+            "key": "B",
+            "text": "orElse()"
+          },
+          {
+            "key": "C",
+            "text": "ifPresentOrElse()"
+          },
+          {
+            "key": "D",
+            "text": "orElseGet()"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ".** `ifPresentOrElse(Consumer, Runnable)` (từ Java 9) cho phép xử lý cả trường hợp có giá trị và không có giá trị."
+      },
+      {
+        "file": "phase4_functional_programming.md",
+        "number": 15,
+        "question": "Kết quả của đoạn code sau?\n```java\nList<String> list = List.of(\"a\", \"b\", \"c\");\nMap<Integer, String> map = list.stream().collect(\n    Collectors.toMap(\n        String::length,\n        s -> s\n    )\n);\nSystem.out.println(map);\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "{1=a, 1=b, 1=c}"
+          },
+          {
+            "key": "B",
+            "text": "{1=a}"
+          },
+          {
+            "key": "C",
+            "text": "Ném IllegalStateException"
+          },
+          {
+            "key": "D",
+            "text": "{1=c}\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ".** Stream có các phần tử \"a\", \"b\", \"c\". Hàm `String::length` sẽ là khóa. Cả ba chuỗi đều có độ dài = 1. `Collectors.toMap` không cung cấp hàm xử lý đụng độ (merge function), vì vậy khi có key trùng lặp, nó sẽ ném `IllegalStateException: Duplicate key`."
+      }
+    ]
+  },
+  "phase5_advanced_topics.md": {
+    "title": "Phase 5: Concurrency, Virtual Threads & IO",
+    "phase": "Phase 5",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 1,
+        "question": "Kết quả của đoạn mã sau là gì?\n```java\npublic class Test {\n    public static void main(String[] args) {\n        System.out.print(checkValue());\n    }\n    static int checkValue() {\n        try {\n            return 10;\n        } finally {\n            return 20;\n        }\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "10"
+          },
+          {
+            "key": "B",
+            "text": "20"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "Throws RuntimeException"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ". Khối `finally` luôn được thực thi và có thể ghi đè (override) giá trị trả về của `try`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 2,
+        "question": "Chọn cú pháp `catch` hợp lệ? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`catch (Exception1 e1 | Exception2 e2)`"
+          },
+          {
+            "key": "B",
+            "text": "`catch (SQLException | IOException e)`"
+          },
+          {
+            "key": "C",
+            "text": "`catch (FileNotFoundException | IOException e)`"
+          },
+          {
+            "key": "D",
+            "text": "`catch (IllegalArgumentException | NullPointerException e)`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D"
+        ],
+        "explanation": ". (A) sai cú pháp (chỉ dùng chung biến e). (C) sai vì `FileNotFoundException` là subclass của `IOException` (không được có quan hệ cha-con trong multi-catch)."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 3,
+        "question": "Lớp MyClass triển khai `AutoCloseable` và in ra tên khi được close. Xem đoạn mã:\n```java\ntry (MyClass m1 = new MyClass(\"1\"); MyClass m2 = new MyClass(\"2\")) {\n    // do nothing\n}\n```\nThứ tự in ra trên console khi thoát khỏi try là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "1, 2"
+          },
+          {
+            "key": "B",
+            "text": "2, 1"
+          },
+          {
+            "key": "C",
+            "text": "Không in gì"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ". try-with-resources đóng tài nguyên theo thứ tự **ngược lại** với lúc khai báo. `m2` khai báo sau nên đóng trước."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 4,
+        "question": "Trong Serialization, khi deserialize một đối tượng, thuộc tính nào sau đây của đối tượng không được bảo toàn và mang giá trị mặc định của hệ thống?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`private`"
+          },
+          {
+            "key": "B",
+            "text": "`protected`"
+          },
+          {
+            "key": "C",
+            "text": "`transient`"
+          },
+          {
+            "key": "D",
+            "text": "`static`"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ". Thuộc tính `transient` không được lưu trạng thái vào mảng byte khi Serialize. Do đó khi Deserialize nó mang giá trị mặc định của kiểu. Thuộc tính `static` thuộc về Class, không liên quan tới serialization của đối tượng."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 5,
+        "question": "Giả sử `Path p1 = Path.of(\"/home/user\");` và `Path p2 = Path.of(\"docs/file.txt\");`. Kết quả của `p1.resolve(p2)` là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`/home/user/docs/file.txt`"
+          },
+          {
+            "key": "B",
+            "text": "`docs/file.txt`"
+          },
+          {
+            "key": "C",
+            "text": "`/docs/file.txt`"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi runtime"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": ". `resolve()` gộp hai đường dẫn. Nếu argument là relative, nó sẽ nối thêm vào path gốc. Kết quả là `/home/user/docs/file.txt`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 6,
+        "question": "Giả sử `Path p1 = Path.of(\"/a/b/c\");` và `Path p2 = Path.of(\"/a/x/y\");`. Giá trị của `p1.relativize(p2)` là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`../../x/y`"
+          },
+          {
+            "key": "B",
+            "text": "`../x/y`"
+          },
+          {
+            "key": "C",
+            "text": "`x/y`"
+          },
+          {
+            "key": "D",
+            "text": "`/x/y`"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": ". `relativize()` tính toán từ `/a/b/c` đi đến `/a/x/y`. Phải lùi 2 cấp (từ `c` về `b`, từ `b` về `a`), dùng `../../`, sau đó tiến tới `x/y`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 7,
+        "question": "Khẳng định nào sau đây là **ĐÚNG** về Virtual Threads trong Java 21? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Virtual Threads do Hệ điều hành (OS) quản lý, không phải JVM."
+          },
+          {
+            "key": "B",
+            "text": "Có thể khởi tạo hàng triệu Virtual Threads mà không gây ra OutOfMemoryError thông thường."
+          },
+          {
+            "key": "C",
+            "text": "Virtual Threads luôn cần được map cứng 1-1 với các luồng của hệ điều hành."
+          },
+          {
+            "key": "D",
+            "text": "`Executors.newVirtualThreadPerTaskExecutor()` trả về một ExecutorService sử dụng Virtual Threads."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D"
+        ],
+        "explanation": ". (A) sai vì VT do JVM quản lý. (C) sai vì VT không map 1-1 với OS thread (đây là đặc điểm của platform thread)."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 8,
+        "question": "Phương thức nào của `ExecutorService` dùng để đẩy một `Callable` vào hàng đợi và trả về đối tượng `Future`?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`execute()`"
+          },
+          {
+            "key": "B",
+            "text": "`call()`"
+          },
+          {
+            "key": "C",
+            "text": "`submit()`"
+          },
+          {
+            "key": "D",
+            "text": "`invoke()`"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ". `submit()` nhận Callable hoặc Runnable và trả về Future. `execute()` chỉ nhận Runnable và không trả kết quả."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 9,
+        "question": "Để sử dụng Concurrent Collections thay vì Synchronization thông thường nhằm tối ưu hiệu suất khi đọc (số lượng thao tác đọc nhiều hơn ghi rất lớn), class nào phù hợp nhất cho danh sách các phần tử?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`Vector`"
+          },
+          {
+            "key": "B",
+            "text": "`CopyOnWriteArrayList`"
+          },
+          {
+            "key": "C",
+            "text": "`ConcurrentArrayList`"
+          },
+          {
+            "key": "D",
+            "text": "`Collections.synchronizedList(new ArrayList<>())`"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ". `CopyOnWriteArrayList` tạo bản sao của toàn bộ mảng mỗi khi ghi, làm cho tác vụ đọc không bao giờ cần block. Rất phù hợp kịch bản nhiều Read ít Write. `ConcurrentArrayList` không tồn tại."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 10,
+        "question": "Index cho cột dữ liệu đầu tiên khi truy xuất dữ liệu từ `ResultSet` của JDBC là bao nhiêu?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "-1"
+          },
+          {
+            "key": "B",
+            "text": "0"
+          },
+          {
+            "key": "C",
+            "text": "1"
+          },
+          {
+            "key": "D",
+            "text": "Tùy thuộc vào CSDL"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ". Trong JDBC (ResultSet và PreparedStatement), chỉ mục cột (column index) và tham số luôn **bắt đầu bằng 1**."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 11,
+        "question": "Trong JDBC, cách tốt nhất để cấu hình để thay đổi (insert/update) chỉ có hiệu lực khi bạn gọi hàm `.commit()` là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`conn.commitOnClose(true);`"
+          },
+          {
+            "key": "B",
+            "text": "`conn.setAutoCommit(false);`"
+          },
+          {
+            "key": "C",
+            "text": "`conn.setTransactionLevel(0);`"
+          },
+          {
+            "key": "D",
+            "text": "Mặc định của Connection đã như vậy, không cần gọi gì."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ". Để quản lý transaction thủ công bằng `commit()` hoặc `rollback()`, bạn phải tắt chế độ `autoCommit` mặc định bằng `conn.setAutoCommit(false)`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 12,
+        "question": "Bạn đang tìm kiếm file resource theo `Locale(\"es\", \"MX\")`. Nếu file `Messages_es_MX.properties` không tồn tại, file nào sau đây sẽ được tìm tiếp theo trong quá trình Fallback? (Giả sử hệ thống đang ở Locale là `en_US`).",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`Messages_es.properties`"
+          },
+          {
+            "key": "B",
+            "text": "`Messages_MX.properties`"
+          },
+          {
+            "key": "C",
+            "text": "`Messages_en_US.properties`"
+          },
+          {
+            "key": "D",
+            "text": "`Messages.properties`"
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": ". Chuỗi Fallback: `es_MX` -> `es` -> `en_US` (mặc định) -> `en` -> Root. File tiếp theo tìm kiếm là `Messages_es.properties`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 13,
+        "question": "Từ khóa nào trong `module-info.java` cho phép các package có thể được truy cập thông qua **Reflection** kể cả khi chúng được khai báo private?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`exports`"
+          },
+          {
+            "key": "B",
+            "text": "`requires`"
+          },
+          {
+            "key": "C",
+            "text": "`opens`"
+          },
+          {
+            "key": "D",
+            "text": "`provides`"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": ". `opens` cho phép Deep Reflection (truy cập cả thành phần private) vào package, trong khi `exports` chỉ cho phép truy cập các thành phần public lúc compile/runtime."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 14,
+        "question": "Từ khóa `requires transitive moduleB;` trong file `module-info.java` của `moduleA` có ý nghĩa gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`moduleB` không thể chạy nếu không có `moduleA`."
+          },
+          {
+            "key": "B",
+            "text": "Nếu `moduleC` requires `moduleA`, thì `moduleC` cũng tự động đọc được `moduleB`."
+          },
+          {
+            "key": "C",
+            "text": "`moduleA` sẽ dịch `moduleB` tại thời điểm biên dịch."
+          },
+          {
+            "key": "D",
+            "text": "Gây ra lỗi biên dịch vì không có từ khóa `transitive` trong Java Modules."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": ". Bất kỳ module nào phụ thuộc vào `moduleA` sẽ ngầm định cũng phụ thuộc vào (và đọc được) `moduleB`."
+      },
+      {
+        "file": "phase5_advanced_topics.md",
+        "number": 15,
+        "question": "Class nào KHÔNG phải là Checked Exception?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`IOException`"
+          },
+          {
+            "key": "B",
+            "text": "`SQLException`"
+          },
+          {
+            "key": "C",
+            "text": "`ClassNotFoundException`"
+          },
+          {
+            "key": "D",
+            "text": "`NullPointerException`\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": ". `NullPointerException` kế thừa từ `RuntimeException`, do đó nó là Unchecked Exception."
+      }
+    ]
+  },
+  "phase6_java22_25_new_features.md": {
+    "title": "Phase 6: Java 22 to 25 New Features",
+    "phase": "Phase 6",
+    "total": 15,
+    "quizzes": [
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 1,
+        "question": "Xem đoạn mã sau sử dụng tính năng Flexible Constructor.\n```java\nclass Person {\n    String name;\n}\nclass Employee extends Person {\n    int id;\n    Employee(int id, String name) {\n        this.id = id; \n        System.out.println(this.id);\n        super();\n        this.name = name;\n    }\n}\n```\nKết quả khi biên dịch là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Biên dịch thành công và chương trình chạy bình thường."
+          },
+          {
+            "key": "B",
+            "text": "Lỗi biên dịch vì `this.id` không thể được gán (assigned) trước khi gọi `super()`."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch vì không được gọi `super()` sau khi thực hiện các phép gán."
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch vì không được PHÉP ĐỌC `this.id` trong lệnh `println` trước khi gọi `super()`."
+          }
+        ],
+        "correctAnswers": [
+          "D"
+        ],
+        "explanation": "Cú pháp JEP 482 cho phép GÁN trước `super()`, nhưng CẤM việc ĐỌC (bao gồm cả in ra màn hình `this.id`) giá trị field trước khi gọi `super()`."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 2,
+        "question": "Một chương trình Java chỉ có nội dung sau nằm trong một file `App.java`:\n```java\nvoid main(String[] args) {\n    System.out.println(\"A\");\n}\nstatic void main(String[] args) {\n    System.out.println(\"B\");\n}\nvoid main() {\n    System.out.println(\"C\");\n}\n```\nNếu chạy bằng lệnh `java App.java`, kết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "A"
+          },
+          {
+            "key": "B",
+            "text": "B"
+          },
+          {
+            "key": "C",
+            "text": "C"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch vì có quá nhiều hàm main."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Thứ tự Launch protocol priority: JVM luôn ưu tiên bản `static void main(String[] args)` cao nhất."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 3,
+        "question": "Trong cùng một khối `catch`, đoạn mã sau có hợp lệ trong Java 22+ không?\n```java\ntry {\n    // code\n} catch (IllegalArgumentException _) {\n    System.out.println(\"Lỗi A\");\n} catch (NullPointerException _) {\n    System.out.println(\"Lỗi B\");\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Không hợp lệ vì biến `_` bị trùng tên."
+          },
+          {
+            "key": "B",
+            "text": "Hợp lệ, chương trình biên dịch bình thường."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch, `_` chỉ được dùng cho biến cục bộ, không dùng được cho tham số ngoại lệ."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Tính năng mới (JEP 456) cho phép sử dụng ký tự `_` nhiều lần mà không bị lỗi \"variable already defined\"."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 4,
+        "question": "Tính năng \"Module Import Declarations\". Khi bạn viết đoạn code sau:\n```java\nimport module java.base;\nimport module java.sql;\n// Cả hai module đều export lớp Date\n```\nVà bạn sử dụng class `Date` trong mã nguồn mà không import tường minh class nào. Chuyện gì sẽ xảy ra?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Ưu tiên sử dụng `java.util.Date` vì `java.base` là module cốt lõi."
+          },
+          {
+            "key": "B",
+            "text": "Ưu tiên sử dụng `java.sql.Date`."
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch do nhập nhằng (ambiguous) giữa 2 lớp Date."
+          },
+          {
+            "key": "D",
+            "text": "Trình biên dịch cảnh báo nhưng chọn class đầu tiên được phát hiện."
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Bị lỗi nhập nhằng (ambiguous). Bạn phải phân giải nó bằng cách `import java.sql.Date;` hoặc dùng FQCN (Fully Qualified Class Name)."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 5,
+        "question": "Kết quả của đoạn code sử dụng Stream Gatherers sau đây là gì?\n```java\nvar result = Stream.of(\"A\", \"B\", \"C\", \"D\")\n                   .gather(Gatherers.windowSliding(2))\n                   .toList();\nSystem.out.println(result.size());\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "2"
+          },
+          {
+            "key": "B",
+            "text": "3"
+          },
+          {
+            "key": "C",
+            "text": "4"
+          },
+          {
+            "key": "D",
+            "text": "5"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "`windowSliding(2)` trên `[A, B, C, D]` sẽ tạo ra 3 lists: `[A, B]`, `[B, C]`, `[C, D]`. Kết quả in ra `3`."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 6,
+        "question": "Khi làm việc với `ScopedValue`, phương thức nào dùng để tạo ra một ScopedValue mới?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`new ScopedValue<>()`"
+          },
+          {
+            "key": "B",
+            "text": "`ScopedValue.create()`"
+          },
+          {
+            "key": "C",
+            "text": "`ScopedValue.newInstance()`"
+          },
+          {
+            "key": "D",
+            "text": "`ScopedValue.of()`"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Cú pháp đúng là `ScopedValue.newInstance()`."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 7,
+        "question": "(Chọn HAI đáp án). Những hành động nào bị CẤM thực hiện **trước** lệnh `super()` trong Java 25 (Flexible Constructor Bodies)?",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "Gọi một phương thức static của lớp đó."
+          },
+          {
+            "key": "B",
+            "text": "Gọi một phương thức instance của lớp đó."
+          },
+          {
+            "key": "C",
+            "text": "Gán giá trị cho một biến instance của lớp đó."
+          },
+          {
+            "key": "D",
+            "text": "Truyền tham chiếu `this` vào một phương thức thuộc lớp khác."
+          },
+          {
+            "key": "E",
+            "text": "Khai báo và gán giá trị cho một biến cục bộ (local variable)."
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          "D"
+        ],
+        "explanation": "Bạn không được phép gọi instance method (B) và không được rò rỉ con trỏ `this` (D) trước lệnh `super()`. Lựa chọn (A) và (C) được phép."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 8,
+        "question": "Xem đoạn mã sau:\n```java\nvoid process(int code) {\n    switch (code) {\n        case 1, _ -> System.out.println(\"One or other\"); // Dòng 1\n        default -> System.out.println(\"Default\");\n    }\n}\n```\nKhẳng định nào đúng?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Dòng 1 bị lỗi biên dịch vì không thể dùng `_` (unnamed pattern) cho kiểu nguyên thuỷ (primitive type) trong case switch (không phải pattern switch)."
+          },
+          {
+            "key": "B",
+            "text": "Hợp lệ, in ra \"One or other\"."
+          },
+          {
+            "key": "C",
+            "text": "Dòng 1 hợp lệ, nhưng báo lỗi vì `_` và `default` gây trùng lặp logic."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "`case 1, _` là không hợp lệ đối với hằng số và switch truyền thống. Unnamed pattern `_` dùng cho cấu trúc pattern matching (vd: `case Point(_, int y)` hoặc `case String _`)."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 9,
+        "question": "Output của đoạn mã sau là gì?\n```java\npublic class Demo {\n    static final ScopedValue<String> SV = ScopedValue.newInstance();\n    public static void main(String[] args) {\n        ScopedValue.where(SV, \"Value1\").run(() -> {\n            ScopedValue.where(SV, \"Value2\").run(() -> {\n                System.out.print(SV.get() + \" \");\n            });\n            System.out.print(SV.get());\n        });\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Value1 Value1"
+          },
+          {
+            "key": "B",
+            "text": "Value2 Value1"
+          },
+          {
+            "key": "C",
+            "text": "Value2 Value2"
+          },
+          {
+            "key": "D",
+            "text": "Runtime Exception tại lần gọi `where()` thứ hai."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Scoped Value hỗ trợ **rebinding**. Trong lần lồng ghép (nesting) bên trong, giá trị được re-bind thành \"Value2\". Khi ra khỏi phạm vi, giá trị phục hồi lại \"Value1\". Do đó in ra \"Value2 Value1\"."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 10,
+        "question": "Khi sử dụng `Gatherers.fold`, điều gì phân biệt nó với phép toán `reduce` thông thường của Stream?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`fold` không thể trả về giá trị kiểu dữ liệu khác với cấu trúc phần tử của Stream, còn `reduce` thì có thể."
+          },
+          {
+            "key": "B",
+            "text": "`fold` có thể dừng (short-circuit) việc duyệt Stream bất cứ lúc nào, trong khi `reduce` bắt buộc duyệt hết các phần tử."
+          },
+          {
+            "key": "C",
+            "text": "`fold` sinh ra một List các phần tử kết quả, còn `reduce` trả về một số."
+          },
+          {
+            "key": "D",
+            "text": "`fold` không hoạt động với parallel stream."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Tính năng thiết kế nổi bật của Stream Gatherers là cho phép \"short-circuiting\" linh hoạt mà phép toán `reduce` không làm được."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 11,
+        "question": "Trong `StructuredTaskScope.ShutdownOnFailure`, nếu có 3 subtasks, trong đó 1 subtask ném ra ngoại lệ và 2 subtasks khác đang chạy. Điều gì xảy ra?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Scope sẽ tự động gọi phương thức hủy bỏ (cancel) đối với 2 tasks đang chạy còn lại."
+          },
+          {
+            "key": "B",
+            "text": "Scope sẽ chờ 2 tasks còn lại chạy xong rồi mới ném ra lỗi."
+          },
+          {
+            "key": "C",
+            "text": "Scope sẽ bỏ qua lỗi và trả về null cho task thất bại."
+          },
+          {
+            "key": "D",
+            "text": "Chương trình văng `OutOfMemoryError`."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "`ShutdownOnFailure` thiết kế theo tư duy \"có lỗi thì dừng tất cả\". Nó sẽ cancel các subtasks còn lại ngay lập tức nếu một subtask fail."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 12,
+        "question": "Lớp `IO` được import ngầm định (implicitly imported) cung cấp phương thức `println`. Có thể sử dụng lớp `IO` trong các class được khai báo `public class` thông thường thay vì implicit class được không?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Không, `IO` chỉ dành cho Implicit classes / Instance main methods."
+          },
+          {
+            "key": "B",
+            "text": "Có, nhưng bạn phải tự thêm `import static java.io.IO.*;` hoặc `import module java.base;` đối với class thông thường."
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "Đối với class thông thường (có từ khóa class), nó không tự động import `IO`. Bạn cần import thủ công các package liên quan."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 13,
+        "question": "Code sau có in ra lỗi không?\n```java\nBiFunction<String, String, Boolean> isEqual = (_, _) -> true;\nSystem.out.println(isEqual.apply(\"A\", \"B\"));\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Có lỗi vì thiếu dấu gạch dưới hợp lệ."
+          },
+          {
+            "key": "B",
+            "text": "Có lỗi vì nhiều `_` trong cùng một danh sách tham số."
+          },
+          {
+            "key": "C",
+            "text": "Biên dịch thành công và in ra `true`."
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Hợp lệ 100%. Đây là chức năng của Unnamed variable `_` được sử dụng cho cả tham số Lambda."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 14,
+        "question": "Khi chạy phương thức instance `void main()` bằng lệnh `java`, đối tượng của class được khởi tạo như thế nào?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Bằng constructor ngầm định không tham số. Nếu class chỉ có constructor có tham số, chương trình sẽ báo lỗi."
+          },
+          {
+            "key": "B",
+            "text": "JVM bỏ qua khởi tạo và gọi phương thức thông qua Reflection với con trỏ null."
+          },
+          {
+            "key": "C",
+            "text": "Chương trình dùng Unsafe để cấp phát bộ nhớ."
+          }
+        ],
+        "correctAnswers": [
+          "A"
+        ],
+        "explanation": "JVM sẽ dùng reflection khởi tạo đối tượng qua **constructor không tham số**. Nếu bạn tự định nghĩa một constructor có tham số nhưng không có constructor không tham số, runtime sẽ quăng exception vì không biết cách khởi tạo class để gọi `main()`."
+      },
+      {
+        "file": "phase6_java22_25_new_features.md",
+        "number": 15,
+        "question": "Điều kiện tiên quyết để được dùng Unnamed variable `_` trong lệnh `try-with-resources` là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Biến phải là kiểu nguyên thuỷ (primitive)."
+          },
+          {
+            "key": "B",
+            "text": "Resource phải được gọi phương thức `close()` ngầm định lúc kết thúc và bạn không được phép tham chiếu tới nó bên trong khối `try`."
+          },
+          {
+            "key": "C",
+            "text": "Class của resource phải implement giao diện `AutoCloseable`. (Cả B và C).\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "Để dùng được trong try-with-resources, đối tượng phải implement `AutoCloseable` và nếu dùng `_`, bạn xác nhận chỉ muốn khối lệnh tự đóng file chứ không dùng đối tượng bên trong block đó. (Cả ý B và C đều là đặc điểm cốt lõi).\n\n---\n*Chúc bạn thi tốt chứng chỉ OCP Java SE 25 (1Z0-831)!*"
+      }
+    ]
+  },
+  "phase7_mock_exam.md": {
+    "title": "Phase 7: Full Mock Exam (50 Questions)",
+    "phase": "Phase 7",
+    "total": 12,
+    "quizzes": [
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 1,
+        "question": "Đoạn mã sau in ra kết quả gì?\n```java\npublic class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = x++ * ++x;\n        System.out.println(y);\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "25"
+          },
+          {
+            "key": "B",
+            "text": "30"
+          },
+          {
+            "key": "C",
+            "text": "35"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 2,
+        "question": "Chọn HAI câu phát biểu đúng về từ khóa `var`:",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`var` có thể được sử dụng để khai báo kiểu trả về của phương thức."
+          },
+          {
+            "key": "B",
+            "text": "`var` có thể được gán `null` nếu được ép kiểu rõ ràng, ví dụ: `var x = (String) null;`."
+          },
+          {
+            "key": "C",
+            "text": "`var` không thể được dùng trong vòng lặp for."
+          },
+          {
+            "key": "D",
+            "text": "`var` chỉ có thể dùng cho biến cục bộ (local variables)."
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 3,
+        "question": "Đoạn mã sau in ra gì?\n```java\nclass A {\n    static void print() { System.out.print(\"A\"); }\n}\nclass B extends A {\n    static void print() { System.out.print(\"B\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.print();\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "A"
+          },
+          {
+            "key": "B",
+            "text": "B"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "Ném ngoại lệ tại runtime"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 4,
+        "question": "Cho định nghĩa record sau:\n```java\npublic record Point(int x, int y) {\n    public Point {\n        if (x < 0) x = 0;\n    }\n}\n```\nĐoạn mã trên có biên dịch được không?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Có, và nó biên dịch thành một compact constructor hợp lệ."
+          },
+          {
+            "key": "B",
+            "text": "Không, compact constructor không được thay đổi giá trị của tham số đầu vào."
+          },
+          {
+            "key": "C",
+            "text": "Không, vì thiếu gán `this.x = x`."
+          },
+          {
+            "key": "D",
+            "text": "Có, nhưng `x` không bao giờ bị thay đổi."
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 5,
+        "question": "Lớp `Vehicle` được khai báo như sau:\n```java\npublic sealed class Vehicle permits Car, Truck {}\nfinal class Car extends Vehicle {}\nnon-sealed class Truck extends Vehicle {}\n```\nChọn MỘT phát biểu SAI:",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "`Car` không thể có lớp con."
+          },
+          {
+            "key": "B",
+            "text": "`Truck` có thể được kế thừa bởi bất kỳ lớp nào khác."
+          },
+          {
+            "key": "C",
+            "text": "Nếu `Car` và `Truck` nằm ở một file khác `Vehicle`, mã vẫn biên dịch thành công mà không cần cấu hình gì thêm."
+          },
+          {
+            "key": "D",
+            "text": "`Vehicle` quản lý chặt chẽ những lớp nào được phép kế thừa trực tiếp từ nó."
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 6,
+        "question": "```java\nimport java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<String> list = new ArrayList<>(List.of(\"A\", \"B\", \"C\"));\n        for (String s : list) {\n            if (s.equals(\"B\")) {\n                list.remove(s);\n            }\n        }\n        System.out.println(list);\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "[A, C]"
+          },
+          {
+            "key": "B",
+            "text": "[A, B, C]"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "ConcurrentModificationException bị ném ra tại runtime"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 7,
+        "question": "```java\nimport java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        var map = new HashMap<String, Integer>();\n        map.put(\"A\", 1);\n        map.put(\"B\", 2);\n        map.merge(\"A\", 3, (v1, v2) -> v1 + v2);\n        map.merge(\"B\", 3, (v1, v2) -> null);\n        System.out.println(map);\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "{A=4, B=null}"
+          },
+          {
+            "key": "B",
+            "text": "{A=4, B=5}"
+          },
+          {
+            "key": "C",
+            "text": "{A=4}"
+          },
+          {
+            "key": "D",
+            "text": "{A=4, B=3}"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 8,
+        "question": "Đoạn mã sau có kết quả gì?\n```java\nimport java.util.stream.*;\npublic class StreamTest {\n    public static void main(String[] args) {\n        Stream<Integer> s = Stream.of(1, 2, 3);\n        s.map(i -> i * 2);\n        long count = s.count();\n        System.out.println(count);\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "3"
+          },
+          {
+            "key": "B",
+            "text": "6"
+          },
+          {
+            "key": "C",
+            "text": "IllegalStateException tại runtime"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 9,
+        "question": "Để gộp tất cả các chuỗi trong `Stream<String>` bằng dấu phẩy `,`, cách nào sau đây đúng? (Chọn HAI)",
+        "isMulti": true,
+        "options": [
+          {
+            "key": "A",
+            "text": "`stream.collect(Collectors.joining(\",\"))`"
+          },
+          {
+            "key": "B",
+            "text": "`stream.reduce((a, b) -> a + \",\" + b).orElse(\"\")`"
+          },
+          {
+            "key": "C",
+            "text": "`stream.join(\",\")`"
+          },
+          {
+            "key": "D",
+            "text": "`stream.collect(Collectors.concat(\",\"))`"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 10,
+        "question": "```java\nimport java.io.*;\npublic class Main {\n    public void readFile() {\n        try (var br = new BufferedReader(new FileReader(\"test.txt\"))) {\n            throw new IOException(\"File error\");\n        } catch (IOException e) {\n            System.out.println(e.getMessage());\n        } finally {\n            System.out.println(\"Done\");\n        }\n    }\n}\n```\nGiả sử tệp \"test.txt\" không tồn tại. Kết quả in ra là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "File error \\n Done"
+          },
+          {
+            "key": "B",
+            "text": "test.txt (No such file or directory) \\n Done"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch"
+          },
+          {
+            "key": "D",
+            "text": "Chương trình crash không in ra Done"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 11,
+        "question": "Pattern matching trong switch:\n```java\npublic class Main {\n    public static void main(String[] args) {\n        Object obj = 123;\n        String result = switch(obj) {\n            case String s -> \"String\";\n            case Integer i when i > 100 -> \"Large Integer\";\n            case Integer i -> \"Small Integer\";\n            default -> \"Unknown\";\n        };\n        System.out.println(result);\n    }\n}\n```",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Large Integer"
+          },
+          {
+            "key": "B",
+            "text": "Small Integer"
+          },
+          {
+            "key": "C",
+            "text": "Lỗi biên dịch ở từ khóa `when`"
+          },
+          {
+            "key": "D",
+            "text": "Lỗi biên dịch vì `switch` expressions không hỗ trợ logic này."
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      },
+      {
+        "file": "phase7_mock_exam.md",
+        "number": 12,
+        "question": "Sử dụng Concurrency:\n```java\nimport java.util.concurrent.*;\npublic class Main {\n    public static void main(String[] args) {\n        ExecutorService service = Executors.newFixedThreadPool(1);\n        Future<Integer> future = service.submit(() -> {\n            Thread.sleep(1000);\n            return 42;\n        });\n        service.shutdownNow();\n        try {\n            System.out.println(future.get());\n        } catch (Exception e) {\n            System.out.println(\"Exception\");\n        }\n    }\n}\n```\nKết quả in ra màn hình là gì?",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "42"
+          },
+          {
+            "key": "B",
+            "text": "Exception"
+          },
+          {
+            "key": "C",
+            "text": "null"
+          },
+          {
+            "key": "D",
+            "text": "Không bao giờ dừng (Deadlock)\n\n\n---"
+          }
+        ],
+        "correctAnswers": [],
+        "explanation": ""
+      }
+    ]
+  },
+  "ocp_java25_master_question_bank.md": {
+    "title": "Master Question Bank (Hard Scenarios)",
+    "phase": "Master",
+    "total": 10,
+    "quizzes": [
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 1,
+        "question": "Xem xét đoạn mã sau:\n```java\npublic class StringInternals {\n    public static void main(String[] args) {\n        String s1 = \"Java25\";\n        String s2 = \"Java\" + 25;\n        String s3 = new String(\"Java25\").intern();\n        String s4 = \"\"\"\n                    Java25\\\n                    \"\"\";\n        System.out.println((s1 == s2) + \" \" + (s2 == s3) + \" \" + (s3 == s4));\n    }\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "true true true"
+          },
+          {
+            "key": "B",
+            "text": "false false true"
+          },
+          {
+            "key": "C",
+            "text": "true false true"
+          },
+          {
+            "key": "D",
+            "text": "false true false"
+          },
+          {
+            "key": "E",
+            "text": "Compile error"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          ""
+        ],
+        "explanation": "**Phân tích:**\n  - `s1 = \"Java25\"`: literal vào String Pool.\n  - `s2 = \"Java\" + 25`: Hằng số biên dịch, được compiler gộp thành `\"Java25\"` và trỏ tới cùng 1 pool reference. Do đó `s1 == s2` là **true**.\n  - `s3 = new String(\"Java25\").intern()`: `.intern()` sẽ tìm kiếm `\"Java25\"` trong pool, và trả về reference của nó. Do đó `s2 == s3` là **true**.\n  - `s4 = \"\"\"Java25\\\"\"\";`: Text block, kết thúc bởi `\\` để tránh ký tự newline. Nó biên dịch thành `\"Java25\"`. `s3 == s4` là **true**."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 2,
+        "question": "Chuyện gì xảy ra khi thực thi đoạn mã sau?\n```java\npublic class TypePromotion {\n    public static void main(String[] args) {\n        final byte b1 = 10;\n        final byte b2 = 20;\n        byte b3 = b1 + b2;\n        var result = (b1 == 10) ? b1 : 20.0;\n        System.out.println(((Object)result).getClass().getName() + \" \" + b3);\n    }\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "java.lang.Byte 30"
+          },
+          {
+            "key": "B",
+            "text": "java.lang.Double 30"
+          },
+          {
+            "key": "C",
+            "text": "java.lang.Double 30.0"
+          },
+          {
+            "key": "D",
+            "text": "Compile error tại dòng `byte b3 = b1 + b2;`"
+          },
+          {
+            "key": "E",
+            "text": "Compile error tại dòng `var result = ...`"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          ""
+        ],
+        "explanation": "**Phân tích:**\n  - `b1` và `b2` là `final byte` và giá trị biên dịch được, nên `b1 + b2` được ngầm định cast về `byte` (constant expression). `byte b3` hợp lệ. (Không bị lỗi cast từ int sang byte).\n  - Biểu thức điều kiện `(b1 == 10) ? b1 : 20.0`: Khi trộn `byte` (b1) và `double` (20.0), type promotion của Ternary operator nâng toàn bộ biểu thức lên `double`. Vì vậy `result` mang giá trị `10.0` và kiểu `Double`. `System.out.println` sẽ in ra `java.lang.Double 30`."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 3,
+        "question": "Mã nào dưới đây hợp lệ với Unnamed Variables (JEP 456 / Java 22+)?\n```java\n// 1\ntry {\n    int _ = Integer.parseInt(\"abc\");\n} catch (NumberFormatException _) { }\n\n// 2\nint _ = 5;\nSystem.out.println(_);\n\n// 3\nfor (int _ = 0; _ < 10; _++) {}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Chỉ 1"
+          },
+          {
+            "key": "B",
+            "text": "1 và 2"
+          },
+          {
+            "key": "C",
+            "text": "1 và 3"
+          },
+          {
+            "key": "D",
+            "text": "2 và 3"
+          },
+          {
+            "key": "E",
+            "text": "Tất cả đều không hợp lệ"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          ""
+        ],
+        "explanation": "**Phân tích:**\n  - `_` là Unnamed Variable (JEP 456). Nó chỉ được dùng khi khởi tạo biến và không thể được truy cập (không thể `System.out.println(_)` hoặc dùng `_ < 10`). Vì thế, đoạn mã 2 và 3 lỗi compile do cố gắng đọc giá trị của `_`. Đoạn 1 hợp lệ (catch parameter không sử dụng)."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 4,
+        "question": "Toán tử `==` và Float/Double `NaN`:\n```java\npublic class NaNCheck {\n    public static void main(String[] args) {\n        double d1 = Double.NaN;\n        double d2 = Double.NaN;\n        System.out.println((d1 == d2) + \" \" + Double.compare(d1, d2));\n    }\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "true 0"
+          },
+          {
+            "key": "B",
+            "text": "false 0"
+          },
+          {
+            "key": "C",
+            "text": "false -1"
+          },
+          {
+            "key": "D",
+            "text": "false 1"
+          },
+          {
+            "key": "E",
+            "text": "true 1"
+          }
+        ],
+        "correctAnswers": [
+          "B",
+          ""
+        ],
+        "explanation": "**Phân tích:**\n  - Theo chuẩn IEEE 754, `NaN == NaN` luôn là **false**.\n  - Tuy nhiên, phương thức `Double.compare(NaN, NaN)` được thiết kế để sắp xếp, nên nó coi `NaN` bằng `NaN` và trả về **0**."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 5,
+        "question": "Garbage Collection & JVM Memory: Khi một đối tượng String được tạo qua `new String(\"OCP\")`, đối tượng được cấp phát ở đâu?\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Stack"
+          },
+          {
+            "key": "B",
+            "text": "String Pool (Method Area/Metaspace)"
+          },
+          {
+            "key": "C",
+            "text": "Eden space của Heap, và \"OCP\" literal nằm trong String Pool."
+          },
+          {
+            "key": "D",
+            "text": "Tenured Generation\n\n### Section 2: Advanced OOP, Constructors, Flexible Constructor Bodies"
+          }
+        ],
+        "correctAnswers": [
+          "C"
+        ],
+        "explanation": "**Phân tích:** `new String(\"OCP\")` tạo 2 đối tượng: Literal `\"OCP\"` được lưu trong String Pool (Method Area / Metaspace tùy phiên bản JVM nhưng thuộc non-heap class data / heap intern), và một đối tượng `String` được cấp phát ở Eden space trên Heap.\n\n### Section 2 Explanations"
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 6,
+        "question": "Flexible Constructor Bodies (JEP 482 / Java 23+):\n```java\npublic class Base {\n    public Base(int x) { System.out.print(\"Base\" + x); }\n}\npublic class Sub extends Base {\n    public Sub(int y) {\n        int z = y * 2;\n        super(z);\n        System.out.print(\"Sub\" + z);\n    }\n    public static void main(String[] args) { new Sub(5); }\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Base10Sub10"
+          },
+          {
+            "key": "B",
+            "text": "Sub10Base10"
+          },
+          {
+            "key": "C",
+            "text": "Compile Error ở dòng `int z = y * 2;`"
+          },
+          {
+            "key": "D",
+            "text": "Compile Error ở `super(z)`"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          ""
+        ],
+        "explanation": "**Phân tích:** JEP 482 (Flexible Constructor Bodies) trong Java 23+ cho phép thực hiện các đoạn mã (không tham chiếu đến `this`) TRƯỚC `super(...)`. `int z = y * 2` (10) thực thi trước, sau đó gọi `super(10)` in \"Base10\", rồi in \"Sub10\"."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 7,
+        "question": "Records và Compact Constructor:\n```java\npublic record Point(int x, int y) {\n    public Point {\n        if (x < 0) x = 0;\n        this.y = y + 1; // 1\n    }\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Compile error ở (1)"
+          },
+          {
+            "key": "B",
+            "text": "Chạy bình thường, y được gán y + 1"
+          },
+          {
+            "key": "C",
+            "text": "Cần phải gán `this.x = x`"
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          ""
+        ],
+        "explanation": "**Phân tích:** Compact constructor của Record không được phép gán tường minh cho `this.y`. Việc gán giá trị phải được thực hiện bằng cách thay đổi giá trị của tham số cục bộ (`y = y + 1`), compiler sẽ tự động thực hiện gán `this.y = y` ở cuối khối."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 8,
+        "question": "Sealed Classes:\n```java\npublic sealed class A permits B, C {}\nfinal class B extends A {}\nnon-sealed class C extends A {}\nclass D extends C {}\nclass E extends A {}\n```\nKhai báo nào lỗi?\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "final class B"
+          },
+          {
+            "key": "B",
+            "text": "non-sealed class C"
+          },
+          {
+            "key": "C",
+            "text": "class D"
+          },
+          {
+            "key": "D",
+            "text": "class E\n\n### Section 3: Pattern Matching, Switch Expressions, Dominance"
+          }
+        ],
+        "correctAnswers": [
+          "D",
+          ""
+        ],
+        "explanation": "**Phân tích:** Class E kế thừa A nhưng không nằm trong danh sách `permits B, C` của lớp A. Điều này vi phạm quy tắc của Sealed Classes.\n\n### Section 3 Explanations"
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 9,
+        "question": "Pattern Matching cho Switch (JEP 441):\n```java\nObject obj = \"Java\";\nString res = switch(obj) {\n    case String s when s.length() > 5 -> \"Long String\";\n    case String s -> \"Short String\";\n    default -> \"Unknown\";\n};\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Short String"
+          },
+          {
+            "key": "B",
+            "text": "Long String"
+          },
+          {
+            "key": "C",
+            "text": "Compile error do sử dụng từ khoá `when` (Java 21+)"
+          },
+          {
+            "key": "D",
+            "text": "Compile error do default không cần thiết."
+          }
+        ],
+        "correctAnswers": [
+          "A",
+          ""
+        ],
+        "explanation": "**Phân tích:** `obj` là `\"Java\"` có length = 4. Nó không khớp với guard condition `when s.length() > 5`, do đó nó sẽ xuống case tiếp theo `case String s` và trả về \"Short String\"."
+      },
+      {
+        "file": "ocp_java25_master_question_bank.md",
+        "number": 10,
+        "question": "Dominance rule trong Switch:\n```java\nObject obj = 10;\nswitch(obj) {\n    case CharSequence c -> {}\n    case String s -> {}\n    default -> {}\n}\n```\n**Choose ONE:**",
+        "isMulti": false,
+        "options": [
+          {
+            "key": "A",
+            "text": "Hợp lệ"
+          },
+          {
+            "key": "B",
+            "text": "Compile error tại `case String s` vì bị chi phối (dominated) bởi `CharSequence c`."
+          },
+          {
+            "key": "C",
+            "text": "Hợp lệ nhưng sẽ không bao giờ vào `String`.\n\n---"
+          }
+        ],
+        "correctAnswers": [
+          "B"
+        ],
+        "explanation": "**Phân tích:** Trong pattern matching switch, một case cụ thể hơn phải xuất hiện trước case tổng quát. `String` là subclass của `CharSequence`. Vì `CharSequence` xử lý trước, case `String` sẽ không bao giờ đạt tới, gây ra lỗi compile-time: **Dominance rule error**."
+      }
+    ]
+  }
+};

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCP Java 25 & DSA Reader</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .viewer-layout {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 6rem 1.25rem;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .viewer-header-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .viewer-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      width: 100%;
+    }
+    .viewer-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.5rem 0.95rem;
+      background: var(--primary-light);
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .viewer-nav-back:hover {
+      background: var(--primary);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+    .viewer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+    .viewer-title-h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    .viewer-content-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    @media (max-width: 768px) {
+      .viewer-layout {
+        padding: 0.85rem 0.65rem 4rem 0.65rem;
+      }
+      .viewer-header-card {
+        padding: 1rem;
+      }
+      .viewer-title-h1 {
+        font-size: 1.2rem;
+      }
+      .viewer-content-card {
+        padding: 1.15rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html" onclick="goBackToHub(event)" class="brand">
+          <div class="brand-logo">☕</div>
+          <div class="brand-text">
+            <h1>OCP Java 25 & DSA Hub</h1>
+            <p>Chế Độ Đọc Toàn Màn Hình Chi Tiết</p>
+          </div>
+        </a>
+
+        <div class="nav-actions">
+          <button class="btn-icon" id="btn-theme-toggle" title="Đổi giao diện Sáng / Tối">🌙</button>
+          <button class="btn-icon" onclick="window.print()" title="In / Lưu PDF">🖨️</button>
+          <button onclick="goBackToHub(event)" class="viewer-nav-back" id="btn-back-hub">
+            ⬅ Quay lại Hub
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Reader Layout -->
+    <main class="viewer-layout">
+      <div class="viewer-header-card" id="viewer-header-card">
+        <div class="viewer-top-bar">
+          <div class="drawer-meta-badges" id="viewer-badges">
+            <!-- Badges rendered by JS -->
+          </div>
+          <div class="viewer-actions">
+            <button class="btn-icon btn-star" id="viewer-star-btn" title="Yêu thích">☆</button>
+            <button class="btn-icon btn-check" id="viewer-check-btn" title="Đã hoàn thành">○</button>
+          </div>
+        </div>
+        <h1 class="viewer-title-h1" id="viewer-title">Đang tải tài liệu...</h1>
+      </div>
+
+      <div class="viewer-content-card markdown-body" id="viewer-body">
+        <!-- Content & In-Doc Quiz rendered by JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="doc_contents.js"></script>
+  <script src="quizzes_data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Hàm quay lại Hub thông minh
+    function goBackToHub(e) {
+      if (e) e.preventDefault();
+      
+      // Nếu tab này được mở từ index.html (có opener), đóng tab này để focus về tab cũ
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.focus();
+          window.close();
+          return;
+        } catch (err) {
+          // Bỏ qua nếu bị browser chặn
+        }
+      }
+
+      // Nếu có lịch sử duyệt trong cùng tab
+      if (window.history.length > 1 && document.referrer && document.referrer.includes("index.html")) {
+        window.history.back();
+      } else {
+        // Chuyển hướng trực tiếp về index.html
+        window.location.href = "index.html";
+      }
+    }
+
+    // Khởi tạo Viewer khi DOM sẵn sàng
+    document.addEventListener("DOMContentLoaded", () => {
+      // Cài đặt Theme
+      const savedTheme = localStorage.getItem("ocp_theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      const themeBtn = document.getElementById("btn-theme-toggle");
+      if (themeBtn) {
+        themeBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+        themeBtn.onclick = () => {
+          const current = document.documentElement.getAttribute("data-theme") || "light";
+          const next = current === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          localStorage.setItem("ocp_theme", next);
+          themeBtn.textContent = next === "dark" ? "☀️" : "🌙";
+        };
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const docId = params.get('doc') || 'master_bible';
+      
+      const doc = DOCUMENTS_DATA.find(d => d.id === docId || d.fileName === docId || d.fileName.includes(docId));
+      if (!doc) {
+        document.getElementById('viewer-title').textContent = "Không tìm thấy tài liệu!";
+        document.getElementById('viewer-body').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>Tài liệu không tồn tại</h3>
+            <p>Không tìm thấy file <code>${docId}</code>. <a href="index.html">Quay lại danh mục Hub</a>.</p>
+          </div>
+        `;
+        return;
+      }
+
+      state.selectedDoc = doc;
+      document.title = `${doc.title} | OCP Java 25 Reader`;
+      document.getElementById('viewer-title').textContent = doc.title;
+      
+      const isStarred = state.favorites.has(doc.id);
+      const isCompleted = state.completed.has(doc.id);
+
+      const starBtn = document.getElementById('viewer-star-btn');
+      const checkBtn = document.getElementById('viewer-check-btn');
+
+      if (starBtn) {
+        starBtn.textContent = isStarred ? "★" : "☆";
+        starBtn.style.color = isStarred ? "#f59e0b" : "";
+        starBtn.onclick = () => {
+          toggleStar(doc.id);
+          const s = state.favorites.has(doc.id);
+          starBtn.textContent = s ? "★" : "☆";
+          starBtn.style.color = s ? "#f59e0b" : "";
+        };
+      }
+
+      if (checkBtn) {
+        checkBtn.textContent = isCompleted ? "✓" : "○";
+        checkBtn.style.color = isCompleted ? "#10b981" : "";
+        checkBtn.onclick = () => {
+          toggleComplete(doc.id);
+          const c = state.completed.has(doc.id);
+          checkBtn.textContent = c ? "✓" : "○";
+          checkBtn.style.color = c ? "#10b981" : "";
+        };
+      }
+
+      document.getElementById('viewer-badges').innerHTML = `
+        <span class="badge badge-${doc.badgeColor}">${doc.difficulty}</span>
+        <span class="badge badge-phase">${doc.phase}</span>
+        <span class="badge" style="background: var(--bg-surface-subtle); color: var(--text-main);">📄 ${doc.lines} dòng</span>
+        <span class="badge" style="background: var(--bg-surface-subtle); color: var(--text-main);">💾 ${doc.size}</span>
+        ${doc.questions > 0 ? `<a href="#in-doc-quiz-root" onclick="jumpToInDocQuiz(event)" class="badge badge-rose" style="text-decoration: none; cursor: pointer;">🎯 Làm ${doc.questions} Quiz ở cuối bài ➔</a>` : ''}
+      `;
+
+      window.jumpToInDocQuiz = function(e) {
+        if (e) e.preventDefault();
+        const el = document.getElementById("in-doc-quiz-root");
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      if (typeof DOCS_FULL_CONTENT !== "undefined" && DOCS_FULL_CONTENT[doc.fileName]) {
+        let rawMarkdown = DOCS_FULL_CONTENT[doc.fileName];
+        if (typeof QUIZZES_DATABASE !== "undefined" && QUIZZES_DATABASE[doc.fileName]) {
+          const splitRegex = /(?:#+\s*(?:Practice Quiz|QUIZ PRACTICE|PHẦN 1:\s*CÂU HỎI|ĐỀ THI THỬ|PHẦN 1:\s*ĐỀ THI|BÀI TẬP TRẮC NGHIỆM|Bài tập trắc nghiệm|Bài Tập Thực Hành))/i;
+          const parts = rawMarkdown.split(splitRegex);
+          if (parts.length > 1) rawMarkdown = parts[0];
+        }
+
+        const renderedTheory = renderMarkdown(rawMarkdown);
+        const inDocQuizWidget = generateInDocQuizWidget(doc);
+        document.getElementById('viewer-body').innerHTML = renderedTheory + inDocQuizWidget;
+      } else {
+        const fallbackPreview = generateDocumentPreview(doc);
+        const inDocQuizWidget = generateInDocQuizWidget(doc);
+        document.getElementById('viewer-body').innerHTML = fallbackPreview + inDocQuizWidget;
+      }
+
+      // Back to Top Button Handler for Viewer
+      const backToTopBtn = document.getElementById("btn-back-to-top");
+      if (backToTopBtn) {
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 280) {
+            backToTopBtn.classList.add("visible");
+          } else {
+            backToTopBtn.classList.remove("visible");
+          }
+        }, { passive: true });
+
+        backToTopBtn.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+    });
+  </script>
+
+  <!-- Floating Back to Top Button -->
+  <button class="btn-back-to-top" id="btn-back-to-top" title="Cuộn lên đầu trang" aria-label="Cuộn lên đầu trang">
+    ▲
+  </button>
+</body>
+</html>
