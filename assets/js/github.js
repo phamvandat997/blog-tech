@@ -150,16 +150,40 @@ class GitHubRepo {
     }
   }
 
+  /** SHA commit ở đầu một nhánh. */
+  async headSha(branch = this.branch) {
+    const ref = await this.request(`/git/ref/heads/${encodeURIComponent(branch)}`,
+      { label: `đọc đầu nhánh ${branch}` });
+    return ref.object.sha;
+  }
+
+  /** Tạo nhánh mới trỏ vào cùng commit với nhánh gốc. */
+  async createBranch(name, fromBranch = this.branch) {
+    const sha = await this.headSha(fromBranch);
+    await this.request("/git/refs", {
+      method: "POST", label: `tạo nhánh ${name}`,
+      body: JSON.stringify({ ref: `refs/heads/${name}`, sha }),
+    });
+    return name;
+  }
+
+  async deleteBranch(name) {
+    await this.request(`/git/refs/heads/${encodeURIComponent(name)}`,
+      { method: "DELETE", label: `xoá nhánh ${name}` });
+  }
+
   /**
    * Ghi nhiều file trong một commit duy nhất.
-   * @param {{path: string, content: string}[]} files
+   * @param {{path: string, content?: string, remove?: boolean}[]} files
+   *   `remove: true` để xoá file khỏi cây.
+   * @param {string} message
+   * @param {string} [branch] nhánh đích, mặc định là nhánh đang cấu hình
    * @returns {Promise<{sha: string, url: string}>}
    */
-  async commitFiles(files, message) {
+  async commitFiles(files, message, branch = this.branch) {
     if (!files.length) throw new GitHubError("Không có file nào để commit.", 0);
 
-    const ref = await this.request(`/git/ref/heads/${encodeURIComponent(this.branch)}`, { label: "đọc đầu nhánh" });
-    const baseCommitSha = ref.object.sha;
+    const baseCommitSha = await this.headSha(branch);
     const baseCommit = await this.request(`/git/commits/${baseCommitSha}`, { label: "đọc commit gốc" });
 
     // Base64 của UTF-8 — btoa một mình sẽ nghẹn ở ký tự tiếng Việt.
@@ -170,19 +194,21 @@ class GitHubRepo {
       return btoa(binary);
     };
 
-    const blobs = await Promise.all(files.map((file) =>
-      this.request("/git/blobs", {
-        method: "POST", label: `tạo blob ${file.path}`,
-        body: JSON.stringify({ content: toBase64(file.content), encoding: "base64" }),
-      })));
+    // File bị xoá không cần blob — trong cây nó là một entry có sha null.
+    const blobs = await Promise.all(files.map((file) => file.remove
+      ? Promise.resolve(null)
+      : this.request("/git/blobs", {
+          method: "POST", label: `tạo blob ${file.path}`,
+          body: JSON.stringify({ content: toBase64(file.content), encoding: "base64" }),
+        })));
 
     const tree = await this.request("/git/trees", {
       method: "POST", label: "dựng cây thư mục",
       body: JSON.stringify({
         base_tree: baseCommit.tree.sha,
-        tree: files.map((file, i) => ({
-          path: file.path, mode: "100644", type: "blob", sha: blobs[i].sha,
-        })),
+        tree: files.map((file, i) => file.remove
+          ? { path: file.path, mode: "100644", type: "blob", sha: null }
+          : { path: file.path, mode: "100644", type: "blob", sha: blobs[i].sha }),
       }),
     });
 
@@ -191,11 +217,53 @@ class GitHubRepo {
       body: JSON.stringify({ message, tree: tree.sha, parents: [baseCommitSha] }),
     });
 
-    await this.request(`/git/refs/heads/${encodeURIComponent(this.branch)}`, {
-      method: "PATCH", label: `đẩy nhánh ${this.branch}`,
+    await this.request(`/git/refs/heads/${encodeURIComponent(branch)}`, {
+      method: "PATCH", label: `đẩy nhánh ${branch}`,
       body: JSON.stringify({ sha: commit.sha }),
     });
 
     return { sha: commit.sha, url: commit.html_url };
+  }
+
+  /* ------------------------------------------------------- pull request */
+
+  /** Mở PR từ `head` vào nhánh chính. */
+  async createPullRequest({ head, title, body }) {
+    return this.request("/pulls", {
+      method: "POST", label: "mở pull request",
+      body: JSON.stringify({ title, body, head, base: this.branch }),
+    });
+  }
+
+  /**
+   * PR đang mở do trang admin tạo, nhận diện bằng tiền tố nhánh.
+   * @returns {Promise<Array<{number, title, html_url, head: {ref}}>>}
+   */
+  async listOpenPullRequests(branchPrefix) {
+    const pulls = await this.request(
+      `/pulls?state=open&per_page=100&base=${encodeURIComponent(this.branch)}`,
+      { label: "đọc danh sách pull request" });
+    return pulls.filter((p) => p.head?.ref?.startsWith(branchPrefix));
+  }
+
+  /** Các file một PR đụng tới, kèm trạng thái added/modified/removed. */
+  async pullRequestFiles(number) {
+    const files = await this.request(`/pulls/${number}/files?per_page=100`,
+      { label: `đọc file của PR #${number}` });
+    return files.map((f) => ({ path: f.filename, status: f.status }));
+  }
+
+  /** Toàn bộ file .md trong content/ trên một nhánh, đọc bằng một lần gọi. */
+  async listContentFiles(branch = this.branch) {
+    const sha = await this.headSha(branch);
+    const tree = await this.request(`/git/trees/${sha}?recursive=1`,
+      { label: "đọc cây thư mục" });
+    if (tree.truncated) {
+      throw new GitHubError(
+        "Kho quá lớn nên GitHub cắt bớt cây thư mục — danh sách bài có thể thiếu.", 0);
+    }
+    return tree.tree
+      .filter((t) => t.type === "blob" && t.path.startsWith("content/"))
+      .map((t) => t.path);
   }
 }

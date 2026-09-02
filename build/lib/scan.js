@@ -103,7 +103,6 @@ function scanContent(contentDir) {
           contentFile: flatten(id),
           title: data.title || firstHeading(body) || slug,
           description: data.description || firstParagraph(body),
-          icon: data.icon || meta.icon || "📄",
           // phase và tags không hiển thị trên giao diện nhưng vẫn vào ô tìm kiếm.
           phase: data.phase || "",
           tags: Array.isArray(data.tags) ? data.tags : [],
@@ -119,7 +118,6 @@ function scanContent(contentDir) {
       categories.push({
         id: categoryId,
         name: decl?.name || categoryId,
-        icon: decl?.icon || "📁",
         order: decl?.order ?? 999,
         docCount: count,
       });
@@ -130,7 +128,6 @@ function scanContent(contentDir) {
     sections.push({
       id: sectionId,
       name: meta.name || sectionId,
-      icon: meta.icon || "📦",
       color: meta.color || "#4f46e5",
       kind: meta.kind === "topic" ? "topic" : "language",
       order: meta.order ?? 999,

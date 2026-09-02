@@ -1,6 +1,5 @@
 ---
 title: "Phase 3: Core APIs - OCP Java SE 25 (1Z0-831)"
-icon: "📚"
 order: 2
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]

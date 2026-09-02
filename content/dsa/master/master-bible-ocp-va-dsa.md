@@ -1,7 +1,6 @@
 ---
 title: "🏛️ BÁCH KHOA TOÀN THƯ HỢP NHẤT: OCP JAVA SE 25 (1Z0-831) & DSA FAANG MASTER BIBLE"
 description: "Bản hợp nhất toàn bộ kiến thức OCP Java SE 25 và thuật toán phỏng vấn FAANG trong một tài liệu duy nhất — dùng để tra cứu, không phải để đọc tuần tự."
-icon: "⚡"
 order: 1
 phase: "DSA"
 tags: ["DSA", "Algorithms", "LeetCode", "FAANG"]

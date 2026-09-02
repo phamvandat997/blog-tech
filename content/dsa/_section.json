@@ -1,6 +1,5 @@
 {
   "name": "Cấu trúc dữ liệu & Giải thuật",
-  "icon": "⚡",
   "color": "#2563eb",
   "kind": "topic",
   "order": 10,
@@ -9,19 +8,16 @@
     {
       "id": "roadmap",
       "name": "Lộ trình",
-      "icon": "🗺️",
       "order": 1
     },
     {
       "id": "foundations",
       "name": "Nền tảng",
-      "icon": "🧱",
       "order": 2
     },
     {
       "id": "master",
       "name": "Bách khoa toàn thư",
-      "icon": "👑",
       "order": 3
     }
   ]

@@ -1,6 +1,5 @@
 ---
 title: "Giai đoạn 3 — Concurrency, I/O, Module, Localization (Tuần 13–18)"
-icon: "⚙️"
 order: 1
 phase: "Phase 5"
 tags: ["Virtual Threads", "Concurrency", "JMM", "NIO.2", "JPMS Modules"]

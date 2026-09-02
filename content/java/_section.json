@@ -1,6 +1,5 @@
 {
   "name": "Java",
-  "icon": "☕",
   "color": "#e76f00",
   "kind": "language",
   "order": 1,
@@ -9,37 +8,31 @@
     {
       "id": "roadmap",
       "name": "Lộ trình ôn luyện",
-      "icon": "🗺️",
       "order": 1
     },
     {
       "id": "core",
       "name": "Java Core & OOP",
-      "icon": "🧱",
       "order": 2
     },
     {
       "id": "collections-streams",
       "name": "Collections, Lambda & Stream",
-      "icon": "📚",
       "order": 3
     },
     {
       "id": "concurrency",
       "name": "Concurrency, I/O & Module",
-      "icon": "⚙️",
       "order": 4
     },
     {
       "id": "new-features",
       "name": "Tính năng mới Java 22–25",
-      "icon": "🚀",
       "order": 5
     },
     {
       "id": "master",
       "name": "Sổ tay, Lab & Đề thi thử",
-      "icon": "👑",
       "order": 6
     }
   ]

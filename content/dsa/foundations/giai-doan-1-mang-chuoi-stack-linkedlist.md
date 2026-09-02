@@ -1,6 +1,5 @@
 ---
 title: "DSA Giai đoạn 1 — Mảng, Chuỗi, Con trỏ, Stack & Linked List (Tuần 1–6)"
-icon: "⚡"
 order: 1
 phase: "DSA"
 tags: ["DSA", "Algorithms", "LeetCode", "FAANG"]

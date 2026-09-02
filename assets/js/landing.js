@@ -16,7 +16,6 @@ function sectionCard(section) {
 
   return `<a class="section-card ${docs.length ? "" : "is-empty"}" href="${attr(hubUrl(section.id))}"
        style="--section-color: ${attr(section.color)}">
-    <div class="section-card-icon">${escapeHtml(section.icon)}</div>
     <h3 class="section-card-name">${escapeHtml(section.name)}</h3>
     <p class="section-card-tagline">${escapeHtml(section.tagline)}</p>
     <div class="section-card-meta">${escapeHtml(meta)}</div>
@@ -60,7 +59,6 @@ function bindGlobalSearch() {
         const section = getSection(doc.section);
         const category = section?.categories.find((c) => c.id === doc.category);
         return `<a class="search-hit" href="${attr(readerUrl(doc))}">
-          <span class="search-hit-icon">${escapeHtml(section?.icon || "📄")}</span>
           <span class="search-hit-body">
             <span class="search-hit-title">${escapeHtml(doc.title)}</span>
             <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(category?.name || doc.category)}</span>

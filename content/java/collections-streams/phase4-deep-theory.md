@@ -1,6 +1,5 @@
 ---
 title: "Phase 4: Functional Programming - Deep Theory Supplement"
-icon: "🔬"
 order: 4
 phase: "Phase 4"
 tags: ["Lambdas", "Stream API", "Collectors", "invokedynamic", "Spliterator"]

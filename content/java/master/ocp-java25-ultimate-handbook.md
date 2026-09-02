@@ -1,6 +1,5 @@
 ---
 title: "OCP Java SE 25 (1Z0-831): THE ULTIMATE MASTER HANDBOOK"
-icon: "📖"
 order: 4
 phase: "Master"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]

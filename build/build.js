@@ -67,7 +67,7 @@ function main() {
   console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
   console.log(`✓ generated/docs/       ${docs.length} file, ${(contentBytes / 1024).toFixed(0)} KB tổng ` +
               `(reader chỉ nạp 1 file mỗi lần)`);
-  sections.forEach((s) => console.log(`   ${s.icon} ${s.name}: ${s.docCount} bài, ${s.categories.length} chuyên mục`));
+  sections.forEach((s) => console.log(`   ${s.name}: ${s.docCount} bài, ${s.categories.length} chuyên mục`));
   if (warnings.length) console.log(`\n${warnings.length} cảnh báo ở trên — build vẫn thành công.`);
 }
 

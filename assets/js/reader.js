@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   qs("#reader-date").textContent = `Cập nhật ${doc.updatedDate}`;
   qs("#reader-breadcrumb").innerHTML =
     `<a href="index.html">Trang chủ</a> <span>›</span>
-     <a href="${attr(hubUrl(section.id))}">${escapeHtml(section.icon)} ${escapeHtml(section.name)}</a>
+     <a href="${attr(hubUrl(section.id))}">${escapeHtml(section.name)}</a>
      <span>›</span>
      <a href="${attr(hubUrl(section.id, { c: doc.category }))}">${escapeHtml(category?.name || doc.category)}</a>`;
   qs("#reader-back").href = hubUrl(section.id, { c: doc.category });

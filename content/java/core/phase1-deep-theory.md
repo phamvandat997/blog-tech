@@ -1,6 +1,5 @@
 ---
 title: "Phase 1: Java Fundamentals - Deep Theory Supplement"
-icon: "🔬"
 order: 2
 phase: "Phase 1"
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]

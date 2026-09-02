@@ -1,6 +1,5 @@
 ---
 title: "Giai đoạn 1 — Nền tảng ngôn ngữ Java 25 (Tuần 1–6)"
-icon: "🧱"
 order: 1
 phase: "Phase 1"
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]

@@ -18,11 +18,10 @@ function renderSidebar() {
   const counts = new Map();
   docsOfSection(hub.section.id).forEach((d) => counts.set(d.category, (counts.get(d.category) || 0) + 1));
 
-  const items = [{ id: "all", name: "Tất cả bài viết", icon: "📑" }].concat(hub.section.categories);
+  const items = [{ id: "all", name: "Tất cả bài viết" }].concat(hub.section.categories);
 
   els.categories.innerHTML = items.map((cat) => `
     <button class="category-item ${hub.category === cat.id ? "active" : ""}" data-category="${attr(cat.id)}" type="button">
-      <span class="category-icon">${escapeHtml(cat.icon)}</span>
       <span class="category-name">${escapeHtml(cat.name)}</span>
       <span class="category-count">${cat.id === "all" ? hub.section.docCount : counts.get(cat.id) || 0}</span>
     </button>`).join("");
@@ -35,7 +34,6 @@ function docCard(doc) {
     ? `<span class="doc-card-quiz">🎯 ${doc.questions} câu quiz</span>`
     : "";
   return `<a class="doc-card" href="${attr(readerUrl(doc))}">
-    <span class="doc-icon-wrap">${escapeHtml(doc.icon)}</span>
     <span class="doc-card-body">
       <span class="doc-title">${escapeHtml(doc.title)}</span>
       <span class="doc-desc">${escapeHtml(doc.description)}</span>
@@ -176,7 +174,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.title = `${hub.section.name} | Blog kỹ thuật`;
   qs("#hub-title").textContent = hub.section.name;
-  qs("#hub-icon").textContent = hub.section.icon;
   document.documentElement.style.setProperty("--section-color", hub.section.color);
 
   els.search.value = hub.query;

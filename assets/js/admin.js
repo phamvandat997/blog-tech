@@ -1,11 +1,18 @@
 "use strict";
-// Trang /admin: soạn một bài markdown rồi commit thẳng vào content/ trên GitHub.
-// Vercel thấy commit mới là tự build và deploy.
+// Trang /admin: quản lý bài viết của blog.
+//
+// MỌI thay đổi — tạo, sửa, xoá — đều đi qua pull request: tạo nhánh mới từ
+// nhánh chính, commit vào đó, rồi mở PR. Bài chỉ lên sóng khi PR được merge,
+// vì lúc đó Vercel mới build lại từ content/ trên nhánh chính.
+//
+// Nhờ vậy KHÔNG cần lưu trạng thái bài ở đâu cả — trạng thái suy ra từ Git:
+//   nằm trên nhánh chính     → đang đăng
+//   chỉ nằm trong PR đang mở → chờ duyệt
+// Không có field nào để lệch với thực tế.
 //
 // VỀ BẢO MẬT: danh sách email dưới đây chỉ là rào chắn nhầm lẫn, KHÔNG phải
 // bảo mật — ai xem mã nguồn trang cũng đọc được. Thứ thật sự chặn người lạ là
-// GitHub: không có token đủ quyền đẩy vào kho thì commit bị từ chối, dù có
-// vào được màn hình này.
+// GitHub: không có token đủ quyền đẩy vào kho thì commit bị từ chối.
 
 const ALLOWED_EMAILS = ["phamvandat0029@gmail.com"];
 
@@ -13,11 +20,15 @@ const DEFAULT_REPO = { owner: "phamvandat997", repo: "blog-tech", branch: "maste
 const SESSION_KEY = "blog.adminSession";
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const NEW = "__new__";
+const BRANCH_PREFIX = "post/";
 
 const admin = {
   /** @type {GitHubRepo|null} */ gh: null,
-  sections: [],   // [{ id, name, icon, categories: [{id,name,icon,order}] }]
-  quizFile: null, // { name, content }
+  sections: [],    // [{ id, name, meta, categories: [{id, name}] }]
+  posts: [],       // [{ path, section, category, slug, title, status, pr }]
+  quizFile: null,  // { name, content }
+  /** null khi tạo mới; { path, quizPath, hasQuiz } khi đang sửa bài có sẵn */
+  editing: null,
   busy: false,
 };
 
@@ -26,135 +37,44 @@ const admin = {
 /** "Phase 1: Nền tảng Java" → "phase-1-nen-tang-java" */
 function toSlug(text) {
   return String(text || "")
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // bỏ dấu tiếng Việt
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")  // bỏ dấu tiếng Việt
     .replace(/đ/g, "d").replace(/Đ/g, "D")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
-function readSession() {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
+/** post/them-bai-abc-20260902-143512 */
+function branchName(action, slug) {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
+    `-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  return `${BRANCH_PREFIX}${action}-${slug}-${stamp}`;
 }
 
-function writeSession(session) {
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch { /* bỏ qua */ }
-}
+const readSession = () => {
+  try { const raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; }
+  catch { return null; }
+};
+const writeSession = (s) => { try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch { /* bỏ qua */ } };
+const clearSession = () => { try { localStorage.removeItem(SESSION_KEY); } catch { /* bỏ qua */ } };
 
-function clearSession() {
-  try { localStorage.removeItem(SESSION_KEY); } catch { /* bỏ qua */ }
-}
-
-function showAlert(el, message) {
-  el.textContent = message;
+function showAlert(el, message, html = false) {
+  if (html) el.innerHTML = message; else el.textContent = message;
   el.hidden = !message;
 }
 
-/* --------------------------------------------------------- gợi ý icon */
-
-// Bảng icon gợi ý. Vẫn gõ tay được — đây chỉ là lối tắt cho những thứ hay dùng.
-const ICON_SETS = {
-  language: [
-    ["☕", "Java"], ["🐍", "Python"], ["🟨", "JavaScript"], ["🔷", "TypeScript"],
-    ["🐹", "Go"], ["🦀", "Rust"], ["🐘", "PHP"], ["💎", "Ruby"],
-    ["🍎", "Swift"], ["🟣", "Kotlin"], ["⚙️", "C / C++"], ["🟦", "C#"],
-    ["🐚", "Shell / Bash"], ["🗃️", "SQL"], ["📱", "Dart / Flutter"], ["🌙", "Lua"],
-  ],
-  topic: [
-    ["⚡", "Thuật toán & CTDL"], ["🏗️", "System Design"], ["🗄️", "Cơ sở dữ liệu"],
-    ["☁️", "Cloud"], ["🐳", "Docker & K8s"], ["🔐", "Bảo mật"],
-    ["🌐", "Mạng"], ["🤖", "AI / Machine Learning"], ["🧩", "Design Pattern"],
-    ["🛠️", "DevOps & Công cụ"], ["🚀", "Hiệu năng"], ["🧪", "Kiểm thử"],
-    ["📊", "Dữ liệu"], ["📐", "Kiến trúc"], ["🖥️", "Hệ điều hành"], ["🎨", "Frontend"],
-  ],
-  category: [
-    ["🗺️", "Lộ trình"], ["🧱", "Nền tảng"], ["📚", "Thư viện & API"], ["⚙️", "Cơ chế bên trong"],
-    ["🚀", "Tính năng mới"], ["👑", "Tổng hợp"], ["🧪", "Thực hành"], ["🎯", "Đề thi & Ôn tập"],
-    ["🧩", "Mẫu thiết kế"], ["🔐", "Bảo mật"], ["📊", "Hiệu năng"], ["🛠️", "Công cụ"],
-  ],
-  doc: [
-    ["📄", "Bài viết thường"], ["🧱", "Nền tảng"], ["📚", "Tra cứu API"], ["🔍", "Phân tích sâu"],
-    ["💡", "Mẹo & Kinh nghiệm"], ["⚠️", "Bẫy thường gặp"], ["🧪", "Bài thực hành"], ["🎯", "Đề thi thử"],
-    ["🚀", "Tính năng mới"], ["🗺️", "Lộ trình"], ["👑", "Tổng hợp"], ["📝", "Ghi chú"],
-  ],
-};
-
-// Gõ "Python" thì đoán luôn 🐍 — khỏi phải đi tìm trong bảng.
-const NAME_TO_ICON = {
-  java: "☕", python: "🐍", javascript: "🟨", js: "🟨", typescript: "🔷", ts: "🔷",
-  go: "🐹", golang: "🐹", rust: "🦀", php: "🐘", ruby: "💎", swift: "🍎",
-  kotlin: "🟣", c: "⚙️", "c++": "⚙️", cpp: "⚙️", "c#": "🟦", csharp: "🟦",
-  bash: "🐚", shell: "🐚", sql: "🗃️", dart: "📱", flutter: "📱", lua: "🌙",
-  dsa: "⚡", algorithm: "⚡", "thuat toan": "⚡", "system design": "🏗️",
-  database: "🗄️", "co so du lieu": "🗄️", cloud: "☁️", docker: "🐳", kubernetes: "🐳",
-  security: "🔐", "bao mat": "🔐", network: "🌐", ai: "🤖", ml: "🤖",
-  devops: "🛠️", testing: "🧪", "kiem thu": "🧪", frontend: "🎨", backend: "🖥️",
-};
-
-/** Bảng icon nào hợp với ô nào. Ô của mảng đổi theo khu Ngôn ngữ / Chủ đề. */
-function iconGroupsFor(kind) {
-  if (kind !== "section") return [["", ICON_SETS[kind] || ICON_SETS.doc]];
-  const isTopic = qs("#new-section-kind").value === "topic";
-  return isTopic
-    ? [["Chủ đề", ICON_SETS.topic], ["Ngôn ngữ", ICON_SETS.language]]
-    : [["Ngôn ngữ", ICON_SETS.language], ["Chủ đề", ICON_SETS.topic]];
+/** Tiêu đề lấy từ catalog đã build; bài chờ duyệt chưa có trong đó. */
+function titleFromCatalog(id) {
+  if (typeof DOCUMENTS === "undefined") return null;
+  return DOCUMENTS.find((d) => d.id === id)?.title || null;
 }
 
-function renderIconPicker(picker) {
-  const input = qs(picker.dataset.iconTarget);
-  const current = input.value.trim();
-  picker.innerHTML = iconGroupsFor(picker.dataset.iconPicker).map(([label, set]) => `
-    ${label ? `<span class="icon-picker-label">${escapeHtml(label)}</span>` : ""}
-    <span class="icon-picker-row">
-      ${set.map(([icon, name]) => `
-        <button type="button" class="icon-chip ${icon === current ? "active" : ""}"
-                data-icon="${attr(icon)}" title="${attr(name)}"
-                aria-label="${attr(name)}">${escapeHtml(icon)}</button>`).join("")}
-    </span>`).join("");
-}
-
-function renderAllIconPickers() {
-  qsa("[data-icon-picker]").forEach(renderIconPicker);
-}
-
-function bindIconPickers() {
-  qsa("[data-icon-picker]").forEach((picker) => {
-    const input = qs(picker.dataset.iconTarget);
-
-    delegate(picker, "click", "[data-icon]", (_, chip) => {
-      // Bấm lại icon đang chọn thì bỏ chọn, để quay về mặc định của build.
-      input.value = chip.classList.contains("active") ? "" : chip.dataset.icon;
-      input.dataset.touched = "1";
-      renderIconPicker(picker);
-    });
-
-    // Gõ tay thì bảng vẫn sáng đúng ô.
-    input.addEventListener("input", () => {
-      input.dataset.touched = input.value.trim() ? "1" : "";
-      renderIconPicker(picker);
-    });
-  });
-
-  // Đổi khu Ngôn ngữ / Chủ đề thì đảo thứ tự nhóm gợi ý.
-  qs("#new-section-kind").addEventListener("change", () =>
-    renderIconPicker(qs('[data-icon-picker="section"]')));
-
-  renderAllIconPickers();
-}
-
-/** Đoán icon từ tên, chỉ khi người dùng chưa tự chọn. */
-function suggestIconFrom(name, inputId, pickerKind) {
-  const input = qs(inputId);
-  if (input.dataset.touched) return;
-  const key = toSlug(name).replace(/-/g, " ");
-  const guess = NAME_TO_ICON[key] || NAME_TO_ICON[key.replace(/\s/g, "")];
-  if (!guess) return;
-  input.value = guess;
-  renderIconPicker(qs(`[data-icon-picker="${pickerKind}"]`));
-}
+/** Một client đọc cùng kho nhưng ở nhánh khác — dùng khi sửa bài đang chờ duyệt. */
+const repoAtBranch = (branch) => new GitHubRepo({
+  token: admin.gh.token, owner: admin.gh.owner, repo: admin.gh.repo, branch,
+});
 
 /* --------------------------------------------------------- đăng nhập */
 
@@ -183,7 +103,7 @@ async function handleLogin(event) {
     const user = await gh.verify();
     admin.gh = gh;
     writeSession({ email, token, ...config, login: user.login });
-    await enterEditor(email, user.login);
+    await enterApp(email, user.login);
   } catch (err) {
     showAlert(error, err.message);
   } finally {
@@ -192,25 +112,34 @@ async function handleLogin(event) {
   }
 }
 
-async function enterEditor(email, login) {
+async function enterApp(email, login) {
   qs("#admin-login").hidden = true;
-  qs("#admin-editor").hidden = false;
+  qs("#admin-tabs").hidden = false;
   qs("#btn-logout").hidden = false;
   const who = qs("#admin-whoami");
   who.textContent = `${email} · @${login}`;
   who.hidden = false;
   await loadSections();
+  switchView("list");
+}
+
+/* ------------------------------------------------------ chuyển màn hình */
+
+function switchView(view) {
+  qsa("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+  qs("#admin-list").hidden = view !== "list";
+  qs("#admin-editor").hidden = view !== "editor";
+  if (view === "list") loadPosts();
 }
 
 /* --------------------------------------- đọc cây thư mục từ GitHub */
 
-/** Đọc content/ trên GitHub: mảng nào có, mỗi mảng có chuyên mục nào. */
+/** Đọc content/ trên nhánh chính: mảng nào có, mỗi mảng có chuyên mục nào. */
 async function loadSections() {
   const select = qs("#field-section");
-  select.disabled = true;
-  select.innerHTML = '<option>Đang đọc thư mục content/ …</option>';
-
   const keep = { section: select.value, category: qs("#field-category").value };
+  select.disabled = true;
+  select.innerHTML = "<option>Đang đọc thư mục content/ …</option>";
 
   try {
     const ids = await admin.gh.listDirs("content");
@@ -225,13 +154,8 @@ async function loadSections() {
       return {
         id,
         name: meta.name || id,
-        icon: meta.icon || "📦",
         meta,
-        categories: dirs.map((dirId) => ({
-          id: dirId,
-          name: declared.get(dirId)?.name || dirId,
-          icon: declared.get(dirId)?.icon || "📁",
-        })),
+        categories: dirs.map((dirId) => ({ id: dirId, name: declared.get(dirId)?.name || dirId })),
       };
     }));
     renderSectionSelect(keep);
@@ -243,19 +167,16 @@ async function loadSections() {
   }
 }
 
-/** @param {{section?: string, category?: string}} keep giữ lại lựa chọn đang có */
 function renderSectionSelect(keep = {}) {
   const select = qs("#field-section");
   select.innerHTML =
     '<option value="">— Chọn mảng —</option>' +
     admin.sections.map((s) =>
-      `<option value="${attr(s.id)}">${escapeHtml(s.icon)} ${escapeHtml(s.name)} (${escapeHtml(s.id)})</option>`).join("") +
+      `<option value="${attr(s.id)}">${escapeHtml(s.name)} (${escapeHtml(s.id)})</option>`).join("") +
     `<option value="${NEW}">➕ Tạo mảng mới…</option>`;
 
   // Đăng nhiều bài vào cùng một chỗ là chuyện thường — đừng bắt chọn lại.
-  if (keep.section && admin.sections.some((s) => s.id === keep.section)) {
-    select.value = keep.section;
-  }
+  if (keep.section && admin.sections.some((s) => s.id === keep.section)) select.value = keep.section;
   renderCategorySelect(keep.category);
 }
 
@@ -281,13 +202,108 @@ function renderCategorySelect(keepCategory) {
   select.innerHTML =
     (options.length ? '<option value="">— Chọn chuyên mục —</option>' : "") +
     options.map((c) =>
-      `<option value="${attr(c.id)}">${escapeHtml(c.icon)} ${escapeHtml(c.name)} (${escapeHtml(c.id)})</option>`).join("") +
+      `<option value="${attr(c.id)}">${escapeHtml(c.name)} (${escapeHtml(c.id)})</option>`).join("") +
     `<option value="${NEW}"${options.length ? "" : " selected"}>➕ Tạo chuyên mục mới…</option>`;
 
   if (keepCategory && options.some((c) => c.id === keepCategory)) select.value = keepCategory;
 
   qs("#new-category-form").hidden = select.value !== NEW;
   updatePathPreview();
+}
+
+/* ------------------------------------------- danh sách & trạng thái bài */
+
+/**
+ * Trạng thái suy ra từ Git, không lưu ở đâu:
+ *   có trên nhánh chính, không PR nào đụng → đang đăng
+ *   có trên nhánh chính, đang có PR đụng   → chờ duyệt thay đổi
+ *   chưa có trên nhánh chính, nằm trong PR → chờ duyệt bài mới
+ */
+async function loadPosts() {
+  const list = qs("#post-list");
+  showAlert(qs("#list-error"), "");
+  list.innerHTML = '<p class="admin-hint">Đang đọc danh sách bài…</p>';
+
+  try {
+    const [paths, pulls] = await Promise.all([
+      admin.gh.listContentFiles(),
+      admin.gh.listOpenPullRequests(BRANCH_PREFIX),
+    ]);
+
+    // Mỗi PR đụng file nào — cần để gắn trạng thái cho đúng bài.
+    const prFiles = await Promise.all(pulls.map((p) => admin.gh.pullRequestFiles(p.number)));
+    const touched = new Map(); // đường dẫn -> { pr, fileStatus }
+    pulls.forEach((pr, i) => prFiles[i]
+      .filter((f) => f.path.endsWith(".md"))
+      .forEach((f) => touched.set(f.path, { pr, fileStatus: f.status })));
+
+    const onMaster = new Set(paths.filter((p) => p.endsWith(".md")));
+
+    admin.posts = [...new Set([...onMaster, ...touched.keys()])].map((path) => {
+      const [, section, category, file] = path.split("/");
+      const slug = (file || "").replace(/\.md$/, "");
+      const hit = touched.get(path) || null;
+      return {
+        path, section, category, slug,
+        pr: hit?.pr || null,
+        title: titleFromCatalog(`${section}/${category}/${slug}`) || slug,
+        status: !hit ? "active"
+          : hit.fileStatus === "removed" ? "removing"
+          : !onMaster.has(path) ? "pending"
+          : "changing",
+      };
+    }).sort((a, b) => a.path.localeCompare(b.path));
+
+    renderPosts();
+  } catch (err) {
+    list.innerHTML = "";
+    showAlert(qs("#list-error"), err.message);
+  }
+}
+
+const STATUS_LABEL = {
+  active:   ["Đang đăng", "is-active"],
+  pending:  ["Chờ duyệt bài mới", "is-pending"],
+  changing: ["Chờ duyệt thay đổi", "is-pending"],
+  removing: ["Chờ duyệt xoá", "is-removing"],
+};
+
+function renderPosts() {
+  const query = qs("#list-search").value.trim().toLowerCase();
+  const posts = query
+    ? admin.posts.filter((p) => `${p.title} ${p.path}`.toLowerCase().includes(query))
+    : admin.posts;
+
+  const list = qs("#post-list");
+  if (!posts.length) {
+    list.innerHTML = admin.posts.length
+      ? '<p class="admin-hint">Không có bài nào khớp từ khoá.</p>'
+      : '<p class="admin-hint">Chưa có bài nào. Bấm “Soạn bài mới” để bắt đầu.</p>';
+    return;
+  }
+
+  const waiting = admin.posts.filter((p) => p.pr).length;
+  list.innerHTML =
+    `<p class="admin-list-count">${posts.length} bài${waiting ? ` · ${waiting} đang chờ duyệt` : ""}</p>` +
+    posts.map((post) => {
+      const [label, cls] = STATUS_LABEL[post.status];
+      const prLink = post.pr
+        ? `<a class="admin-pr-link" href="${attr(post.pr.html_url)}" target="_blank" rel="noopener">PR #${post.pr.number} ↗</a>`
+        : "";
+      return `<article class="admin-list-row" data-path="${attr(post.path)}">
+        <div class="admin-list-main">
+          <span class="admin-list-title">${escapeHtml(post.title)}</span>
+          <code class="admin-list-path">${escapeHtml(post.path)}</code>
+        </div>
+        <div class="admin-list-side">
+          <span class="admin-status ${cls}">${label}</span>
+          ${prLink}
+          <button class="admin-btn-secondary admin-btn-xs" type="button" data-edit>Sửa</button>
+          ${post.status === "removing" ? ""
+            : '<button class="admin-btn-danger admin-btn-xs" type="button" data-delete>Xoá</button>'}
+        </div>
+      </article>`;
+    }).join("");
 }
 
 /* ----------------------------------------------- đường dẫn sẽ ghi */
@@ -308,36 +324,38 @@ function updatePathPreview() {
     `content/${sectionId || "…"}/${categoryId || "…"}/${slug || "…"}.md`;
 }
 
-/* ------------------------------------------------------ nạp file .md */
+/* ------------------------------------------------------ nạp nội dung */
+
+/** Đổ frontmatter + thân bài vào form. `overwrite` dùng khi mở bài để sửa. */
+function fillEditor(data, body, { overwrite = false } = {}) {
+  qs("#field-body").value = body.trim();
+  const fill = (id, value) => {
+    const el = qs(id);
+    const empty = value === undefined || value === null || value === "";
+    if (overwrite) el.value = empty ? "" : value;
+    else if (!empty && !el.value) el.value = value;
+  };
+  fill("#field-title", data.title);
+  fill("#field-description", data.description);
+  fill("#field-order", data.order);
+  fill("#field-phase", data.phase);
+  fill("#field-tags", Array.isArray(data.tags) ? data.tags.join(", ") : data.tags);
+
+  if (!qs("#field-title").value) {
+    const heading = body.match(/^#\s+(.+)$/m);
+    if (heading) qs("#field-title").value = heading[1].trim();
+  }
+}
 
 function handleMarkdownFile(file) {
   const reader = new FileReader();
   reader.onload = () => {
     const { data, body } = parseFrontmatter(String(reader.result));
-    qs("#field-body").value = body.trim();
-
-    // Frontmatter sẵn có thì điền vào form, nhưng không ghi đè thứ đã gõ.
-    const fill = (id, value) => {
-      const el = qs(id);
-      if (value !== undefined && value !== null && value !== "" && !el.value) el.value = value;
-    };
-    fill("#field-title", data.title);
-    fill("#field-description", data.description);
-    fill("#field-icon", data.icon);
-    fill("#field-order", data.order);
-    fill("#field-phase", data.phase);
-    fill("#field-tags", Array.isArray(data.tags) ? data.tags.join(", ") : data.tags);
-
+    fillEditor(data, body);
     if (!qs("#field-slug").value) {
       qs("#field-slug").value = toSlug(file.name.replace(/\.(md|markdown)$/i, ""));
     }
-    if (!qs("#field-title").value) {
-      const heading = body.match(/^#\s+(.+)$/m);
-      if (heading) qs("#field-title").value = heading[1].trim();
-    }
-
     qs("#file-markdown-name").textContent = `Đã nạp ${file.name}`;
-    renderAllIconPickers();
     updatePathPreview();
     showAlert(qs("#post-error"), "");
   };
@@ -366,10 +384,10 @@ function handleQuizFile(file) {
   reader.readAsText(file);
 }
 
-/* ------------------------------------------------------- kiểm tra form */
+/* ------------------------------------------------------- dựng thay đổi */
 
-/** @returns {{files: {path,content}[], message: string, docUrl: string}} */
-function buildCommit() {
+/** @returns {{files, message, sectionId, categoryId, slug, path, action, title}} */
+function buildChange() {
   const { sectionId, categoryId, slug } = resolvePlacement();
   const body = qs("#field-body").value.trim();
   const isNewSection = qs("#field-section").value === NEW;
@@ -402,21 +420,26 @@ function buildCommit() {
   const markdown = stringifyFrontmatter({
     title: qs("#field-title").value.trim(),
     description: qs("#field-description").value.trim(),
-    icon: qs("#field-icon").value.trim(),
     order: order ? Number(order) : "",
     phase: qs("#field-phase").value.trim(),
     tags,
   }, body);
 
   const dir = `content/${sectionId}/${categoryId}`;
-  const files = [{ path: `${dir}/${slug}.md`, content: markdown }];
+  const path = `${dir}/${slug}.md`;
+  const files = [{ path, content: markdown }];
   if (admin.quizFile) files.push({ path: `${dir}/${slug}.quiz.json`, content: admin.quizFile.content });
 
-  // _section.json: tạo mới, hoặc bổ sung chuyên mục vào mảng đã có.
+  // Sửa bài mà đổi chỗ hoặc đổi tên file → xoá đường dẫn cũ trong cùng commit,
+  // nếu không sẽ thành hai bài trùng nội dung.
+  if (admin.editing && admin.editing.path !== path) {
+    files.push({ path: admin.editing.path, remove: true });
+    if (admin.editing.hasQuiz) files.push({ path: admin.editing.quizPath, remove: true });
+  }
+
   const newCategory = {
     id: categoryId,
     name: qs("#new-category-name").value.trim() || categoryId,
-    icon: qs("#new-category-icon").value.trim() || "📁",
     order: (section?.categories.length || 0) + 1,
   };
 
@@ -425,7 +448,6 @@ function buildCommit() {
       path: `content/${sectionId}/_section.json`,
       content: JSON.stringify({
         name: qs("#new-section-name").value.trim(),
-        icon: qs("#new-section-icon").value.trim() || "📦",
         color: qs("#new-section-color").value,
         kind: qs("#new-section-kind").value,
         order: admin.sections.length + 1,
@@ -436,91 +458,193 @@ function buildCommit() {
   } else if (isNewCategory) {
     const meta = JSON.parse(JSON.stringify(section?.meta || {}));
     meta.categories = [...(meta.categories || []), newCategory];
-    files.push({
-      path: `content/${sectionId}/_section.json`,
-      content: JSON.stringify(meta, null, 2) + "\n",
-    });
+    files.push({ path: `content/${sectionId}/_section.json`, content: JSON.stringify(meta, null, 2) + "\n" });
   }
 
   const title = qs("#field-title").value.trim() || slug;
-  return {
-    sectionId,
-    categoryId,
-    files,
-    message: `content: them bai "${title}"\n\n${files.map((f) => `- ${f.path}`).join("\n")}`,
-    docUrl: `reader.html?s=${encodeURIComponent(sectionId)}&d=${encodeURIComponent(`${categoryId}/${slug}`)}`,
-  };
+  const action = admin.editing ? "sua" : "them";
+  return { files, sectionId, categoryId, slug, path, action, title,
+    message: `content: ${action} bai "${title}"` };
+}
+
+/* ------------------------------------------------ tạo nhánh + mở PR */
+
+/**
+ * Tạo nhánh từ nhánh chính, commit vào đó, mở PR. Nhánh được dọn nếu commit
+ * hoặc PR hỏng giữa chừng, để không bỏ lại nhánh rác trên kho.
+ */
+async function openPullRequest({ files, message, action, slug, title }) {
+  const branch = branchName(action, slug);
+  await admin.gh.createBranch(branch);
+  try {
+    await admin.gh.commitFiles(files, message, branch);
+    return await admin.gh.createPullRequest({
+      head: branch,
+      title: message,
+      body: `Tạo từ trang /admin.\n\n` +
+        files.map((f) => `- ${f.remove ? "xoá" : "ghi"} \`${f.path}\``).join("\n") +
+        `\n\nMerge vào \`${admin.gh.branch}\` là Vercel build lại và bài "${title}" lên sóng.`,
+    });
+  } catch (error) {
+    await admin.gh.deleteBranch(branch).catch(() => { /* dọn được thì tốt */ });
+    throw error;
+  }
 }
 
 /* ------------------------------------------------------------ đăng bài */
 
-async function handlePost(event) {
+async function handleSubmit(event) {
   event.preventDefault();
   if (admin.busy) return;
 
   const button = qs("#post-submit");
-  const status = qs("#post-status");
+  const editing = admin.editing;
   showAlert(qs("#post-error"), "");
   showAlert(qs("#post-success"), "");
 
   let plan;
   try {
-    plan = buildCommit();
+    plan = buildChange();
   } catch (err) {
     return showAlert(qs("#post-error"), err.message);
   }
 
-  // Ghi đè bài đã có là chuyện lớn — hỏi trước.
-  const existing = await admin.gh.readFile(plan.files[0].path).catch(() => null);
-  if (existing !== null &&
-      !window.confirm(`${plan.files[0].path} đã tồn tại.\n\nĐăng tiếp sẽ GHI ĐÈ toàn bộ nội dung cũ. Tiếp tục?`)) {
-    return;
+  // Tạo mới mà trùng đường dẫn có sẵn thì hỏi trước.
+  if (!editing) {
+    const existing = await admin.gh.readFile(plan.path).catch(() => null);
+    if (existing !== null && !window.confirm(
+        `${plan.path} đã tồn tại trên ${admin.gh.branch}.\n\n` +
+        `Đăng tiếp sẽ GHI ĐÈ nội dung cũ khi PR được merge. Tiếp tục?`)) {
+      return;
+    }
   }
 
   admin.busy = true;
   button.disabled = true;
-  button.textContent = "Đang commit…";
-  status.textContent = `${plan.files.length} file`;
+  button.textContent = "Đang tạo nhánh và mở PR…";
 
   try {
-    const commit = await admin.gh.commitFiles(plan.files, plan.message);
-    const success = qs("#post-success");
-    success.innerHTML =
-      `✅ Đã commit <a href="${attr(commit.url)}" target="_blank" rel="noopener"><code>${escapeHtml(commit.sha.slice(0, 7))}</code></a>. ` +
-      `Vercel đang build — khoảng một phút nữa bài sẽ lên sóng tại ` +
-      `<a href="${attr(plan.docUrl)}">${escapeHtml(plan.files[0].path.replace(/^content\//, "").replace(/\.md$/, ""))}</a>.`;
-    success.hidden = false;
-    status.textContent = "";
+    const pr = await openPullRequest(plan);
+    showAlert(qs("#post-success"),
+      `✅ Đã mở <a href="${attr(pr.html_url)}" target="_blank" rel="noopener">PR #${pr.number}</a>. ` +
+      `Bài chỉ lên sóng sau khi PR được merge — Vercel build lại khoảng một phút sau đó.`, true);
     resetForm();
-    // Nạp lại để mảng/chuyên mục vừa tạo xuất hiện ở dropdown, rồi chọn đúng
-    // chỗ vừa đăng để viết bài tiếp không phải chọn lại.
     await loadSections();
     qs("#field-section").value = plan.sectionId;
     renderCategorySelect(plan.categoryId);
   } catch (err) {
     showAlert(qs("#post-error"), err.message);
-    status.textContent = "";
   } finally {
     admin.busy = false;
     button.disabled = false;
-    button.textContent = "Đăng bài";
+    button.textContent = admin.editing ? "Tạo pull request cập nhật" : "Tạo pull request";
   }
 }
 
+/* ------------------------------------------------------------ sửa bài */
+
+async function startEdit(post) {
+  resetForm();
+  switchView("editor");
+
+  const banner = qs("#edit-banner");
+  showAlert(banner, `Đang tải ${post.path}…`);
+
+  try {
+    // Bài chờ duyệt còn nằm trên nhánh PR, chưa có trên nhánh chính.
+    const source = post.pr ? repoAtBranch(post.pr.head.ref) : admin.gh;
+    const raw = await source.readFile(post.path);
+    if (raw === null) throw new Error(`Không đọc được ${post.path} trên nhánh ${source.branch}.`);
+
+    const quizPath = post.path.replace(/\.md$/, ".quiz.json");
+    const quizRaw = await source.readFile(quizPath);
+
+    const { data, body } = parseFrontmatter(raw);
+    admin.editing = { path: post.path, quizPath, hasQuiz: quizRaw !== null };
+
+    qs("#field-section").value = post.section;
+    renderCategorySelect(post.category);
+    qs("#field-slug").value = post.slug;
+    qs("#field-slug").dataset.touched = "1";
+    fillEditor(data, body, { overwrite: true });
+
+    if (quizRaw !== null) {
+      admin.quizFile = { name: quizPath.split("/").pop(), content: quizRaw };
+      const count = (JSON.parse(quizRaw).quizzes || []).length;
+      qs("#file-quiz-name").textContent = `${admin.quizFile.name} — ${count} câu (giữ nguyên nếu không đổi)`;
+      qs("#file-quiz-clear").hidden = false;
+    }
+
+    updatePathPreview();
+    showAlert(banner,
+      `Đang sửa <code>${escapeHtml(post.path)}</code>` +
+      (post.pr ? ` — đọc từ nhánh của PR #${post.pr.number}.` : ".") +
+      ` Lưu lại sẽ mở một pull request mới.`, true);
+    qs("#btn-cancel-edit").hidden = false;
+    qs("#post-submit").textContent = "Tạo pull request cập nhật";
+  } catch (err) {
+    admin.editing = null;
+    showAlert(banner, "");
+    showAlert(qs("#post-error"), err.message);
+  }
+}
+
+/* ------------------------------------------------------------ xoá bài */
+
+async function handleDelete(post) {
+  if (!window.confirm(
+    `Xoá bài này?\n\n${post.path}\n\n` +
+    `Thao tác sẽ mở một pull request xoá file. Bài chỉ thật sự biến mất khỏi ` +
+    `site sau khi bạn merge PR đó.`)) return;
+
+  showAlert(qs("#list-error"), "");
+  const row = qs(`[data-path="${CSS.escape(post.path)}"]`);
+  const button = row && qs("[data-delete]", row);
+  if (button) { button.disabled = true; button.textContent = "Đang mở PR…"; }
+
+  try {
+    const files = [{ path: post.path, remove: true }];
+    // Quiz đi kèm bài thì xoá luôn, đừng để lại file mồ côi.
+    const quizPath = post.path.replace(/\.md$/, ".quiz.json");
+    if (await admin.gh.readFile(quizPath).catch(() => null) !== null) {
+      files.push({ path: quizPath, remove: true });
+    }
+
+    const pr = await openPullRequest({
+      files,
+      message: `content: xoa bai "${post.title}"`,
+      action: "xoa",
+      slug: post.slug,
+      title: post.title,
+    });
+    showToast(`Đã mở PR #${pr.number} để xoá bài.`);
+    window.open(pr.html_url, "_blank", "noopener");
+    await loadPosts();
+  } catch (err) {
+    showAlert(qs("#list-error"), err.message);
+    if (button) { button.disabled = false; button.textContent = "Xoá"; }
+  }
+}
+
+/* ------------------------------------------------------------- form */
+
 function resetForm() {
-  ["#field-slug", "#field-title", "#field-description", "#field-icon",
+  ["#field-slug", "#field-title", "#field-description",
    "#field-order", "#field-phase", "#field-tags", "#field-body"].forEach((id) => { qs(id).value = ""; });
-  ["#new-section-id", "#new-section-name", "#new-section-icon", "#new-section-tagline",
-   "#new-category-id", "#new-category-name", "#new-category-icon"].forEach((id) => { qs(id).value = ""; });
+  ["#new-section-id", "#new-section-name", "#new-section-tagline",
+   "#new-category-id", "#new-category-name"].forEach((id) => { qs(id).value = ""; });
+  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
+
   admin.quizFile = null;
+  admin.editing = null;
   qs("#file-quiz").value = "";
   qs("#file-quiz-name").textContent = "Chưa chọn file";
   qs("#file-quiz-clear").hidden = true;
   qs("#file-markdown").value = "";
   qs("#file-markdown-name").textContent = "Hoặc gõ thẳng vào ô bên dưới";
-  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
-  qsa("[data-icon-picker]").forEach((p) => { qs(p.dataset.iconTarget).dataset.touched = ""; });
-  renderAllIconPickers();
+  qs("#edit-banner").hidden = true;
+  qs("#btn-cancel-edit").hidden = true;
+  qs("#post-submit").textContent = "Tạo pull request";
   updatePathPreview();
 }
 
@@ -528,57 +652,59 @@ function resetForm() {
 
 function bindEvents() {
   qs("#login-form").addEventListener("submit", handleLogin);
-  qs("#post-form").addEventListener("submit", handlePost);
+  qs("#post-form").addEventListener("submit", handleSubmit);
 
-  qs("#btn-logout").addEventListener("click", () => {
-    clearSession();
-    window.location.reload();
-  });
+  qs("#btn-logout").addEventListener("click", () => { clearSession(); window.location.reload(); });
 
-  qs("#field-section").addEventListener("change", renderCategorySelect);
+  qsa("[data-view]").forEach((btn) => btn.addEventListener("click", () => {
+    // Bấm "Soạn bài mới" khi đang sửa dở thì phải về trạng thái tạo mới.
+    if (btn.dataset.view === "editor" && admin.editing) resetForm();
+    switchView(btn.dataset.view);
+  }));
+
+  qs("#btn-cancel-edit").addEventListener("click", () => { resetForm(); switchView("list"); });
+  qs("#btn-refresh").addEventListener("click", loadPosts);
+  qs("#list-search").addEventListener("input", renderPosts);
+
+  const rowAction = (selector, handler) =>
+    delegate(qs("#post-list"), "click", selector, (_, btn) => {
+      const post = admin.posts.find((p) => p.path === btn.closest("[data-path]").dataset.path);
+      if (post) handler(post);
+    });
+  rowAction("[data-edit]", startEdit);
+  rowAction("[data-delete]", handleDelete);
+
+  qs("#field-section").addEventListener("change", () => renderCategorySelect());
   qs("#field-category").addEventListener("change", () => {
     qs("#new-category-form").hidden = qs("#field-category").value !== NEW;
     updatePathPreview();
   });
 
-  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) =>
-    qs(id).addEventListener("input", updatePathPreview));
-
-  // Tên thư mục gõ tự do nhưng chuẩn hoá khi rời ô, để không commit tên sai.
-  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) =>
+  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => {
+    qs(id).addEventListener("input", (event) => {
+      event.target.dataset.touched = event.target.value ? "1" : "";
+      updatePathPreview();
+    });
+    // Chuẩn hoá khi rời ô, để không commit ra tên thư mục sai quy ước.
     qs(id).addEventListener("blur", (event) => {
       event.target.value = toSlug(event.target.value);
       updatePathPreview();
-    }));
-
-  // Tên thư mục bám theo tên hiển thị cho tới khi người dùng tự sửa nó —
-  // cùng quy tắc với ô tên file bám theo tiêu đề.
-  const bindAutoSlug = (nameId, idField, iconField, pickerKind) => {
-    qs(nameId).addEventListener("input", (event) => {
-      if (!qs(idField).dataset.touched) {
-        qs(idField).value = toSlug(event.target.value);
-        updatePathPreview();
-      }
-      suggestIconFrom(event.target.value, iconField, pickerKind);
     });
-  };
-  bindAutoSlug("#new-section-name", "#new-section-id", "#new-section-icon", "section");
-  bindAutoSlug("#new-category-name", "#new-category-id", "#new-category-icon", "category");
+  });
 
-  ["#new-section-id", "#new-category-id"].forEach((id) =>
-    qs(id).addEventListener("input", (event) => {
-      event.target.dataset.touched = event.target.value ? "1" : "";
-    }));
+  // Tên thư mục bám theo tên hiển thị cho tới khi người dùng tự sửa nó.
+  const bindAutoSlug = (nameId, idField) => qs(nameId).addEventListener("input", (event) => {
+    if (qs(idField).dataset.touched) return;
+    qs(idField).value = toSlug(event.target.value);
+    updatePathPreview();
+  });
+  bindAutoSlug("#new-section-name", "#new-section-id");
+  bindAutoSlug("#new-category-name", "#new-category-id");
 
   qs("#field-title").addEventListener("input", (event) => {
-    // Slug bám theo tiêu đề cho tới khi người dùng tự sửa slug.
-    if (!qs("#field-slug").dataset.touched) {
-      qs("#field-slug").value = toSlug(event.target.value);
-      updatePathPreview();
-    }
-  });
-  qs("#field-slug").addEventListener("input", (event) => {
-    event.target.dataset.touched = event.target.value ? "1" : "";
+    if (qs("#field-slug").dataset.touched) return;
+    qs("#field-slug").value = toSlug(event.target.value);
+    updatePathPreview();
   });
 
   qs("#file-markdown").addEventListener("change", (event) => {
@@ -595,8 +721,6 @@ function bindEvents() {
     qs("#file-quiz-name").textContent = "Chưa chọn file";
     qs("#file-quiz-clear").hidden = true;
   });
-
-  bindIconPickers();
 
   qsa("[data-editor-tab]").forEach((btn) => btn.addEventListener("click", () => {
     const isPreview = btn.dataset.editorTab === "preview";
@@ -634,7 +758,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const gh = new GitHubRepo(session);
     const user = await gh.verify();
     admin.gh = gh;
-    await enterEditor(session.email, user.login);
+    await enterApp(session.email, user.login);
   } catch (err) {
     clearSession();
     qs("#admin-login").hidden = false;

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Soạn bài | Blog kỹ thuật</title>
+  <title>Quản lý bài viết | Blog kỹ thuật</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,10 +20,15 @@
       <a href="index.html" class="brand">
         <div class="brand-logo">✍️</div>
         <div class="brand-text">
-          <h1>Soạn bài</h1>
-          <p>Đăng bài thẳng vào kho nội dung</p>
+          <h1>Quản lý bài viết</h1>
         </div>
       </a>
+
+      <div class="nav-tabs-group" id="admin-tabs" hidden>
+        <button class="nav-tab-btn active" data-view="list" type="button">Danh sách</button>
+        <button class="nav-tab-btn" data-view="editor" type="button">Soạn bài mới</button>
+      </div>
+
       <div class="nav-actions">
         <span class="admin-whoami" id="admin-whoami" hidden></span>
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
@@ -51,12 +56,13 @@
         <input type="password" id="login-token" autocomplete="current-password" required
                placeholder="github_pat_…">
         <span class="admin-hint">
-          Tạo ở <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens</a>:
-          chọn đúng kho này, mục <b>Repository permissions → Contents</b> đặt <b>Read and write</b>.
+          Tạo ở <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens</a>,
+          chọn đúng kho này và bật <b>hai</b> quyền:
+          <b>Contents: Read and write</b> và <b>Pull requests: Read and write</b>.
         </span>
       </label>
 
-      <details class="admin-repo-config" id="repo-config">
+      <details class="admin-repo-config">
         <summary>Cấu hình kho</summary>
         <div class="admin-repo-grid">
           <label class="admin-field">
@@ -68,7 +74,7 @@
             <input type="text" id="login-repo" required>
           </label>
           <label class="admin-field">
-            <span class="admin-label">Nhánh</span>
+            <span class="admin-label">Nhánh chính</span>
             <input type="text" id="login-branch" required>
           </label>
         </div>
@@ -86,9 +92,24 @@
     </form>
   </main>
 
-  <!-- SOẠN BÀI -->
+  <!-- DANH SÁCH BÀI VIẾT -->
+  <main class="admin-editor" id="admin-list" hidden>
+    <div class="admin-list-bar">
+      <div class="admin-field admin-list-search">
+        <input type="search" id="list-search" placeholder="Lọc theo tiêu đề hoặc đường dẫn…">
+      </div>
+      <button class="admin-btn-secondary" id="btn-refresh" type="button">↻ Tải lại</button>
+    </div>
+
+    <div class="admin-alert admin-alert-error" id="list-error" hidden></div>
+    <div class="admin-list" id="post-list"></div>
+  </main>
+
+  <!-- SOẠN / SỬA BÀI -->
   <main class="admin-editor" id="admin-editor" hidden>
     <form class="admin-form" id="post-form">
+
+      <div class="admin-alert admin-alert-info" id="edit-banner" hidden></div>
 
       <section class="admin-card">
         <h2 class="admin-card-title">Nơi lưu bài</h2>
@@ -104,7 +125,6 @@
           </label>
         </div>
 
-        <!-- Tạo mảng mới -->
         <fieldset class="admin-subform" id="new-section-form" hidden>
           <legend>Mảng mới</legend>
           <div class="admin-row">
@@ -131,18 +151,12 @@
               </select>
             </label>
           </div>
-          <div class="admin-field">
-            <label class="admin-label" for="new-section-icon">Icon</label>
-            <input type="text" id="new-section-icon" placeholder="🐍" maxlength="4">
-            <div class="icon-picker" data-icon-picker="section" data-icon-target="#new-section-icon"></div>
-          </div>
           <label class="admin-field">
             <span class="admin-label">Mô tả ngắn</span>
             <input type="text" id="new-section-tagline" placeholder="Ghi chép về Python từ cơ bản tới nâng cao.">
           </label>
         </fieldset>
 
-        <!-- Tạo chuyên mục mới -->
         <fieldset class="admin-subform" id="new-category-form" hidden>
           <legend>Chuyên mục mới</legend>
           <div class="admin-row">
@@ -155,18 +169,11 @@
               <input type="text" id="new-category-name" placeholder="Cơ bản">
             </label>
           </div>
-          <div class="admin-field">
-            <label class="admin-label" for="new-category-icon">Icon</label>
-            <input type="text" id="new-category-icon" placeholder="🧱" maxlength="4">
-            <div class="icon-picker" data-icon-picker="category" data-icon-target="#new-category-icon"></div>
-          </div>
         </fieldset>
 
         <label class="admin-field">
           <span class="admin-label">Tên file <b class="req">*</b></span>
-          <div class="admin-path-preview">
-            <code id="path-preview">content/…</code>
-          </div>
+          <div class="admin-path-preview"><code id="path-preview">content/…</code></div>
           <input type="text" id="field-slug" required placeholder="bai-viet-dau-tien">
           <span class="admin-hint">Tự sinh từ tiêu đề, sửa lại được. Đây cũng là địa chỉ bài trên web.</span>
         </label>
@@ -206,12 +213,6 @@
                     placeholder="Thiếu thì lấy đoạn văn xuôi đầu tiên"></textarea>
         </label>
 
-        <div class="admin-field">
-          <label class="admin-label" for="field-icon">Icon</label>
-          <input type="text" id="field-icon" maxlength="4" placeholder="📄">
-          <div class="icon-picker" data-icon-picker="doc" data-icon-target="#field-icon"></div>
-        </div>
-
         <div class="admin-row">
           <label class="admin-field admin-field-sm">
             <span class="admin-label">Thứ tự</span>
@@ -244,7 +245,8 @@
       <div class="admin-alert admin-alert-ok" id="post-success" hidden></div>
 
       <div class="admin-actions">
-        <button class="admin-btn-primary" id="post-submit" type="submit">Đăng bài</button>
+        <button class="admin-btn-primary" id="post-submit" type="submit">Tạo pull request</button>
+        <button class="admin-btn-link" id="btn-cancel-edit" type="button" hidden>Huỷ, quay lại danh sách</button>
         <span class="admin-hint" id="post-status"></span>
       </div>
     </form>
@@ -252,6 +254,7 @@
 
 </div>
 
+<script src="generated/catalog.js"></script>
 <script src="assets/js/dom.js"></script>
 <script src="assets/js/state.js"></script>
 <script src="assets/js/frontmatter.js"></script>

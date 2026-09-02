@@ -16,7 +16,6 @@ Frontmatter — mọi trường đều tuỳ chọn, thiếu thì build tự suy
 ---
 title: "Phase 1: Nền tảng Java"       # thiếu → lấy heading # đầu tiên
 description: "Kiểu dữ liệu, toán tử"  # thiếu → lấy đoạn văn xuôi đầu tiên
-icon: "🧱"
 order: 2                               # thứ tự trong chuyên mục
 phase: "Phase 1"                       # không hiện ra, chỉ giúp tìm kiếm
 tags: [Java, OOP]                      # không hiện ra, chỉ giúp tìm kiếm
@@ -33,13 +32,12 @@ mkdir -p content/python/co-ban
 cat > content/python/_section.json <<'JSON'
 {
   "name": "Python",
-  "icon": "🐍",
   "color": "#3776ab",
   "kind": "language",
   "order": 2,
   "tagline": "Ghi chép về Python từ cơ bản tới nâng cao.",
   "categories": [
-    { "id": "co-ban", "name": "Cơ bản", "icon": "🧱", "order": 1 }
+    { "id": "co-ban", "name": "Cơ bản", "order": 1 }
   ]
 }
 JSON
@@ -86,22 +84,59 @@ npm run serve   # http://localhost:8080
 không cần chạy build trước. Vercel tự build lại từ `content/` nên không bắt buộc, nhưng
 nên chạy `npm run build` và commit lại `generated/` mỗi khi sửa nội dung cho khỏi lệch.
 
-## Đăng bài qua trang /admin
+## Trang /admin — quản lý bài viết
 
 Mở `https://<tên-miền>/admin` (ở máy: `npm run serve` rồi vào `localhost:8080/admin.html`).
 
-Trang này soạn một bài rồi **commit thẳng vào kho GitHub**. Vercel thấy commit mới
-là tự build và deploy — khoảng một phút sau bài lên sóng. Không cần backend.
+Trang này có hai màn hình: **Danh sách** (xem, sửa, xoá bài) và **Soạn bài mới**.
+
+### Mọi thay đổi đều đi qua pull request
+
+Tạo, sửa hay xoá — trang admin đều làm cùng một việc:
+
+1. Tạo nhánh mới từ nhánh chính, tên dạng `post/<hành-động>-<slug>-<thời-điểm>`
+2. Commit toàn bộ thay đổi vào nhánh đó (một commit duy nhất)
+3. Mở pull request vào nhánh chính
+
+Bài **chỉ lên sóng khi bạn merge PR** — lúc đó Vercel mới build lại từ `content/`.
+Nếu commit hoặc mở PR hỏng giữa chừng, nhánh vừa tạo được xoá đi, không để lại rác.
+
+### Trạng thái bài không lưu ở đâu cả
+
+Nó suy ra từ Git, nên không thể lệch với thực tế:
+
+| Trạng thái | Nghĩa là |
+|---|---|
+| **Đang đăng** | File có trên nhánh chính, không PR nào đang đụng tới |
+| **Chờ duyệt bài mới** | File chưa có trên nhánh chính, đang nằm trong một PR mở |
+| **Chờ duyệt thay đổi** | File có trên nhánh chính và một PR mở đang sửa nó |
+| **Chờ duyệt xoá** | Một PR mở đang xoá file này (nút Xoá tự ẩn để khỏi mở PR trùng) |
+
+Merge PR → lần tải danh sách sau, bài chuyển sang **Đang đăng**. Không có nút nào phải bấm.
+
+### Sửa và xoá
+
+- **Sửa**: nạp nội dung và quiz của bài vào form. Bài đang chờ duyệt thì đọc từ chính
+  nhánh PR của nó. Đổi tên file hoặc chuyển chuyên mục cũng được — đường dẫn cũ được
+  xoá trong cùng commit nên không sinh ra bài trùng.
+- **Xoá**: mở PR xoá file `.md` và file `.quiz.json` đi kèm (nếu có).
 
 ### Lần đầu: tạo token
 
 1. Vào [Settings → Developer settings → Fine-grained tokens](https://github.com/settings/personal-access-tokens/new)
 2. **Repository access** → Only select repositories → chọn `blog-tech`
-3. **Repository permissions → Contents** → `Read and write`
+3. **Repository permissions**, bật **hai** quyền:
+   - **Contents** → `Read and write`
+   - **Pull requests** → `Read and write`
 4. Tạo token, copy, dán vào ô ở trang `/admin`
 
 Token lưu trong `localStorage` của chính trình duyệt đó và chỉ được gửi tới
 `api.github.com`. Thu hồi bất cứ lúc nào ở trang Settings của GitHub.
+
+### Nên bật xoá nhánh tự động
+
+Mỗi PR để lại một nhánh `post/…`. Vào **Settings → General → Pull Requests** của kho
+và bật **Automatically delete head branches** để GitHub tự dọn sau khi merge.
 
 ### Đăng nhập báo lỗi thì làm gì
 
@@ -121,6 +156,8 @@ read -rs "TOKEN?Dan token roi Enter: " && curl -s -w '\nHTTP %{http_code}\n' -H 
 | `HTTP 401` | Token sai hoặc hết hạn |
 | `HTTP 403` | Đọc câu `message` — thường là thiếu quyền hoặc token classic thiếu scope `repo` |
 
+Lỗi lúc mở PR mà báo thiếu quyền thì gần như chắc là quên bật **Pull requests: Read and write**.
+
 ### Mô hình bảo mật — đọc kỹ chỗ này
 
 Ô email chỉ đối chiếu với một danh sách viết cứng trong `assets/js/admin.js`.
@@ -134,25 +171,6 @@ chối, kể cả khi đã vào được màn hình soạn bài. Trang admin cũ
 
 Hệ quả cần biết: **ai cầm token của bạn thì ghi được vào kho.** Đừng đăng nhập
 trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên GitHub.
-
-### Trang admin làm được gì
-
-- Upload file `.md` (frontmatter có sẵn được đọc và điền vào form) hoặc gõ trực tiếp
-- Xem trước nội dung đã render, đúng bộ dựng markdown của blog
-- Chọn **mảng** và **chuyên mục** từ dropdown — đọc trực tiếp cây `content/` trên
-  GitHub nên luôn đúng thực tế, kể cả thư mục vừa tạo mà chưa build
-- Tạo **mảng mới** (tự sinh `_section.json`) hoặc **chuyên mục mới** (bổ sung vào
-  `_section.json` sẵn có, giữ nguyên các mục cũ)
-- Tên file tự sinh từ tiêu đề, bỏ dấu tiếng Việt (`Đệ quy nâng cao` → `de-quy-nang-cao`);
-  tên thư mục cũng bám theo tên hiển thị cho tới khi bạn tự sửa nó
-- Bảng gợi ý icon cho mảng (tách nhóm **Ngôn ngữ** / **Chủ đề**), cho chuyên mục và
-  cho bài viết; gõ tên quen thuộc như `Python`, `Rust`, `Docker` là đoán icon luôn.
-  Sửa danh sách ở `ICON_SETS` và `NAME_TO_ICON` trong [assets/js/admin.js](assets/js/admin.js)
-- Đính kèm file `.quiz.json`, kiểm tra cú pháp trước khi gửi
-- Cảnh báo và hỏi lại trước khi ghi đè bài đã có
-
-Mọi file của một lần đăng nằm trong **một commit duy nhất** — lịch sử sạch và
-Vercel chỉ build một lần.
 
 ### Đổi danh sách email được phép
 
@@ -212,7 +230,7 @@ assets/css/blog.css          trang chủ, breadcrumb, điều hướng bài
 assets/js/                   dom · state · catalog · frontmatter · markdown · quiz
                              landing · hub · reader · github · admin
 404.html                     trang không tìm thấy (Vercel dùng tự động)
-admin.html                   soạn bài, commit thẳng lên GitHub (route /admin)
+admin.html                   quản lý bài viết qua pull request (route /admin)
 index.html                   trang chủ — chọn mảng nội dung
 hub.html?s=<mảng>            danh mục bài viết của một mảng
 reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
@@ -223,7 +241,8 @@ Bài quiz đang làm dở và lựa chọn giao diện sáng/tối lưu ở `loc
 ## Phạm vi giao diện
 
 Giao diện cố ý chỉ phục vụ hai việc: **đọc bài** và **làm quiz**. Không có thống kê,
-không theo dõi tiến độ đọc, không đánh dấu yêu thích, không sắp xếp hay lọc nhiều tầng.
+không theo dõi tiến độ đọc, không đánh dấu yêu thích, không icon, không sắp xếp hay
+lọc nhiều tầng.
 Điều hướng chỉ gồm: chọn mảng → chọn chuyên mục → chọn bài, cộng một ô tìm kiếm.
 
 ### Về việc mở bằng `file://`
