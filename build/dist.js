@@ -14,6 +14,7 @@ const ENTRIES = [
   "index.html",
   "hub.html",
   "reader.html",
+  "admin.html",
   "404.html",
   "assets",
   "generated",

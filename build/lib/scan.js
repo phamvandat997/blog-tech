@@ -1,7 +1,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const { parseFrontmatter } = require("./frontmatter");
+const { parseFrontmatter } = require("../../assets/js/frontmatter");
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

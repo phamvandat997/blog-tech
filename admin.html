@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Soạn bài | Blog kỹ thuật</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/blog.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+<div class="app-container">
+
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-logo">✍️</div>
+        <div class="brand-text">
+          <h1>Soạn bài</h1>
+          <p>Đăng bài thẳng vào kho nội dung</p>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <span class="admin-whoami" id="admin-whoami" hidden></span>
+        <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
+        <button class="btn-icon" id="btn-logout" type="button" title="Đăng xuất" hidden>🚪</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ĐĂNG NHẬP -->
+  <main class="admin-login" id="admin-login" hidden>
+    <form class="admin-login-card" id="login-form">
+      <h2>Đăng nhập</h2>
+      <p class="admin-login-lead">
+        Quyền ghi do GitHub quyết định: token phải có quyền đẩy vào kho này thì mới đăng bài được.
+      </p>
+
+      <label class="admin-field">
+        <span class="admin-label">Email</span>
+        <input type="email" id="login-email" autocomplete="username" required
+               placeholder="ban@example.com">
+      </label>
+
+      <label class="admin-field">
+        <span class="admin-label">GitHub personal access token</span>
+        <input type="password" id="login-token" autocomplete="current-password" required
+               placeholder="github_pat_…">
+        <span class="admin-hint">
+          Tạo ở <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Developer settings → Fine-grained tokens</a>:
+          chọn đúng kho này, mục <b>Repository permissions → Contents</b> đặt <b>Read and write</b>.
+        </span>
+      </label>
+
+      <details class="admin-repo-config" id="repo-config">
+        <summary>Cấu hình kho</summary>
+        <div class="admin-repo-grid">
+          <label class="admin-field">
+            <span class="admin-label">Chủ kho</span>
+            <input type="text" id="login-owner" required>
+          </label>
+          <label class="admin-field">
+            <span class="admin-label">Tên kho</span>
+            <input type="text" id="login-repo" required>
+          </label>
+          <label class="admin-field">
+            <span class="admin-label">Nhánh</span>
+            <input type="text" id="login-branch" required>
+          </label>
+        </div>
+      </details>
+
+      <div class="admin-alert admin-alert-error" id="login-error" hidden></div>
+
+      <button class="admin-btn-primary" id="login-submit" type="submit">Đăng nhập</button>
+
+      <p class="admin-login-note">
+        Token được lưu trong <code>localStorage</code> của chính trình duyệt này và không gửi đi
+        đâu ngoài <code>api.github.com</code>. Dùng máy chung thì nhớ Đăng xuất, hoặc thu hồi
+        token trên GitHub bất cứ lúc nào.
+      </p>
+    </form>
+  </main>
+
+  <!-- SOẠN BÀI -->
+  <main class="admin-editor" id="admin-editor" hidden>
+    <form class="admin-form" id="post-form">
+
+      <section class="admin-card">
+        <h2 class="admin-card-title">Nơi lưu bài</h2>
+
+        <div class="admin-row">
+          <label class="admin-field">
+            <span class="admin-label">Mảng nội dung <b class="req">*</b></span>
+            <select id="field-section" required></select>
+          </label>
+          <label class="admin-field">
+            <span class="admin-label">Chuyên mục <b class="req">*</b></span>
+            <select id="field-category" required></select>
+          </label>
+        </div>
+
+        <!-- Tạo mảng mới -->
+        <fieldset class="admin-subform" id="new-section-form" hidden>
+          <legend>Mảng mới</legend>
+          <div class="admin-row">
+            <label class="admin-field">
+              <span class="admin-label">Tên thư mục <b class="req">*</b></span>
+              <input type="text" id="new-section-id" placeholder="python">
+              <span class="admin-hint">Chữ thường, số và dấu <code>-</code></span>
+            </label>
+            <label class="admin-field">
+              <span class="admin-label">Tên hiển thị <b class="req">*</b></span>
+              <input type="text" id="new-section-name" placeholder="Python">
+            </label>
+          </div>
+          <div class="admin-row">
+            <label class="admin-field admin-field-sm">
+              <span class="admin-label">Icon</span>
+              <input type="text" id="new-section-icon" placeholder="🐍" maxlength="4">
+            </label>
+            <label class="admin-field admin-field-sm">
+              <span class="admin-label">Màu</span>
+              <input type="color" id="new-section-color" value="#4f46e5">
+            </label>
+            <label class="admin-field">
+              <span class="admin-label">Xếp vào khu</span>
+              <select id="new-section-kind">
+                <option value="language">Ngôn ngữ</option>
+                <option value="topic">Chủ đề</option>
+              </select>
+            </label>
+          </div>
+          <label class="admin-field">
+            <span class="admin-label">Mô tả ngắn</span>
+            <input type="text" id="new-section-tagline" placeholder="Ghi chép về Python từ cơ bản tới nâng cao.">
+          </label>
+        </fieldset>
+
+        <!-- Tạo chuyên mục mới -->
+        <fieldset class="admin-subform" id="new-category-form" hidden>
+          <legend>Chuyên mục mới</legend>
+          <div class="admin-row">
+            <label class="admin-field">
+              <span class="admin-label">Tên thư mục <b class="req">*</b></span>
+              <input type="text" id="new-category-id" placeholder="co-ban">
+            </label>
+            <label class="admin-field">
+              <span class="admin-label">Tên hiển thị <b class="req">*</b></span>
+              <input type="text" id="new-category-name" placeholder="Cơ bản">
+            </label>
+            <label class="admin-field admin-field-sm">
+              <span class="admin-label">Icon</span>
+              <input type="text" id="new-category-icon" placeholder="🧱" maxlength="4">
+            </label>
+          </div>
+        </fieldset>
+
+        <label class="admin-field">
+          <span class="admin-label">Tên file <b class="req">*</b></span>
+          <div class="admin-path-preview">
+            <code id="path-preview">content/…</code>
+          </div>
+          <input type="text" id="field-slug" required placeholder="bai-viet-dau-tien">
+          <span class="admin-hint">Tự sinh từ tiêu đề, sửa lại được. Đây cũng là địa chỉ bài trên web.</span>
+        </label>
+      </section>
+
+      <section class="admin-card">
+        <h2 class="admin-card-title">Nội dung</h2>
+
+        <div class="admin-upload">
+          <label class="admin-btn-secondary" for="file-markdown">📄 Chọn file .md</label>
+          <input type="file" id="file-markdown" accept=".md,.markdown,text/markdown" hidden>
+          <span class="admin-hint" id="file-markdown-name">Hoặc gõ thẳng vào ô bên dưới</span>
+        </div>
+
+        <div class="admin-tabs">
+          <button type="button" class="admin-tab active" data-editor-tab="write">Soạn</button>
+          <button type="button" class="admin-tab" data-editor-tab="preview">Xem trước</button>
+        </div>
+
+        <textarea id="field-body" class="admin-textarea" spellcheck="false"
+                  placeholder="# Tiêu đề bài&#10;&#10;Nội dung markdown…"></textarea>
+        <div class="admin-preview markdown-body" id="body-preview" hidden></div>
+      </section>
+
+      <section class="admin-card">
+        <h2 class="admin-card-title">Thông tin bài</h2>
+        <p class="admin-card-note">Bỏ trống cũng được — build sẽ tự suy ra từ nội dung.</p>
+
+        <label class="admin-field">
+          <span class="admin-label">Tiêu đề</span>
+          <input type="text" id="field-title" placeholder="Thiếu thì lấy dòng # đầu tiên">
+        </label>
+
+        <label class="admin-field">
+          <span class="admin-label">Mô tả</span>
+          <textarea id="field-description" rows="2"
+                    placeholder="Thiếu thì lấy đoạn văn xuôi đầu tiên"></textarea>
+        </label>
+
+        <div class="admin-row">
+          <label class="admin-field admin-field-sm">
+            <span class="admin-label">Icon</span>
+            <input type="text" id="field-icon" maxlength="4" placeholder="📄">
+          </label>
+          <label class="admin-field admin-field-sm">
+            <span class="admin-label">Thứ tự</span>
+            <input type="number" id="field-order" min="1" step="1">
+          </label>
+          <label class="admin-field">
+            <span class="admin-label">Phase</span>
+            <input type="text" id="field-phase" placeholder="Phase 1">
+            <span class="admin-hint">Không hiện ra, chỉ giúp tìm kiếm</span>
+          </label>
+          <label class="admin-field">
+            <span class="admin-label">Tags</span>
+            <input type="text" id="field-tags" placeholder="Java, OOP, Stream">
+            <span class="admin-hint">Cách nhau bằng dấu phẩy</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2 class="admin-card-title">Quiz <span class="admin-optional">tuỳ chọn</span></h2>
+        <div class="admin-upload">
+          <label class="admin-btn-secondary" for="file-quiz">🎯 Chọn file .quiz.json</label>
+          <input type="file" id="file-quiz" accept=".json,application/json" hidden>
+          <span class="admin-hint" id="file-quiz-name">Chưa chọn file</span>
+          <button type="button" class="admin-btn-link" id="file-quiz-clear" hidden>Bỏ chọn</button>
+        </div>
+      </section>
+
+      <div class="admin-alert admin-alert-error" id="post-error" hidden></div>
+      <div class="admin-alert admin-alert-ok" id="post-success" hidden></div>
+
+      <div class="admin-actions">
+        <button class="admin-btn-primary" id="post-submit" type="submit">Đăng bài</button>
+        <span class="admin-hint" id="post-status"></span>
+      </div>
+    </form>
+  </main>
+
+</div>
+
+<script src="assets/js/dom.js"></script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/frontmatter.js"></script>
+<script src="assets/js/markdown.js"></script>
+<script src="assets/js/github.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

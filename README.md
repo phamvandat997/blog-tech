@@ -86,6 +86,56 @@ npm run serve   # http://localhost:8080
 không cần chạy build trước. Vercel tự build lại từ `content/` nên không bắt buộc, nhưng
 nên chạy `npm run build` và commit lại `generated/` mỗi khi sửa nội dung cho khỏi lệch.
 
+## Đăng bài qua trang /admin
+
+Mở `https://<tên-miền>/admin` (ở máy: `npm run serve` rồi vào `localhost:8080/admin.html`).
+
+Trang này soạn một bài rồi **commit thẳng vào kho GitHub**. Vercel thấy commit mới
+là tự build và deploy — khoảng một phút sau bài lên sóng. Không cần backend.
+
+### Lần đầu: tạo token
+
+1. Vào [Settings → Developer settings → Fine-grained tokens](https://github.com/settings/personal-access-tokens/new)
+2. **Repository access** → Only select repositories → chọn `blog-tech`
+3. **Repository permissions → Contents** → `Read and write`
+4. Tạo token, copy, dán vào ô ở trang `/admin`
+
+Token lưu trong `localStorage` của chính trình duyệt đó và chỉ được gửi tới
+`api.github.com`. Thu hồi bất cứ lúc nào ở trang Settings của GitHub.
+
+### Mô hình bảo mật — đọc kỹ chỗ này
+
+Ô email chỉ đối chiếu với một danh sách viết cứng trong `assets/js/admin.js`.
+**Đó không phải bảo mật** — ai xem mã nguồn trang cũng đọc được và bỏ qua được.
+Nó chỉ để tránh nhầm lẫn.
+
+Thứ thật sự chặn người lạ là **GitHub**: mọi thao tác ghi đều đi qua GitHub API
+bằng token của người dùng. Không có token đủ quyền đẩy vào kho thì commit bị từ
+chối, kể cả khi đã vào được màn hình soạn bài. Trang admin cũng kiểm tra
+`permissions.push` trước khi cho vào.
+
+Hệ quả cần biết: **ai cầm token của bạn thì ghi được vào kho.** Đừng đăng nhập
+trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên GitHub.
+
+### Trang admin làm được gì
+
+- Upload file `.md` (frontmatter có sẵn được đọc và điền vào form) hoặc gõ trực tiếp
+- Xem trước nội dung đã render, đúng bộ dựng markdown của blog
+- Chọn **mảng** và **chuyên mục** từ dropdown — đọc trực tiếp cây `content/` trên
+  GitHub nên luôn đúng thực tế, kể cả thư mục vừa tạo mà chưa build
+- Tạo **mảng mới** (tự sinh `_section.json`) hoặc **chuyên mục mới** (bổ sung vào
+  `_section.json` sẵn có, giữ nguyên các mục cũ)
+- Tên file tự sinh từ tiêu đề, bỏ dấu tiếng Việt (`Đệ quy nâng cao` → `de-quy-nang-cao`)
+- Đính kèm file `.quiz.json`, kiểm tra cú pháp trước khi gửi
+- Cảnh báo và hỏi lại trước khi ghi đè bài đã có
+
+Mọi file của một lần đăng nằm trong **một commit duy nhất** — lịch sử sạch và
+Vercel chỉ build một lần.
+
+### Đổi danh sách email được phép
+
+Sửa `ALLOWED_EMAILS` ở đầu [assets/js/admin.js](assets/js/admin.js), rồi build và push.
+
 ## Deploy lên Vercel
 
 Repo đã có sẵn `vercel.json`, Vercel tự nhận cấu hình — không phải chỉnh gì trong dashboard.
@@ -119,7 +169,7 @@ npm run dist        # đóng gói vào dist/ đúng như Vercel sẽ làm
 npm run serve:dist  # http://localhost:8080
 ```
 
-`dist/` chỉ chứa `index.html`, `hub.html`, `reader.html`, `404.html`, `assets/`, `generated/`
+`dist/` chỉ chứa `index.html`, `hub.html`, `reader.html`, `admin.html`, `404.html`, `assets/`, `generated/`
 — khoảng 1,05 MB. Nguồn markdown trong `content/`, script trong `build/` và tài liệu
 thiết kế trong `docs/` **không** lên production.
 
@@ -137,8 +187,10 @@ generated/                   sản phẩm build (đừng sửa tay)
   quiz-<mảng>.js             ngân hàng câu hỏi của một mảng
 assets/css/base.css          bảng màu, navbar, thẻ bài, quiz, markdown
 assets/css/blog.css          trang chủ, breadcrumb, điều hướng bài
-assets/js/                   dom · state · catalog · markdown · quiz · landing · hub · reader
+assets/js/                   dom · state · catalog · frontmatter · markdown · quiz
+                             landing · hub · reader · github · admin
 404.html                     trang không tìm thấy (Vercel dùng tự động)
+admin.html                   soạn bài, commit thẳng lên GitHub (route /admin)
 index.html                   trang chủ — chọn mảng nội dung
 hub.html?s=<mảng>            danh mục bài viết của một mảng
 reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
