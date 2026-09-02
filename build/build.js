@@ -53,7 +53,11 @@ function main() {
   for (const section of sections) {
     const bank = {};
     docs.filter((d) => d.section === section.id && d._quiz)
-        .forEach((d) => { bank[d.id] = { title: d._quiz.title || d.title, quizzes: d._quiz.quizzes || [] }; });
+        .forEach((d) => {
+          // Bỏ trường "file" cũ: khoá câu hỏi giờ suy ra từ id bài + số câu.
+          const quizzes = (d._quiz.quizzes || []).map(({ file, ...q }) => q);
+          bank[d.id] = { docId: d.id, title: d._quiz.title || d.title, quizzes };
+        });
     writeFile(`quiz-${section.id}.js`,
       `window.__quizLoaded && window.__quizLoaded(${JSON.stringify(section.id)}, ${JSON.stringify(bank)});\n`);
   }

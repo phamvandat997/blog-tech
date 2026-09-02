@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh mục bài viết | Blog kỹ thuật</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/blog.css">
+</head>
+<body>
+<div class="app-container" id="hub-root">
+
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-logo" id="hub-icon">📘</div>
+        <div class="brand-text">
+          <h1 id="hub-title">Đang tải…</h1>
+          <p id="hub-tagline"></p>
+        </div>
+      </a>
+
+      <div class="nav-tabs-group">
+        <button class="nav-tab-btn active" data-tab="docs" type="button"><span>📑</span> Bài viết</button>
+        <button class="nav-tab-btn" data-tab="phases" type="button"><span>🧭</span> Lộ trình</button>
+        <button class="nav-tab-btn quiz-tab" data-tab="quizzes" type="button"><span>🎯</span> Luyện quiz</button>
+      </div>
+
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" class="search-input"
+               placeholder="Tìm theo tên bài, tag, phase…" autocomplete="off">
+        <button id="search-clear-btn" class="search-clear" type="button" title="Xoá tìm kiếm" hidden>✕</button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
+        <button class="btn-icon" id="btn-reset-filters" type="button" title="Đặt lại bộ lọc">🔄</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="stats-banner">
+    <div class="stats-grid" id="hub-stats"></div>
+  </section>
+
+  <main class="main-wrapper">
+    <aside class="sidebar">
+      <div class="filter-section">
+        <div class="filter-title"><span>Chuyên mục</span></div>
+        <div class="category-list" id="category-container"></div>
+      </div>
+
+      <div class="filter-section" id="phase-filter-block">
+        <div class="filter-title"><span>Lọc theo phase</span></div>
+        <div class="phase-pills" id="phase-pills-container"></div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title"><span>Trạng thái đọc</span></div>
+        <label class="checkbox-filter"><input type="checkbox" id="filter-favorite"><span>⭐ Đã đánh dấu</span></label>
+        <label class="checkbox-filter"><input type="checkbox" id="filter-completed"><span>✅ Đã đọc xong</span></label>
+        <label class="checkbox-filter"><input type="checkbox" id="filter-uncompleted"><span>⏳ Chưa đọc</span></label>
+      </div>
+    </aside>
+
+    <section class="content-area">
+      <div class="toolbar" id="main-toolbar">
+        <div class="results-count" id="results-counter"></div>
+        <div class="toolbar-controls">
+          <div class="select-wrapper">
+            <select id="sort-select" title="Sắp xếp danh sách">
+              <option value="default">Sắp xếp: theo lộ trình</option>
+              <option value="title-asc">Tên bài (A → Z)</option>
+              <option value="title-desc">Tên bài (Z → A)</option>
+              <option value="lines-desc">Dài nhất trước</option>
+              <option value="lines-asc">Ngắn nhất trước</option>
+              <option value="questions-desc">Nhiều quiz nhất</option>
+              <option value="updated-desc">Cập nhật gần nhất</option>
+            </select>
+          </div>
+          <div class="view-modes">
+            <button class="view-btn" data-view-mode="grid" type="button" title="Chế độ lưới"><span>🔲</span> Lưới</button>
+            <button class="view-btn" data-view-mode="list" type="button" title="Chế độ danh sách"><span>📋</span> Danh sách</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-container grid-view" id="docs-container"></div>
+      <div class="phase-explorer-container" id="phases-view" hidden></div>
+      <div class="quiz-player-container" id="quiz-view" hidden></div>
+    </section>
+  </main>
+
+</div>
+
+<button class="btn-back-to-top" id="btn-back-to-top" title="Lên đầu trang" aria-label="Lên đầu trang">▲</button>
+
+<script src="generated/catalog.js"></script>
+<script src="assets/js/dom.js"></script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/markdown.js"></script>
+<script src="assets/js/quiz.js"></script>
+<script src="assets/js/hub.js"></script>
+</body>
+</html>

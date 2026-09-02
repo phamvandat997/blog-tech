@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog kỹ thuật — Chia sẻ kiến thức lập trình</title>
+  <title>Đang tải bài viết… | Blog kỹ thuật</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/css/blog.css">
 </head>
 <body>
-<div class="app-container">
+<div class="app-container" id="reader-root">
 
   <header class="navbar">
     <div class="navbar-inner">
@@ -19,33 +19,36 @@
         <div class="brand-logo">📘</div>
         <div class="brand-text">
           <h1>Blog kỹ thuật</h1>
-          <p>Ghi chép &amp; chia sẻ kiến thức lập trình</p>
+          <p>Chế độ đọc</p>
         </div>
       </a>
-
-      <div class="search-wrapper is-global">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="global-search" class="search-input"
-               placeholder="Tìm bài viết trong mọi mảng nội dung…" autocomplete="off">
-        <div class="search-results" id="global-search-results"></div>
-      </div>
-
       <div class="nav-actions">
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
+        <button class="btn-icon" onclick="window.print()" type="button" title="In / lưu PDF">🖨️</button>
+        <a class="viewer-nav-back" id="reader-back" href="index.html">⬅ Về danh mục</a>
       </div>
     </div>
   </header>
 
-  <section class="stats-banner">
-    <div class="stats-grid" id="landing-stats"></div>
-  </section>
+  <main class="reader-layout">
+    <nav class="reader-breadcrumb" id="reader-breadcrumb"></nav>
 
-  <main class="landing-wrapper">
-    <div class="landing-intro">
-      <h2>Chọn mảng nội dung</h2>
-      <p>Mỗi mảng là một thư mục trong <code>content/</code>. Thêm thư mục mới là có ngay một thẻ ở đây.</p>
+    <div class="reader-header-card">
+      <div class="reader-top-bar">
+        <div class="drawer-meta-badges" id="reader-badges"></div>
+        <div class="reader-actions">
+          <button class="btn-icon btn-star" id="reader-star-btn" type="button" title="Yêu thích">☆</button>
+          <button class="btn-icon btn-check" id="reader-check-btn" type="button" title="Đã đọc xong">○</button>
+        </div>
+      </div>
+      <h1 class="reader-title" id="reader-title">Đang tải…</h1>
     </div>
-    <div id="sections-root"></div>
+
+    <article class="reader-content-card markdown-body" id="reader-body"></article>
+
+    <div id="reader-quiz"></div>
+
+    <nav class="reader-neighbours" id="reader-neighbours"></nav>
   </main>
 
 </div>
@@ -56,6 +59,8 @@
 <script src="assets/js/dom.js"></script>
 <script src="assets/js/state.js"></script>
 <script src="assets/js/catalog.js"></script>
-<script src="assets/js/landing.js"></script>
+<script src="assets/js/markdown.js"></script>
+<script src="assets/js/quiz.js"></script>
+<script src="assets/js/reader.js"></script>
 </body>
 </html>
