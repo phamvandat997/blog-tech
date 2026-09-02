@@ -1,8 +1,7 @@
 ---
 title: "🗺️ Lộ Trình Nghiên Cứu DSA — Phỏng Vấn FAANG/Big Tech"
-description: "Ngôn ngữ: Java"
+description: "Lộ trình luyện thuật toán bằng Java cho vòng phỏng vấn kỹ thuật Big Tech, ước tính 3–6 tháng với 2–3 giờ mỗi ngày."
 icon: "⚡"
-difficulty: "Advanced"
 order: 1
 phase: "DSA"
 tags: ["DSA", "Algorithms", "LeetCode", "FAANG"]

@@ -1,8 +1,13 @@
 /* Lớp bổ sung cho cấu trúc blog nhiều mảng nội dung.
-   base.css giữ bảng màu, navbar, thẻ bài, quiz, markdown. File này thêm:
-   trang chủ chọn mảng, breadcrumb, điều hướng bài trước/sau, toast. */
+   base.css giữ bảng màu, navbar, quiz và markdown. File này định hình
+   giao diện tối giản: chọn mảng → chọn bài → đọc → làm quiz. */
 
 :root { --section-color: var(--primary); }
+
+/* base.css đặt display cho .sidebar, .quiz-player-container, .nav-tab-btn…
+   nên quy tắc display:none của thuộc tính `hidden` (nằm ở sheet trình duyệt)
+   bị đè. Không có dòng này thì el.hidden = true chẳng giấu được gì. */
+[hidden] { display: none !important; }
 
 /* --------------------------------------------------------------- trang chủ */
 
@@ -10,32 +15,19 @@
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 1.25rem 5rem;
+  padding: 2.5rem 1.25rem 5rem;
   box-sizing: border-box;
 }
 
-.landing-intro { margin: 0.5rem 0 1.75rem; }
-.landing-intro h2 { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 0 0 0.35rem; }
-.landing-intro p { color: var(--text-muted); font-size: 0.92rem; margin: 0; }
-.landing-intro code {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.85em;
-  background: var(--bg-surface-subtle);
-  padding: 0.15em 0.4em;
-  border-radius: 5px;
-}
-
 .section-group { margin-bottom: 2.75rem; }
-.section-group-head { margin-bottom: 1rem; }
-.section-group-head h2 {
-  font-size: 0.8rem;
+.section-group-head {
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin: 0 0 0.2rem;
+  margin: 0 0 1rem;
 }
-.section-group-head p { font-size: 0.85rem; color: var(--text-muted); margin: 0; opacity: 0.8; }
 
 .section-cards {
   display: grid;
@@ -81,22 +73,11 @@
   flex: 1;
 }
 .section-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.8rem;
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-muted);
-  margin-top: 0.35rem;
+  margin-top: 0.5rem;
 }
-.section-card-soon {
-  font-style: italic;
-  color: var(--section-color);
-  font-weight: 700;
-}
-.section-card-progress { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
-.section-card-progress .progress-bar-container { flex: 1; margin: 0; }
-.section-card-pct { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
 
 /* ------------------------------------------------- tìm kiếm toàn cục */
 
@@ -140,13 +121,22 @@
 }
 .search-hit-path { font-size: 0.74rem; color: var(--text-muted); }
 
-/* ------------------------------------------------------------ thống kê */
+/* --------------------------------------------------------------- hub */
 
-.stat-value-row { display: flex; justify-content: space-between; align-items: baseline; }
-.stat-pct { font-size: 0.8rem; font-weight: 700; color: var(--accent-emerald); }
+.main-wrapper.no-sidebar { grid-template-columns: minmax(0, 1fr); }
 
-/* --------------------------------------------------------- sidebar hub */
-
+.category-list {
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
 .category-item { display: flex; align-items: center; gap: 0.55rem; width: 100%; }
 .category-icon { flex-shrink: 0; }
 .category-name { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -161,88 +151,48 @@
 }
 .category-item.active .category-count { background: rgba(255, 255, 255, 0.22); color: inherit; }
 
-/* ------------------------------------------------------------ thẻ bài */
+.docs-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
 
-.doc-card-link {
+/* Thẻ bài: icon, tiêu đề, mô tả — và số câu quiz nếu bài có. */
+.doc-card {
   display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.85rem;
   text-decoration: none;
-  color: inherit;
-  flex: 1;
-  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
-.doc-card-ident { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-.doc-meta-quiz {
-  border: none;
-  background: none;
-  font: inherit;
-  cursor: pointer;
-  color: var(--accent-rose);
+.doc-card-body { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.doc-card .doc-title {
+  font-size: 0.97rem;
   font-weight: 700;
-  padding: 0;
+  color: var(--text-main);
+  line-height: 1.4;
+  margin: 0;
 }
-.badge-difficulty { background: var(--primary-light); color: var(--primary); }
-.badge-plain { background: var(--bg-surface-subtle); color: var(--text-main); }
-.badge-quiz { background: rgba(225, 29, 72, 0.12); color: var(--accent-rose); text-decoration: none; }
-
-/* --------------------------------------------------------- tab lộ trình */
-
-.phase-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-left: 4px solid var(--phase-color, var(--section-color));
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 1.25rem;
-}
-.phase-card-head { display: flex; align-items: flex-start; gap: 0.9rem; margin-bottom: 0.75rem; }
-.phase-card-icon { font-size: 1.9rem; line-height: 1; }
-.phase-card-head h3 { margin: 0 0 0.2rem; font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
-.phase-card-head p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-.phase-card-weeks {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  background: var(--bg-surface-subtle);
+.doc-card .doc-desc {
+  font-size: 0.83rem;
   color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-.phase-sub {
+.doc-card-quiz {
+  margin-top: 0.35rem;
   font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin: 1.1rem 0 0.5rem;
+  font-weight: 700;
+  color: var(--accent-rose);
 }
-.phase-list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
-.phase-list li { font-size: 0.87rem; line-height: 1.55; color: var(--text-main); }
-.phase-list.is-trap li::marker { color: var(--accent-rose); }
-.phase-list.is-core li::marker { color: var(--accent-emerald); }
-
-.phase-doc-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.phase-doc-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  background: var(--bg-surface-subtle);
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
-}
-.phase-doc-row:hover { border-color: var(--phase-color, var(--section-color)); transform: translateX(3px); }
-.phase-doc-row.is-done { opacity: 0.66; }
-.phase-doc-icon { font-size: 1.15rem; }
-.phase-doc-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-.phase-doc-title { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
-.phase-doc-meta { font-size: 0.75rem; color: var(--text-muted); }
-.phase-doc-state { font-weight: 800; color: var(--phase-color, var(--section-color)); }
 
 /* --------------------------------------------------------------- quiz */
 
@@ -258,7 +208,7 @@
 
 .reader-layout {
   width: 100%;
-  max-width: 1100px;
+  max-width: 820px;
   margin: 0 auto;
   padding: 1.25rem 1.25rem 6rem;
   box-sizing: border-box;
@@ -272,45 +222,23 @@
   flex-wrap: wrap;
   font-size: 0.82rem;
   color: var(--text-muted);
-  margin-bottom: 1rem;
+  margin-bottom: 1.75rem;
 }
 .reader-breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 600; }
 .reader-breadcrumb a:hover { text-decoration: underline; }
 
-.reader-header-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-top: 4px solid var(--section-color);
-  border-radius: var(--radius-lg);
-  padding: 1.35rem 1.6rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  box-sizing: border-box;
-}
-.reader-top-bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.9rem;
-}
-.reader-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+.reader-head { margin-bottom: 1.75rem; }
 .reader-title {
-  font-size: 1.5rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: var(--text-main);
-  line-height: 1.35;
-  margin: 0;
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
   overflow-wrap: break-word;
 }
+.reader-date { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
 
 .reader-content-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
   box-sizing: border-box;
   overflow-wrap: break-word;
 }
@@ -336,7 +264,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 .reader-nav-link {
   display: flex;
@@ -395,10 +323,9 @@
 
 @media (max-width: 768px) {
   .landing-wrapper, .reader-layout { padding-left: 0.75rem; padding-right: 0.75rem; }
-  .section-cards { grid-template-columns: 1fr; }
-  .reader-content-card { padding: 1.15rem 0.85rem; }
-  .reader-header-card { padding: 1rem; }
-  .reader-title { font-size: 1.2rem; }
+  .section-cards, .docs-container { grid-template-columns: 1fr; }
+  .category-list { position: static; }
+  .reader-title { font-size: 1.35rem; }
   .reader-neighbours { grid-template-columns: 1fr; }
   .reader-nav-link.is-next { text-align: left; }
   .reader-nav-link.is-empty { display: none; }

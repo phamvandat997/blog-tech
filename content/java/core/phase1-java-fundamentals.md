@@ -1,8 +1,6 @@
 ---
 title: "Phase 1: Nền tảng Java (Java Fundamentals) - Luyện thi OCP Java SE 25 (1Z0-831)"
-description: "Tài liệu này bao gồm các kiến thức nền tảng của Java, được thiết kế đặc biệt để giúp bạn vượt qua kỳ thi OCP Java SE 25. Trọng tâm sẽ là các chi tiết kỹ thuật, các trường hợp ngoại"
 icon: "🧱"
-difficulty: "Fundamental"
 order: 3
 phase: "Phase 1"
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]

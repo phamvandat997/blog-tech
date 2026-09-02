@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 5: Các Chủ đề Nâng cao (Advanced Topics) - OCP Java SE 25 (1Z0-831)"
-description: "Tài liệu này bao quát các chủ đề nâng cao quan trọng thường xuất hiện trong bài thi OCP Java SE 25. Bạn cần nắm vững không chỉ cú pháp mà còn cách các thư viện tiêu chuẩn hoạt động"
 icon: "⚙️"
-difficulty: "Advanced"
 order: 2
 phase: "Phase 5"
 tags: ["Virtual Threads", "Concurrency", "JMM", "NIO.2", "JPMS Modules"]

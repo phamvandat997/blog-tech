@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 1 — Nền tảng ngôn ngữ Java 25 (Tuần 1–6)"
-description: "Mọi output trong tài liệu này đã được chạy thử để xác minh, trừ các mục ghi rõ [Java 25] (môi trường kiểm thử chạy JDK 21 — bạn tự chạy lại trên JDK 25)"
 icon: "🧱"
-difficulty: "Fundamental"
 order: 1
 phase: "Phase 1"
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]

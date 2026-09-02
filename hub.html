@@ -19,78 +19,34 @@
         <div class="brand-logo" id="hub-icon">📘</div>
         <div class="brand-text">
           <h1 id="hub-title">Đang tải…</h1>
-          <p id="hub-tagline"></p>
         </div>
       </a>
 
       <div class="nav-tabs-group">
-        <button class="nav-tab-btn active" data-tab="docs" type="button"><span>📑</span> Bài viết</button>
-        <button class="nav-tab-btn" data-tab="phases" type="button"><span>🧭</span> Lộ trình</button>
-        <button class="nav-tab-btn quiz-tab" data-tab="quizzes" type="button"><span>🎯</span> Luyện quiz</button>
+        <button class="nav-tab-btn active" data-tab="docs" type="button">Bài viết</button>
+        <button class="nav-tab-btn quiz-tab" data-tab="quizzes" type="button">Luyện quiz</button>
       </div>
 
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" class="search-input"
-               placeholder="Tìm theo tên bài, tag, phase…" autocomplete="off">
+               placeholder="Tìm bài viết…" autocomplete="off">
         <button id="search-clear-btn" class="search-clear" type="button" title="Xoá tìm kiếm" hidden>✕</button>
       </div>
 
       <div class="nav-actions">
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
-        <button class="btn-icon" id="btn-reset-filters" type="button" title="Đặt lại bộ lọc">🔄</button>
       </div>
     </div>
   </header>
 
-  <section class="stats-banner">
-    <div class="stats-grid" id="hub-stats"></div>
-  </section>
-
   <main class="main-wrapper">
-    <aside class="sidebar">
-      <div class="filter-section">
-        <div class="filter-title"><span>Chuyên mục</span></div>
-        <div class="category-list" id="category-container"></div>
-      </div>
-
-      <div class="filter-section" id="phase-filter-block">
-        <div class="filter-title"><span>Lọc theo phase</span></div>
-        <div class="phase-pills" id="phase-pills-container"></div>
-      </div>
-
-      <div class="filter-section">
-        <div class="filter-title"><span>Trạng thái đọc</span></div>
-        <label class="checkbox-filter"><input type="checkbox" id="filter-favorite"><span>⭐ Đã đánh dấu</span></label>
-        <label class="checkbox-filter"><input type="checkbox" id="filter-completed"><span>✅ Đã đọc xong</span></label>
-        <label class="checkbox-filter"><input type="checkbox" id="filter-uncompleted"><span>⏳ Chưa đọc</span></label>
-      </div>
+    <aside class="sidebar" id="hub-sidebar">
+      <div class="category-list" id="category-container"></div>
     </aside>
 
     <section class="content-area">
-      <div class="toolbar" id="main-toolbar">
-        <div class="results-count" id="results-counter"></div>
-        <div class="toolbar-controls">
-          <div class="select-wrapper">
-            <select id="sort-select" title="Sắp xếp danh sách">
-              <option value="default">Sắp xếp: theo lộ trình</option>
-              <option value="title-asc">Tên bài (A → Z)</option>
-              <option value="title-desc">Tên bài (Z → A)</option>
-              <option value="lines-desc">Dài nhất trước</option>
-              <option value="lines-asc">Ngắn nhất trước</option>
-              <option value="questions-desc">Nhiều quiz nhất</option>
-              <option value="updated-desc">Cập nhật gần nhất</option>
-            </select>
-          </div>
-          <div class="view-modes">
-            <button class="view-btn" data-view-mode="grid" type="button" title="Chế độ lưới"><span>🔲</span> Lưới</button>
-            <button class="view-btn" data-view-mode="list" type="button" title="Chế độ danh sách"><span>📋</span> Danh sách</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="docs-container grid-view" id="docs-container"></div>
-      <div class="phase-explorer-container" id="phases-view" hidden></div>
+      <div class="docs-container" id="docs-container"></div>
       <div class="quiz-player-container" id="quiz-view" hidden></div>
     </section>
   </main>

@@ -1,8 +1,6 @@
 ---
 title: "Phase 1: Java Fundamentals - Deep Theory Supplement"
-description: "Tài liệu này cung cấp kiến thức chuyên sâu (Deep Theory) cho Phase 1 của kỳ thi OCP Java SE 25 (1Z0-831). Chúng ta sẽ đi sâu vào cách JVM hoạt động dưới mảng (under the hood), lý d"
 icon: "🔬"
-difficulty: "Expert"
 order: 2
 phase: "Phase 1"
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]

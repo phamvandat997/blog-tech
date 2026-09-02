@@ -19,20 +19,6 @@ function loadDocContent(doc) {
   });
 }
 
-function renderBadges(doc) {
-  const section = getSection(doc.section);
-  const category = section?.categories.find((c) => c.id === doc.category);
-  return [
-    doc.difficulty && `<span class="badge badge-difficulty">${escapeHtml(doc.difficulty)}</span>`,
-    doc.phase && `<span class="badge badge-phase">${escapeHtml(doc.phase)}</span>`,
-    `<span class="badge badge-plain">${escapeHtml(category?.icon || "📁")} ${escapeHtml(category?.name || doc.category)}</span>`,
-    `<span class="badge badge-plain">📄 ${doc.lines} dòng</span>`,
-    `<span class="badge badge-plain">💾 ${escapeHtml(doc.size)}</span>`,
-    `<span class="badge badge-plain">🕗 ${escapeHtml(doc.updatedDate)}</span>`,
-    doc.questions ? `<a class="badge badge-quiz" href="#in-doc-quiz-root">🎯 ${doc.questions} câu quiz ở cuối bài ➔</a>` : "",
-  ].filter(Boolean).join("");
-}
-
 /** Bài trước / bài sau trong cùng mảng, theo đúng thứ tự catalog. */
 function renderNeighbours(doc) {
   const siblings = docsOfSection(doc.section);
@@ -44,30 +30,6 @@ function renderNeighbours(doc) {
        </a>`
     : '<span class="reader-nav-link is-empty"></span>';
   return link(siblings[index - 1], "⬅ Bài trước", "prev") + link(siblings[index + 1], "Bài sau ➔", "next");
-}
-
-function bindDocActions(doc) {
-  const star = qs("#reader-star-btn");
-  const check = qs("#reader-check-btn");
-
-  const paint = () => {
-    const starred = state.favorites.has(doc.id);
-    const done = state.completed.has(doc.id);
-    star.textContent = starred ? "★" : "☆";
-    star.classList.toggle("starred", starred);
-    check.textContent = done ? "✓" : "○";
-    check.classList.toggle("completed", done);
-  };
-
-  star.addEventListener("click", () => {
-    showToast(toggleFavorite(doc.id) ? "Đã thêm vào yêu thích" : "Đã bỏ khỏi yêu thích");
-    paint();
-  });
-  check.addEventListener("click", () => {
-    showToast(toggleCompleted(doc.id) ? "Đã đánh dấu đọc xong" : "Đã bỏ đánh dấu đọc xong");
-    paint();
-  });
-  paint();
 }
 
 function showError(title, text, action) {
@@ -92,17 +54,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const doc = params.doc;
   const section = params.section;
+  const category = section.categories.find((c) => c.id === doc.category);
 
   document.title = `${doc.title} | ${section.name}`;
   document.documentElement.style.setProperty("--section-color", section.color);
   qs("#reader-title").textContent = doc.title;
-  qs("#reader-badges").innerHTML = renderBadges(doc);
+  qs("#reader-date").textContent = `Cập nhật ${doc.updatedDate}`;
   qs("#reader-breadcrumb").innerHTML =
     `<a href="index.html">Trang chủ</a> <span>›</span>
      <a href="${attr(hubUrl(section.id))}">${escapeHtml(section.icon)} ${escapeHtml(section.name)}</a>
-     <span>›</span> <span>${escapeHtml(doc.title)}</span>`;
+     <span>›</span>
+     <a href="${attr(hubUrl(section.id, { c: doc.category }))}">${escapeHtml(category?.name || doc.category)}</a>`;
   qs("#reader-back").href = hubUrl(section.id, { c: doc.category });
-  bindDocActions(doc);
 
   const [body] = await Promise.all([loadDocContent(doc), loadQuizBank(section.id)]);
 

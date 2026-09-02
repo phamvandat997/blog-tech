@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 6: Các tính năng mới của Java 22 - 25 (OCP Java SE 25 - 1Z0-831)"
-description: "Tài liệu này bao gồm tất cả các tính năng mới từ Java 22 đến Java 25 có thể xuất hiện trong bài thi chứng chỉ OCP Java SE 25 Developer (1Z0-831)"
 icon: "🚀"
-difficulty: "Advanced"
 order: 2
 phase: "Phase 6"
 tags: ["Flexible Constructors", "Gatherers", "Scoped Values", "Unnamed vars"]

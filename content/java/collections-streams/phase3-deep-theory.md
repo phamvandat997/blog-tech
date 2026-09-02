@@ -1,8 +1,6 @@
 ---
 title: "Phase 3: Core APIs - Deep Theory Supplement"
-description: "Tài liệu bổ sung này cung cấp cái nhìn sâu sắc về internals (cơ chế nội bộ) của các Core APIs trong Java SE 25. Hiểu được \"tại sao\" và \"như thế nào\" đằng sau các API này là chìa kh"
 icon: "🔬"
-difficulty: "Expert"
 order: 3
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]

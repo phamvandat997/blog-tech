@@ -1,8 +1,6 @@
 ---
 title: "Phase 2: Lập trình Hướng đối tượng (OOP) & Thiết kế Lớp"
-description: "Tài liệu này đi sâu vào các khái niệm cốt lõi của OOP và thiết kế lớp trong Java, bao gồm các tính năng mới nhất được bổ sung trong các phiên bản Java gần đây như Flexible Construc"
 icon: "📦"
-difficulty: "Intermediate"
 order: 5
 phase: "Phase 2"
 tags: ["Records", "Sealed Classes", "Pattern Matching", "Class Loading"]

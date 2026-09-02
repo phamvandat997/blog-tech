@@ -1,8 +1,6 @@
 ---
 title: "SỔ TAY THỰC HÀNH MÃ NGUỒN & PHÒNG THÍ NGHIỆM THỰC THI OCP JAVA SE 25 (1Z0-831)"
-description: "Tài liệu này cung cấp các ví dụ mã nguồn thực tế, tự chứa và có thể thực thi hoàn toàn trong Java 25. Mỗi Lab tập trung vào một nhóm tính năng cốt lõi của Java 25, với phân tích ch"
 icon: "💻"
-difficulty: "Mastery"
 order: 1
 phase: "Master"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]

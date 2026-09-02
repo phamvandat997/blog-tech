@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 2 — Collections, Lambda & Stream (Tuần 7–12)"
-description: "Mọi output đã được chạy thử để xác minh trên JDK 21, trừ các mục ghi rõ [Java 24] (Stream Gatherers) — bạn tự chạy lại trên JDK 25"
 icon: "📚"
-difficulty: "Intermediate"
 order: 1
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]

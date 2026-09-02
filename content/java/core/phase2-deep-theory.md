@@ -1,8 +1,6 @@
 ---
 title: "Phase 2: OOP & Class Design — Deep Theory Supplement"
-description: "Tài liệu này đi sâu vào kiến trúc bên trong (internal mechanisms) của JVM và Java Language Specification (JLS) liên quan đến OOP. Thay vì chỉ học \"cái gì\" (what), chúng ta sẽ khám"
 icon: "🔬"
-difficulty: "Expert"
 order: 4
 phase: "Phase 2"
 tags: ["Records", "Sealed Classes", "Pattern Matching", "Class Loading"]

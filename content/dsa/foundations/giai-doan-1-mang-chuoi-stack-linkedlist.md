@@ -1,8 +1,6 @@
 ---
 title: "DSA Giai đoạn 1 — Mảng, Chuỗi, Con trỏ, Stack & Linked List (Tuần 1–6)"
-description: "Toàn bộ code trong tài liệu này đã được chạy thử và xác minh output trên JDK 21"
 icon: "⚡"
-difficulty: "Advanced"
 order: 1
 phase: "DSA"
 tags: ["DSA", "Algorithms", "LeetCode", "FAANG"]

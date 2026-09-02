@@ -1,8 +1,6 @@
 ---
 title: "OCP Java SE 25 (1Z0-831) - Phase 5: Advanced Topics (Deep Theory Supplement)"
-description: "Tài liệu này cung cấp cái nhìn chuyên sâu về các chủ đề nâng cao trong Java, tập trung vào cơ chế nội bộ (internal mechanisms), các trường hợp ngoại lệ (edge cases), và sự khác biệ"
 icon: "🔬"
-difficulty: "Expert"
 order: 3
 phase: "Phase 5"
 tags: ["Virtual Threads", "Concurrency", "JMM", "NIO.2", "JPMS Modules"]

@@ -4,7 +4,7 @@ const assert = require("node:assert");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { scanContent, formatSize, flatten } = require("./lib/scan");
+const { scanContent, flatten } = require("./lib/scan");
 
 function fixture(tree) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "scan-"));
@@ -21,7 +21,7 @@ const SECTION = JSON.stringify({
   categories: [{ id: "core", name: "Java Core", icon: "🧱", order: 1 }],
 });
 
-test("dựng id từ đường dẫn và suy ra lines/size", () => {
+test("dựng id từ đường dẫn và suy ra ngày cập nhật", () => {
   const dir = fixture({
     "java/_section.json": SECTION,
     "java/core/phase1.md": "---\ntitle: P1\n---\nmột\nhai\n",
@@ -31,8 +31,18 @@ test("dựng id từ đường dẫn và suy ra lines/size", () => {
   assert.equal(docs[0].id, "java/core/phase1");
   assert.equal(docs[0].section, "java");
   assert.equal(docs[0].category, "core");
-  assert.equal(docs[0].lines, 3);
-  assert.match(docs[0].size, /B$/);
+  assert.match(docs[0].updatedDate, /^\d{4}-\d{2}-\d{2}$/);
+});
+
+test("không mang theo số liệu file đã bỏ khỏi giao diện", () => {
+  const dir = fixture({
+    "java/_section.json": SECTION,
+    "java/core/a.md": "---\ntitle: A\ndifficulty: Expert\n---\nx",
+  });
+  const { docs } = scanContent(dir);
+  for (const field of ["lines", "size", "difficulty"]) {
+    assert.equal(docs[0][field], undefined, `catalog vẫn còn trường "${field}"`);
+  }
 });
 
 test("thiếu title thì lấy heading đầu, thiếu cả hai thì lấy slug", () => {
@@ -48,13 +58,36 @@ test("thiếu title thì lấy heading đầu, thiếu cả hai thì lấy slug"
   assert.equal(warnings.filter((w) => w.includes('thiếu "title"')).length, 2);
 });
 
-test("thiếu description thì lấy đoạn văn đầu, bỏ qua heading và trích dẫn", () => {
+test("thiếu description thì lấy đoạn văn đầu, bỏ heading, trích dẫn, đường kẻ", () => {
   const dir = fixture({
     "java/_section.json": SECTION,
-    "java/core/a.md": "---\ntitle: A\n---\n# H1\n\n> ghi chú\n\nĐoạn văn **thật**.\n",
+    "java/core/a.md": "---\ntitle: A\n---\n# H1\n\n> ghi chú\n\n---\n\n| a | b |\n\nĐoạn văn **thật**.\n",
   });
   const { docs } = scanContent(dir);
   assert.equal(docs[0].description, "Đoạn văn thật.");
+});
+
+test("mô tả dài bị cắt ở ranh giới từ, không đứt giữa chữ", () => {
+  const long = "Nhập môn ".repeat(40).trim();
+  const dir = fixture({
+    "java/_section.json": SECTION,
+    "java/core/a.md": `---\ntitle: A\n---\n${long}\n`,
+  });
+  const { description } = scanContent(dir).docs[0];
+  assert.ok(description.endsWith("…"), "phải có dấu … ở cuối");
+  assert.ok(description.length <= 171, `dài ${description.length}`);
+  const kept = description.slice(0, -1);
+  assert.ok(long.startsWith(kept), "phần giữ lại phải khớp đầu bài");
+  // Ký tự ngay sau chỗ cắt phải là khoảng trắng — nghĩa là cắt trọn một từ.
+  assert.equal(long[kept.length], " ", `cắt giữa từ: ...${kept.slice(-12)}|${long.slice(kept.length, kept.length + 6)}`);
+});
+
+test("link markdown trong mô tả chỉ còn phần chữ", () => {
+  const dir = fixture({
+    "java/_section.json": SECTION,
+    "java/core/a.md": "---\ntitle: A\n---\nXem [tài liệu Oracle](https://example.com) để rõ hơn.\n",
+  });
+  assert.equal(scanContent(dir).docs[0].description, "Xem tài liệu Oracle để rõ hơn.");
 });
 
 test("đếm câu quiz từ file .quiz.json nằm cạnh", () => {
@@ -123,10 +156,4 @@ test("JSON hỏng làm build dừng, báo rõ đường dẫn", () => {
 test("id phẳng hoá không đụng nhau", () => {
   assert.equal(flatten("java/core/phase1"), "java__core__phase1");
   assert.notEqual(flatten("a/b-c/d"), flatten("a/b/c-d"));
-});
-
-test("formatSize đổi đơn vị theo ngưỡng", () => {
-  assert.equal(formatSize(512), "512 B");
-  assert.equal(formatSize(2048), "2.0 KB");
-  assert.equal(formatSize(2 * 1024 * 1024), "2.0 MB");
 });

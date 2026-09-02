@@ -1,8 +1,7 @@
 ---
 title: "📜 Lộ Trình OCP Java SE 25 Developer — Exam 1Z0-831"
-description: "Chứng chỉ: Oracle Certified Professional: Java SE 25 Developer"
+description: "Lộ trình ôn thi Oracle Certified Professional: Java SE 25 Developer (mã đề 1Z0-831) — 50 câu, 120 phút — chia theo tuần và theo domain."
 icon: "🗺️"
-difficulty: "Strategy"
 order: 1
 phase: "Roadmap"
 tags: ["Roadmap", "14 Weeks", "Domains", "Study Plan"]

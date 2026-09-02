@@ -1,8 +1,6 @@
 ---
 title: "Phase 4: Functional Programming - Deep Theory Supplement"
-description: "Tài liệu bổ sung này đi sâu vào cơ chế hoạt động thực sự bên dưới của Functional Programming trong Java, đặc biệt phục vụ cho kỳ thi OCP Java SE 25 (1Z0-831). Nó không chỉ trả lời"
 icon: "🔬"
-difficulty: "Expert"
 order: 4
 phase: "Phase 4"
 tags: ["Lambdas", "Stream API", "Collectors", "invokedynamic", "Spliterator"]

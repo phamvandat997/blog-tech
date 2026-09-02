@@ -1,8 +1,6 @@
 ---
 title: "Phase 7: Chiến lược thi & Đề thi thử (Mock Exam) - OCP Java SE 25 (1Z0-831)"
-description: "Tài liệu này cung cấp chiến lược làm bài thi thực tế và một đề thi thử toàn diện mô phỏng kỳ thi OCP Java SE 25 (1Z0-831)"
 icon: "🏆"
-difficulty: "Exam Simulation"
 order: 5
 phase: "Phase 7"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]

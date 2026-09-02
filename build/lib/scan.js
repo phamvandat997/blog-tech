@@ -5,11 +5,6 @@ const { parseFrontmatter } = require("./frontmatter");
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-const formatSize = (bytes) =>
-  bytes < 1024 ? `${bytes} B`
-  : bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB`
-  : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-
 // id -> tên file phẳng trong generated/docs/. Dùng "__" vì "/" không hợp lệ
 // trong tên file và slug đã cấm dấu gạch dưới.
 const flatten = (id) => id.replace(/\//g, "__");
@@ -24,12 +19,29 @@ function firstHeading(body) {
   return m ? m[1].trim() : null;
 }
 
+const MAX_DESCRIPTION = 170;
+
+/** Đoạn văn xuôi đầu tiên của bài — bỏ heading, trích dẫn, mã, bảng, đường kẻ. */
 function firstParagraph(body) {
   for (const block of body.split(/\r?\n\s*\r?\n/)) {
     const t = block.trim();
-    if (!t || t.startsWith("#") || t.startsWith(">") || t.startsWith("```") || t.startsWith("|")) continue;
-    const flat = t.replace(/\s+/g, " ").replace(/[*_`]/g, "");
-    return flat.length > 180 ? flat.slice(0, 177).trimEnd() + "…" : flat;
+    if (!t) continue;
+    if (/^(#|>|\||[-*+]\s|\d+\.\s)/.test(t)) continue;
+    if (t.includes("```")) continue; // đoạn dính khối mã
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) continue; // đường kẻ ngang
+
+    const flat = t
+      .replace(/\s+/g, " ")
+      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1") // link/ảnh → chỉ giữ chữ
+      .replace(/[*_`]/g, "")
+      .trim();
+    if (!flat) continue;
+    if (flat.length <= MAX_DESCRIPTION) return flat;
+
+    // Cắt ở ranh giới từ để không đứt giữa chữ.
+    const head = flat.slice(0, MAX_DESCRIPTION);
+    const cut = head.lastIndexOf(" ");
+    return (cut > MAX_DESCRIPTION / 2 ? head.slice(0, cut) : head).replace(/[,;:.\s]+$/, "") + "…";
   }
   return "";
 }
@@ -92,12 +104,10 @@ function scanContent(contentDir) {
           title: data.title || firstHeading(body) || slug,
           description: data.description || firstParagraph(body),
           icon: data.icon || meta.icon || "📄",
-          difficulty: data.difficulty || "",
+          // phase và tags không hiển thị trên giao diện nhưng vẫn vào ô tìm kiếm.
           phase: data.phase || "",
           tags: Array.isArray(data.tags) ? data.tags : [],
           order: typeof data.order === "number" ? data.order : 999,
-          lines: body.split("\n").length,
-          size: formatSize(Buffer.byteLength(raw, "utf8")),
           updatedDate: fs.statSync(filePath).mtime.toISOString().slice(0, 10),
           questions,
           _body: body,
@@ -142,4 +152,4 @@ function scanContent(contentDir) {
   return { sections, docs, warnings };
 }
 
-module.exports = { scanContent, formatSize, flatten, SLUG };
+module.exports = { scanContent, flatten, SLUG };

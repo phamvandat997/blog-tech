@@ -19,12 +19,10 @@
         <div class="brand-logo">📘</div>
         <div class="brand-text">
           <h1>Blog kỹ thuật</h1>
-          <p>Chế độ đọc</p>
         </div>
       </a>
       <div class="nav-actions">
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
-        <button class="btn-icon" onclick="window.print()" type="button" title="In / lưu PDF">🖨️</button>
         <a class="viewer-nav-back" id="reader-back" href="index.html">⬅ Về danh mục</a>
       </div>
     </div>
@@ -33,16 +31,10 @@
   <main class="reader-layout">
     <nav class="reader-breadcrumb" id="reader-breadcrumb"></nav>
 
-    <div class="reader-header-card">
-      <div class="reader-top-bar">
-        <div class="drawer-meta-badges" id="reader-badges"></div>
-        <div class="reader-actions">
-          <button class="btn-icon btn-star" id="reader-star-btn" type="button" title="Yêu thích">☆</button>
-          <button class="btn-icon btn-check" id="reader-check-btn" type="button" title="Đã đọc xong">○</button>
-        </div>
-      </div>
+    <header class="reader-head">
       <h1 class="reader-title" id="reader-title">Đang tải…</h1>
-    </div>
+      <p class="reader-date" id="reader-date"></p>
+    </header>
 
     <article class="reader-content-card markdown-body" id="reader-body"></article>
 

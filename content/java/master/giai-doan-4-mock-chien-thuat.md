@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 4 — Ôn tập & Mock (Tuần 19–24)"
-description: "Mọi output đã chạy thử để xác minh trên JDK 21. Các mục [Java 25] chưa chạy được trên môi trường kiểm thử"
 icon: "🏆"
-difficulty: "Exam Simulation"
 order: 2
 phase: "Phase 7"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]

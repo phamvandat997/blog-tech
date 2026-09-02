@@ -1,8 +1,6 @@
 ---
 title: "Phase 6: Java 22-25 New Features - Deep Theory Supplement"
-description: "Tài liệu này cung cấp cái nhìn sâu sắc vào cơ chế hoạt động, lý thuyết nền tảng và các edge cases của các tính năng mới trong Java 22 đến 25, phục vụ cho kỳ thi OCP Java SE 25 (1Z0"
 icon: "🔬"
-difficulty: "Expert"
 order: 1
 phase: "Phase 6"
 tags: ["Flexible Constructors", "Gatherers", "Scoped Values", "Unnamed vars"]

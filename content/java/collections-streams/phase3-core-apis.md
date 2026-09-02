@@ -1,8 +1,6 @@
 ---
 title: "Phase 3: Core APIs - OCP Java SE 25 (1Z0-831)"
-description: "Tài liệu hướng dẫn ôn tập giai đoạn 3 cho kỳ thi OCP Java SE 25 (1Z0-831). Phần này tập trung vào các API cốt lõi trong Java: Arrays, Collections, Generics, và Date/Time"
 icon: "📚"
-difficulty: "Intermediate"
 order: 2
 phase: "Phase 3"
 tags: ["Collections", "Generics", "HashMap Treeify", "Date/Time"]

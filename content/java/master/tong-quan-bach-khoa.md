@@ -1,8 +1,7 @@
 ---
 title: "🏛️ BÁCH KHOA TOÀN THƯ OCP JAVA SE 25 (1Z0-831) & DSA ROADMAP"
-description: "Tổng quy mô: 18 tài liệu chuyên khảo | ~7,336 dòng nội dung | 210+ câu hỏi trắc nghiệm & tình huống"
+description: "Bản đồ tổng quan bốn trụ cột tài liệu: lộ trình, lý thuyết theo phase, lý thuyết chuyên sâu và đề thi thử — đọc trước để biết nên bắt đầu từ đâu."
 icon: "🏛️"
-difficulty: "All-in-One"
 order: 6
 phase: "Master"
 tags: ["Master Bible", "All-in-One", "Summary", "Architecture"]

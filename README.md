@@ -15,16 +15,16 @@ Frontmatter — mọi trường đều tuỳ chọn, thiếu thì build tự suy
 ```yaml
 ---
 title: "Phase 1: Nền tảng Java"       # thiếu → lấy heading # đầu tiên
-description: "Kiểu dữ liệu, toán tử"  # thiếu → lấy đoạn văn đầu tiên
+description: "Kiểu dữ liệu, toán tử"  # thiếu → lấy đoạn văn xuôi đầu tiên
 icon: "🧱"
-phase: "Phase 1"                       # để lọc theo phase ở sidebar
-difficulty: "Intermediate"
-tags: [Java, OOP]
 order: 2                               # thứ tự trong chuyên mục
+phase: "Phase 1"                       # không hiện ra, chỉ giúp tìm kiếm
+tags: [Java, OOP]                      # không hiện ra, chỉ giúp tìm kiếm
 ---
 ```
 
-Số dòng, dung lượng, ngày cập nhật và số câu quiz do build tự tính — không khai báo.
+Ngày cập nhật và số câu quiz do build tự tính. `description` tự sinh thường
+đủ dùng; bài nào mở đầu bằng bảng, sơ đồ hay callout thì nên viết tay một câu.
 
 ## Thêm một mảng nội dung mới (Python, JavaScript, System Design…)
 
@@ -50,7 +50,6 @@ Thẻ Python xuất hiện ngay trên trang chủ. Không phải sửa dòng Jav
 
 - `kind: "language"` → thẻ nằm ở khu **Ngôn ngữ**; `"topic"` → khu **Chủ đề**.
 - Thư mục con chưa khai báo trong `categories` vẫn hiện (lấy tên thư mục), build chỉ cảnh báo.
-- Muốn có tab **Lộ trình**: thêm `phases` và `phaseDetails` vào `_section.json` — xem `content/java/_section.json`.
 
 ## Thêm quiz cho một bài
 
@@ -72,7 +71,8 @@ Thẻ Python xuất hiện ngay trên trang chủ. Không phải sửa dòng Jav
 }
 ```
 
-Quiz hiện ở cuối bài viết và trong tab **Luyện quiz** của mảng đó.
+Quiz hiện ở cuối bài viết và trong tab **Luyện quiz** của mảng đó. Mảng không có
+câu hỏi nào thì tab **Luyện quiz** tự ẩn.
 
 ## Chạy
 
@@ -144,7 +144,13 @@ hub.html?s=<mảng>            danh mục bài viết của một mảng
 reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
 ```
 
-Tiến độ đọc, bài đánh dấu và bài quiz đang làm lưu ở `localStorage` của trình duyệt.
+Bài quiz đang làm dở và lựa chọn giao diện sáng/tối lưu ở `localStorage` của trình duyệt.
+
+## Phạm vi giao diện
+
+Giao diện cố ý chỉ phục vụ hai việc: **đọc bài** và **làm quiz**. Không có thống kê,
+không theo dõi tiến độ đọc, không đánh dấu yêu thích, không sắp xếp hay lọc nhiều tầng.
+Điều hướng chỉ gồm: chọn mảng → chọn chuyên mục → chọn bài, cộng một ô tìm kiếm.
 
 ### Về việc mở bằng `file://`
 

@@ -1,8 +1,6 @@
 ---
 title: "OCP Java SE 25 (1Z0-831): THE ULTIMATE MASTER HANDBOOK"
-description: "Tài liệu chuyên khảo OCP Java SE 25 (1Z0-831): THE ULTIMATE MASTER HANDBOOK gồm 239 dòng lý thuyết, mã nguồn và câu hỏi trắc nghiệm"
 icon: "📖"
-difficulty: "Mastery"
 order: 4
 phase: "Master"
 tags: ["Mock Exam", "Handbook", "Labs", "Traps", "Master Question Bank"]

@@ -1,8 +1,6 @@
 ---
 title: "Giai đoạn 3 — Concurrency, I/O, Module, Localization (Tuần 13–18)"
-description: "Output đã chạy thử để xác minh trên JDK 21, trừ hai nhóm ghi rõ:"
 icon: "⚙️"
-difficulty: "Advanced"
 order: 1
 phase: "Phase 5"
 tags: ["Virtual Threads", "Concurrency", "JMM", "NIO.2", "JPMS Modules"]

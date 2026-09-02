@@ -1,8 +1,6 @@
 ---
 title: "Tài Liệu Ôn Thi OCP Java SE 25 (1Z0-831) - Giai Đoạn 4: Functional Programming"
-description: "Giai đoạn này tập trung vào Lập Trình Hàm (Functional Programming) trong Java, bao gồm Functional Interfaces, Lambda Expressions, Stream API, Collectors, Optional và Parallel Strea"
 icon: "🌊"
-difficulty: "Intermediate"
 order: 5
 phase: "Phase 4"
 tags: ["Lambdas", "Stream API", "Collectors", "invokedynamic", "Spliterator"]
