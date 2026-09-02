@@ -1,0 +1,11 @@
+{
+  "name": "blog-tech",
+  "version": "1.0.0",
+  "description": "Blog kỹ thuật đa ngôn ngữ — nội dung markdown, giao diện tĩnh chạy được offline",
+  "private": true,
+  "scripts": {
+    "build": "node build/build.js",
+    "test": "node --test build/*.test.js",
+    "serve": "python3 -m http.server 8080"
+  }
+}
