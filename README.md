@@ -143,7 +143,11 @@ trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên G
   GitHub nên luôn đúng thực tế, kể cả thư mục vừa tạo mà chưa build
 - Tạo **mảng mới** (tự sinh `_section.json`) hoặc **chuyên mục mới** (bổ sung vào
   `_section.json` sẵn có, giữ nguyên các mục cũ)
-- Tên file tự sinh từ tiêu đề, bỏ dấu tiếng Việt (`Đệ quy nâng cao` → `de-quy-nang-cao`)
+- Tên file tự sinh từ tiêu đề, bỏ dấu tiếng Việt (`Đệ quy nâng cao` → `de-quy-nang-cao`);
+  tên thư mục cũng bám theo tên hiển thị cho tới khi bạn tự sửa nó
+- Bảng gợi ý icon cho mảng (tách nhóm **Ngôn ngữ** / **Chủ đề**), cho chuyên mục và
+  cho bài viết; gõ tên quen thuộc như `Python`, `Rust`, `Docker` là đoán icon luôn.
+  Sửa danh sách ở `ICON_SETS` và `NAME_TO_ICON` trong [assets/js/admin.js](assets/js/admin.js)
 - Đính kèm file `.quiz.json`, kiểm tra cú pháp trước khi gửi
 - Cảnh báo và hỏi lại trước khi ghi đè bài đã có
 

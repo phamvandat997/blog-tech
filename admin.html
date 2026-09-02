@@ -120,10 +120,6 @@
           </div>
           <div class="admin-row">
             <label class="admin-field admin-field-sm">
-              <span class="admin-label">Icon</span>
-              <input type="text" id="new-section-icon" placeholder="🐍" maxlength="4">
-            </label>
-            <label class="admin-field admin-field-sm">
               <span class="admin-label">Màu</span>
               <input type="color" id="new-section-color" value="#4f46e5">
             </label>
@@ -134,6 +130,11 @@
                 <option value="topic">Chủ đề</option>
               </select>
             </label>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="new-section-icon">Icon</label>
+            <input type="text" id="new-section-icon" placeholder="🐍" maxlength="4">
+            <div class="icon-picker" data-icon-picker="section" data-icon-target="#new-section-icon"></div>
           </div>
           <label class="admin-field">
             <span class="admin-label">Mô tả ngắn</span>
@@ -153,10 +154,11 @@
               <span class="admin-label">Tên hiển thị <b class="req">*</b></span>
               <input type="text" id="new-category-name" placeholder="Cơ bản">
             </label>
-            <label class="admin-field admin-field-sm">
-              <span class="admin-label">Icon</span>
-              <input type="text" id="new-category-icon" placeholder="🧱" maxlength="4">
-            </label>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="new-category-icon">Icon</label>
+            <input type="text" id="new-category-icon" placeholder="🧱" maxlength="4">
+            <div class="icon-picker" data-icon-picker="category" data-icon-target="#new-category-icon"></div>
           </div>
         </fieldset>
 
@@ -204,11 +206,13 @@
                     placeholder="Thiếu thì lấy đoạn văn xuôi đầu tiên"></textarea>
         </label>
 
+        <div class="admin-field">
+          <label class="admin-label" for="field-icon">Icon</label>
+          <input type="text" id="field-icon" maxlength="4" placeholder="📄">
+          <div class="icon-picker" data-icon-picker="doc" data-icon-target="#field-icon"></div>
+        </div>
+
         <div class="admin-row">
-          <label class="admin-field admin-field-sm">
-            <span class="admin-label">Icon</span>
-            <input type="text" id="field-icon" maxlength="4" placeholder="📄">
-          </label>
           <label class="admin-field admin-field-sm">
             <span class="admin-label">Thứ tự</span>
             <input type="number" id="field-order" min="1" step="1">

@@ -289,3 +289,44 @@
   .admin-repo-grid { grid-template-columns: 1fr; }
   .admin-whoami { display: none; }
 }
+
+/* ------------------------------------------------------- gợi ý icon */
+
+.icon-picker { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.15rem; }
+
+.icon-picker-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.icon-picker-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+.icon-chip {
+  font-size: 1.05rem;
+  line-height: 1;
+  width: 2.15rem;
+  height: 2.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+.icon-chip:hover { transform: translateY(-2px); border-color: var(--border-color); }
+.icon-chip.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .icon-chip { width: 2.4rem; height: 2.4rem; }
+}

@@ -53,6 +53,109 @@ function showAlert(el, message) {
   el.hidden = !message;
 }
 
+/* --------------------------------------------------------- gợi ý icon */
+
+// Bảng icon gợi ý. Vẫn gõ tay được — đây chỉ là lối tắt cho những thứ hay dùng.
+const ICON_SETS = {
+  language: [
+    ["☕", "Java"], ["🐍", "Python"], ["🟨", "JavaScript"], ["🔷", "TypeScript"],
+    ["🐹", "Go"], ["🦀", "Rust"], ["🐘", "PHP"], ["💎", "Ruby"],
+    ["🍎", "Swift"], ["🟣", "Kotlin"], ["⚙️", "C / C++"], ["🟦", "C#"],
+    ["🐚", "Shell / Bash"], ["🗃️", "SQL"], ["📱", "Dart / Flutter"], ["🌙", "Lua"],
+  ],
+  topic: [
+    ["⚡", "Thuật toán & CTDL"], ["🏗️", "System Design"], ["🗄️", "Cơ sở dữ liệu"],
+    ["☁️", "Cloud"], ["🐳", "Docker & K8s"], ["🔐", "Bảo mật"],
+    ["🌐", "Mạng"], ["🤖", "AI / Machine Learning"], ["🧩", "Design Pattern"],
+    ["🛠️", "DevOps & Công cụ"], ["🚀", "Hiệu năng"], ["🧪", "Kiểm thử"],
+    ["📊", "Dữ liệu"], ["📐", "Kiến trúc"], ["🖥️", "Hệ điều hành"], ["🎨", "Frontend"],
+  ],
+  category: [
+    ["🗺️", "Lộ trình"], ["🧱", "Nền tảng"], ["📚", "Thư viện & API"], ["⚙️", "Cơ chế bên trong"],
+    ["🚀", "Tính năng mới"], ["👑", "Tổng hợp"], ["🧪", "Thực hành"], ["🎯", "Đề thi & Ôn tập"],
+    ["🧩", "Mẫu thiết kế"], ["🔐", "Bảo mật"], ["📊", "Hiệu năng"], ["🛠️", "Công cụ"],
+  ],
+  doc: [
+    ["📄", "Bài viết thường"], ["🧱", "Nền tảng"], ["📚", "Tra cứu API"], ["🔍", "Phân tích sâu"],
+    ["💡", "Mẹo & Kinh nghiệm"], ["⚠️", "Bẫy thường gặp"], ["🧪", "Bài thực hành"], ["🎯", "Đề thi thử"],
+    ["🚀", "Tính năng mới"], ["🗺️", "Lộ trình"], ["👑", "Tổng hợp"], ["📝", "Ghi chú"],
+  ],
+};
+
+// Gõ "Python" thì đoán luôn 🐍 — khỏi phải đi tìm trong bảng.
+const NAME_TO_ICON = {
+  java: "☕", python: "🐍", javascript: "🟨", js: "🟨", typescript: "🔷", ts: "🔷",
+  go: "🐹", golang: "🐹", rust: "🦀", php: "🐘", ruby: "💎", swift: "🍎",
+  kotlin: "🟣", c: "⚙️", "c++": "⚙️", cpp: "⚙️", "c#": "🟦", csharp: "🟦",
+  bash: "🐚", shell: "🐚", sql: "🗃️", dart: "📱", flutter: "📱", lua: "🌙",
+  dsa: "⚡", algorithm: "⚡", "thuat toan": "⚡", "system design": "🏗️",
+  database: "🗄️", "co so du lieu": "🗄️", cloud: "☁️", docker: "🐳", kubernetes: "🐳",
+  security: "🔐", "bao mat": "🔐", network: "🌐", ai: "🤖", ml: "🤖",
+  devops: "🛠️", testing: "🧪", "kiem thu": "🧪", frontend: "🎨", backend: "🖥️",
+};
+
+/** Bảng icon nào hợp với ô nào. Ô của mảng đổi theo khu Ngôn ngữ / Chủ đề. */
+function iconGroupsFor(kind) {
+  if (kind !== "section") return [["", ICON_SETS[kind] || ICON_SETS.doc]];
+  const isTopic = qs("#new-section-kind").value === "topic";
+  return isTopic
+    ? [["Chủ đề", ICON_SETS.topic], ["Ngôn ngữ", ICON_SETS.language]]
+    : [["Ngôn ngữ", ICON_SETS.language], ["Chủ đề", ICON_SETS.topic]];
+}
+
+function renderIconPicker(picker) {
+  const input = qs(picker.dataset.iconTarget);
+  const current = input.value.trim();
+  picker.innerHTML = iconGroupsFor(picker.dataset.iconPicker).map(([label, set]) => `
+    ${label ? `<span class="icon-picker-label">${escapeHtml(label)}</span>` : ""}
+    <span class="icon-picker-row">
+      ${set.map(([icon, name]) => `
+        <button type="button" class="icon-chip ${icon === current ? "active" : ""}"
+                data-icon="${attr(icon)}" title="${attr(name)}"
+                aria-label="${attr(name)}">${escapeHtml(icon)}</button>`).join("")}
+    </span>`).join("");
+}
+
+function renderAllIconPickers() {
+  qsa("[data-icon-picker]").forEach(renderIconPicker);
+}
+
+function bindIconPickers() {
+  qsa("[data-icon-picker]").forEach((picker) => {
+    const input = qs(picker.dataset.iconTarget);
+
+    delegate(picker, "click", "[data-icon]", (_, chip) => {
+      // Bấm lại icon đang chọn thì bỏ chọn, để quay về mặc định của build.
+      input.value = chip.classList.contains("active") ? "" : chip.dataset.icon;
+      input.dataset.touched = "1";
+      renderIconPicker(picker);
+    });
+
+    // Gõ tay thì bảng vẫn sáng đúng ô.
+    input.addEventListener("input", () => {
+      input.dataset.touched = input.value.trim() ? "1" : "";
+      renderIconPicker(picker);
+    });
+  });
+
+  // Đổi khu Ngôn ngữ / Chủ đề thì đảo thứ tự nhóm gợi ý.
+  qs("#new-section-kind").addEventListener("change", () =>
+    renderIconPicker(qs('[data-icon-picker="section"]')));
+
+  renderAllIconPickers();
+}
+
+/** Đoán icon từ tên, chỉ khi người dùng chưa tự chọn. */
+function suggestIconFrom(name, inputId, pickerKind) {
+  const input = qs(inputId);
+  if (input.dataset.touched) return;
+  const key = toSlug(name).replace(/-/g, " ");
+  const guess = NAME_TO_ICON[key] || NAME_TO_ICON[key.replace(/\s/g, "")];
+  if (!guess) return;
+  input.value = guess;
+  renderIconPicker(qs(`[data-icon-picker="${pickerKind}"]`));
+}
+
 /* --------------------------------------------------------- đăng nhập */
 
 async function handleLogin(event) {
@@ -234,6 +337,7 @@ function handleMarkdownFile(file) {
     }
 
     qs("#file-markdown-name").textContent = `Đã nạp ${file.name}`;
+    renderAllIconPickers();
     updatePathPreview();
     showAlert(qs("#post-error"), "");
   };
@@ -414,6 +518,9 @@ function resetForm() {
   qs("#file-quiz-clear").hidden = true;
   qs("#file-markdown").value = "";
   qs("#file-markdown-name").textContent = "Hoặc gõ thẳng vào ô bên dưới";
+  ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
+  qsa("[data-icon-picker]").forEach((p) => { qs(p.dataset.iconTarget).dataset.touched = ""; });
+  renderAllIconPickers();
   updatePathPreview();
 }
 
@@ -444,18 +551,24 @@ function bindEvents() {
       updatePathPreview();
     }));
 
-  qs("#new-section-name").addEventListener("input", (event) => {
-    if (!qs("#new-section-id").value) {
-      qs("#new-section-id").value = toSlug(event.target.value);
-      updatePathPreview();
-    }
-  });
-  qs("#new-category-name").addEventListener("input", (event) => {
-    if (!qs("#new-category-id").value) {
-      qs("#new-category-id").value = toSlug(event.target.value);
-      updatePathPreview();
-    }
-  });
+  // Tên thư mục bám theo tên hiển thị cho tới khi người dùng tự sửa nó —
+  // cùng quy tắc với ô tên file bám theo tiêu đề.
+  const bindAutoSlug = (nameId, idField, iconField, pickerKind) => {
+    qs(nameId).addEventListener("input", (event) => {
+      if (!qs(idField).dataset.touched) {
+        qs(idField).value = toSlug(event.target.value);
+        updatePathPreview();
+      }
+      suggestIconFrom(event.target.value, iconField, pickerKind);
+    });
+  };
+  bindAutoSlug("#new-section-name", "#new-section-id", "#new-section-icon", "section");
+  bindAutoSlug("#new-category-name", "#new-category-id", "#new-category-icon", "category");
+
+  ["#new-section-id", "#new-category-id"].forEach((id) =>
+    qs(id).addEventListener("input", (event) => {
+      event.target.dataset.touched = event.target.value ? "1" : "";
+    }));
 
   qs("#field-title").addEventListener("input", (event) => {
     // Slug bám theo tiêu đề cho tới khi người dùng tự sửa slug.
@@ -482,6 +595,8 @@ function bindEvents() {
     qs("#file-quiz-name").textContent = "Chưa chọn file";
     qs("#file-quiz-clear").hidden = true;
   });
+
+  bindIconPickers();
 
   qsa("[data-editor-tab]").forEach((btn) => btn.addEventListener("click", () => {
     const isPreview = btn.dataset.editorTab === "preview";
