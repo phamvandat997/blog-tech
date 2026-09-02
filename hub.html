@@ -27,6 +27,7 @@
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" class="search-input"
                placeholder="Tìm bài viết…" autocomplete="off">
+        <kbd class="search-kbd">⌘K</kbd>
         <button id="search-clear-btn" class="search-clear" type="button" title="Xoá tìm kiếm" hidden>✕</button>
       </div>
 
@@ -42,9 +43,19 @@
     </aside>
 
     <section class="content-area">
+      <div class="hub-progress-tracker" id="hub-progress-tracker" hidden></div>
       <div class="docs-container" id="docs-container"></div>
+      <div class="pagination-wrapper" id="pagination-container"></div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-copyright">
+        &copy; 2026 <strong>Blog kỹ thuật</strong>. All rights reserved.
+      </p>
+    </div>
+  </footer>
 
 </div>
 

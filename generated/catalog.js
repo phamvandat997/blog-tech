@@ -117,6 +117,7 @@ const DOCUMENTS = [
    "Study Plan"
   ],
   "order": 1,
+  "readingMinutes": 24,
   "updatedDate": "2026-09-02"
  },
  {
@@ -136,6 +137,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 1,
+  "readingMinutes": 13,
   "updatedDate": "2026-09-02"
  },
  {
@@ -155,6 +157,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 2,
+  "readingMinutes": 14,
   "updatedDate": "2026-09-02"
  },
  {
@@ -174,6 +177,7 @@ const DOCUMENTS = [
    "Stack Memory"
   ],
   "order": 3,
+  "readingMinutes": 29,
   "updatedDate": "2026-09-02"
  },
  {
@@ -192,6 +196,7 @@ const DOCUMENTS = [
    "Class Loading"
   ],
   "order": 4,
+  "readingMinutes": 16,
   "updatedDate": "2026-09-02"
  },
  {
@@ -210,6 +215,7 @@ const DOCUMENTS = [
    "Class Loading"
   ],
   "order": 5,
+  "readingMinutes": 15,
   "updatedDate": "2026-09-02"
  },
  {
@@ -228,6 +234,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 1,
+  "readingMinutes": 14,
   "updatedDate": "2026-09-02"
  },
  {
@@ -246,6 +253,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 2,
+  "readingMinutes": 11,
   "updatedDate": "2026-09-02"
  },
  {
@@ -265,6 +273,7 @@ const DOCUMENTS = [
    "Spliterator"
   ],
   "order": 3,
+  "readingMinutes": 15,
   "updatedDate": "2026-09-02"
  },
  {
@@ -284,6 +293,7 @@ const DOCUMENTS = [
    "Spliterator"
   ],
   "order": 4,
+  "readingMinutes": 16,
   "updatedDate": "2026-09-02"
  },
  {
@@ -302,6 +312,7 @@ const DOCUMENTS = [
    "Date/Time"
   ],
   "order": 5,
+  "readingMinutes": 27,
   "updatedDate": "2026-09-02"
  },
  {
@@ -321,6 +332,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 1,
+  "readingMinutes": 11,
   "updatedDate": "2026-09-02"
  },
  {
@@ -340,6 +352,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 2,
+  "readingMinutes": 13,
   "updatedDate": "2026-09-02"
  },
  {
@@ -359,6 +372,7 @@ const DOCUMENTS = [
    "JPMS Modules"
   ],
   "order": 3,
+  "readingMinutes": 28,
   "updatedDate": "2026-09-02"
  },
  {
@@ -377,6 +391,7 @@ const DOCUMENTS = [
    "Unnamed vars"
   ],
   "order": 1,
+  "readingMinutes": 16,
   "updatedDate": "2026-09-02"
  },
  {
@@ -395,6 +410,7 @@ const DOCUMENTS = [
    "Unnamed vars"
   ],
   "order": 2,
+  "readingMinutes": 13,
   "updatedDate": "2026-09-02"
  },
  {
@@ -413,6 +429,7 @@ const DOCUMENTS = [
    "Architecture"
   ],
   "order": 1,
+  "readingMinutes": 5,
   "updatedDate": "2026-09-02"
  },
  {
@@ -432,6 +449,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 2,
+  "readingMinutes": 8,
   "updatedDate": "2026-09-02"
  },
  {
@@ -451,6 +469,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 3,
+  "readingMinutes": 7,
   "updatedDate": "2026-09-02"
  },
  {
@@ -470,6 +489,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 4,
+  "readingMinutes": 27,
   "updatedDate": "2026-09-02"
  },
  {
@@ -489,6 +509,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 5,
+  "readingMinutes": 10,
   "updatedDate": "2026-09-02"
  },
  {
@@ -508,6 +529,7 @@ const DOCUMENTS = [
    "Master Question Bank"
   ],
   "order": 6,
+  "readingMinutes": 7,
   "updatedDate": "2026-09-02"
  },
  {
@@ -526,6 +548,7 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
+  "readingMinutes": 12,
   "updatedDate": "2026-09-02"
  },
  {
@@ -544,6 +567,7 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
+  "readingMinutes": 40,
   "updatedDate": "2026-09-02"
  },
  {
@@ -562,6 +586,7 @@ const DOCUMENTS = [
    "FAANG"
   ],
   "order": 1,
+  "readingMinutes": 237,
   "updatedDate": "2026-09-02"
  },
  {
@@ -579,6 +604,7 @@ const DOCUMENTS = [
    "Fundamentals"
   ],
   "order": 1,
+  "readingMinutes": 11,
   "updatedDate": "2026-09-02"
  }
 ];

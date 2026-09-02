@@ -60,3 +60,26 @@ function initBackToTop() {
   }, { passive: true });
   btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 }
+
+function initSearchShortcut(inputSelector) {
+  const input = qs(inputSelector);
+  if (!input) return;
+
+  const isMac = typeof navigator !== "undefined" && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform || navigator.userAgent);
+  qsa(".search-kbd").forEach((k) => (k.textContent = isMac ? "⌘K" : "Ctrl+K"));
+
+  document.addEventListener("keydown", (e) => {
+    const tag = document.activeElement?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || document.activeElement?.isContentEditable) {
+      if (e.key === "Escape" && document.activeElement === input) {
+        input.blur();
+      }
+      return;
+    }
+    if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || e.key === "/") {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+}
