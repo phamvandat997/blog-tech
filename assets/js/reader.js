@@ -46,7 +46,7 @@ function renderRelatedSection(doc) {
   const list = qs("#reader-related-list");
   if (!sidebar || !list) return;
 
-  const related = getRelatedDocs(doc, 4);
+  const related = getRelatedDocs(doc, 5);
   if (related.length === 0) {
     sidebar.hidden = true;
     return;
@@ -260,6 +260,216 @@ function setupCompletionWidget(doc) {
   });
 }
 
+function bindReaderSearch() {
+  const input = qs("#reader-search");
+  const panel = qs("#reader-search-results");
+  if (!input || !panel) return;
+
+  let selectedIdx = -1;
+
+  const close = () => {
+    panel.innerHTML = "";
+    panel.classList.remove("open");
+    selectedIdx = -1;
+  };
+
+  const updateSelection = (hits) => {
+    hits.forEach((h, i) => {
+      h.classList.toggle("is-selected", i === selectedIdx);
+      if (i === selectedIdx) h.scrollIntoView({ block: "nearest" });
+    });
+  };
+
+  input.addEventListener("input", () => {
+    selectedIdx = -1;
+    const query = input.value.trim();
+    if (query.length < 2) return close();
+    const hits = filterDocs({ query }).slice(0, 8);
+    if (!hits.length) {
+      panel.innerHTML = `<div class="search-hit search-hit-empty">Không có bài nào khớp “${escapeHtml(query)}”</div>`;
+    } else {
+      panel.innerHTML = hits.map((doc) => {
+        const section = getSection(doc.section);
+        const category = section?.categories.find((c) => c.id === doc.category);
+        return `<a class="search-hit" href="${attr(readerUrl(doc))}">
+          <span class="search-hit-body">
+            <span class="search-hit-title">${escapeHtml(doc.title)}</span>
+            <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(category?.name || doc.category)}</span>
+          </span>
+        </a>`;
+      }).join("");
+    }
+    panel.classList.add("open");
+  });
+
+  input.addEventListener("keydown", (event) => {
+    const hits = qsa(".search-hit", panel);
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!hits.length) return;
+      selectedIdx = (selectedIdx + 1) % hits.length;
+      updateSelection(hits);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!hits.length) return;
+      selectedIdx = (selectedIdx - 1 + hits.length) % hits.length;
+      updateSelection(hits);
+    } else if (event.key === "Enter") {
+      if (selectedIdx >= 0 && hits[selectedIdx]) {
+        event.preventDefault();
+        window.location.href = hits[selectedIdx].href;
+      } else {
+        const query = input.value.trim();
+        if (!query) return;
+        const first = filterDocs({ query })[0];
+        if (first) window.location.href = readerUrl(first);
+      }
+    } else if (event.key === "Escape") {
+      close();
+      input.blur();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".search-wrapper")) close();
+  });
+}
+
+async function initMermaidDiagrams() {
+  const diagrams = qsa(".mermaid");
+  if (!diagrams.length) return;
+
+  if (typeof mermaid === "undefined") {
+    try {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js";
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    } catch (e) {
+      console.warn("Không thể nạp mermaid.js (offline fallback):", e);
+      return;
+    }
+  }
+
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  try {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isDark ? "dark" : "neutral",
+      securityLevel: "loose",
+      fontFamily: "var(--font-sans)",
+      themeVariables: {
+        darkMode: isDark,
+        fontFamily: "var(--font-sans)",
+      },
+    });
+    mermaid.run({
+      nodes: diagrams,
+    });
+  } catch (err) {
+    console.warn("Mermaid init error:", err);
+  }
+}
+
+function setupFontSizeAdjuster() {
+  const decBtn = qs("#btn-font-dec");
+  const incBtn = qs("#btn-font-inc");
+  const valEl = qs("#font-size-val");
+  const readerBody = qs("#reader-body");
+  if (!decBtn || !incBtn) return;
+
+  const SIZES = [85, 100, 115, 130, 145];
+  let current = parseInt(localStorage.getItem("blog.fontSize"), 10) || 100;
+  if (!SIZES.includes(current)) current = 100;
+
+  const apply = (val, notify = false) => {
+    current = val;
+    const scale = current / 100;
+    document.documentElement.style.setProperty("--reader-font-scale", String(scale));
+    if (readerBody) {
+      readerBody.style.setProperty("--reader-font-scale", String(scale));
+      readerBody.style.fontSize = `${current}%`;
+    }
+    if (valEl) valEl.textContent = `${current}%`;
+    try { localStorage.setItem("blog.fontSize", String(current)); } catch {}
+    if (notify) showToast(`Cỡ chữ: ${current}%`);
+  };
+
+  apply(current, false);
+
+  decBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const idx = SIZES.indexOf(current);
+    if (idx > 0) {
+      apply(SIZES[idx - 1], true);
+    } else {
+      showToast("Đã ở mức cỡ chữ nhỏ nhất (85%)");
+    }
+  });
+
+  incBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const idx = SIZES.indexOf(current);
+    if (idx < SIZES.length - 1) {
+      apply(SIZES[idx + 1], true);
+    } else {
+      showToast("Đã ở mức cỡ chữ lớn nhất (145%)");
+    }
+  });
+}
+
+function setupZenMode() {
+  const btn = qs("#btn-zen-mode");
+  if (!btn) return;
+
+  const toggle = () => {
+    const isZen = document.body.classList.toggle("zen-mode");
+    btn.classList.toggle("active", isZen);
+    btn.textContent = isZen ? "✕" : "🧘";
+    btn.title = isZen ? "Thoát chế độ tập trung (Esc / Z)" : "Chế độ đọc tập trung (Zen Mode) [Z]";
+    showToast(isZen ? "🧘 Đã bật chế độ tập trung (Nhấn Z hoặc Esc để thoát)" : "Đã thoát chế độ tập trung");
+  };
+
+  btn.addEventListener("click", toggle);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.matches("input, textarea, select")) return;
+    if (e.key === "z" || e.key === "Z") {
+      e.preventDefault();
+      toggle();
+    } else if (e.key === "Escape" && document.body.classList.contains("zen-mode")) {
+      toggle();
+    }
+  });
+}
+
+function setupHeadingAnchors() {
+  qsa("#reader-body h2[id], #reader-body h3[id]").forEach((heading) => {
+    const btn = document.createElement("button");
+    btn.className = "heading-anchor-btn";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Sao chép liên kết mục này");
+    btn.title = "Sao chép liên kết mục này";
+    btn.innerHTML = "#";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const url = new URL(window.location.href);
+      url.hash = heading.id;
+      history.replaceState(null, "", url.toString());
+      navigator.clipboard.writeText(url.toString()).then(
+        () => showToast("🔗 Đã sao chép liên kết đề mục!"),
+        () => showToast("Không thể truy cập clipboard")
+      );
+    });
+    heading.appendChild(btn);
+  });
+}
+
 function showError(title, text, action) {
   document.body.classList.add("no-toc");
   qs("#reader-root").innerHTML = emptyState("🔍", title, text, action);
@@ -269,6 +479,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initBackToTop();
   trackNavbarHeight();
+  bindReaderSearch();
+  initSearchShortcut("#reader-search");
+  setupFontSizeAdjuster();
+  setupZenMode();
+
+  window.addEventListener("theme-changed", () => {
+    initMermaidDiagrams();
+  });
 
   const params = readParams();
   const home = '<a class="btn-primary-link" href="index.html">⬅ Về trang chủ</a>';
@@ -313,7 +531,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   qs("#reader-body").innerHTML = renderMarkdown(cleanBody);
   renderRelatedSection(doc);
+  setupHeadingAnchors();
   setupToc();
   setupReadingProgress();
   setupCompletionWidget(doc);
+  initMermaidDiagrams();
 });
