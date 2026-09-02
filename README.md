@@ -106,3 +106,10 @@ reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
 ```
 
 Tiến độ đọc, bài đánh dấu và bài quiz đang làm lưu ở `localStorage` của trình duyệt.
+
+### Về việc mở bằng `file://`
+
+Nội dung nạp bằng thẻ `<script>` chèn động (không dùng `fetch`), nên về nguyên
+tắc mở thẳng `index.html` bằng `file://` vẫn chạy. Điều này **chưa được kiểm
+chứng** trên máy này vì không có Chrome/Chromium để chạy thử — cách chắc chắn
+là `npm run serve`.
