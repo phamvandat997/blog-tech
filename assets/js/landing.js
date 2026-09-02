@@ -89,11 +89,12 @@ function bindGlobalSearch() {
     } else {
       panel.innerHTML = hits.map((doc) => {
         const section = getSection(doc.section);
+        const category = section?.categories.find((c) => c.id === doc.category);
         return `<a class="search-hit" href="${attr(readerUrl(doc))}">
           <span class="search-hit-icon">${escapeHtml(section?.icon || "📄")}</span>
           <span class="search-hit-body">
             <span class="search-hit-title">${escapeHtml(doc.title)}</span>
-            <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(doc.category)}</span>
+            <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(category?.name || doc.category)}</span>
           </span>
         </a>`;
       }).join("");
