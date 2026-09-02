@@ -1,0 +1,16 @@
+{
+  "name": "Javascript",
+  "icon": "abc",
+  "color": "#669c35",
+  "kind": "topic",
+  "order": 3,
+  "tagline": "",
+  "categories": [
+    {
+      "id": "co-ban",
+      "name": "cơ bản",
+      "icon": "📁",
+      "order": 1
+    }
+  ]
+}
