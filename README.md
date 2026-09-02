@@ -103,6 +103,24 @@ là tự build và deploy — khoảng một phút sau bài lên sóng. Không c
 Token lưu trong `localStorage` của chính trình duyệt đó và chỉ được gửi tới
 `api.github.com`. Thu hồi bất cứ lúc nào ở trang Settings của GitHub.
 
+### Đăng nhập báo lỗi thì làm gì
+
+Thông báo lỗi luôn kèm **nguyên văn câu GitHub trả về** và **bước bị hỏng**. Đọc câu đó trước.
+
+Kiểm nhanh token bằng một lệnh (dùng `read -s` nên token không vào lịch sử shell):
+
+```bash
+read -rs "TOKEN?Dan token roi Enter: " && curl -s -w '\nHTTP %{http_code}\n' -H "Authorization: Bearer $TOKEN" https://api.github.com/repos/phamvandat997/blog-tech | grep -E '"(message|full_name)"|"push"|HTTP'
+```
+
+| Kết quả | Nghĩa là |
+|---|---|
+| `HTTP 200` và `"push": true` | Token đúng, đăng bài được |
+| `HTTP 200` nhưng `"push": false` | Token chỉ đọc — đặt **Contents: Read and write** |
+| `HTTP 404` | Token chưa được cấp quyền vào kho này — sửa mục **Repository access** (GitHub cố tình trả 404 thay vì 403 để không lộ kho riêng tư) |
+| `HTTP 401` | Token sai hoặc hết hạn |
+| `HTTP 403` | Đọc câu `message` — thường là thiếu quyền hoặc token classic thiếu scope `repo` |
+
 ### Mô hình bảo mật — đọc kỹ chỗ này
 
 Ô email chỉ đối chiếu với một danh sách viết cứng trong `assets/js/admin.js`.
