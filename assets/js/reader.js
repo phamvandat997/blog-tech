@@ -19,17 +19,60 @@ function loadDocContent(doc) {
   });
 }
 
-/** Bài trước / bài sau trong cùng mảng, theo đúng thứ tự catalog. */
-function renderNeighbours(doc) {
-  const siblings = docsOfSection(doc.section);
-  const index = siblings.findIndex((d) => d.id === doc.id);
-  const link = (target, label, side) => target
-    ? `<a class="reader-nav-link is-${side}" href="${attr(readerUrl(target))}">
-         <span class="reader-nav-label">${label}</span>
-         <span class="reader-nav-title">${escapeHtml(target.title)}</span>
-       </a>`
-    : '<span class="reader-nav-link is-empty"></span>';
-  return link(siblings[index - 1], "⬅ Bài trước", "prev") + link(siblings[index + 1], "Bài sau ➔", "next");
+/** Tìm các bài viết liên quan dựa theo cùng mảng, chuyên mục, phase và tag tương đồng. */
+function getRelatedDocs(currentDoc, limit = 3) {
+  const currentTags = new Set(currentDoc.tags || []);
+  const candidates = ALL_DOCUMENTS.filter((d) => d.id !== currentDoc.id);
+
+  const scored = candidates.map((d) => {
+    let score = 0;
+    if (d.section === currentDoc.section) score += 10;
+    if (d.category === currentDoc.category) score += 15;
+    if (d.phase && currentDoc.phase && d.phase === currentDoc.phase) score += 5;
+    if (d.tags && currentTags.size > 0) {
+      for (const t of d.tags) {
+        if (currentTags.has(t)) score += 4;
+      }
+    }
+    return { doc: d, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map((s) => s.doc);
+}
+
+function renderRelatedSection(doc) {
+  const sidebar = qs("#reader-related-sidebar");
+  const list = qs("#reader-related-list");
+  if (!sidebar || !list) return;
+
+  const related = getRelatedDocs(doc, 4);
+  if (related.length === 0) {
+    sidebar.hidden = true;
+    return;
+  }
+
+  sidebar.hidden = false;
+  list.innerHTML = related.map((d) => {
+    const isCompleted = isDocCompleted(d.id);
+    const phaseBadge = d.phase ? `<span class="related-card-phase">${escapeHtml(d.phase.toUpperCase())}</span>` : "";
+    const readingTime = d.readingMinutes ? `<span class="related-card-time">⏱️ ~${d.readingMinutes}p</span>` : "";
+    const completedMark = isCompleted ? `<span class="related-card-completed">✓ Đã học</span>` : "";
+
+    return `
+      <a class="related-card ${isCompleted ? "is-completed" : ""}" href="${attr(readerUrl(d))}">
+        <div class="related-card-meta">
+          ${phaseBadge}
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            ${completedMark}
+            ${readingTime}
+          </div>
+        </div>
+        <h4 class="related-card-title">${escapeHtml(d.title)}</h4>
+        <p class="related-card-desc">${escapeHtml(d.description)}</p>
+      </a>
+    `;
+  }).join("");
 }
 
 /**
@@ -178,6 +221,45 @@ function setupScrollSpy(headings) {
   window.__scrollSpy = { activeId, measure, tops: () => tops };
 }
 
+function setupReadingProgress() {
+  const bar = qs("#reading-progress");
+  if (!bar) return;
+  const onScroll = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (maxScroll <= 0) {
+      bar.style.width = "0%";
+      return;
+    }
+    const pct = Math.min(100, Math.max(0, (scrollY / maxScroll) * 100));
+    bar.style.width = `${pct}%`;
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
+
+function setupCompletionWidget(doc) {
+  const box = qs("#reader-complete-box");
+  const btn = qs("#btn-toggle-complete");
+  if (!box || !btn) return;
+  box.hidden = false;
+
+  const updateButton = (completed) => {
+    btn.classList.toggle("is-completed", completed);
+    btn.querySelector(".complete-btn-label").textContent = completed
+      ? "✓ Đã hoàn thành (nhấn để huỷ)"
+      : "Đánh dấu đã học";
+  };
+
+  updateButton(isDocCompleted(doc.id));
+
+  btn.addEventListener("click", () => {
+    const isNow = toggleDocCompleted(doc.id);
+    updateButton(isNow);
+    showToast(isNow ? "🎉 Đã lưu vào tiến độ ôn tập!" : "Đã huỷ đánh dấu bài học.");
+  });
+}
+
 function showError(title, text, action) {
   document.body.classList.add("no-toc");
   qs("#reader-root").innerHTML = emptyState("🔍", title, text, action);
@@ -207,7 +289,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.title = `${doc.title} | ${section.name}`;
   document.documentElement.style.setProperty("--section-color", section.color);
   qs("#reader-title").textContent = doc.title;
-  qs("#reader-date").textContent = `Cập nhật ${doc.updatedDate}`;
   qs("#reader-breadcrumb").innerHTML =
     `<a href="index.html">Trang chủ</a> <span>›</span>
      <a href="${attr(hubUrl(section.id))}">${escapeHtml(section.name)}</a>
@@ -224,7 +305,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  qs("#reader-body").innerHTML = renderMarkdown(body);
-  qs("#reader-neighbours").innerHTML = renderNeighbours(doc);
+  const readingMinutes = doc.readingMinutes || Math.max(1, Math.round(body.trim().split(/\s+/).length / 200));
+  qs("#reader-date").innerHTML = `📅 Cập nhật ${doc.updatedDate} &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc`;
+
+  // Bỏ heading H1 đầu bài nếu có vì đã hiển thị ở phần header #reader-title
+  const cleanBody = body.replace(/^\s*#[^\n]*\r?\n?/, "");
+
+  qs("#reader-body").innerHTML = renderMarkdown(cleanBody);
+  renderRelatedSection(doc);
   setupToc();
+  setupReadingProgress();
+  setupCompletionWidget(doc);
 });

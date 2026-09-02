@@ -30,6 +30,79 @@ function renderInlineCode(text) {
   return escapeText(text).replace(/`([^`]+)`/g, (_, code) => `<code>${code}</code>`);
 }
 
+const KEYWORDS = new Set([
+  "abstract", "assert", "async", "await", "boolean", "break", "byte", "case", "catch",
+  "char", "class", "const", "continue", "default", "do", "double", "else", "enum",
+  "export", "extends", "final", "finally", "float", "for", "function", "if", "implements",
+  "import", "instanceof", "int", "interface", "let", "long", "native", "new", "non-sealed",
+  "package", "permits", "private", "protected", "public", "record", "return", "sealed",
+  "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw",
+  "throws", "transient", "try", "typeof", "var", "void", "volatile", "when", "while", "yield",
+  "select", "from", "where", "insert", "update", "delete", "join", "order", "by", "group"
+]);
+
+const BOOLEANS = new Set(["true", "false", "null", "undefined"]);
+
+const CODE_TOKEN_RE = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|#(?:!|\s)[^\n]*|"""[\s\S]*?"""|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[\s\S]*?`)|(@[A-Za-z0-9_]+)|(\b0[xX][0-9a-fA-F_]+[lL]?\b|\b0[bB][01_]+[lL]?\b|\b\d[\d_]*(?:\.[\d_]+)?(?:[eE][+-]?[\d_]+)?[fFdDlL]?\b)|(->|::)|([A-Za-z_$][A-Za-z0-9_$]*)/g;
+
+const escapeCodeText = (s) => String(s ?? "")
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;");
+
+function highlightCode(rawCode, lang = "text") {
+  const l = (lang || "").toLowerCase();
+  if (!["java", "js", "javascript", "ts", "typescript", "json", "sql", "sh", "bash"].includes(l)) {
+    return escapeCodeText(rawCode);
+  }
+
+  let result = "";
+  let lastIndex = 0;
+  CODE_TOKEN_RE.lastIndex = 0;
+
+  let match;
+  while ((match = CODE_TOKEN_RE.exec(rawCode)) !== null) {
+    if (match.index > lastIndex) {
+      result += escapeCodeText(rawCode.slice(lastIndex, match.index));
+    }
+    lastIndex = CODE_TOKEN_RE.lastIndex;
+
+    const [full, commentOrStr, annotation, number, arrow, word] = match;
+    if (commentOrStr) {
+      if (commentOrStr.startsWith("//") || commentOrStr.startsWith("/*") || commentOrStr.startsWith("#")) {
+        result += `<span class="tok-comment">${escapeCodeText(commentOrStr)}</span>`;
+      } else {
+        result += `<span class="tok-string">${escapeCodeText(commentOrStr)}</span>`;
+      }
+    } else if (annotation) {
+      result += `<span class="tok-annotation">${escapeCodeText(annotation)}</span>`;
+    } else if (number) {
+      result += `<span class="tok-number">${escapeCodeText(number)}</span>`;
+    } else if (arrow) {
+      result += `<span class="tok-operator">${escapeCodeText(arrow)}</span>`;
+    } else if (word) {
+      if (KEYWORDS.has(word) || KEYWORDS.has(word.toLowerCase())) {
+        result += `<span class="tok-keyword">${escapeCodeText(word)}</span>`;
+      } else if (BOOLEANS.has(word)) {
+        result += `<span class="tok-boolean">${escapeCodeText(word)}</span>`;
+      } else if (/^[A-Z][a-zA-Z0-9_]*$/.test(word)) {
+        result += `<span class="tok-type">${escapeCodeText(word)}</span>`;
+      } else {
+        result += escapeCodeText(word);
+      }
+    } else {
+      result += escapeCodeText(full);
+    }
+  }
+
+  if (lastIndex < rawCode.length) {
+    result += escapeCodeText(rawCode.slice(lastIndex));
+  }
+
+  return result;
+}
+
 function renderMarkdown(md) {
   if (!md) return "";
 
@@ -39,12 +112,13 @@ function renderMarkdown(md) {
   const blocks = [];
   let text = md.replace(/```([\w+-]*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
     const label = (lang || "text").toUpperCase();
+    const highlighted = highlightCode(code, lang);
     blocks.push(`<div class="code-block-wrapper">
       <div class="code-block-header">
         <span>${escapeHtml(label)}</span>
         <button class="code-copy-btn" type="button" data-copy-code>Sao chép mã</button>
       </div>
-      <pre><code class="language-${escapeHtml(lang || "text")}">${escapeText(code)}</code></pre>
+      <pre><code class="language-${escapeHtml(lang || "text")}">${highlighted}</code></pre>
     </div>`);
     return `%%CODE${blocks.length - 1}%%`;
   });
@@ -68,35 +142,56 @@ function renderMarkdown(md) {
     .replace(/^##\s+(.*)$/gim, (_, t) => `<h2 id="${escapeHtml(headingSlug(t))}">${t}</h2>`)
     .replace(/^#\s+(.*)$/gim, (_, t) => `<h1>${t}</h1>`);
 
-  // 5. Đường kẻ ngang, nhấn mạnh, mã inline.
+  // 5. Đường kẻ ngang, liên kết, nhấn mạnh, mã inline.
   text = text
     .replace(/^\s*(?:---|\*\*\*|___)\s*$/gim, "<hr>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+      const u = url.trim();
+      const isExternal = /^https?:\/\//i.test(u);
+      return `<a href="${attr(u)}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""}>${label}</a>`;
+    })
     .replace(/\*\*\*([^*]+)\*\*\*/g, (_, t) => `<b><i>${t}</i></b>`)
     .replace(/\*\*([^*]+)\*\*/g, (_, t) => `<b>${t}</b>`)
     .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, (_, pre, t) => `${pre}<i>${t}</i>`)
     .replace(/`([^`\n]+)`/g, (_, t) => `<code>${t}</code>`);
 
-  // 6. Bảng: bỏ dòng phân cách, gộp các <tr> liền nhau thành một <table>.
+  // 6. Bảng: nhận diện hàng đầu là <th>, các hàng sau là <td>.
   text = text.replace(/^\|(.+)\|[ \t]*$/gim, (row) => {
     const cells = row.trim().slice(1, -1).split("|");
     if (cells.some((c) => /^\s*:?-{2,}:?\s*$/.test(c))) return "%%TSEP%%";
     return "<tr>" + cells.map((c) => `<td>${c.trim()}</td>`).join("") + "</tr>";
   });
-  text = text.replace(/%%TSEP%%\r?\n?/g, "");
-  text = text.replace(/(?:<tr>[\s\S]*?<\/tr>\s*)+/g, (rows) =>
-    `<div class="table-responsive-wrapper"><table>${rows.replace(/>\s+</g, "><").trim()}</table></div>`);
+  text = text.replace(/<tr>(.*?)<\/tr>\s*%%TSEP%%\r?\n?/g, (_, row) => {
+    const ths = row.replace(/<td>/g, "<th>").replace(/<\/td>/g, "</th>");
+    return `<thead><tr>${ths}</tr></thead>`;
+  });
+  text = text.replace(/(?:<thead>[\s\S]*?<\/thead>)?(?:<tr>[\s\S]*?<\/tr>\s*)+/g, (tbl) => {
+    let body = tbl;
+    let head = "";
+    if (tbl.startsWith("<thead>")) {
+      const endHead = tbl.indexOf("</thead>") + 8;
+      head = tbl.slice(0, endHead);
+      body = tbl.slice(endHead).trim();
+    }
+    const tbody = body ? `<tbody>${body}</tbody>` : "";
+    return `<div class="table-responsive-wrapper"><table>${head}${tbody}</table></div>`;
+  });
 
   // 7. Danh sách: bọc các <li> liền nhau vào <ul>.
   text = text.replace(/^[ \t]*(?:[-*+]|\d+\.)\s+(.*)$/gim, (_, t) => `<li>${t}</li>`);
   text = text.replace(/(?:<li>[\s\S]*?<\/li>\s*)+/g, (items) => `<ul>${items.trim()}</ul>`);
 
   // 8. Đoạn văn.
-  text = text.replace(/\r?\n\s*\r?\n/g, "</p><p>");
+  text = `<p>${text}</p>`.replace(/\r?\n\s*\r?\n/g, "</p><p>");
 
   // 9. Trả khối mã về chỗ cũ (dùng hàm nên "$&" trong mã không bị hiểu nhầm).
   text = text.replace(/%%CODE(\d+)%%/g, (_, i) => blocks[Number(i)] || "");
 
-  return `<div class="markdown-content"><p>${text}</p></div>`;
+  // Dọn dẹp thẻ p rỗng hoặc bọc ngoài các khối block-level
+  text = text.replace(/<p>\s*<\/p>/g, "")
+             .replace(/<p>\s*(<(?:div|table|ul|ol|h[1-6]|hr|blockquote)[\s\S]*?<\/(?:div|table|ul|ol|h[1-6]|blockquote)>|<hr>)\s*<\/p>/g, "$1");
+
+  return `<div class="markdown-content">${text}</div>`;
 }
 
 // Nút "Sao chép mã" — uỷ nhiệm một lần cho toàn trang.

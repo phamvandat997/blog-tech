@@ -30,14 +30,15 @@ function filterDocs(f) {
   });
 }
 
-/** Đọc ?s= và ?d= từ URL, chỉ trả về giá trị có thật trong catalog. */
 function readParams() {
   const params = new URLSearchParams(window.location.search);
   const sectionId = params.get("s") || "";
   const section = getSection(sectionId);
   const docPath = params.get("d") || "";
   const doc = docPath ? getDoc(`${sectionId}/${docPath}`) : null;
-  return { section, doc, query: params.get("q") || "", category: params.get("c") || "" };
+  const pageNum = parseInt(params.get("p") || params.get("page") || "1", 10);
+  const page = isNaN(pageNum) || pageNum < 1 ? 1 : pageNum;
+  return { section, doc, query: params.get("q") || "", category: params.get("c") || "", page };
 }
 
 const hubUrl = (sectionId, extra = {}) => {

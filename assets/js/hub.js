@@ -2,13 +2,26 @@
 // Hub của một mảng nội dung: danh sách bài để đọc.
 // Chuyên mục đọc từ catalog — không hardcode tên mảng nào.
 
+const PAGE_SIZE = 12;
+
 const hub = {
   section: null,
   category: "all",
   query: "",
+  page: 1,
 };
 
 const els = {};
+
+function updateUrl() {
+  const params = new URLSearchParams();
+  if (hub.section) params.set("s", hub.section.id);
+  if (hub.category && hub.category !== "all") params.set("c", hub.category);
+  if (hub.query) params.set("q", hub.query);
+  if (hub.page > 1) params.set("p", hub.page);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  history.replaceState(null, "", newUrl);
+}
 
 /* ---------------------------------------------------------------- sidebar */
 
@@ -28,26 +41,123 @@ function renderSidebar() {
 /* --------------------------------------------------------------- tab: docs */
 
 function docCard(doc) {
-  return `<a class="doc-card" href="${attr(readerUrl(doc))}">
+  const isCompleted = isDocCompleted(doc.id);
+  const readingTime = doc.readingMinutes || 5;
+  const phaseBadge = doc.phase ? `<span class="doc-badge doc-badge-phase">${escapeHtml(doc.phase)}</span>` : "";
+  const completedBadge = isCompleted ? `<span class="doc-badge doc-badge-completed">✓ Đã học</span>` : "";
+  const tagsHtml = (doc.tags || []).slice(0, 2).map((t) => `<span class="doc-tag">#${escapeHtml(t)}</span>`).join("");
+
+  return `<a class="doc-card ${isCompleted ? "is-completed" : ""}" href="${attr(readerUrl(doc))}">
+    <div class="doc-card-top">
+      <div class="doc-badges">
+        ${phaseBadge}
+        ${completedBadge}
+      </div>
+      <span class="doc-reading-time">⏱️ ~${readingTime}p</span>
+    </div>
     <span class="doc-card-body">
       <span class="doc-title">${escapeHtml(doc.title)}</span>
       <span class="doc-desc">${escapeHtml(doc.description)}</span>
     </span>
+    <div class="doc-card-footer">
+      <div class="doc-tags">${tagsHtml}</div>
+      <span class="doc-arrow">➔</span>
+    </div>
   </a>`;
+}
+
+function renderProgressTracker() {
+  if (!els.progressTracker || !hub.section) return;
+  const allDocs = docsOfSection(hub.section.id);
+  const total = allDocs.length;
+  if (!total) {
+    els.progressTracker.hidden = true;
+    return;
+  }
+  const completed = allDocs.filter((d) => isDocCompleted(d.id)).length;
+  const percent = Math.round((completed / total) * 100);
+
+  els.progressTracker.hidden = false;
+  els.progressTracker.innerHTML = `
+    <div class="progress-tracker-header">
+      <span class="progress-tracker-title">🎯 Tiến độ ôn luyện ${escapeHtml(hub.section.name)}</span>
+      <span class="progress-tracker-count"><b>${completed}</b> / ${total} bài (${percent}%)</span>
+    </div>
+    <div class="progress-tracker-track">
+      <div class="progress-tracker-fill" style="width: ${percent}%;"></div>
+    </div>
+  `;
+}
+
+function paginationRange(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = [];
+  pages.push(1);
+  if (current > 3) pages.push("...");
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) {
+    if (!pages.includes(i)) pages.push(i);
+  }
+  if (current < total - 2) pages.push("...");
+  if (!pages.includes(total)) pages.push(total);
+  return pages;
+}
+
+function renderPagination(total, totalPages, startIdx, endIdx) {
+  if (!els.pagination) return;
+  if (totalPages <= 1) {
+    els.pagination.innerHTML = "";
+    return;
+  }
+
+  const range = paginationRange(hub.page, totalPages);
+
+  const controlsHtml = [
+    `<button class="pagination-btn pagination-prev" data-page="${hub.page - 1}" type="button" ${hub.page === 1 ? "disabled" : ""} aria-label="Trang trước">⬅ Trước</button>`,
+    ...range.map((item) => {
+      if (item === "...") return `<span class="pagination-ellipsis">…</span>`;
+      const isCurrent = item === hub.page;
+      return `<button class="pagination-btn ${isCurrent ? "active" : ""}" data-page="${item}" type="button" ${isCurrent ? "disabled" : ""} aria-label="Trang ${item}">${item}</button>`;
+    }),
+    `<button class="pagination-btn pagination-next" data-page="${hub.page + 1}" type="button" ${hub.page === totalPages ? "disabled" : ""} aria-label="Trang sau">Sau ➡</button>`,
+  ].join("");
+
+  els.pagination.innerHTML = `
+    <span class="pagination-info">Hiển thị <b>${startIdx + 1}–${endIdx}</b> trong <b>${total}</b> bài viết</span>
+    <div class="pagination-controls">${controlsHtml}</div>
+  `;
 }
 
 function renderDocs() {
   const docs = filterDocs({ section: hub.section.id, category: hub.category, query: hub.query });
-  els.docs.innerHTML = docs.length
-    ? docs.map(docCard).join("")
-    : emptyState("🔍", "Không có bài nào khớp", "Thử đổi từ khoá hoặc chọn lại chuyên mục.");
+  const total = docs.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  if (hub.page > totalPages) hub.page = totalPages;
+  if (hub.page < 1) hub.page = 1;
+
+  const startIdx = (hub.page - 1) * PAGE_SIZE;
+  const endIdx = Math.min(startIdx + PAGE_SIZE, total);
+  const pagedDocs = docs.slice(startIdx, endIdx);
+
+  if (!total) {
+    els.docs.innerHTML = emptyState("🔍", "Không có bài nào khớp", "Thử đổi từ khoá hoặc chọn lại chuyên mục.");
+    if (els.pagination) els.pagination.innerHTML = "";
+    return;
+  }
+
+  els.docs.innerHTML = pagedDocs.map(docCard).join("");
+  renderPagination(total, totalPages, startIdx, endIdx);
 }
 
 /* ------------------------------------------------------------------- tabs */
 
 function render() {
   renderSidebar();
+  renderProgressTracker();
   renderDocs();
+  updateUrl();
 }
 
 /* ------------------------------------------------------------------ events */
@@ -55,11 +165,13 @@ function render() {
 function bindEvents() {
   delegate(els.categories, "click", "[data-category]", (_, btn) => {
     hub.category = btn.dataset.category;
+    hub.page = 1;
     render();
   });
 
   els.search.addEventListener("input", () => {
     hub.query = els.search.value.trim();
+    hub.page = 1;
     els.searchClear.hidden = !hub.query;
     render();
   });
@@ -67,11 +179,22 @@ function bindEvents() {
   els.searchClear.addEventListener("click", () => {
     els.search.value = "";
     hub.query = "";
+    hub.page = 1;
     els.searchClear.hidden = true;
     els.search.focus();
     render();
   });
 
+  if (els.pagination) {
+    delegate(els.pagination, "click", "[data-page]", (e, btn) => {
+      const page = parseInt(btn.dataset.page, 10);
+      if (page && page !== hub.page) {
+        hub.page = page;
+        renderDocs();
+        updateUrl();
+      }
+    });
+  }
 }
 
 /* ------------------------------------------------------------------- start */
@@ -81,6 +204,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   Object.assign(els, {
     categories: qs("#category-container"),
     docs: qs("#docs-container"),
+    pagination: qs("#pagination-container"),
+    progressTracker: qs("#hub-progress-tracker"),
     search: qs("#search-input"),
     searchClear: qs("#search-clear-btn"),
   });
@@ -96,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hub.section = params.section;
   hub.query = params.query;
   hub.category = params.category && params.category !== "all" ? params.category : "all";
+  hub.page = params.page || 1;
 
   document.title = `${hub.section.name} | Blog kỹ thuật`;
   qs("#hub-title").textContent = hub.section.name;
@@ -105,6 +231,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   els.searchClear.hidden = !hub.query;
 
   bindEvents();
+  initSearchShortcut("#search-input");
+  window.addEventListener("doc-completion-changed", () => {
+    renderProgressTracker();
+    renderDocs();
+  });
+
   render();
   initBackToTop();
 });

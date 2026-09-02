@@ -83,5 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   renderLanding();
   bindGlobalSearch();
+  initSearchShortcut("#global-search");
   initBackToTop();
 });

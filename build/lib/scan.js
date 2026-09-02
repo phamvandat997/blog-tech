@@ -93,15 +93,18 @@ function scanContent(contentDir) {
         // File <slug>.quiz.json vẫn nằm cạnh bài nhưng build cố tình bỏ qua —
         // tính năng quiz đang tạm gỡ, dữ liệu giữ nguyên để bật lại sau.
 
+        const words = body.trim().split(/\s+/).filter(Boolean).length;
+        const readingMinutes = Math.max(1, Math.round(words / 200));
+
         docs.push({
           id, section: sectionId, category: categoryId, slug,
           contentFile: flatten(id),
           title: data.title || firstHeading(body) || slug,
           description: data.description || firstParagraph(body),
-          // phase và tags không hiển thị trên giao diện nhưng vẫn vào ô tìm kiếm.
           phase: data.phase || "",
           tags: Array.isArray(data.tags) ? data.tags : [],
           order: typeof data.order === "number" ? data.order : 999,
+          readingMinutes,
           updatedDate: fs.statSync(filePath).mtime.toISOString().slice(0, 10),
           _body: body,
         });
