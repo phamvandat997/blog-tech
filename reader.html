@@ -26,7 +26,21 @@
         </div>
       </a>
 
+      <div class="search-wrapper is-global">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="reader-search" class="search-input"
+               placeholder="Tìm bài viết…" autocomplete="off">
+        <kbd class="search-kbd">⌘K</kbd>
+        <div class="search-results" id="reader-search-results"></div>
+      </div>
+
       <div class="nav-actions">
+        <div class="font-size-controls" title="Điều chỉnh cỡ chữ đọc bài">
+          <button class="font-btn" id="btn-font-dec" type="button" aria-label="Giảm cỡ chữ" title="Giảm cỡ chữ">A-</button>
+          <span class="font-size-val" id="font-size-val">100%</span>
+          <button class="font-btn" id="btn-font-inc" type="button" aria-label="Tăng cỡ chữ" title="Tăng cỡ chữ">A+</button>
+        </div>
+        <button class="btn-icon" id="btn-zen-mode" type="button" title="Chế độ đọc tập trung (Zen Mode) [Z]">🧘</button>
         <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
         <a class="viewer-nav-back" id="reader-back" href="index.html">⬅ Về danh mục</a>
       </div>

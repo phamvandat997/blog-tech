@@ -111,6 +111,21 @@ function renderMarkdown(md) {
   //    — mọi bài có từ 11 khối mã trở lên đều hỏng.)
   const blocks = [];
   let text = md.replace(/```([\w+-]*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
+    const l = (lang || "").toLowerCase();
+    if (l === "mermaid") {
+      const trimmed = code.trim();
+      blocks.push(`<div class="mermaid-block-wrapper">
+        <div class="mermaid-block-header">
+          <span>📊 SƠ ĐỒ HỆ THỐNG (MERMAID)</span>
+          <button class="code-copy-btn" type="button" data-copy-code>Sao chép mã</button>
+        </div>
+        <div class="mermaid-diagram-container">
+          <pre class="mermaid">${escapeHtml(trimmed)}</pre>
+        </div>
+      </div>`);
+      return `%%CODE${blocks.length - 1}%%`;
+    }
+
     const label = (lang || "text").toUpperCase();
     const highlighted = highlightCode(code, lang);
     blocks.push(`<div class="code-block-wrapper">

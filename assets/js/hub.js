@@ -7,6 +7,7 @@ const PAGE_SIZE = 12;
 const hub = {
   section: null,
   category: "all",
+  phase: "all",
   query: "",
   page: 1,
 };
@@ -17,6 +18,7 @@ function updateUrl() {
   const params = new URLSearchParams();
   if (hub.section) params.set("s", hub.section.id);
   if (hub.category && hub.category !== "all") params.set("c", hub.category);
+  if (hub.phase && hub.phase !== "all") params.set("phase", hub.phase);
   if (hub.query) params.set("q", hub.query);
   if (hub.page > 1) params.set("p", hub.page);
   const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -129,8 +131,35 @@ function renderPagination(total, totalPages, startIdx, endIdx) {
   `;
 }
 
+function renderFilterBar() {
+  if (!els.filterBar || !hub.section) return;
+  const docs = docsOfSection(hub.section.id);
+  const phases = Array.from(new Set(docs.map((d) => d.phase).filter(Boolean)));
+  if (!phases.length) {
+    els.filterBar.innerHTML = "";
+    els.filterBar.hidden = true;
+    return;
+  }
+
+  els.filterBar.hidden = false;
+  const items = [{ id: "all", label: "Tất cả Phase" }].concat(
+    phases.map((p) => ({ id: p, label: p.toUpperCase() }))
+  );
+
+  els.filterBar.innerHTML = `
+    <div class="phase-filter-list">
+      <span class="phase-filter-label">Lọc theo Phase:</span>
+      ${items.map((item) => `
+        <button class="phase-chip ${hub.phase === item.id ? "active" : ""}" data-phase="${attr(item.id)}" type="button">
+          ${escapeHtml(item.label)}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderDocs() {
-  const docs = filterDocs({ section: hub.section.id, category: hub.category, query: hub.query });
+  const docs = filterDocs({ section: hub.section.id, category: hub.category, phase: hub.phase, query: hub.query });
   const total = docs.length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -142,7 +171,12 @@ function renderDocs() {
   const pagedDocs = docs.slice(startIdx, endIdx);
 
   if (!total) {
-    els.docs.innerHTML = emptyState("🔍", "Không có bài nào khớp", "Thử đổi từ khoá hoặc chọn lại chuyên mục.");
+    els.docs.innerHTML = emptyState(
+      "🔍",
+      "Không có bài nào khớp",
+      "Thử đổi từ khoá hoặc chọn lại chuyên mục / phase.",
+      '<button class="btn-primary-link" id="btn-reset-filters" type="button">✕ Xoá bộ lọc & Đặt lại</button>'
+    );
     if (els.pagination) els.pagination.innerHTML = "";
     return;
   }
@@ -156,6 +190,7 @@ function renderDocs() {
 function render() {
   renderSidebar();
   renderProgressTracker();
+  renderFilterBar();
   renderDocs();
   updateUrl();
 }
@@ -195,6 +230,24 @@ function bindEvents() {
       }
     });
   }
+
+  if (els.filterBar) {
+    delegate(els.filterBar, "click", "[data-phase]", (_, btn) => {
+      hub.phase = btn.dataset.phase;
+      hub.page = 1;
+      render();
+    });
+  }
+
+  delegate(els.docs, "click", "#btn-reset-filters", () => {
+    hub.category = "all";
+    hub.phase = "all";
+    hub.query = "";
+    hub.page = 1;
+    els.search.value = "";
+    els.searchClear.hidden = true;
+    render();
+  });
 }
 
 /* ------------------------------------------------------------------- start */
@@ -206,6 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     docs: qs("#docs-container"),
     pagination: qs("#pagination-container"),
     progressTracker: qs("#hub-progress-tracker"),
+    filterBar: qs("#hub-filter-bar"),
     search: qs("#search-input"),
     searchClear: qs("#search-clear-btn"),
   });
@@ -221,6 +275,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hub.section = params.section;
   hub.query = params.query;
   hub.category = params.category && params.category !== "all" ? params.category : "all";
+  hub.phase = params.phase && params.phase !== "all" ? params.phase : "all";
   hub.page = params.page || 1;
 
   document.title = `${hub.section.name} | Blog kỹ thuật`;

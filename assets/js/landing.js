@@ -9,11 +9,21 @@ const KIND_GROUPS = [
 
 function sectionCard(section) {
   const docs = docsOfSection(section.id);
-  const meta = docs.length ? `${docs.length} bài` : "Sắp có nội dung";
+  const completedCount = docs.filter((d) => isDocCompleted(d.id)).length;
+  let meta = docs.length ? `${docs.length} bài` : "Sắp có nội dung";
+  let progressBadge = "";
+
+  if (docs.length > 0 && completedCount > 0) {
+    const pct = Math.round((completedCount / docs.length) * 100);
+    progressBadge = `<span class="section-card-progress">✓ ${completedCount}/${docs.length} bài (${pct}%)</span>`;
+  }
 
   return `<a class="section-card ${docs.length ? "" : "is-empty"}" href="${attr(hubUrl(section.id))}"
        style="--section-color: ${attr(section.color)}">
-    <h3 class="section-card-name">${escapeHtml(section.name)}</h3>
+    <div class="section-card-header">
+      <h3 class="section-card-name">${escapeHtml(section.name)}</h3>
+      ${progressBadge}
+    </div>
     <p class="section-card-tagline">${escapeHtml(section.tagline)}</p>
     <div class="section-card-meta">${escapeHtml(meta)}</div>
   </a>`;
@@ -35,17 +45,43 @@ function renderLanding() {
       <div class="section-cards">${sections.map(sectionCard).join("")}</div>
     </section>`;
   }).join("");
+
+  // Cập nhật thống kê tiến độ thực tế trên Hero Banner
+  const allDocs = hasCatalog ? ALL_DOCS : [];
+  const completedTotal = allDocs.filter((d) => isDocCompleted(d.id)).length;
+  const progressVal = qs("#hero-progress-val");
+  const progressLbl = qs("#hero-progress-lbl");
+
+  if (progressVal && progressLbl && allDocs.length) {
+    const pct = Math.round((completedTotal / allDocs.length) * 100);
+    progressVal.textContent = `${pct}%`;
+    progressLbl.textContent = `${completedTotal}/${allDocs.length} bài đã hoàn thành`;
+  }
 }
 
-/** Tìm kiếm toàn cục: gợi ý bài từ mọi mảng, Enter đi thẳng vào hub. */
+/** Tìm kiếm toàn cục: gợi ý bài từ mọi mảng, phím mũi tên & Enter. */
 function bindGlobalSearch() {
   const input = qs("#global-search");
   const panel = qs("#global-search-results");
   if (!input || !panel) return;
 
-  const close = () => { panel.innerHTML = ""; panel.classList.remove("open"); };
+  let selectedIdx = -1;
+
+  const close = () => {
+    panel.innerHTML = "";
+    panel.classList.remove("open");
+    selectedIdx = -1;
+  };
+
+  const updateSelection = (hits) => {
+    hits.forEach((h, i) => {
+      h.classList.toggle("is-selected", i === selectedIdx);
+      if (i === selectedIdx) h.scrollIntoView({ block: "nearest" });
+    });
+  };
 
   input.addEventListener("input", () => {
+    selectedIdx = -1;
     const query = input.value.trim();
     if (query.length < 2) return close();
     const hits = filterDocs({ query }).slice(0, 8);
@@ -67,11 +103,31 @@ function bindGlobalSearch() {
   });
 
   input.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") return;
-    const query = input.value.trim();
-    if (!query) return;
-    const first = filterDocs({ query })[0];
-    if (first) window.location.href = hubUrl(first.section, { q: query });
+    const hits = qsa(".search-hit", panel);
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!hits.length) return;
+      selectedIdx = (selectedIdx + 1) % hits.length;
+      updateSelection(hits);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!hits.length) return;
+      selectedIdx = (selectedIdx - 1 + hits.length) % hits.length;
+      updateSelection(hits);
+    } else if (event.key === "Enter") {
+      if (selectedIdx >= 0 && hits[selectedIdx]) {
+        event.preventDefault();
+        window.location.href = hits[selectedIdx].href;
+      } else {
+        const query = input.value.trim();
+        if (!query) return;
+        const first = filterDocs({ query })[0];
+        if (first) window.location.href = hubUrl(first.section, { q: query });
+      }
+    } else if (event.key === "Escape") {
+      close();
+      input.blur();
+    }
   });
 
   document.addEventListener("click", (event) => {
@@ -85,4 +141,5 @@ document.addEventListener("DOMContentLoaded", () => {
   bindGlobalSearch();
   initSearchShortcut("#global-search");
   initBackToTop();
+  window.addEventListener("doc-completion-changed", renderLanding);
 });

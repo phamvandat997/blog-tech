@@ -20,6 +20,7 @@ function filterDocs(f) {
   return ALL_DOCUMENTS.filter((doc) => {
     if (f.section && doc.section !== f.section) return false;
     if (f.category && f.category !== "all" && doc.category !== f.category) return false;
+    if (f.phase && f.phase !== "all" && doc.phase !== f.phase) return false;
     if (query) {
       // phase và tags không hiện trên giao diện nhưng vẫn giúp tìm thấy bài.
       const haystack = [doc.title, doc.description, doc.slug, doc.phase, ...doc.tags]
@@ -38,7 +39,14 @@ function readParams() {
   const doc = docPath ? getDoc(`${sectionId}/${docPath}`) : null;
   const pageNum = parseInt(params.get("p") || params.get("page") || "1", 10);
   const page = isNaN(pageNum) || pageNum < 1 ? 1 : pageNum;
-  return { section, doc, query: params.get("q") || "", category: params.get("c") || "", page };
+  return {
+    section,
+    doc,
+    query: params.get("q") || "",
+    category: params.get("c") || "",
+    phase: params.get("phase") || "all",
+    page
+  };
 }
 
 const hubUrl = (sectionId, extra = {}) => {

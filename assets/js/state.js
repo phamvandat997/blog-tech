@@ -45,6 +45,7 @@ function applyTheme(theme) {
   document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
     btn.textContent = state.theme === "dark" ? "☀️" : "🌙";
   });
+  window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: state.theme } }));
 }
 
 function initTheme() {
