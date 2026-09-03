@@ -174,9 +174,6 @@ async function loadSections() {
       };
     }));
     renderSectionSelect(keep);
-    // Chạy song song với loadPosts nên có thể về sau: danh sách đã vẽ bằng id
-    // thư mục, giờ mới có tên hiển thị — vẽ lại nhãn nhóm cho đúng.
-    if (admin.posts.length) renderPosts();
   } catch (err) {
     select.innerHTML = '<option value="">Không đọc được</option>';
     showAlert(qs("#post-error"), `Không đọc được thư mục content/: ${err.message}`);
@@ -340,24 +337,9 @@ function renderPosts() {
     return;
   }
 
-  // Nhóm theo mảng, giữ đúng thứ tự đã sắp của admin.posts.
-  const groups = new Map();
-  posts.forEach((p) => {
-    if (!groups.has(p.section)) groups.set(p.section, []);
-    groups.get(p.section).push(p);
-  });
-
-  const sectionName = (id) =>
-    admin.sections.find((sec) => sec.id === id)?.name || id;
-
-  list.innerHTML = [...groups].map(([section, rows]) =>
-    `<section class="admin-group">
-      <h3 class="admin-group-head">
-        ${escapeHtml(sectionName(section))}
-        <span class="admin-group-count">${rows.length}</span>
-      </h3>
-      ${rows.map(postRow).join("")}
-    </section>`).join("");
+  // admin.posts đã sắp theo đường dẫn nên bài cùng một mảng vẫn nằm liền nhau;
+  // mảng của mỗi bài đọc được ngay trên dòng đường dẫn của nó.
+  list.innerHTML = posts.map(postRow).join("");
 }
 
 function postRow(post) {
