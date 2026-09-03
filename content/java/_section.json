@@ -1,0 +1,14 @@
+{
+  "name": "Java",
+  "color": "#00364a",
+  "kind": "language",
+  "order": 1,
+  "tagline": "",
+  "categories": [
+    {
+      "id": "setup-environment",
+      "name": "Setup Environment",
+      "order": 1
+    }
+  ]
+}
