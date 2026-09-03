@@ -9,11 +9,8 @@ const ALL_DOCUMENTS = hasCatalog ? DOCUMENTS : [];
 const getSection = (id) => ALL_SECTIONS.find((s) => s.id === id) || null;
 const docsOfSection = (id) => ALL_DOCUMENTS.filter((d) => d.section === id);
 const getDoc = (id) => ALL_DOCUMENTS.find((d) => d.id === id) || null;
-const featuredDocs = (limit = 6) => {
-  const explicit = ALL_DOCUMENTS.filter((d) => d.featured);
-  if (explicit.length >= limit) return explicit.slice(0, limit);
-  const rest = ALL_DOCUMENTS.filter((d) => !d.featured);
-  return [...explicit, ...rest].slice(0, limit);
+const featuredDocs = (limit = 8) => {
+  return ALL_DOCUMENTS.filter((d) => Boolean(d.featured)).slice(0, limit);
 };
 
 /**

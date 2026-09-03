@@ -15,7 +15,7 @@ const SECTIONS = [
 ];
 const DOCUMENTS = [
   { id: "java/core/a", section: "java", category: "core", slug: "a",
-    title: "Java Fundamentals", description: "Kiểu dữ liệu", phase: "Phase 1", tags: ["Java", "OOP"] },
+    title: "Java Fundamentals", description: "Kiểu dữ liệu", phase: "Phase 1", tags: ["Java", "OOP"], featured: true },
   { id: "java/core/b", section: "java", category: "core", slug: "b",
     title: "Streams", description: "Lambda", phase: "Phase 3", tags: ["Stream"] },
   { id: "dsa/roadmap/c", section: "dsa", category: "roadmap", slug: "c",
@@ -135,9 +135,10 @@ test("readerUrl đi được vòng tròn qua readParams", () => {
   assert.equal(p.doc.id, "java/core/b");
 });
 
-test("featuredDocs ưu tiên bài có featured và fallback hợp lý", () => {
+test("featuredDocs chỉ trả về đúng các bài có featured: true", () => {
   const c = load();
-  const res = c.featuredDocs(2);
-  assert.equal(res.length, 2);
+  const res = c.featuredDocs();
+  assert.equal(res.length, 1);
+  assert.equal(res[0].id, "java/core/a");
 });
 

@@ -292,10 +292,12 @@ async function loadPosts() {
       const [, section, category, file] = path.split("/");
       const slug = (file || "").replace(/\.md$/, "");
       const hit = touched.get(path) || null;
+      const doc = typeof getDoc === "function" ? getDoc(`${section}/${category}/${slug}`) : null;
       return {
         path, section, category, slug,
         pr: hit?.pr || null,
         title: titleFromCatalog(`${section}/${category}/${slug}`) || slug,
+        featured: Boolean(doc?.featured),
         status: !hit ? "active"
           : hit.fileStatus === "removed" ? "removing"
           : !onMaster.has(path) ? "pending"
@@ -380,9 +382,12 @@ function postRow(post) {
   const prLink = post.pr
     ? `<a class="admin-pr-link" href="${attr(post.pr.html_url)}" target="_blank" rel="noopener">PR #${post.pr.number} ↗</a>`
     : "";
+  const featuredBadge = post.featured
+    ? `<span class="inline-flex items-center gap-1 text-[0.7rem] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 ml-2">⭐ Nổi bật</span>`
+    : "";
   return `<article class="admin-list-row" data-path="${attr(post.path)}">
     <div class="admin-list-main">
-      <span class="admin-list-title">${escapeHtml(post.title)}</span>
+      <span class="admin-list-title">${escapeHtml(post.title)}${featuredBadge}</span>
       <code class="admin-list-path">${escapeHtml(post.path)}</code>
     </div>
     <div class="admin-list-side">
@@ -426,6 +431,12 @@ function fillEditor(data, body, { overwrite = false } = {}) {
   };
   fill("#field-title", data.title);
   fill("#field-description", data.description);
+
+  const featuredEl = qs("#field-featured");
+  if (featuredEl) {
+    if (overwrite) featuredEl.checked = Boolean(data.featured || data.pinned);
+    else if (data.featured !== undefined) featuredEl.checked = Boolean(data.featured || data.pinned);
+  }
 
   // order, phase và tags không còn ô nhập trên form. Bài cũ có sẵn các trường
   // này thì giữ nguyên giá trị, đừng để việc lưu lại làm mất chúng khỏi file.
@@ -494,9 +505,11 @@ function buildChange() {
     fail(`Chuyên mục "${categoryId}" đã có trong ${sectionId} — chọn nó ở dropdown.`);
   }
 
+  const isFeatured = qs("#field-featured")?.checked ?? false;
   const markdown = stringifyFrontmatter({
     title: qs("#field-title").value.trim(),
     description: qs("#field-description").value.trim(),
+    featured: isFeatured ? true : undefined,
     order: admin.carried.order ?? "",
     phase: admin.carried.phase ?? "",
     tags: admin.carried.tags ?? [],
@@ -772,6 +785,7 @@ function buildPreview() {
       slug: slug || "preview",
       title,
       description: qs("#field-description").value.trim(),
+      featured: qs("#field-featured")?.checked ?? false,
       tags: admin.carried.tags ?? [],
       order: admin.carried.order ?? 999,
       phase: admin.carried.phase ?? "",
@@ -907,6 +921,7 @@ function saveDraft() {
   if (admin.editing || isFormEmpty()) return;
   const values = {};
   DRAFT_FIELDS.forEach((id) => { values[id] = qs(id).value; });
+  values["#field-featured"] = qs("#field-featured")?.checked || false;
   try {
     localStorage.setItem(DRAFT_KEY,
       JSON.stringify({ savedAt: Date.now(), values, carried: admin.carried }));
@@ -951,6 +966,10 @@ function applyDraft() {
       const el = qs(id);
       if (el && draft.values[id] !== undefined) el.value = draft.values[id];
     });
+    if (draft.values["#field-featured"] !== undefined) {
+      const feat = qs("#field-featured");
+      if (feat) feat.checked = Boolean(draft.values["#field-featured"]);
+    }
     admin.carried = draft.carried || {};
     renderCategorySelect(draft.values["#field-category"]);
     qs("#field-category").value = draft.values["#field-category"] || "";
@@ -978,6 +997,8 @@ function markDirty() {
 function resetForm() {
   ["#field-slug", "#field-title", "#field-description",
    "#field-body"].forEach((id) => { qs(id).value = ""; });
+  const feat = qs("#field-featured");
+  if (feat) feat.checked = false;
   admin.carried = {};
   ["#new-section-id", "#new-section-name", "#new-section-tagline",
    "#new-category-id", "#new-category-name"].forEach((id) => { qs(id).value = ""; });
