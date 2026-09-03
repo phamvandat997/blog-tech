@@ -482,6 +482,28 @@ async function setupGiscus(doc) {
     const data = await res.json();
 
     if (data.error || !Array.isArray(data) || data.length === 0) {
+      const isSuspended = typeof data.error === "string" && data.error.toLowerCase().includes("suspended");
+
+      if (isSuspended) {
+        container.innerHTML = `
+          <div class="giscus-setup-guide">
+            <div class="setup-guide-icon">⚠️</div>
+            <h4>Ứng dụng Giscus đang bị Tạm ngưng (Suspended) trên GitHub</h4>
+            <p>Giscus App đã được cài vào tài khoản của bạn nhưng đang ở trạng thái <b>Suspended</b> (tạm ngưng). Bạn chỉ cần bấm vào liên kết bên dưới để Mở lại (Unsuspend) hoặc Cài đặt lại:</p>
+            <div class="setup-guide-steps">
+              <a class="setup-btn setup-btn-primary" href="https://github.com/settings/installations" target="_blank" rel="noopener">
+                🔓 Mở lại Giscus (Bấm Configure ➔ Unsuspend) ↗
+              </a>
+              <a class="setup-btn" href="https://github.com/apps/giscus" target="_blank" rel="noopener">
+                🔄 Cài đặt lại Giscus App ↗
+              </a>
+            </div>
+            <span class="setup-guide-note">Thao tác: Vào link trên ➔ Tìm <b>Giscus</b> ➔ Chọn <b>Unsuspend</b> (hoặc Uninstall rồi cài lại). Sau đó F5 trang là bình luận được ngay!</span>
+          </div>
+        `;
+        return;
+      }
+
       container.innerHTML = `
         <div class="giscus-setup-guide">
           <div class="setup-guide-icon">⚙️</div>
