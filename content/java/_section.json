@@ -34,6 +34,11 @@
       "id": "master",
       "name": "Sổ tay, Lab & Đề thi thử",
       "order": 6
+    },
+    {
+      "id": "cai-dat-moi-truong",
+      "name": "Cài Đặt Môi Trường",
+      "order": 7
     }
   ]
 }
