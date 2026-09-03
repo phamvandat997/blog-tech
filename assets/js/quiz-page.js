@@ -13,9 +13,12 @@ function initQuizPage() {
 
   function handleRoute() {
     const params = new URLSearchParams(window.location.search);
+    const isPreview = params.get("preview") === "1";
     const docId = params.get("id");
 
-    if (docId) {
+    if (isPreview) {
+      openQuizPreview();
+    } else if (docId) {
       openQuizPlayer(docId);
     } else {
       openQuizList();
@@ -24,6 +27,53 @@ function initQuizPage() {
 
   window.addEventListener("popstate", handleRoute);
   handleRoute();
+}
+
+/**
+ * Mở giao diện thi thử trực tiếp từ dữ liệu Admin vừa upload / soạn
+ */
+function openQuizPreview() {
+  const root = qs("#quiz-root");
+  if (!root) return;
+
+  try {
+    const raw = sessionStorage.getItem("blog.quiz.preview");
+    if (!raw) {
+      root.innerHTML = emptyState(
+        "⚠️",
+        "Không tìm thấy dữ liệu thi thử",
+        "Dữ liệu thi thử chưa được tạo hoặc đã hết hạn phiên làm việc. Vui lòng quay lại trang Quản lý Quiz trong Admin.",
+        '<a class="btn-primary mt-4 no-underline inline-block" href="admin.html">← Về trang Admin</a>'
+      );
+      return;
+    }
+
+    const data = JSON.parse(raw);
+    const docId = data.docId || "preview/quiz";
+    const docs = getDocs();
+    const linkedDoc = docs.find((d) => d.id === docId);
+
+    const doc = linkedDoc || {
+      id: docId,
+      title: data.title || "Bài thi trắc nghiệm xem thử",
+      section: "preview",
+      category: "quiz",
+      slug: "preview",
+      questions: data.quizzes?.length || 0,
+      readingMinutes: Math.max(1, Math.round((data.quizzes?.length || 5) * 1.5))
+    };
+
+    const bank = {
+      docId: doc.id,
+      title: data.title || doc.title,
+      quizzes: data.quizzes || []
+    };
+
+    QUIZ_BANK[doc.id] = bank;
+    renderPlayer(doc, bank, true);
+  } catch (err) {
+    root.innerHTML = emptyState("⚠️", "Lỗi đọc dữ liệu thi thử", escapeHtml(err.message), '<a class="btn-primary mt-4 no-underline inline-block" href="admin.html">← Về trang Admin</a>');
+  }
 }
 
 const getDocs = () => (typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []));
@@ -239,118 +289,151 @@ function openQuizPlayer(docId) {
       return;
     }
 
-    renderPlayer(doc, bank);
+    renderPlayer(doc, bank, false);
+  });
+}
+
+function renderPlayer(doc, bank, isPreview = false) {
+  const root = qs("#quiz-root");
+  if (!root) return;
+
+  const docId = doc.id;
+  const sec = getSections().find((s) => s.id === doc.section);
+  const cat = (sec?.categories || []).find((c) => c.id === doc.category);
+  const score = scoreOf(docId);
+
+  const total = bank.quizzes.length;
+  let correctCount = 0;
+  let wrongCount = 0;
+  let unansweredCount = 0;
+
+  bank.quizzes.forEach((q) => {
+    const qKey = qKeyOf(docId, q.number);
+    if (!isChecked(qKey)) unansweredCount++;
+    else if (isCorrect(qKey, q)) correctCount++;
+    else wrongCount++;
   });
 
-  function renderPlayer(doc, bank) {
-    const sec = getSections().find((s) => s.id === doc.section);
-    const cat = (sec?.categories || []).find((c) => c.id === doc.category);
-    const score = scoreOf(docId);
+  const hasTheory = doc.section && doc.category && doc.slug && doc.section !== "preview";
+  const theoryUrl = hasTheory
+    ? `reader.html?s=${encodeURIComponent(doc.section)}&d=${encodeURIComponent(`${doc.category}/${doc.slug}`)}`
+    : "#";
 
-    const total = bank.quizzes.length;
-    let correctCount = 0;
-    let wrongCount = 0;
-    let unansweredCount = 0;
+  const previewBannerHtml = isPreview
+    ? `<div class="mb-5 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300/80 dark:border-amber-700/60 flex items-center justify-between gap-3 text-xs shadow-sm flex-wrap">
+        <div class="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-bold">
+          <span class="text-base">👁</span>
+          <span><b>Chế độ Thi Thử (Live Exam Preview)</b>: Bạn đang trải nghiệm giao diện thi thực tế từ dữ liệu vừa soạn/upload trong Admin. Mọi tính năng chấm điểm và giải thích đều hoạt động thực tế.</span>
+        </div>
+        <a href="admin.html?view=quiz" class="px-3.5 py-1.5 rounded-xl bg-amber-500 text-white font-bold no-underline hover:bg-amber-600 transition-colors">
+          ← Về Quản Lý Quiz
+        </a>
+      </div>`
+    : "";
 
-    bank.quizzes.forEach((q) => {
-      const qKey = qKeyOf(docId, q.number);
-      if (!isChecked(qKey)) unansweredCount++;
-      else if (isCorrect(qKey, q)) correctCount++;
-      else wrongCount++;
-    });
+  const backLabel = isPreview ? "‹ Quay lại Quản lý Quiz" : "‹ Quay lại danh sách bài Quiz";
 
-    const theoryUrl = `reader.html?s=${encodeURIComponent(doc.section)}&d=${encodeURIComponent(`${doc.category}/${doc.slug}`)}`;
+  root.innerHTML = `
+    <div class="quiz-player-container" data-quiz-scope="${attr(docId)}">
+      ${previewBannerHtml}
 
-    root.innerHTML = `
-      <div class="quiz-player-container" data-quiz-scope="${attr(docId)}">
-        <!-- Thanh điều hướng đầu trang -->
-        <div class="flex items-center justify-between gap-4 mb-2 flex-wrap">
-          <button class="btn-back-quiz inline-flex items-center gap-1.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  id="btn-back-list-top">
-            <span>‹</span> <span>Quay lại danh sách bài Quiz</span>
-          </button>
+      <!-- Thanh điều hướng đầu trang -->
+      <div class="flex items-center justify-between gap-4 mb-2 flex-wrap">
+        <button class="btn-back-quiz inline-flex items-center gap-1.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                id="btn-back-list-top">
+          <span>${escapeHtml(backLabel)}</span>
+        </button>
+        ${hasTheory ? `
           <a href="${attr(theoryUrl)}" target="_blank" rel="noopener" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
             <span>📖 Đọc lại lý thuyết</span> <span>↗</span>
           </a>
-        </div>
+        ` : ""}
+      </div>
 
-        <!-- Header bài quiz -->
-        <div class="quiz-dashboard-header">
-          <div class="quiz-meta-info">
-            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50">
-                ${escapeHtml(sec?.name || doc.section)}
-              </span>
-              ${cat ? `<span class="text-xs font-medium text-slate-500 dark:text-slate-400">${escapeHtml(cat.name)}</span>` : ""}
-              ${doc.phase ? `<span class="text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-800/40">${escapeHtml(doc.phase)}</span>` : ""}
-            </div>
-            <h2>${escapeHtml(bank.title || doc.title)}</h2>
-            <p>Chọn đáp án cho từng câu hỏi, sau đó bấm Kiểm tra hoặc Chấm toàn bộ để xem lời giải chi tiết.</p>
+      <!-- Header bài quiz -->
+      <div class="quiz-dashboard-header">
+        <div class="quiz-meta-info">
+          <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50">
+              ${escapeHtml(sec?.name || doc.section)}
+            </span>
+            ${cat ? `<span class="text-xs font-medium text-slate-500 dark:text-slate-400">${escapeHtml(cat.name)}</span>` : ""}
+            ${doc.phase ? `<span class="text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-800/40">${escapeHtml(doc.phase)}</span>` : ""}
           </div>
+          <h2>${escapeHtml(bank.title || doc.title)}</h2>
+          <p>Chọn đáp án cho từng câu hỏi, sau đó bấm Kiểm tra hoặc Chấm toàn bộ để xem lời giải chi tiết.</p>
+        </div>
 
-          <div class="quiz-actions-toolbar">
-            <div class="quiz-score-badge" data-quiz-score>
-              Kết quả: <b>${score.correct}</b> / ${score.total} (${score.pct}%)
-            </div>
-            <button class="btn-quiz-secondary" type="button" data-quiz-reset>
-              🔄 Làm lại
-            </button>
-            <button class="btn-quiz-primary" type="button" data-quiz-submit>
-              📝 Chấm toàn bộ
-            </button>
+        <div class="quiz-actions-toolbar">
+          <div class="quiz-score-badge" data-quiz-score>
+            Kết quả: <b>${score.correct}</b> / ${score.total} (${score.pct}%)
           </div>
-        </div>
-
-        <!-- Bộ lọc tab câu hỏi -->
-        <div class="quiz-filter-bar">
-          <button class="quiz-tab-pill active" type="button" data-quiz-filter="all">
-            Tất cả (<span data-count-all>${total}</span>)
+          <button class="btn-quiz-secondary" type="button" data-quiz-reset>
+            🔄 Làm lại
           </button>
-          <button class="quiz-tab-pill" type="button" data-quiz-filter="correct">
-            Câu đúng (<span data-count-correct>${correctCount}</span>)
+          <button class="btn-quiz-primary" type="button" data-quiz-submit>
+            📝 Chấm toàn bộ
           </button>
-          <button class="quiz-tab-pill" type="button" data-quiz-filter="wrong">
-            Câu sai (<span data-count-wrong>${wrongCount}</span>)
-          </button>
-          <button class="quiz-tab-pill" type="button" data-quiz-filter="unanswered">
-            Chưa làm (<span data-count-unanswered>${unansweredCount}</span>)
-          </button>
-        </div>
-
-        <!-- Danh sách thẻ câu hỏi -->
-        <div class="quiz-cards-wrapper flex flex-col gap-6">
-          ${bank.quizzes.map((q) => renderQuestionCard(docId, q)).join("")}
-        </div>
-
-        <!-- Thanh hành động cuối bài -->
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-          <button class="btn-back-quiz text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  id="btn-back-list-bottom">
-            ‹ Quay lại danh sách bài Quiz
-          </button>
-          <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <button class="btn-quiz-secondary flex-1 sm:flex-initial" type="button" data-quiz-reset>
-              🔄 Làm lại bài này
-            </button>
-            <button class="btn-quiz-primary flex-1 sm:flex-initial" type="button" data-quiz-submit>
-              📝 Nộp bài &amp; Chấm điểm
-            </button>
-          </div>
         </div>
       </div>
-    `;
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+      <!-- Bộ lọc tab câu hỏi -->
+      <div class="quiz-filter-bar">
+        <button class="quiz-tab-pill active" type="button" data-quiz-filter="all">
+          Tất cả (<span data-count-all>${total}</span>)
+        </button>
+        <button class="quiz-tab-pill" type="button" data-quiz-filter="correct">
+          Câu đúng (<span data-count-correct>${correctCount}</span>)
+        </button>
+        <button class="quiz-tab-pill" type="button" data-quiz-filter="wrong">
+          Câu sai (<span data-count-wrong>${wrongCount}</span>)
+        </button>
+        <button class="quiz-tab-pill" type="button" data-quiz-filter="unanswered">
+          Chưa làm (<span data-count-unanswered>${unansweredCount}</span>)
+        </button>
+      </div>
 
-    // Gắn sự kiện nút quay lại danh sách
-    const backBtnTop = qs("#btn-back-list-top");
-    if (backBtnTop) backBtnTop.onclick = () => { history.pushState(null, "", "quiz.html"); openQuizList(); };
-    const backBtnBottom = qs("#btn-back-list-bottom");
-    if (backBtnBottom) backBtnBottom.onclick = () => { history.pushState(null, "", "quiz.html"); openQuizList(); };
+      <!-- Danh sách thẻ câu hỏi -->
+      <div class="quiz-cards-wrapper flex flex-col gap-6">
+        ${bank.quizzes.map((q) => renderQuestionCard(docId, q)).join("")}
+      </div>
 
-    // Gắn toàn bộ sự kiện chọn đáp án, chấm điểm, lọc tab
-    bindQuiz(root, () => renderPlayer(doc, bank));
-  }
+      <!-- Thanh hành động cuối bài -->
+      <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+        <button class="btn-back-quiz text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                id="btn-back-list-bottom">
+          ${escapeHtml(backLabel)}
+        </button>
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <button class="btn-quiz-secondary flex-1 sm:flex-initial" type="button" data-quiz-reset>
+            🔄 Làm lại bài này
+          </button>
+          <button class="btn-quiz-primary flex-1 sm:flex-initial" type="button" data-quiz-submit>
+            📝 Nộp bài &amp; Chấm điểm
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const handleBack = () => {
+    if (isPreview) {
+      window.location.href = "admin.html?view=quiz";
+    } else {
+      history.pushState(null, "", "quiz.html");
+      openQuizList();
+    }
+  };
+
+  const backBtnTop = qs("#btn-back-list-top");
+  if (backBtnTop) backBtnTop.onclick = handleBack;
+  const backBtnBottom = qs("#btn-back-list-bottom");
+  if (backBtnBottom) backBtnBottom.onclick = handleBack;
+
+  // Gắn toàn bộ sự kiện chọn đáp án, chấm điểm, lọc tab
+  bindQuiz(root, () => renderPlayer(doc, bank, isPreview));
 }
 
 document.addEventListener("DOMContentLoaded", initQuizPage);

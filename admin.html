@@ -53,8 +53,9 @@
       </a>
 
       <div class="nav-tabs-group" id="admin-tabs" hidden>
-        <button class="nav-tab-btn active" data-view="list" type="button">Danh sách</button>
+        <button class="nav-tab-btn active" data-view="list" type="button">Danh sách bài viết</button>
         <button class="nav-tab-btn" data-view="editor" type="button">Soạn bài mới</button>
+        <button class="nav-tab-btn" data-view="quiz" type="button">🎯 Quản lý Quiz</button>
       </div>
 
       <div class="nav-actions">
@@ -126,6 +127,10 @@
         Token được lưu trong <code>localStorage</code> của chính trình duyệt này và không gửi đi
         đâu ngoài <code>api.github.com</code>. Dùng máy chung thì nhớ Đăng xuất, hoặc thu hồi
         token trên GitHub bất cứ lúc nào.
+      </p>
+
+      <p class="admin-login-note text-center pt-3 mt-2 border-t border-slate-200 dark:border-slate-700/60">
+        Hoặc bạn chỉ cần tạo / tải lên bài quiz? <a href="#" id="link-guest-quiz" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Mở Quản lý Quiz (không cần GitHub) ➔</a>
       </p>
     </form>
   </main>
@@ -291,6 +296,151 @@
     </form>
   </main>
 
+  <!-- QUẢN LÝ / TẠO BÀI QUIZ -->
+  <main class="admin-editor" id="admin-quiz" hidden>
+    <div class="admin-quiz-header mb-6">
+      <div class="flex items-center justify-between gap-4 flex-wrap pb-4 border-b border-slate-200 dark:border-slate-700/60">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white m-0">🎯 Quản Lý &amp; Tải Lên Bài Quiz</h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 m-0">
+            Tải file câu hỏi, liên kết tới bài viết lý thuyết, tải template mẫu và xem trước bài thi thực tế.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button class="admin-btn-secondary flex items-center gap-1.5 text-xs font-bold" id="btn-export-template" type="button" title="Tải file template quiz mẫu chuẩn định dạng">
+            <span>📥</span>
+            <span>Tải Template Mẫu (.json)</span>
+          </button>
+          <label class="admin-btn-secondary flex items-center gap-1.5 text-xs font-bold cursor-pointer" for="quiz-file-input">
+            <span>📁</span>
+            <span>Upload File Quiz</span>
+            <input type="file" id="quiz-file-input" accept=".json,.quiz.json" hidden>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <form class="admin-form" id="quiz-form">
+      <div class="admin-alert admin-alert-error" id="quiz-error" hidden></div>
+      <div class="admin-alert admin-alert-ok" id="quiz-success" hidden></div>
+
+      <!-- CARD 1: LIÊN KẾT BÀI VIẾT LÝ THUYẾT -->
+      <section class="admin-card">
+        <h2 class="admin-card-title flex items-center gap-2">
+          <span>🔗</span>
+          <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
+        </h2>
+        <p class="admin-card-note">
+          Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại <code>content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>.
+        </p>
+
+        <div class="admin-row">
+          <label class="admin-field" style="flex: 2;">
+            <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
+            <span class="admin-select">
+              <select id="quiz-doc-select" required></select>
+            </span>
+          </label>
+          <div class="admin-field" style="flex: 1; align-self: flex-end;">
+            <a id="quiz-view-doc-btn" class="admin-btn-secondary w-full text-center flex items-center justify-center gap-1.5 text-xs font-bold py-2.5" target="_blank" href="index.html">
+              <span>📖</span>
+              <span>Đọc bài lý thuyết ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="admin-doc-details p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-xs space-y-1.5 mt-2" id="quiz-doc-info">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-bold text-slate-500 dark:text-slate-400">Đường dẫn file quiz:</span>
+            <code class="text-indigo-600 dark:text-indigo-400 font-mono" id="quiz-file-path">content/.../....quiz.json</code>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-bold text-slate-500 dark:text-slate-400">Trạng thái hiện tại:</span>
+            <span id="quiz-current-status" class="font-semibold text-slate-600 dark:text-slate-300">Đang kiểm tra...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 2: TIÊU ĐỀ & NỘI DUNG QUIZ -->
+      <section class="admin-card">
+        <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+          <h2 class="admin-card-title m-0 flex items-center gap-2">
+            <span>📝</span>
+            <span>Nội Dung Câu Hỏi Trắc Nghiệm</span>
+          </h2>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-load-sample" type="button" title="Điền dữ liệu mẫu chuẩn">
+              ✨ Nạp template mẫu vào ô soạn
+            </button>
+            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-format-json" type="button" title="Format làm đẹp mã JSON">
+              🪄 Format JSON
+            </button>
+          </div>
+        </div>
+
+        <label class="admin-field mb-4">
+          <span class="admin-label">Tiêu đề bài trắc nghiệm <b class="req">*</b></span>
+          <input type="text" id="quiz-title" placeholder="VD: Chapter 1: OOP Approach - Part 1 (24 Practice Questions)" required>
+        </label>
+
+        <!-- Thống kê nhanh câu hỏi (Live Stats) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-center">
+          <div class="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/40">
+            <div class="text-base font-black text-indigo-600 dark:text-indigo-400" id="stat-total-q">0</div>
+            <div class="text-[0.7rem] font-bold text-slate-500 dark:text-slate-400 uppercase">Tổng câu hỏi</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/40">
+            <div class="text-base font-black text-blue-600 dark:text-blue-400" id="stat-single-q">0</div>
+            <div class="text-[0.7rem] font-bold text-slate-500 dark:text-slate-400 uppercase">Chọn 1 đáp án</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40">
+            <div class="text-base font-black text-purple-600 dark:text-purple-400" id="stat-multi-q">0</div>
+            <div class="text-[0.7rem] font-bold text-slate-500 dark:text-slate-400 uppercase">Chọn nhiều đáp án</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40">
+            <div class="text-base font-black text-emerald-600 dark:text-emerald-400" id="stat-explained-q">0</div>
+            <div class="text-[0.7rem] font-bold text-slate-500 dark:text-slate-400 uppercase">Có giải thích</div>
+          </div>
+        </div>
+
+        <div class="admin-tabs" id="quiz-editor-tabs">
+          <button type="button" class="admin-tab active" data-quiz-tab="json">Mã JSON</button>
+          <button type="button" class="admin-tab" data-quiz-tab="preview">Xem trước câu hỏi</button>
+        </div>
+
+        <div class="admin-panes" id="quiz-panes">
+          <div class="admin-pane" data-quiz-pane="json">
+            <textarea id="quiz-json-content" class="admin-textarea font-mono text-xs leading-relaxed" spellcheck="false" rows="18" placeholder="Dán hoặc gõ nội dung JSON câu hỏi tại đây, hoặc bấm 'Tải Template Mẫu' / 'Upload File Quiz'..."></textarea>
+          </div>
+          <div class="admin-pane" data-quiz-pane="preview" hidden>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4 max-h-[500px] overflow-y-auto" id="quiz-questions-preview"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 3: HÀNH ĐỘNG & THI THỬ -->
+      <div class="admin-actions flex items-center justify-between flex-wrap gap-3 pt-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button class="admin-btn-secondary flex items-center gap-1.5 font-bold" id="btn-quiz-test-run" type="button" title="Mở trang thi thử thực tế trong tab mới">
+            <span>🎯</span>
+            <span>Làm thử bài thi này ➔</span>
+          </button>
+          <button class="admin-btn-secondary flex items-center gap-1.5 font-bold" id="btn-download-quiz-file" type="button" title="Lưu file về máy tính để đặt vào thư mục content">
+            <span>💾</span>
+            <span>Tải về file .quiz.json</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button class="admin-btn-primary flex items-center gap-1.5 font-bold" id="btn-quiz-submit-pr" type="submit">
+            <span>🚀</span>
+            <span>Đăng lên GitHub (Tạo PR)</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </main>
+
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="footer-copyright">
@@ -304,8 +454,12 @@
 <script src="generated/catalog.js"></script>
 <script src="assets/js/dom.js"></script>
 <script src="assets/js/state.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/markdown.js"></script>
+<script src="assets/js/quiz.js"></script>
 <script src="assets/js/frontmatter.js"></script>
 <script src="assets/js/github.js"></script>
+<script src="assets/js/admin-quiz.js"></script>
 <script src="assets/js/admin.js"></script>
 </body>
 </html>

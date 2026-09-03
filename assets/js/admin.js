@@ -167,7 +167,10 @@ function switchView(view) {
   qsa("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
   qs("#admin-list").hidden = view !== "list";
   qs("#admin-editor").hidden = view !== "editor";
+  if (qs("#admin-quiz")) qs("#admin-quiz").hidden = view !== "quiz";
+
   if (view === "list") loadPosts();
+  else if (view === "quiz" && typeof initQuizManager === "function") initQuizManager();
   else syncEditorPanes();
 }
 
@@ -1037,6 +1040,17 @@ function bindEvents() {
     if (btn.dataset.view === "editor" && !admin.editing && isFormEmpty()) offerDraft();
   }));
 
+  const guestQuizLink = qs("#link-guest-quiz");
+  if (guestQuizLink) {
+    guestQuizLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      qs("#admin-boot").hidden = true;
+      qs("#admin-login").hidden = true;
+      qs("#admin-tabs").hidden = false;
+      switchView("quiz");
+    });
+  }
+
   qs("#btn-preview").addEventListener("click", handlePreview);
   qs("#btn-cancel-edit").addEventListener("click", () => { resetForm(); switchView("list"); });
   qs("#btn-refresh").addEventListener("click", loadPosts);
@@ -1162,6 +1176,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   qs("#login-email").value = session?.email || "";
 
   const showLogin = (message) => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "quiz") {
+      qs("#admin-boot").hidden = true;
+      qs("#admin-login").hidden = true;
+      qs("#admin-tabs").hidden = false;
+      switchView("quiz");
+      return;
+    }
+
     qs("#admin-boot").hidden = true;
     qs("#admin-login").hidden = false;
     if (message) showAlert(qs("#login-error"), message);
@@ -1175,6 +1198,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = await gh.verify();
     admin.gh = gh;
     enterApp(session.email, user.login);
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "quiz") {
+      switchView("quiz");
+    }
   } catch (err) {
     clearSession();
     showLogin(`Phiên cũ không dùng được nữa — ${err.message}`);
