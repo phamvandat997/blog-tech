@@ -83,3 +83,31 @@ function initSearchShortcut(inputSelector) {
     }
   });
 }
+
+/**
+ * Đặt tiêu đề và mô tả của trang, đồng bộ luôn thẻ Open Graph để link chia sẻ
+ * lên Facebook/Zalo/Slack hiện đúng bài chứ không phải mô tả chung của site.
+ */
+function setPageMeta({ title, description }) {
+  if (title) {
+    document.title = title;
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", title);
+  }
+  if (description) {
+    const text = String(description).replace(/\s+/g, " ").trim().slice(0, 200);
+    document.querySelectorAll('meta[name="description"], meta[property="og:description"]')
+      .forEach((el) => el.setAttribute("content", text));
+  }
+}
+
+/** Chặn lập chỉ mục cho những trang không nên lên kết quả tìm kiếm. */
+function setNoIndex() {
+  let tag = document.querySelector('meta[name="robots"]');
+  if (!tag) {
+    tag = document.createElement("meta");
+    tag.setAttribute("name", "robots");
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute("content", "noindex, nofollow");
+}

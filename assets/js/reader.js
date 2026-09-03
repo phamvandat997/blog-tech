@@ -555,6 +555,7 @@ function renderPreview(preview) {
     .forEach((sel) => { const el = qs(sel); if (el) el.remove(); });
 
   document.title = `Xem thử: ${doc.title}`;
+  setNoIndex();   // bản nháp không được lọt vào công cụ tìm kiếm
   document.documentElement.style.setProperty("--section-color", section.color);
   qs("#reader-title").textContent = doc.title;
   qs("#reader-breadcrumb").innerHTML =
@@ -617,7 +618,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const section = params.section;
   const category = section.categories.find((c) => c.id === doc.category);
 
-  document.title = `${doc.title} | ${section.name}`;
+  setPageMeta({
+    title: `${doc.title} | ${section.name}`,
+    // Mô tả tự sinh lúc build đã bỏ heading và trích dẫn, dùng thẳng được.
+    description: doc.description || `${doc.title} — ${section.name}.`,
+  });
   document.documentElement.style.setProperty("--section-color", section.color);
   qs("#reader-title").textContent = doc.title;
   qs("#reader-breadcrumb").innerHTML =

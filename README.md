@@ -156,6 +156,27 @@ trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên G
 
 Sửa `ALLOWED_EMAILS` ở đầu [assets/js/admin.js](assets/js/admin.js), rồi build và push.
 
+## SEO — sitemap.xml và robots.txt
+
+Build sinh cả hai vào `generated/`, `npm run dist` đưa chúng lên gốc `dist/`.
+
+Sitemap cần URL tuyệt đối nên phải biết tên miền:
+
+- **Trên Vercel**: tự có, không cần làm gì — build đọc `VERCEL_PROJECT_PRODUCTION_URL`
+  (biến này trỏ đúng tên miền riêng nếu bạn đã gắn).
+- **Nơi khác / máy cá nhân**: đặt `SITE_URL`, ví dụ
+
+  ```bash
+  SITE_URL=blog.example.com npm run dist
+  ```
+
+Không biết tên miền thì build **bỏ qua sitemap** kèm ghi chú, chứ không sinh URL sai.
+`robots.txt` vẫn được tạo (chặn `/admin`), chỉ thiếu dòng `Sitemap:`.
+
+Mô tả trang: `index/hub/reader/404` có sẵn `<meta name="description">` và thẻ Open
+Graph; trang mảng và trang đọc ghi đè chúng theo đúng mảng / bài đang mở. Trang
+xem thử tự gắn `noindex`.
+
 ## Deploy lên Vercel
 
 Repo đã có sẵn `vercel.json`, Vercel tự nhận cấu hình — không phải chỉnh gì trong dashboard.
@@ -180,7 +201,8 @@ npm run serve     # http://localhost:8080
 git add -A && git commit -m "them bai moi" && git push
 ```
 
-Vercel tự build lại từ `content/`, bạn không cần commit `dist/` (đã nằm trong `.gitignore`).
+Vercel tự build lại từ `content/`. Cả `dist/` lẫn `generated/` đều nằm trong
+`.gitignore` — chỉ commit nguồn, không commit sản phẩm build.
 
 ### Kiểm tra bản deploy ngay tại máy
 
@@ -189,9 +211,10 @@ npm run dist        # đóng gói vào dist/ đúng như Vercel sẽ làm
 npm run serve:dist  # http://localhost:8080
 ```
 
-`dist/` chỉ chứa `index.html`, `hub.html`, `reader.html`, `admin.html`, `404.html`, `assets/`, `generated/`
-— khoảng 1,05 MB. Nguồn markdown trong `content/`, script trong `build/` và tài liệu
-thiết kế trong `docs/` **không** lên production.
+`dist/` chỉ chứa `index.html`, `hub.html`, `reader.html`, `admin.html`, `404.html`,
+`assets/`, `generated/`, cộng `robots.txt` và `sitemap.xml` ở gốc — khoảng 0,3 MB.
+Nguồn markdown trong `content/`, script trong `build/` và tài liệu thiết kế trong
+`docs/` **không** lên production.
 
 ## Cấu trúc
 
@@ -201,9 +224,12 @@ content/                     nguồn duy nhất — chỉ sửa ở đây
   <mảng>/<chuyên-mục>/*.md   bài viết
   <mảng>/<chuyên-mục>/*.quiz.json   (giữ nguyên, build đang bỏ qua)
 build/                       script sinh dữ liệu, đóng gói dist, test
-generated/                   sản phẩm build (đừng sửa tay)
-  catalog.js                 metadata mọi bài (~16 KB, mọi trang đều nạp)
+  lib/scan.js                quét content/ thành sections + docs
+  lib/seo.js                 dựng sitemap.xml và robots.txt
+generated/                   sản phẩm build — KHÔNG commit (xem .gitignore)
+  catalog.js                 metadata mọi bài (mọi trang đều nạp)
   docs/<id>.js               nội dung một bài (reader chỉ nạp bài đang mở)
+  robots.txt, sitemap.xml    dist.js đưa lên gốc dist/
 assets/css/base.css          bảng màu, navbar, thẻ bài, markdown (còn CSS quiz để dùng lại)
 assets/css/blog.css          trang chủ, mục lục cột trái, breadcrumb, điều hướng bài
 assets/js/                   dom · state · catalog · frontmatter · markdown
@@ -215,7 +241,8 @@ hub.html?s=<mảng>            danh mục bài viết của một mảng
 reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
 ```
 
-Lựa chọn giao diện sáng/tối lưu ở `localStorage` của trình duyệt.
+Giao diện sáng/tối: lần đầu vào trang thì theo cài đặt của hệ điều hành; bấm nút đổi
+một lần là lựa chọn đó được ghi vào `localStorage` và thắng hệ thống từ đó về sau.
 
 ## Phạm vi giao diện
 

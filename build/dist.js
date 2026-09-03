@@ -51,8 +51,21 @@ function main() {
     bytes += sizeOf(from);
   }
 
+  // robots.txt và sitemap.xml do build sinh vào generated/, nhưng công cụ tìm
+  // kiếm chỉ tìm chúng ở gốc site — nâng lên một tầng.
+  const promoted = [];
+  for (const name of ["robots.txt", "sitemap.xml"]) {
+    const from = path.join(ROOT, "generated", name);
+    if (!fs.existsSync(from)) continue;
+    fs.copyFileSync(from, path.join(DIST, name));
+    promoted.push(name);
+  }
+
   console.log(`✓ dist/ · ${files} file · ${(bytes / 1024 / 1024).toFixed(2)} MB`);
   console.log(`  ${ENTRIES.join(", ")}`);
+  console.log(promoted.length
+    ? `  + ${promoted.join(", ")} (đưa từ generated/ lên gốc)`
+    : "  (chưa có robots.txt/sitemap.xml — xem ghi chú ở bước build)");
   console.log("  (content/, build/, docs/ không đưa lên production)");
 }
 

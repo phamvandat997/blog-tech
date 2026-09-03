@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { scanContent } = require("./lib/scan");
+const { resolveSiteUrl, buildSitemap, buildRobots } = require("./lib/seo");
 
 const ROOT = path.join(__dirname, "..");
 const CONTENT = path.join(ROOT, "content");
@@ -53,10 +54,22 @@ function main() {
       `window.__docLoaded && window.__docLoaded(${JSON.stringify(doc.id)}, ${JSON.stringify(doc._body)});\n`);
   }
 
+  // 3. sitemap.xml + robots.txt. Đặt trong generated/ rồi dist.js đưa lên gốc
+  //    dist/ — nơi công cụ tìm kiếm mong thấy chúng.
+  const siteUrl = resolveSiteUrl();
+  fs.writeFileSync(path.join(OUT, "robots.txt"), buildRobots(siteUrl));
+  if (siteUrl) {
+    fs.writeFileSync(path.join(OUT, "sitemap.xml"), buildSitemap(siteUrl, sections, meta));
+  }
+
   console.log(`✓ ${sections.length} mảng · ${docs.length} bài`);
   console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
   console.log(`✓ generated/docs/       ${docs.length} file, ${(contentBytes / 1024).toFixed(0)} KB tổng ` +
               `(reader chỉ nạp 1 file mỗi lần)`);
+  console.log(siteUrl
+    ? `✓ generated/sitemap.xml   ${1 + sections.length + meta.length} URL · ${siteUrl}`
+    : `· bỏ qua sitemap.xml — chưa biết tên miền. Đặt SITE_URL=... rồi build lại ` +
+      `(trên Vercel thì tự có qua VERCEL_PROJECT_PRODUCTION_URL).`);
   sections.forEach((s) => console.log(`   ${s.name}: ${s.docCount} bài, ${s.categories.length} chuyên mục`));
   if (warnings.length) console.log(`\n${warnings.length} cảnh báo ở trên — build vẫn thành công.`);
 }

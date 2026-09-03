@@ -278,7 +278,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   hub.phase = params.phase && params.phase !== "all" ? params.phase : "all";
   hub.page = params.page || 1;
 
-  document.title = `${hub.section.name} | Blog kỹ thuật`;
+  setPageMeta({
+    title: `${hub.section.name} | Blog kỹ thuật`,
+    description: hub.section.tagline || `Danh mục bài viết mảng ${hub.section.name}.`,
+  });
   qs("#hub-title").textContent = hub.section.name;
   document.documentElement.style.setProperty("--section-color", hub.section.color);
 

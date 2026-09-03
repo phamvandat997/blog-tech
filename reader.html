@@ -4,6 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đang tải bài viết… | Blog kỹ thuật</title>
+  <meta name="description" content="Bài viết kỹ thuật chuyên sâu, có mục lục, chế độ đọc tập trung và gợi ý bài liên quan.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Đang tải bài viết… | Blog kỹ thuật">
+  <meta property="og:description" content="Bài viết kỹ thuật chuyên sâu, có mục lục, chế độ đọc tập trung và gợi ý bài liên quan.">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>
+    // Đặt giao diện TRƯỚC khi vẽ khung đầu tiên, nếu không trang chớp sáng rồi
+    // mới lật sang tối. Buộc phải inline và đồng bộ; state.js chạy sau là muộn.
+    // Cùng quy tắc với preferredTheme() trong assets/js/state.js.
+    try {
+      var t = localStorage.getItem("blog.theme");
+      if (t !== "dark" && t !== "light") {
+        t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { /* bỏ qua, giữ nguyên data-theme trong HTML */ }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Webfont không được chặn vẽ khung đầu tiên: nạp như stylesheet in ấn rồi
