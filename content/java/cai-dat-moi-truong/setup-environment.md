@@ -4,9 +4,6 @@ title: "Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và
 
 # Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux
 
-> Cập nhật: tháng 9/2026 — Phiên bản LTS mới nhất là **Java 25** (phát hành 9/2025). Java 26 là bản feature release (3/2026), chỉ được hỗ trợ 6 tháng.
-
----
 
 ## Toàn cảnh quá trình cài đặt
 
@@ -24,18 +21,6 @@ flowchart LR
     H --> I[Viết chương trình đầu tiên]
 ```
 
----
-
-## Mục lục
-
-1. [Chọn phiên bản và bản phân phối JDK](#1-chọn-phiên-bản-và-bản-phân-phối-jdk)
-2. [Cài đặt trên Windows](#2-cài-đặt-trên-windows)
-3. [Cài đặt trên macOS](#3-cài-đặt-trên-macos)
-4. [Cài đặt trên Linux](#4-cài-đặt-trên-linux)
-5. [Kiểm tra cài đặt](#5-kiểm-tra-cài-đặt)
-6. [Quản lý nhiều phiên bản Java](#6-quản-lý-nhiều-phiên-bản-java)
-7. [Chương trình đầu tiên](#7-chương-trình-đầu-tiên)
-8. [Xử lý lỗi thường gặp](#8-xử-lý-lỗi-thường-gặp)
 
 ---
 
@@ -661,13 +646,3 @@ gradle -version
 ```
 
 Nếu sai, sửa lại biến `JAVA_HOME`.
-
----
-
-## Tham khảo
-
-- Eclipse Temurin: <https://adoptium.net>
-- OpenJDK: <https://openjdk.org>
-- Amazon Corretto: <https://aws.amazon.com/corretto/>
-- SDKMAN!: <https://sdkman.io>
-- Lịch phát hành Java: <https://endoflife.date/java>
