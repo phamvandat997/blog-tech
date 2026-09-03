@@ -46,12 +46,12 @@
 }
 
 [data-theme="dark"] {
-  --bg-body: #090d16;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1e293b;
-  --bg-surface-subtle: #172033;
-  --bg-card-hover: #1e293b;
-  --border-color: #1f293d;
+  --bg-body: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-surface-elevated: #273549;
+  --bg-surface-subtle: #172337;
+  --bg-card-hover: #243247;
+  --border-color: rgba(99, 102, 241, 0.25);
   --border-subtle: #334155;
 
   --text-main: #f8fafc;
@@ -63,10 +63,10 @@
   --primary-hover: #818cf8;
   --primary-text: #ffffff;
 
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 24px 38px -6px rgba(0, 0, 0, 0.8);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 20px 32px -6px rgba(0, 0, 0, 0.45);
 }
 
 /* === BASE STYLES === */
