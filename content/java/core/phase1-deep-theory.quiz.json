@@ -1,0 +1,686 @@
+{
+  "title": "Chapter 1: Utilizing Java Object-Oriented Approach - Part 1 (24 Practice Questions)",
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Consider the following code snippet:\n```java\npublic class Main {\n    public static void main(String[] args) {\n        StringBuilder sb1 = new StringBuilder(\"Java\");\n        StringBuilder sb2 = new StringBuilder(\"Python\");\n        sb1 = sb2;\n        // More code here\n    }\n}\n```\nAfter the execution of the above code, which of the following statements is true regarding garbage collection?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both `sb1` and `sb2` are eligible for garbage collection."
+        },
+        {
+          "key": "B",
+          "text": "Only the `StringBuilder` object initially referenced by `sb1` is eligible for garbage collection."
+        },
+        {
+          "key": "C",
+          "text": "Only the `StringBuilder` object initially referenced by `sb2` is eligible for garbage collection."
+        },
+        {
+          "key": "D",
+          "text": "Neither of the `StringBuilder` objects are eligible for garbage collection."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Ban đầu, `sb1` trỏ đến đối tượng `\"Java\"`, `sb2` trỏ đến `\"Python\"`. Sau lệnh gán tham chiếu `sb1 = sb2;`, cả hai biến tham chiếu đều trỏ tới đối tượng `\"Python\"`. Đối tượng `\"Java\"` (được trỏ ban đầu bởi `sb1`) không còn bất kỳ biến tham chiếu nào trỏ tới, do đó nó trở thành đối tượng đủ điều kiện để Garbage Collector thu hồi bộ nhớ (eligible for GC)."
+    },
+    {
+      "number": 2,
+      "question": "Which of the following are reserved keywords in Java? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`implement`"
+        },
+        {
+          "key": "B",
+          "text": "`array`"
+        },
+        {
+          "key": "C",
+          "text": "`volatile`"
+        },
+        {
+          "key": "D",
+          "text": "`extends`"
+        }
+      ],
+      "correctAnswers": [
+        "C",
+        "D"
+      ],
+      "explanation": "`volatile` và `extends` là từ khóa dành riêng (reserved keywords) trong Java. Trong khi đó, từ khóa dùng cho interface là `implements` (có s), không phải `implement`. `array` không phải từ khóa Java."
+    },
+    {
+      "number": 3,
+      "question": "Consider the following code snippet:\n```java\n1. // calculates the sum of numbers\n2. public class Calculator {\n3.     /* Adds two numbers\n4.      * @param a the first number\n5.      * @param b the second number\n6.      * @return the sum of a and b\n7.      */\n8.     public int add(int a, int b) {\n9.         // return the sum\n10.        return a + b;\n11.    }\n12.    //TODO: Implement subtract method\n13. }\n```\nWhich of the following statements are true about the comments in the above code? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "Line 1 is an example of a single-line comment."
+        },
+        {
+          "key": "B",
+          "text": "Lines 3-7 demonstrate the use of a javadoc comment."
+        },
+        {
+          "key": "C",
+          "text": "Line 9 uses a javadoc comment to explain the `add` method."
+        },
+        {
+          "key": "D",
+          "text": "Line 12 uses a special `TODO` comment, different from a single-line comment."
+        },
+        {
+          "key": "E",
+          "text": "Lines 3-7 is a block comment that is used as if it were a javadoc comment."
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "E"
+      ],
+      "explanation": "Dòng 1 là chú thích một dòng thông thường (`//`). Khối chú thích ở dòng 3-7 mở đầu bằng `/*` thay vì `/**`, nên đây là một chú thích khối (multi-line / block comment) được viết giả lập định dạng javadoc chứ không phải Javadoc comment thật (Javadoc bắt buộc phải bắt đầu bằng `/**`). Dòng 12 chỉ là chú thích dòng thông thường chứa tiền tố TODO."
+    },
+    {
+      "number": 4,
+      "question": "Consider you have the following two Java files located in the same directory:\n```java\n// File 1: Calculator.java\npackage math;\n\npublic class Calculator {\n    public int add(int a, int b) {\n        return a + b;\n    }\n}\n\n// File 2: Application.java\npackage app;\n\nimport math.Calculator;\n\npublic class Application {\n    public static void main(String[] args) {\n        Calculator calc = new Calculator();\n        System.out.println(calc.add(5, 3));\n    }\n}\n```\nWhich of the following statements is true regarding the `package` and `import` statements in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "The `import` statement in `Application.java` is unnecessary because both classes are in the same directory."
+        },
+        {
+          "key": "B",
+          "text": "The `import` statement in `Application.java` is necessary for using the `Calculator` class because they belong to different packages."
+        },
+        {
+          "key": "C",
+          "text": "The `Calculator` class will not be accessible in `Application.java` due to being in a different directory."
+        },
+        {
+          "key": "D",
+          "text": "Removing the `package` statement from both files will allow `Application.java` to use `Calculator` without an `import` statement, regardless of directory structure."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong Java, phạm vi namespace phụ thuộc vào khai báo `package`. `Calculator` thuộc package `math` còn `Application` thuộc package `app`. Dù hai file có đặt cùng một thư mục vật lý thì lệnh `import math.Calculator;` vẫn bắt buộc phải có để nhận diện lớp từ package khác."
+    },
+    {
+      "number": 5,
+      "question": "Consider the default access levels provided by Java four access modifiers: `public`, `protected`, `default` (no modifier), and `private`. Which of the following statements correctly describe the access levels granted by these modifiers? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "A `public` class or member can be accessed by any other class in the same package or in any other package."
+        },
+        {
+          "key": "B",
+          "text": "A `protected` member can be accessed by any class in its own package, but from outside the package, only by classes that extend the class containing the `protected` member."
+        },
+        {
+          "key": "C",
+          "text": "A member with `default` (no modifier) access can be accessed by any class in the same package but not from a class in a different package."
+        },
+        {
+          "key": "D",
+          "text": "A `private` member can be accessed only by methods that are members of the same class or within the same file."
+        },
+        {
+          "key": "E",
+          "text": "A `protected` member can be accessed by any class in the Java program, regardless of package."
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "A đúng: `public` truy cập tự do từ mọi nơi. B đúng: `protected` truy cập được trong cùng package và các lớp con ở ngoài package. C đúng: `default` (package-private) chỉ truy cập được trong cùng package. D sai: `private` chỉ truy cập trong cùng lớp khai báo, không chia sẻ cho các top-level class khác cùng file. E sai: `protected` không mở cho toàn bộ chương trình."
+    },
+    {
+      "number": 6,
+      "question": "Which of the following class declarations correctly demonstrates the use of access modifiers, `class` keyword, and class naming conventions in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`class public Vehicle { }`"
+        },
+        {
+          "key": "B",
+          "text": "`public class vehicle { }`"
+        },
+        {
+          "key": "C",
+          "text": "`Public class Vehicle { }`"
+        },
+        {
+          "key": "D",
+          "text": "`public class Vehicle { }`"
+        },
+        {
+          "key": "E",
+          "text": "`classVehicle public { }`"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Cú pháp khai báo lớp chuẩn mực là `public class Vehicle { }`: từ khóa `public` và `class` viết thường, tên lớp viết hoa chữ cái đầu theo quy ước đặt tên CamelCase (`Vehicle`). `vehicle` viết thường vi phạm quy ước đặt tên class; `Public` viết hoa sai từ khóa; `class public` đảo sai thứ tự."
+    },
+    {
+      "number": 7,
+      "question": "Consider the following code snippet:\n```java\npublic class Counter {\n    public static int COUNT = 0;\n    \n    public Counter() {\n        COUNT++;\n    }\n    \n    public static void resetCount() {\n        COUNT = 0;\n    }\n    \n    public int getCount() {\n        return COUNT;\n    }\n}\n```\nWhich of the following statements are true about `static` and instance members within the `Counter` class? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "The `COUNT` variable can be accessed directly using the class name without creating an instance of `Counter`."
+        },
+        {
+          "key": "B",
+          "text": "The `getCount()` method is an example of a static method because it returns the value of a static variable."
+        },
+        {
+          "key": "C",
+          "text": "Every time a new instance of `Counter` is created, the `COUNT` variable is incremented."
+        },
+        {
+          "key": "D",
+          "text": "The `resetCount()` method resets the `COUNT` variable to 0 for all instances of `Counter`."
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "C",
+        "D"
+      ],
+      "explanation": "`COUNT` là biến static nên có thể gọi qua `Counter.COUNT` (A đúng). `getCount()` là instance method (không có từ khóa static) dù nó trả về biến static (B sai). Constructor `Counter()` gọi `COUNT++` mỗi khi có đối tượng mới được tạo (C đúng). `resetCount()` là phương thức static đặt lại biến static `COUNT = 0`, ảnh hưởng đến toàn bộ các instance (D đúng)."
+    },
+    {
+      "number": 8,
+      "question": "Which of the following are valid field name identifiers in Java? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`int _age;`"
+        },
+        {
+          "key": "B",
+          "text": "`double 2ndValue;`"
+        },
+        {
+          "key": "C",
+          "text": "`boolean is_valid;`"
+        },
+        {
+          "key": "D",
+          "text": "`String $name;`"
+        },
+        {
+          "key": "E",
+          "text": "`char #char;`"
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "C",
+        "D"
+      ],
+      "explanation": "Quy tắc định danh biến (identifier) trong Java: có thể bắt đầu bằng chữ cái, dấu gạch dưới `_` hoặc ký tự đô la `$`. Tên biến không được bắt đầu bằng chữ số (`2ndValue` sai) và không được chứa ký tự đặc biệt ngoài `_` và `$` (`#char` sai)."
+    },
+    {
+      "number": 9,
+      "question": "Consider the syntax used to declare methods in a class. Which of the following method declarations is correct according to Java syntax rules?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`int public static final computeSum(int num1, int num2) { return num1 + num2 }`"
+        },
+        {
+          "key": "B",
+          "text": "`private void updateRecord(int id) throws IOException {}`"
+        },
+        {
+          "key": "C",
+          "text": "`synchronized boolean checkStatus [int status] { return status == 1; }`"
+        },
+        {
+          "key": "D",
+          "text": "`float calculateArea() {}`"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "B là khai báo phương thức hoàn toàn hợp lệ theo cú pháp Java. A sai vì modifier phải đứng trước kiểu trả về (`int`) và thiếu dấu chấm phẩy sau lệnh return. C sai vì tham số phải đặt trong dấu ngoặc tròn `()`, không dùng ngoặc vuông `[]`. D sai vì phương thức trả về `float` bắt buộc phải có câu lệnh `return`."
+    },
+    {
+      "number": 10,
+      "question": "Given the method declarations below, which of them have the same method signature?\nA) `public void update(int id, String value)`\nB) `private void update(int identifier, String data)`\nC) `public boolean update(String value, int id)`\nD) `void update(String value, int id)`\nE) `protected void update(int id, int value) throws IOException`",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "A and B"
+        },
+        {
+          "key": "B",
+          "text": "C and D"
+        },
+        {
+          "key": "C",
+          "text": "A and C"
+        },
+        {
+          "key": "D",
+          "text": "B and E"
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "B"
+      ],
+      "explanation": "Method Signature trong Java CHỈ bao gồm: Tên phương thức + danh sách kiểu dữ liệu tham số theo thứ tự. Tên tham số, kiểu trả về, access modifier và throws clause KHÔNG thuộc về signature. Cả phương thức A và B đều có signature `update(int, String)`. C và D đều có signature `update(String, int)`."
+    },
+    {
+      "number": 11,
+      "question": "Given this class:\n```java\npublic class AccountManager {\n    private void resetAccountPassword(String accountId) {}\n    void auditTrail(String accountId) {}\n    protected void notifyAccountChanges(String accountId) {}\n    public void updateAccountInformation(String accountId) {}\n}\n```\nWhich of the following statements correctly describe the accessibility of the methods within the `AccountManager` class from a class in the same package and from a class in a different package? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "The `resetAccountPassword` method can be accessed from any class within the same package but not from a class in a different package."
+        },
+        {
+          "key": "B",
+          "text": "The `auditTrail` method can be accessed from any class within the same package and from subclasses in different packages."
+        },
+        {
+          "key": "C",
+          "text": "The `notifyAccountChanges` method can be accessed from any class within the same package and from subclasses in different packages."
+        },
+        {
+          "key": "D",
+          "text": "The `updateAccountInformation` method can be accessed from any class, regardless of its package."
+        }
+      ],
+      "correctAnswers": [
+        "C",
+        "D"
+      ],
+      "explanation": "`notifyAccountChanges` là `protected` nên truy cập được trong cùng package và các lớp con ở ngoài package (C đúng). `updateAccountInformation` là `public` nên truy cập được từ mọi nơi (D đúng). A sai vì `private` chỉ dùng nội bộ trong chính lớp đó. B sai vì `auditTrail` có default access nên không thể truy cập từ lớp con ở package khác."
+    },
+    {
+      "number": 12,
+      "question": "What will be the output of this program?\n```java\npublic class TestPassByValue {\n    public static void main(String[] args) {\n        int originalValue = 10;\n        TestPassByValue test = new TestPassByValue();\n        System.out.println(\"Before calling changeValue: \" + originalValue);\n        test.changeValue(originalValue);\n        System.out.println(\"After calling changeValue: \" + originalValue);\n    }\n    public void changeValue(int value) {\n        value = 20;\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Before calling changeValue: 10\nAfter calling changeValue: 20"
+        },
+        {
+          "key": "B",
+          "text": "Before calling changeValue: 10\nAfter calling changeValue: 10"
+        },
+        {
+          "key": "C",
+          "text": "Before calling changeValue: 20\nAfter calling changeValue: 20"
+        },
+        {
+          "key": "D",
+          "text": "Before calling changeValue: 20\nAfter calling changeValue: 10"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Java là ngôn ngữ thuần truyền theo giá trị (strictly pass-by-value). Với kiểu nguyên thủy `int`, một bản sao của giá trị 10 được chuyển vào biến tham số `value`. Việc gán `value = 20` bên trong hàm chỉ làm thay đổi biến cục bộ của hàm mà không ảnh hưởng tới biến `originalValue` trong `main`."
+    },
+    {
+      "number": 13,
+      "question": "What will be the output of the following program?\n```java\npublic class Test {\n    public static void main(String[] args) {\n        print(null);\n    }\n    public static void print(Object o) {\n        System.out.println(\"Object\");\n    }\n    public static void print(String s) {\n        System.out.println(\"String\");\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Object`"
+        },
+        {
+          "key": "B",
+          "text": "`String`"
+        },
+        {
+          "key": "C",
+          "text": "Compilation fails"
+        },
+        {
+          "key": "D",
+          "text": "A runtime exception is thrown"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khi gọi phương thức quá tải (overload) với đối số `null`, trình biên dịch Java sẽ ưu tiên chọn phương thức có kiểu dữ liệu cụ thể và hẹp nhất (most specific). Vì `String` là lớp con của `Object`, nên `String` cụ thể hơn `Object`. Do đó, `print(String)` được chọn và in ra `String`."
+    },
+    {
+      "number": 14,
+      "question": "Which of the following method declarations correctly uses varargs? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`public void print(String... messages, int count)`"
+        },
+        {
+          "key": "B",
+          "text": "`public void print(int count, String... messages)`"
+        },
+        {
+          "key": "C",
+          "text": "`public void print(String messages...)`"
+        },
+        {
+          "key": "D",
+          "text": "`public void print(String[]... messages)`"
+        },
+        {
+          "key": "E",
+          "text": "`public void print(String... messages, String lastMessage)`"
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "Quy tắc varargs: 1) Tham số varargs bắt buộc phải là tham số cuối cùng trong danh sách tham số (loại A, E). 2) Dấu ba chấm `...` phải đặt sau kiểu dữ liệu (loại C). Phương thức B (`int count, String... messages`) và D (`String[]... messages` - mảng 2 chiều truyền dưới dạng varargs) đều hợp lệ."
+    },
+    {
+      "number": 15,
+      "question": "Given the class `Vehicle`:\n```java\npublic class Vehicle {\n    private String type;\n    private int maxSpeed;\n    public Vehicle(String type) {\n        this.type = type;\n    }\n    public Vehicle(int maxSpeed) {\n        this.maxSpeed = maxSpeed;\n    }\n}\n```\nWhich of the following statements is true regarding its constructors?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "The class `Vehicle` demonstrates constructor overloading by having multiple constructors with different parameter lists."
+        },
+        {
+          "key": "B",
+          "text": "The class `Vehicle` will compile with an error because it does not provide a default constructor."
+        },
+        {
+          "key": "C",
+          "text": "It is possible to create an instance of `Vehicle` with both `type` and `maxSpeed` set to specific values through a single constructor call."
+        },
+        {
+          "key": "D",
+          "text": "Calling either constructor will initialize both `type` and `maxSpeed` fields of the `Vehicle` class."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Lớp `Vehicle` định nghĩa 2 constructor có cùng tên với lớp nhưng khác nhau về kiểu tham số (`String` vs `int`). Đây là ví dụ điển hình của quá tải constructor (constructor overloading). Khi lớp đã tự định nghĩa constructor có tham số, trình biên dịch không tự động tạo constructor mặc định (no-arg constructor), nhưng đây không phải lỗi."
+    },
+    {
+      "number": 16,
+      "question": "Consider the following class with an instance initializer block:\n```java\npublic class Library {\n    private int bookCount;\n    private List<String> books;\n    {\n        books = new ArrayList<>();\n        books.add(\"Book 1\");\n        books.add(\"Book 2\");\n    }\n    public Library(int bookCount) {\n        this.bookCount = bookCount + books.size();\n    }\n    public int getBookCount() { return bookCount; }\n}\n```\nWhich of the following statements accurately describe the role and effect of the instance initializer block? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "The instance initializer block is executed before the constructor, initializing the `books` list and adding two books to it."
+        },
+        {
+          "key": "B",
+          "text": "The instance initializer block replaces the need for a constructor in the `Library` class."
+        },
+        {
+          "key": "C",
+          "text": "Instance initializer blocks cannot initialize instance variables like `books`."
+        },
+        {
+          "key": "D",
+          "text": "If multiple instances of `Library` are created, the instance initializer block will execute each time before the constructor, ensuring the `books` list is initialized and populated for each object."
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "D"
+      ],
+      "explanation": "Khối khởi tạo instance (`{ ... }`) chạy mỗi lần một đối tượng mới được tạo và luôn chạy trước thân constructor (A và D đúng). Khối này không thay thế hoàn toàn constructor (B sai) và hoàn toàn có thể khởi tạo các biến instance (C sai)."
+    },
+    {
+      "number": 17,
+      "question": "Consider the following Java class with a `static` initializer block:\n```java\npublic class Configuration {\n    private static Map<String, String> settings;\n    static {\n        settings = new HashMap<>();\n        settings.put(\"url\", \"https://eherrera.net\");\n        settings.put(\"timeout\", \"30\");\n    }\n    public static String getSetting(String key) { return settings.get(key); }\n}\n```\nWhich of the following statements accurately describe the role and effect of the `static` initializer block?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "The `static` initializer block is executed only once when the class is first loaded into memory, initializing the `settings` map with default values."
+        },
+        {
+          "key": "B",
+          "text": "The `static` initializer block allows instance methods to modify the `settings` map without creating an instance of the `Configuration` class."
+        },
+        {
+          "key": "C",
+          "text": "`static` initializer blocks are executed each time a new instance of the `Configuration` class is created."
+        },
+        {
+          "key": "D",
+          "text": "The `static` initializer block is executed before any instance initializer blocks or constructors, when an instance of the class is created."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Khối `static { ... }` chỉ chạy duy nhất MỘT LẦN khi lớp được JVM nạp (class loading) vào bộ nhớ, trước khi bất kỳ instance nào được tạo ra hoặc bất kỳ phương thức tĩnh nào được gọi."
+    },
+    {
+      "number": 18,
+      "question": "Consider the following class definition:\n```java\npublic class InitializationOrder {\n    static {\n        System.out.println(\"1. Static initializer\");\n    }\n    private static int staticValue = initializeStaticValue();\n    private int instanceValue = initializeInstanceValue();\n    {\n        System.out.println(\"3. Instance initializer\");\n    }\n    public InitializationOrder() {\n        System.out.println(\"4. Constructor\");\n    }\n    private static int initializeStaticValue() {\n        System.out.println(\"2. Static value initializer\");\n        return 0;\n    }\n    private int initializeInstanceValue() {\n        System.out.println(\"3. Instance value initializer\");\n        return 0;\n    }\n    public static void main(String[] args) {\n        new InitializationOrder();\n    }\n}\n```\nWhat is the correct order of execution?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "1. Static initializer -> 2. Static value initializer -> 3. Instance initializer -> 3. Instance value initializer -> 4. Constructor"
+        },
+        {
+          "key": "B",
+          "text": "1. Static initializer -> 2. Static value initializer -> 3. Instance value initializer -> 3. Instance initializer -> 4. Constructor"
+        },
+        {
+          "key": "C",
+          "text": "1. Static initializer -> 3. Instance initializer -> 2. Static value initializer -> 3. Instance value initializer -> 4. Constructor"
+        },
+        {
+          "key": "D",
+          "text": "2. Static value initializer -> 1. Static initializer -> 3. Instance value initializer -> 3. Instance initializer -> 4. Constructor"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Thứ tự nạp lớp: 1) Khối static xuất hiện trước: in `1. Static initializer`. 2) Biến static gán hàm `initializeStaticValue()`: in `2. Static value initializer`. Khi gọi `new InitializationOrder()`: 3) Biến instance `instanceValue` gán hàm `initializeInstanceValue()` xuất hiện trước khối instance: in `3. Instance value initializer`. 4) Khối instance chạy: in `3. Instance initializer`. 5) Thân constructor chạy cuối cùng: in `4. Constructor`."
+    },
+    {
+      "number": 19,
+      "question": "Consider a class `CustomObject` that does not explicitly override any methods from `java.lang.Object`:\n```java\npublic class CustomObject {}\n```\nWhich of the following statements correctly reflect the outcomes when methods from `java.lang.Object` are used with instances of `CustomObject`? (Choose all that apply.)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "Invoking `toString()` on an instance of `CustomObject` will return a `String` that includes the class name followed by the `@` symbol and the object's hashcode."
+        },
+        {
+          "key": "B",
+          "text": "Calling `equals(Object obj)` on two different instances of `CustomObject` that have identical content will return `true` because they are instances of the same class."
+        },
+        {
+          "key": "C",
+          "text": "Using `hashCode()` on any instance of `CustomObject` will generate a unique integer that remains consistent across multiple invocations within the same execution of a program."
+        },
+        {
+          "key": "D",
+          "text": "The `clone()` method can be used to create a shallow copy of an instance of `CustomObject` without the need for `CustomObject` to implement the `Cloneable` interface."
+        }
+      ],
+      "correctAnswers": [
+        "A",
+        "C"
+      ],
+      "explanation": "Mặc định từ `Object`: `toString()` sinh chuỗi `TênClass@mãHexHashCode` (A đúng). `hashCode()` trả về số nguyên nhất quán cho cùng đối tượng trong suốt phiên chạy (C đúng). B sai vì mặc định `equals` chỉ so sánh địa chỉ tham chiếu (`==`), hai đối tượng khác nhau sẽ trả về `false`. D sai vì gọi `clone()` mà không implements `Cloneable` sẽ ném ngoại lệ `CloneNotSupportedException`."
+    },
+    {
+      "number": 20,
+      "question": "Consider the code snippet below that demonstrates the use of a static nested class:\n```java\npublic class OuterClass {\n    private static String message = \"Hello, World!\";\n    static class NestedClass {\n        void printMessage() {\n            System.out.println(message);\n        }\n    }\n    public static void main(String[] args) {\n        OuterClass.NestedClass nested = new OuterClass.NestedClass();\n        nested.printMessage();\n    }\n}\n```\nWhich of the following statements is true regarding static nested classes in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "A static nested class can access both static and non-static members of its enclosing class directly."
+        },
+        {
+          "key": "B",
+          "text": "Instances of a static nested class can exist without an instance of its enclosing class."
+        },
+        {
+          "key": "C",
+          "text": "A static nested class can only be instantiated within the static method of its enclosing class."
+        },
+        {
+          "key": "D",
+          "text": "Static nested classes are not considered members of their enclosing class and cannot access any members of the enclosing class."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Lớp lồng tĩnh (static nested class) hoạt động tương tự như một top-level class được đặt bên trong một class khác vì mục đích đóng gói. Nó không giữ liên kết với một đối tượng của outer class, do đó có thể tạo đối tượng `new OuterClass.NestedClass()` mà không cần tạo đối tượng `OuterClass` trước (B đúng)."
+    },
+    {
+      "number": 21,
+      "question": "Consider the following code snippet demonstrating an inner class:\n```java\npublic class OuterClass {\n    private String message = \"Hello, World!\";\n    class InnerClass {\n        void printMessage() { System.out.println(message); }\n    }\n    public static void main(String[] args) {\n        OuterClass outer = new OuterClass();\n        OuterClass.InnerClass inner = outer.new InnerClass();\n        inner.printMessage();\n    }\n}\n```\nWhich of the following statements is true regarding non-static nested (inner) classes in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "A non-static nested class can directly access both static and non-static members of its enclosing class."
+        },
+        {
+          "key": "B",
+          "text": "Instances of a non-static nested class can exist independently of an instance of its enclosing class."
+        },
+        {
+          "key": "C",
+          "text": "A non-static nested class cannot access the non-static members of its enclosing class directly."
+        },
+        {
+          "key": "D",
+          "text": "Non-static nested classes must be declared static to access the static members of their enclosing class."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Inner class (non-static) luôn được gắn với một instance cụ thể của lớp bao bọc (enclosing class), cho phép nó truy cập trực tiếp tất cả các thành viên static và non-static (kể cả private) của outer class mà không cần thông qua đối tượng outer."
+    },
+    {
+      "number": 22,
+      "question": "Consider the following code snippet demonstrating a local class within a method:\n```java\npublic class LocalClassExample {\n    public void printEvenNumbers(int[] numbers, int max) {\n        class EvenNumberPrinter {\n            public void print() {\n                for (int number : numbers) {\n                    if (number % 2 == 0 && number <= max) {\n                        System.out.println(number);\n                    }\n                }\n            }\n        }\n        EvenNumberPrinter printer = new EvenNumberPrinter();\n        printer.print();\n    }\n}\n```\nWhich of the following statements correctly describe local classes in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Local classes can be declared within any block that precedes a statement."
+        },
+        {
+          "key": "B",
+          "text": "Instances of a local class can be created and used outside of the block where the local class is defined."
+        },
+        {
+          "key": "C",
+          "text": "Local classes are a type of static nested class and can access both static and non-static members of the enclosing class directly."
+        },
+        {
+          "key": "D",
+          "text": "Local classes can access local variables and parameters of the enclosing block only if they are declared `final` or effectively final."
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Một lớp cục bộ (local class) định nghĩa bên trong phương thức chỉ có thể truy cập các biến cục bộ và tham số của phương thức bao bọc nếu các biến đó là `final` hoặc effectively final (tức giá trị không bị thay đổi sau khi khởi tạo)."
+    },
+    {
+      "number": 23,
+      "question": "Consider the following Java code snippet demonstrating an anonymous class:\n```java\npublic class HelloWorld {\n    interface HelloWorldInterface { void greet(); }\n    public void sayHello() {\n        HelloWorldInterface myGreeting = new HelloWorldInterface() {\n            @Override\n            public void greet() { System.out.println(\"Hello, world!\"); }\n        };\n        myGreeting.greet();\n    }\n}\n```\nWhich of the following statements is true about anonymous classes in Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Anonymous classes can implement interfaces and extend classes without the need to declare a named class."
+        },
+        {
+          "key": "B",
+          "text": "An anonymous class must override all methods in the superclass or interface it declares it is implementing or extending."
+        },
+        {
+          "key": "C",
+          "text": "Anonymous classes can have constructors as named classes do."
+        },
+        {
+          "key": "D",
+          "text": "Instances of anonymous classes cannot be passed as arguments to methods."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Lớp ẩn danh (anonymous class) cho phép lập trình viên định nghĩa và khởi tạo trực tiếp một lớp thực thi interface hoặc mở rộng một lớp khác trong cùng một biểu thức mà không cần tạo tên lớp riêng biệt (A đúng). Anonymous class không thể có constructor tường minh vì nó không có tên (C sai)."
+    },
+    {
+      "number": 24,
+      "question": "Which of the following statements accurately reflects a valid rule regarding how classes and source files are organized?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "A source file can contain multiple public classes."
+        },
+        {
+          "key": "B",
+          "text": "Private classes can be declared at the top level in a source file."
+        },
+        {
+          "key": "C",
+          "text": "A `public` class must be declared in a source file that has the same name as the class."
+        },
+        {
+          "key": "D",
+          "text": "If a source file contains more than one class, none of the classes can be `public`."
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Quy tắc vàng trong tổ chức mã nguồn Java: Một file `.java` chỉ được phép chứa tối đa một lớp `public`. Và nếu có lớp `public`, tên của file nguồn bắt buộc phải trùng khớp 100% (tính cả chữ hoa, chữ thường) với tên của lớp public đó kèm đuôi `.java` (ví dụ `Vehicle.java` cho `public class Vehicle`)."
+    }
+  ]
+}

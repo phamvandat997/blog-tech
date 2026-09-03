@@ -777,7 +777,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const readingMinutes = doc.readingMinutes || Math.max(1, Math.round(body.trim().split(/\s+/).length / 200));
-  qs("#reader-date").innerHTML = `📅 Cập nhật ${doc.updatedDate} &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc`;
+  const quizLinkHtml = doc.questions > 0
+    ? ` &nbsp;·&nbsp; <a href="quiz.html?id=${encodeURIComponent(doc.id)}" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"><span>🎯</span> <span>Làm Quiz (${doc.questions} câu)</span></a>`
+    : "";
+  qs("#reader-date").innerHTML = `📅 Cập nhật ${doc.updatedDate} &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc${quizLinkHtml}`;
 
   // Bỏ heading H1 đầu bài nếu có vì đã hiển thị ở phần header #reader-title
   const cleanBody = body.replace(/^\s*#[^\n]*\r?\n?/, "");
@@ -788,6 +791,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupHeadingAnchors();
   setupReadingProgress();
   setupCompletionWidget(doc);
+
+  // Nạp và hiển thị bài tập trắc nghiệm nếu bài có câu hỏi quiz
+  if (doc.questions > 0 && typeof renderDocQuizSection === "function") {
+    loadQuizBank(doc.section).then(() => {
+      const quizHtml = renderDocQuizSection(doc.id);
+      if (quizHtml) {
+        const quizContainer = document.createElement("div");
+        quizContainer.className = "reader-quiz-mount mb-8";
+        quizContainer.innerHTML = quizHtml;
+        const targetNode = qs("#reader-complete-box") || qs("#reader-body");
+        if (targetNode) {
+          targetNode.after(quizContainer);
+          bindQuiz(quizContainer);
+        }
+      }
+    });
+  }
+
   setupGiscus(doc);
   initMermaidDiagrams();
 });

@@ -5,6 +5,8 @@
 const STORE = {
   theme: "blog.theme",
   completedDocs: "blog.completedDocs",
+  quizAnswers: "blog.quiz.answers",
+  quizChecked: "blog.quiz.checked",
 };
 
 /**
@@ -24,10 +26,33 @@ const hasThemeChoice = () => {
   try { return !!localStorage.getItem(STORE.theme); } catch { return false; }
 };
 
+function loadQuizAnswers() {
+  try {
+    const raw = localStorage.getItem(STORE.quizAnswers);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function loadQuizChecked() {
+  try {
+    const raw = localStorage.getItem(STORE.quizChecked);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch { return new Set(); }
+}
+
 const state = {
   theme: preferredTheme(),
   completedDocs: null,
+  quizAnswers: loadQuizAnswers(),
+  quizChecked: loadQuizChecked(),
 };
+
+function persistQuiz() {
+  try {
+    localStorage.setItem(STORE.quizAnswers, JSON.stringify(state.quizAnswers));
+    localStorage.setItem(STORE.quizChecked, JSON.stringify([...state.quizChecked]));
+  } catch { /* bỏ qua */ }
+}
 
 function getCompletedDocs() {
   if (state.completedDocs) return state.completedDocs;

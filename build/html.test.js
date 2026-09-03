@@ -14,7 +14,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = path.join(__dirname, "..");
-const PAGES = ["index.html", "hub.html", "reader.html", "admin.html", "404.html"];
+const PAGES = ["index.html", "hub.html", "reader.html", "quiz.html", "admin.html", "404.html"];
 const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
 const count = (s, re) => (s.match(re) || []).length;
 

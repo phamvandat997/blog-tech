@@ -14,6 +14,7 @@ const ENTRIES = [
   "index.html",
   "hub.html",
   "reader.html",
+  "quiz.html",
   "admin.html",
   "404.html",
   "favicon.svg",

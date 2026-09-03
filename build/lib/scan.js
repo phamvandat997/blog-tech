@@ -90,9 +90,6 @@ function scanContent(contentDir) {
 
         if (!data.title) warnings.push(`${id} thiếu "title" trong frontmatter`);
 
-        // File <slug>.quiz.json vẫn nằm cạnh bài nhưng build cố tình bỏ qua —
-        // tính năng quiz đang tạm gỡ, dữ liệu giữ nguyên để bật lại sau.
-
         const words = body.trim().split(/\s+/).filter(Boolean).length;
         const readingMinutes = Math.max(1, Math.round(words / 200));
 
@@ -146,4 +143,43 @@ function scanContent(contentDir) {
   return { sections, docs, warnings };
 }
 
-module.exports = { scanContent, flatten, SLUG };
+/**
+ * Quét tất cả file <slug>.quiz.json trong content/ và trả về map:
+ * { [docId]: { docId, section, category, title, quizzes: [...] } }
+ */
+function scanQuizzes(contentDir) {
+  const bank = {};
+  if (!fs.existsSync(contentDir)) return bank;
+  for (const sectionId of dirsIn(contentDir)) {
+    if (!SLUG.test(sectionId)) continue;
+    const sectionDir = path.join(contentDir, sectionId);
+    for (const categoryId of dirsIn(sectionDir)) {
+      if (!SLUG.test(categoryId)) continue;
+      const categoryDir = path.join(sectionDir, categoryId);
+      for (const file of fs.readdirSync(categoryDir).sort()) {
+        if (!file.endsWith(".quiz.json")) continue;
+        const slug = file.slice(0, -10);
+        const docId = `${sectionId}/${categoryId}/${slug}`;
+        const quizPath = path.join(categoryDir, file);
+        try {
+          const raw = JSON.parse(fs.readFileSync(quizPath, "utf8"));
+          if (Array.isArray(raw.quizzes) && raw.quizzes.length) {
+            bank[docId] = {
+              docId,
+              section: sectionId,
+              category: categoryId,
+              title: raw.title || slug,
+              quizzes: raw.quizzes.map(({ file, ...q }) => q),
+            };
+          }
+        } catch (e) {
+          // Bỏ qua nếu cú pháp sai để không làm hỏng build
+        }
+      }
+    }
+  }
+  return bank;
+}
+
+module.exports = { scanContent, scanQuizzes, flatten, SLUG };
+

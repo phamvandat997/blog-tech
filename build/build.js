@@ -2,7 +2,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const { scanContent } = require("./lib/scan");
+const { scanContent, scanQuizzes } = require("./lib/scan");
 const { resolveSiteUrl, buildSitemap, buildRobots } = require("./lib/seo");
 
 const ROOT = path.join(__dirname, "..");
@@ -31,6 +31,14 @@ function main() {
     : { sections: [], docs: [], warnings: [] };
   warnings.forEach((w) => console.warn(`  ⚠ ${w}`));
 
+  const quizBank = hasContent ? scanQuizzes(CONTENT) : {};
+  docs.forEach((doc) => {
+    const qz = quizBank[doc.id];
+    if (qz) {
+      doc.questions = qz.quizzes.length;
+    }
+  });
+
   // Sắp bài theo đúng thứ tự chuyên mục đã khai báo trong _section.json.
   const rank = new Map();
   sections.forEach((s, si) =>
@@ -54,7 +62,18 @@ function main() {
       `window.__docLoaded && window.__docLoaded(${JSON.stringify(doc.id)}, ${JSON.stringify(doc._body)});\n`);
   }
 
-  // 3. sitemap.xml + robots.txt. Đặt trong generated/ rồi dist.js đưa lên gốc
+  // 3. Quiz bank - một file cho mỗi mảng, nạp động khi luyện quiz
+  for (const section of sections) {
+    const bank = {};
+    docs.filter((d) => d.section === section.id && quizBank[d.id])
+        .forEach((d) => {
+          bank[d.id] = quizBank[d.id];
+        });
+    writeFile(`quiz-${section.id}.js`,
+      `window.__quizLoaded && window.__quizLoaded(${JSON.stringify(section.id)}, ${JSON.stringify(bank)});\n`);
+  }
+
+  // 4. sitemap.xml + robots.txt. Đặt trong generated/ rồi dist.js đưa lên gốc
   //    dist/ — nơi công cụ tìm kiếm mong thấy chúng.
   const siteUrl = resolveSiteUrl();
   fs.writeFileSync(path.join(OUT, "robots.txt"), buildRobots(siteUrl));
@@ -62,7 +81,8 @@ function main() {
     fs.writeFileSync(path.join(OUT, "sitemap.xml"), buildSitemap(siteUrl, sections, meta));
   }
 
-  console.log(`✓ ${sections.length} mảng · ${docs.length} bài`);
+  const totalQuestions = docs.reduce((n, d) => n + (d.questions || 0), 0);
+  console.log(`✓ ${sections.length} mảng · ${docs.length} bài · ${totalQuestions} câu quiz`);
   console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
   console.log(`✓ generated/docs/       ${docs.length} file, ${(contentBytes / 1024).toFixed(0)} KB tổng ` +
               `(reader chỉ nạp 1 file mỗi lần)`);

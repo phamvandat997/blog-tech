@@ -12,7 +12,7 @@ const path = require("node:path");
 const { ENTRIES } = require("./dist");
 
 const ROOT = path.join(__dirname, "..");
-const PAGES = ["index.html", "hub.html", "reader.html", "admin.html", "404.html"];
+const PAGES = ["index.html", "hub.html", "reader.html", "quiz.html", "admin.html", "404.html"];
 
 /** Tệp có được ENTRIES phủ không — trực tiếp, hoặc nằm trong một thư mục đã liệt kê. */
 const packaged = (file) =>
