@@ -126,3 +126,53 @@ function setNoIndex() {
   }
   tag.setAttribute("content", "noindex, nofollow");
 }
+
+/* ------------------------------------------------------------ phân trang */
+
+/**
+ * Dãy số trang để hiển thị, có rút gọn bằng "..." khi nhiều trang.
+ * Luôn giữ trang đầu, trang cuối và vùng quanh trang hiện tại.
+ */
+function paginationRange(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = [1];
+  if (current > 3) pages.push("...");
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) {
+    if (!pages.includes(i)) pages.push(i);
+  }
+  if (current < total - 2) pages.push("...");
+  if (!pages.includes(total)) pages.push(total);
+  return pages;
+}
+
+/**
+ * Đổ bộ điều khiển phân trang vào `el`. Dùng chung cho trang danh mục và
+ * trang quản lý bài viết — một bản dựng duy nhất để hai nơi không lệch nhau.
+ * Chỉ một trang thì để trống, CSS đã có luật ẩn phần tử rỗng.
+ *
+ * @param {{page:number,totalPages:number,total:number,startIdx:number,endIdx:number,noun?:string}} s
+ */
+function renderPaginationInto(el, s) {
+  if (!el) return;
+  if (s.totalPages <= 1) { el.innerHTML = ""; return; }
+
+  const btn = (page, label, extra = "", disabled = false) =>
+    `<button class="pagination-btn ${extra}" data-page="${page}" type="button"` +
+    `${disabled ? " disabled" : ""} aria-label="${attr(label.replace(/[⬅➡\s]+/g, " ").trim())}">${label}</button>`;
+
+  const controls = [
+    btn(s.page - 1, "⬅ Trước", "pagination-prev", s.page === 1),
+    ...paginationRange(s.page, s.totalPages).map((item) =>
+      item === "..."
+        ? `<span class="pagination-ellipsis">…</span>`
+        : btn(item, String(item), item === s.page ? "active" : "", item === s.page)),
+    btn(s.page + 1, "Sau ➡", "pagination-next", s.page === s.totalPages),
+  ].join("");
+
+  el.innerHTML =
+    `<span class="pagination-info">Hiển thị <b>${s.startIdx + 1}–${s.endIdx}</b> ` +
+    `trong <b>${s.total}</b> ${escapeHtml(s.noun || "bài viết")}</span>` +
+    `<div class="pagination-controls">${controls}</div>`;
+}

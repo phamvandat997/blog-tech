@@ -91,44 +91,11 @@ function renderProgressTracker() {
   `;
 }
 
-function paginationRange(current, total) {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages = [];
-  pages.push(1);
-  if (current > 3) pages.push("...");
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  for (let i = start; i <= end; i++) {
-    if (!pages.includes(i)) pages.push(i);
-  }
-  if (current < total - 2) pages.push("...");
-  if (!pages.includes(total)) pages.push(total);
-  return pages;
-}
 
 function renderPagination(total, totalPages, startIdx, endIdx) {
-  if (!els.pagination) return;
-  if (totalPages <= 1) {
-    els.pagination.innerHTML = "";
-    return;
-  }
-
-  const range = paginationRange(hub.page, totalPages);
-
-  const controlsHtml = [
-    `<button class="pagination-btn pagination-prev" data-page="${hub.page - 1}" type="button" ${hub.page === 1 ? "disabled" : ""} aria-label="Trang trước">⬅ Trước</button>`,
-    ...range.map((item) => {
-      if (item === "...") return `<span class="pagination-ellipsis">…</span>`;
-      const isCurrent = item === hub.page;
-      return `<button class="pagination-btn ${isCurrent ? "active" : ""}" data-page="${item}" type="button" ${isCurrent ? "disabled" : ""} aria-label="Trang ${item}">${item}</button>`;
-    }),
-    `<button class="pagination-btn pagination-next" data-page="${hub.page + 1}" type="button" ${hub.page === totalPages ? "disabled" : ""} aria-label="Trang sau">Sau ➡</button>`,
-  ].join("");
-
-  els.pagination.innerHTML = `
-    <span class="pagination-info">Hiển thị <b>${startIdx + 1}–${endIdx}</b> trong <b>${total}</b> bài viết</span>
-    <div class="pagination-controls">${controlsHtml}</div>
-  `;
+  renderPaginationInto(els.pagination, {
+    page: hub.page, totalPages, total, startIdx, endIdx, noun: "bài viết",
+  });
 }
 
 function renderFilterBar() {

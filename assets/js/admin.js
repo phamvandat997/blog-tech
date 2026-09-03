@@ -37,6 +37,9 @@ const DRAFT_KEY = "blog.adminDraft";
 const DRAFT_DEBOUNCE_MS = 800;
 const SPLIT_QUERY = "(min-width: 1100px)";
 const PREVIEW_KEY = "blog.readerPreview";
+/** Số bài mỗi trang ở màn danh sách. Dòng bài gọn nên chứa được nhiều hơn
+ *  thẻ bài ở trang danh mục (12). */
+const POSTS_PAGE_SIZE = 15;
 
 const admin = {
   /** @type {GitHubRepo|null} */ gh: null,
@@ -50,6 +53,7 @@ const admin = {
   /** Trường frontmatter form không còn ô nhập nhưng phải giữ nguyên khi lưu lại. */
   carried: {},
   filter: "all",       // bộ lọc trạng thái ở màn danh sách
+  page: 1,             // trang đang xem ở màn danh sách
   postsToken: 0,       // chống kết quả của lượt loadPosts cũ ghi đè lượt mới
   dirty: false,        // form có thay đổi chưa gửi
   restoring: false,    // đang đổ dữ liệu vào form, đừng coi là người dùng gõ
@@ -264,6 +268,7 @@ async function loadPosts() {
   qs("#list-filters").hidden = true;
 
   // Bấm "Tải lại" liên tục thì lượt chậm về sau không được ghi đè lượt mới.
+  admin.page = 1;
   const token = ++admin.postsToken;
   const stale = () => token !== admin.postsToken;
 
@@ -345,16 +350,29 @@ function renderPosts() {
     .filter((p) => !query || `${p.title} ${p.path}`.toLowerCase().includes(query));
 
   const list = qs("#post-list");
+  const pager = qs("#post-pagination");
   if (!posts.length) {
     list.innerHTML = admin.posts.length
       ? '<p class="admin-hint">Không có bài nào khớp bộ lọc hiện tại.</p>'
       : '<p class="admin-hint">Chưa có bài nào. Bấm “Soạn bài mới” để bắt đầu.</p>';
+    if (pager) pager.innerHTML = "";
     return;
   }
 
+  // Lọc hoặc xoá bài có thể làm số trang co lại — kẹp trang hiện tại vào
+  // khoảng hợp lệ, nếu không người dùng nhìn vào một trang rỗng.
+  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PAGE_SIZE));
+  admin.page = Math.min(Math.max(1, admin.page), totalPages);
+
+  const startIdx = (admin.page - 1) * POSTS_PAGE_SIZE;
+  const endIdx = Math.min(startIdx + POSTS_PAGE_SIZE, posts.length);
+
   // admin.posts đã sắp theo đường dẫn nên bài cùng một mảng vẫn nằm liền nhau;
   // mảng của mỗi bài đọc được ngay trên dòng đường dẫn của nó.
-  list.innerHTML = posts.map(postRow).join("");
+  list.innerHTML = posts.slice(startIdx, endIdx).map(postRow).join("");
+  renderPaginationInto(pager, {
+    page: admin.page, totalPages, total: posts.length, startIdx, endIdx, noun: "bài",
+  });
 }
 
 function postRow(post) {
@@ -996,7 +1014,7 @@ function bindEvents() {
   qs("#btn-preview").addEventListener("click", handlePreview);
   qs("#btn-cancel-edit").addEventListener("click", () => { resetForm(); switchView("list"); });
   qs("#btn-refresh").addEventListener("click", loadPosts);
-  qs("#list-search").addEventListener("input", renderPosts);
+  qs("#list-search").addEventListener("input", () => { admin.page = 1; renderPosts(); });
 
   const rowAction = (selector, handler) =>
     delegate(qs("#post-list"), "click", selector, (_, btn) => {
@@ -1052,10 +1070,21 @@ function bindEvents() {
   // Đổi bề ngang màn hình thì đổi giữa hai cột và hai tab.
   window.matchMedia(SPLIT_QUERY).addEventListener("change", syncEditorPanes);
 
-  // Bộ lọc trạng thái ở màn danh sách.
+  // Bộ lọc trạng thái ở màn danh sách. Đổi bộ lọc thì về trang 1 — kết quả mới
+  // có thể ít hơn hẳn, đứng nguyên ở trang cũ là nhìn vào chỗ trống.
   delegate(qs("#list-filters"), "click", "[data-filter]", (_, btn) => {
     admin.filter = btn.dataset.filter;
+    admin.page = 1;
     renderPosts();
+  });
+
+  delegate(qs("#post-pagination"), "click", "[data-page]", (_, btn) => {
+    const page = Number(btn.dataset.page);
+    if (!Number.isFinite(page) || page === admin.page) return;
+    admin.page = page;
+    renderPosts();
+    // Nhảy trang mà vẫn đứng ở cuối danh sách thì mất phương hướng.
+    qs("#admin-list").scrollIntoView({ block: "start", behavior: "smooth" });
   });
 
   // Nháp: mọi ô trong form đều đánh dấu bẩn và hẹn giờ lưu.
