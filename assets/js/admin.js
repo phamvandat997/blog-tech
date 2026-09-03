@@ -32,6 +32,8 @@ const admin = {
   /** null khi tạo mới; { path, quizPath, quizContent } khi đang sửa bài có sẵn */
   editing: null,
   busy: false,
+  /** Trường frontmatter form không còn ô nhập nhưng phải giữ nguyên khi lưu lại. */
+  carried: {},
   filter: "all",       // bộ lọc trạng thái ở màn danh sách
   postsToken: 0,       // chống kết quả của lượt loadPosts cũ ghi đè lượt mới
   dirty: false,        // form có thay đổi chưa gửi
@@ -408,9 +410,16 @@ function fillEditor(data, body, { overwrite = false } = {}) {
   };
   fill("#field-title", data.title);
   fill("#field-description", data.description);
-  fill("#field-order", data.order);
-  fill("#field-phase", data.phase);
   fill("#field-tags", Array.isArray(data.tags) ? data.tags.join(", ") : data.tags);
+
+  // order và phase không còn ô nhập trên form. Bài cũ có sẵn hai trường này thì
+  // giữ nguyên giá trị, đừng để việc lưu lại làm mất chúng khỏi file.
+  const carry = (key, value) => {
+    if (value === undefined || value === null || value === "") return;
+    if (overwrite || admin.carried[key] === undefined) admin.carried[key] = value;
+  };
+  carry("order", data.order);
+  carry("phase", data.phase);
 
   if (!qs("#field-title").value) {
     const heading = body.match(/^#\s+(.+)$/m);
@@ -467,13 +476,12 @@ function buildChange() {
   }
 
   const tags = qs("#field-tags").value.split(",").map((t) => t.trim()).filter(Boolean);
-  const order = qs("#field-order").value.trim();
 
   const markdown = stringifyFrontmatter({
     title: qs("#field-title").value.trim(),
     description: qs("#field-description").value.trim(),
-    order: order ? Number(order) : "",
-    phase: qs("#field-phase").value.trim(),
+    order: admin.carried.order ?? "",
+    phase: admin.carried.phase ?? "",
     tags,
   }, body);
 
@@ -758,7 +766,7 @@ function showPane(name) {
 // khôi phục nửa vời sẽ nguy hiểm hơn là mất công gõ lại.
 const DRAFT_FIELDS = [
   "#field-section", "#field-category", "#field-slug", "#field-title",
-  "#field-description", "#field-order", "#field-phase", "#field-tags", "#field-body",
+  "#field-description", "#field-tags", "#field-body",
   "#new-section-id", "#new-section-name", "#new-section-tagline",
   "#new-section-color", "#new-section-kind",
   "#new-category-id", "#new-category-name",
@@ -778,7 +786,8 @@ function saveDraft() {
   const values = {};
   DRAFT_FIELDS.forEach((id) => { values[id] = qs(id).value; });
   try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), values }));
+    localStorage.setItem(DRAFT_KEY,
+      JSON.stringify({ savedAt: Date.now(), values, carried: admin.carried }));
   } catch { /* hết chỗ thì thôi, không chặn việc soạn bài */ }
 }
 
@@ -820,6 +829,7 @@ function applyDraft() {
       const el = qs(id);
       if (el && draft.values[id] !== undefined) el.value = draft.values[id];
     });
+    admin.carried = draft.carried || {};
     renderCategorySelect(draft.values["#field-category"]);
     qs("#field-category").value = draft.values["#field-category"] || "";
     qs("#new-section-form").hidden = qs("#field-section").value !== NEW;
@@ -845,7 +855,8 @@ function markDirty() {
 
 function resetForm() {
   ["#field-slug", "#field-title", "#field-description",
-   "#field-order", "#field-phase", "#field-tags", "#field-body"].forEach((id) => { qs(id).value = ""; });
+   "#field-tags", "#field-body"].forEach((id) => { qs(id).value = ""; });
+  admin.carried = {};
   ["#new-section-id", "#new-section-name", "#new-section-tagline",
    "#new-category-id", "#new-category-name"].forEach((id) => { qs(id).value = ""; });
   ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
