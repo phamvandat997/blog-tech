@@ -56,9 +56,8 @@ body::before {
 
 .landing-wrapper {
   width: 100%;
-  max-width: 1240px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 5rem;
   box-sizing: border-box;
 }
 
@@ -66,9 +65,9 @@ body::before {
 .hero-section {
   position: relative;
   text-align: center;
-  padding: 2.5rem 1.5rem 3rem;
-  max-width: 960px;
-  margin: 0 auto 2.5rem;
+  padding: 2.5rem 1rem 2.8rem;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   background: transparent;
   border: none;
   box-shadow: none;
