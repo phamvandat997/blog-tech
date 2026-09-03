@@ -1440,6 +1440,12 @@ body {
   border-radius: var(--radius-lg);
   width: 100%;
   min-width: 0;
+  /* Khối này thường được đổ vào đúng chỗ của danh sách bài, mà chỗ đó là lưới
+     nhiều cột. Một phần tử con của lưới chỉ chiếm MỘT ô, nên `width: 100%` ở
+     trên chỉ là 100% của một cột — khối thông báo nằm co ro ở góc trái.
+     Bắt nó trải hết các cột. Thuộc tính này vô hại khi khối cha không phải
+     lưới, nên không cần tách riêng từng nơi. */
+  grid-column: 1 / -1;
 }
 
 .empty-icon {
