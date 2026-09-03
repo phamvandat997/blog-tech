@@ -1,0 +1,14 @@
+{
+  "name": "Javascript",
+  "color": "#669c35",
+  "kind": "topic",
+  "order": 3,
+  "tagline": "",
+  "categories": [
+    {
+      "id": "co-ban",
+      "name": "cơ bản",
+      "order": 1
+    }
+  ]
+}

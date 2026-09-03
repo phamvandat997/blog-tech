@@ -1,0 +1,317 @@
+{
+  "title": "Phase 7: Full Mock Exam (50 Questions)",
+  "quizzes": [
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 1,
+      "question": "Đoạn mã sau in ra kết quả gì?\n```java\npublic class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = x++ * ++x;\n        System.out.println(y);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "25"
+        },
+        {
+          "key": "B",
+          "text": "30"
+        },
+        {
+          "key": "C",
+          "text": "35"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 2,
+      "question": "Chọn HAI câu phát biểu đúng về từ khóa `var`:",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`var` có thể được sử dụng để khai báo kiểu trả về của phương thức."
+        },
+        {
+          "key": "B",
+          "text": "`var` có thể được gán `null` nếu được ép kiểu rõ ràng, ví dụ: `var x = (String) null;`."
+        },
+        {
+          "key": "C",
+          "text": "`var` không thể được dùng trong vòng lặp for."
+        },
+        {
+          "key": "D",
+          "text": "`var` chỉ có thể dùng cho biến cục bộ (local variables)."
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 3,
+      "question": "Đoạn mã sau in ra gì?\n```java\nclass A {\n    static void print() { System.out.print(\"A\"); }\n}\nclass B extends A {\n    static void print() { System.out.print(\"B\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.print();\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch"
+        },
+        {
+          "key": "D",
+          "text": "Ném ngoại lệ tại runtime"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 4,
+      "question": "Cho định nghĩa record sau:\n```java\npublic record Point(int x, int y) {\n    public Point {\n        if (x < 0) x = 0;\n    }\n}\n```\nĐoạn mã trên có biên dịch được không?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Có, và nó biên dịch thành một compact constructor hợp lệ."
+        },
+        {
+          "key": "B",
+          "text": "Không, compact constructor không được thay đổi giá trị của tham số đầu vào."
+        },
+        {
+          "key": "C",
+          "text": "Không, vì thiếu gán `this.x = x`."
+        },
+        {
+          "key": "D",
+          "text": "Có, nhưng `x` không bao giờ bị thay đổi."
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 5,
+      "question": "Lớp `Vehicle` được khai báo như sau:\n```java\npublic sealed class Vehicle permits Car, Truck {}\nfinal class Car extends Vehicle {}\nnon-sealed class Truck extends Vehicle {}\n```\nChọn MỘT phát biểu SAI:",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Car` không thể có lớp con."
+        },
+        {
+          "key": "B",
+          "text": "`Truck` có thể được kế thừa bởi bất kỳ lớp nào khác."
+        },
+        {
+          "key": "C",
+          "text": "Nếu `Car` và `Truck` nằm ở một file khác `Vehicle`, mã vẫn biên dịch thành công mà không cần cấu hình gì thêm."
+        },
+        {
+          "key": "D",
+          "text": "`Vehicle` quản lý chặt chẽ những lớp nào được phép kế thừa trực tiếp từ nó."
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 6,
+      "question": "```java\nimport java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<String> list = new ArrayList<>(List.of(\"A\", \"B\", \"C\"));\n        for (String s : list) {\n            if (s.equals(\"B\")) {\n                list.remove(s);\n            }\n        }\n        System.out.println(list);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "[A, C]"
+        },
+        {
+          "key": "B",
+          "text": "[A, B, C]"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch"
+        },
+        {
+          "key": "D",
+          "text": "ConcurrentModificationException bị ném ra tại runtime"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 7,
+      "question": "```java\nimport java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        var map = new HashMap<String, Integer>();\n        map.put(\"A\", 1);\n        map.put(\"B\", 2);\n        map.merge(\"A\", 3, (v1, v2) -> v1 + v2);\n        map.merge(\"B\", 3, (v1, v2) -> null);\n        System.out.println(map);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "{A=4, B=null}"
+        },
+        {
+          "key": "B",
+          "text": "{A=4, B=5}"
+        },
+        {
+          "key": "C",
+          "text": "{A=4}"
+        },
+        {
+          "key": "D",
+          "text": "{A=4, B=3}"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 8,
+      "question": "Đoạn mã sau có kết quả gì?\n```java\nimport java.util.stream.*;\npublic class StreamTest {\n    public static void main(String[] args) {\n        Stream<Integer> s = Stream.of(1, 2, 3);\n        s.map(i -> i * 2);\n        long count = s.count();\n        System.out.println(count);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "3"
+        },
+        {
+          "key": "B",
+          "text": "6"
+        },
+        {
+          "key": "C",
+          "text": "IllegalStateException tại runtime"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 9,
+      "question": "Để gộp tất cả các chuỗi trong `Stream<String>` bằng dấu phẩy `,`, cách nào sau đây đúng? (Chọn HAI)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`stream.collect(Collectors.joining(\",\"))`"
+        },
+        {
+          "key": "B",
+          "text": "`stream.reduce((a, b) -> a + \",\" + b).orElse(\"\")`"
+        },
+        {
+          "key": "C",
+          "text": "`stream.join(\",\")`"
+        },
+        {
+          "key": "D",
+          "text": "`stream.collect(Collectors.concat(\",\"))`"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 10,
+      "question": "```java\nimport java.io.*;\npublic class Main {\n    public void readFile() {\n        try (var br = new BufferedReader(new FileReader(\"test.txt\"))) {\n            throw new IOException(\"File error\");\n        } catch (IOException e) {\n            System.out.println(e.getMessage());\n        } finally {\n            System.out.println(\"Done\");\n        }\n    }\n}\n```\nGiả sử tệp \"test.txt\" không tồn tại. Kết quả in ra là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "File error \\n Done"
+        },
+        {
+          "key": "B",
+          "text": "test.txt (No such file or directory) \\n Done"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch"
+        },
+        {
+          "key": "D",
+          "text": "Chương trình crash không in ra Done"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 11,
+      "question": "Pattern matching trong switch:\n```java\npublic class Main {\n    public static void main(String[] args) {\n        Object obj = 123;\n        String result = switch(obj) {\n            case String s -> \"String\";\n            case Integer i when i > 100 -> \"Large Integer\";\n            case Integer i -> \"Small Integer\";\n            default -> \"Unknown\";\n        };\n        System.out.println(result);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Large Integer"
+        },
+        {
+          "key": "B",
+          "text": "Small Integer"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch ở từ khóa `when`"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch vì `switch` expressions không hỗ trợ logic này."
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    },
+    {
+      "file": "phase7_mock_exam.md",
+      "number": 12,
+      "question": "Sử dụng Concurrency:\n```java\nimport java.util.concurrent.*;\npublic class Main {\n    public static void main(String[] args) {\n        ExecutorService service = Executors.newFixedThreadPool(1);\n        Future<Integer> future = service.submit(() -> {\n            Thread.sleep(1000);\n            return 42;\n        });\n        service.shutdownNow();\n        try {\n            System.out.println(future.get());\n        } catch (Exception e) {\n            System.out.println(\"Exception\");\n        }\n    }\n}\n```\nKết quả in ra màn hình là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "42"
+        },
+        {
+          "key": "B",
+          "text": "Exception"
+        },
+        {
+          "key": "C",
+          "text": "null"
+        },
+        {
+          "key": "D",
+          "text": "Không bao giờ dừng (Deadlock)\n\n\n---"
+        }
+      ],
+      "correctAnswers": [],
+      "explanation": ""
+    }
+  ]
+}

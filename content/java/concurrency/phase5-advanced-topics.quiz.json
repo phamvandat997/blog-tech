@@ -1,0 +1,427 @@
+{
+  "title": "Phase 5: Concurrency, Virtual Threads & IO",
+  "quizzes": [
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 1,
+      "question": "Kết quả của đoạn mã sau là gì?\n```java\npublic class Test {\n    public static void main(String[] args) {\n        System.out.print(checkValue());\n    }\n    static int checkValue() {\n        try {\n            return 10;\n        } finally {\n            return 20;\n        }\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "10"
+        },
+        {
+          "key": "B",
+          "text": "20"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch"
+        },
+        {
+          "key": "D",
+          "text": "Throws RuntimeException"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ". Khối `finally` luôn được thực thi và có thể ghi đè (override) giá trị trả về của `try`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 2,
+      "question": "Chọn cú pháp `catch` hợp lệ? (Chọn HAI)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "`catch (Exception1 e1 | Exception2 e2)`"
+        },
+        {
+          "key": "B",
+          "text": "`catch (SQLException | IOException e)`"
+        },
+        {
+          "key": "C",
+          "text": "`catch (FileNotFoundException | IOException e)`"
+        },
+        {
+          "key": "D",
+          "text": "`catch (IllegalArgumentException | NullPointerException e)`"
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": ". (A) sai cú pháp (chỉ dùng chung biến e). (C) sai vì `FileNotFoundException` là subclass của `IOException` (không được có quan hệ cha-con trong multi-catch)."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 3,
+      "question": "Lớp MyClass triển khai `AutoCloseable` và in ra tên khi được close. Xem đoạn mã:\n```java\ntry (MyClass m1 = new MyClass(\"1\"); MyClass m2 = new MyClass(\"2\")) {\n    // do nothing\n}\n```\nThứ tự in ra trên console khi thoát khỏi try là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "1, 2"
+        },
+        {
+          "key": "B",
+          "text": "2, 1"
+        },
+        {
+          "key": "C",
+          "text": "Không in gì"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ". try-with-resources đóng tài nguyên theo thứ tự **ngược lại** với lúc khai báo. `m2` khai báo sau nên đóng trước."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 4,
+      "question": "Trong Serialization, khi deserialize một đối tượng, thuộc tính nào sau đây của đối tượng không được bảo toàn và mang giá trị mặc định của hệ thống?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`private`"
+        },
+        {
+          "key": "B",
+          "text": "`protected`"
+        },
+        {
+          "key": "C",
+          "text": "`transient`"
+        },
+        {
+          "key": "D",
+          "text": "`static`"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": ". Thuộc tính `transient` không được lưu trạng thái vào mảng byte khi Serialize. Do đó khi Deserialize nó mang giá trị mặc định của kiểu. Thuộc tính `static` thuộc về Class, không liên quan tới serialization của đối tượng."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 5,
+      "question": "Giả sử `Path p1 = Path.of(\"/home/user\");` và `Path p2 = Path.of(\"docs/file.txt\");`. Kết quả của `p1.resolve(p2)` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`/home/user/docs/file.txt`"
+        },
+        {
+          "key": "B",
+          "text": "`docs/file.txt`"
+        },
+        {
+          "key": "C",
+          "text": "`/docs/file.txt`"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi runtime"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": ". `resolve()` gộp hai đường dẫn. Nếu argument là relative, nó sẽ nối thêm vào path gốc. Kết quả là `/home/user/docs/file.txt`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 6,
+      "question": "Giả sử `Path p1 = Path.of(\"/a/b/c\");` và `Path p2 = Path.of(\"/a/x/y\");`. Giá trị của `p1.relativize(p2)` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`../../x/y`"
+        },
+        {
+          "key": "B",
+          "text": "`../x/y`"
+        },
+        {
+          "key": "C",
+          "text": "`x/y`"
+        },
+        {
+          "key": "D",
+          "text": "`/x/y`"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": ". `relativize()` tính toán từ `/a/b/c` đi đến `/a/x/y`. Phải lùi 2 cấp (từ `c` về `b`, từ `b` về `a`), dùng `../../`, sau đó tiến tới `x/y`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 7,
+      "question": "Khẳng định nào sau đây là **ĐÚNG** về Virtual Threads trong Java 21? (Chọn HAI)",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "Virtual Threads do Hệ điều hành (OS) quản lý, không phải JVM."
+        },
+        {
+          "key": "B",
+          "text": "Có thể khởi tạo hàng triệu Virtual Threads mà không gây ra OutOfMemoryError thông thường."
+        },
+        {
+          "key": "C",
+          "text": "Virtual Threads luôn cần được map cứng 1-1 với các luồng của hệ điều hành."
+        },
+        {
+          "key": "D",
+          "text": "`Executors.newVirtualThreadPerTaskExecutor()` trả về một ExecutorService sử dụng Virtual Threads."
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": ". (A) sai vì VT do JVM quản lý. (C) sai vì VT không map 1-1 với OS thread (đây là đặc điểm của platform thread)."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 8,
+      "question": "Phương thức nào của `ExecutorService` dùng để đẩy một `Callable` vào hàng đợi và trả về đối tượng `Future`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`execute()`"
+        },
+        {
+          "key": "B",
+          "text": "`call()`"
+        },
+        {
+          "key": "C",
+          "text": "`submit()`"
+        },
+        {
+          "key": "D",
+          "text": "`invoke()`"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": ". `submit()` nhận Callable hoặc Runnable và trả về Future. `execute()` chỉ nhận Runnable và không trả kết quả."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 9,
+      "question": "Để sử dụng Concurrent Collections thay vì Synchronization thông thường nhằm tối ưu hiệu suất khi đọc (số lượng thao tác đọc nhiều hơn ghi rất lớn), class nào phù hợp nhất cho danh sách các phần tử?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Vector`"
+        },
+        {
+          "key": "B",
+          "text": "`CopyOnWriteArrayList`"
+        },
+        {
+          "key": "C",
+          "text": "`ConcurrentArrayList`"
+        },
+        {
+          "key": "D",
+          "text": "`Collections.synchronizedList(new ArrayList<>())`"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ". `CopyOnWriteArrayList` tạo bản sao của toàn bộ mảng mỗi khi ghi, làm cho tác vụ đọc không bao giờ cần block. Rất phù hợp kịch bản nhiều Read ít Write. `ConcurrentArrayList` không tồn tại."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 10,
+      "question": "Index cho cột dữ liệu đầu tiên khi truy xuất dữ liệu từ `ResultSet` của JDBC là bao nhiêu?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "-1"
+        },
+        {
+          "key": "B",
+          "text": "0"
+        },
+        {
+          "key": "C",
+          "text": "1"
+        },
+        {
+          "key": "D",
+          "text": "Tùy thuộc vào CSDL"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": ". Trong JDBC (ResultSet và PreparedStatement), chỉ mục cột (column index) và tham số luôn **bắt đầu bằng 1**."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 11,
+      "question": "Trong JDBC, cách tốt nhất để cấu hình để thay đổi (insert/update) chỉ có hiệu lực khi bạn gọi hàm `.commit()` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`conn.commitOnClose(true);`"
+        },
+        {
+          "key": "B",
+          "text": "`conn.setAutoCommit(false);`"
+        },
+        {
+          "key": "C",
+          "text": "`conn.setTransactionLevel(0);`"
+        },
+        {
+          "key": "D",
+          "text": "Mặc định của Connection đã như vậy, không cần gọi gì."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ". Để quản lý transaction thủ công bằng `commit()` hoặc `rollback()`, bạn phải tắt chế độ `autoCommit` mặc định bằng `conn.setAutoCommit(false)`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 12,
+      "question": "Bạn đang tìm kiếm file resource theo `Locale(\"es\", \"MX\")`. Nếu file `Messages_es_MX.properties` không tồn tại, file nào sau đây sẽ được tìm tiếp theo trong quá trình Fallback? (Giả sử hệ thống đang ở Locale là `en_US`).",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Messages_es.properties`"
+        },
+        {
+          "key": "B",
+          "text": "`Messages_MX.properties`"
+        },
+        {
+          "key": "C",
+          "text": "`Messages_en_US.properties`"
+        },
+        {
+          "key": "D",
+          "text": "`Messages.properties`"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": ". Chuỗi Fallback: `es_MX` -> `es` -> `en_US` (mặc định) -> `en` -> Root. File tiếp theo tìm kiếm là `Messages_es.properties`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 13,
+      "question": "Từ khóa nào trong `module-info.java` cho phép các package có thể được truy cập thông qua **Reflection** kể cả khi chúng được khai báo private?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`exports`"
+        },
+        {
+          "key": "B",
+          "text": "`requires`"
+        },
+        {
+          "key": "C",
+          "text": "`opens`"
+        },
+        {
+          "key": "D",
+          "text": "`provides`"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": ". `opens` cho phép Deep Reflection (truy cập cả thành phần private) vào package, trong khi `exports` chỉ cho phép truy cập các thành phần public lúc compile/runtime."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 14,
+      "question": "Từ khóa `requires transitive moduleB;` trong file `module-info.java` của `moduleA` có ý nghĩa gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`moduleB` không thể chạy nếu không có `moduleA`."
+        },
+        {
+          "key": "B",
+          "text": "Nếu `moduleC` requires `moduleA`, thì `moduleC` cũng tự động đọc được `moduleB`."
+        },
+        {
+          "key": "C",
+          "text": "`moduleA` sẽ dịch `moduleB` tại thời điểm biên dịch."
+        },
+        {
+          "key": "D",
+          "text": "Gây ra lỗi biên dịch vì không có từ khóa `transitive` trong Java Modules."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": ". Bất kỳ module nào phụ thuộc vào `moduleA` sẽ ngầm định cũng phụ thuộc vào (và đọc được) `moduleB`."
+    },
+    {
+      "file": "phase5_advanced_topics.md",
+      "number": 15,
+      "question": "Class nào KHÔNG phải là Checked Exception?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`IOException`"
+        },
+        {
+          "key": "B",
+          "text": "`SQLException`"
+        },
+        {
+          "key": "C",
+          "text": "`ClassNotFoundException`"
+        },
+        {
+          "key": "D",
+          "text": "`NullPointerException`\n\n---"
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": ". `NullPointerException` kế thừa từ `RuntimeException`, do đó nó là Unchecked Exception."
+    }
+  ]
+}

@@ -1,11 +1,9 @@
 ---
 title: "Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux"
-tags: ["Java"]
 ---
 
 # Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux
 
----
 
 ## Toàn cảnh quá trình cài đặt
 
@@ -22,6 +20,7 @@ flowchart LR
     G --> H["Kiểm tra: java -version"]
     H --> I[Viết chương trình đầu tiên]
 ```
+
 
 ---
 
@@ -647,5 +646,3 @@ gradle -version
 ```
 
 Nếu sai, sửa lại biến `JAVA_HOME`.
-
----

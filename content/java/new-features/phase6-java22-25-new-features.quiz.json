@@ -1,0 +1,402 @@
+{
+  "title": "Phase 6: Java 22 to 25 New Features",
+  "quizzes": [
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 1,
+      "question": "Xem đoạn mã sau sử dụng tính năng Flexible Constructor.\n```java\nclass Person {\n    String name;\n}\nclass Employee extends Person {\n    int id;\n    Employee(int id, String name) {\n        this.id = id; \n        System.out.println(this.id);\n        super();\n        this.name = name;\n    }\n}\n```\nKết quả khi biên dịch là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Biên dịch thành công và chương trình chạy bình thường."
+        },
+        {
+          "key": "B",
+          "text": "Lỗi biên dịch vì `this.id` không thể được gán (assigned) trước khi gọi `super()`."
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch vì không được gọi `super()` sau khi thực hiện các phép gán."
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch vì không được PHÉP ĐỌC `this.id` trong lệnh `println` trước khi gọi `super()`."
+        }
+      ],
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "Cú pháp JEP 482 cho phép GÁN trước `super()`, nhưng CẤM việc ĐỌC (bao gồm cả in ra màn hình `this.id`) giá trị field trước khi gọi `super()`."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 2,
+      "question": "Một chương trình Java chỉ có nội dung sau nằm trong một file `App.java`:\n```java\nvoid main(String[] args) {\n    System.out.println(\"A\");\n}\nstatic void main(String[] args) {\n    System.out.println(\"B\");\n}\nvoid main() {\n    System.out.println(\"C\");\n}\n```\nNếu chạy bằng lệnh `java App.java`, kết quả in ra là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch vì có quá nhiều hàm main."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Thứ tự Launch protocol priority: JVM luôn ưu tiên bản `static void main(String[] args)` cao nhất."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 3,
+      "question": "Trong cùng một khối `catch`, đoạn mã sau có hợp lệ trong Java 22+ không?\n```java\ntry {\n    // code\n} catch (IllegalArgumentException _) {\n    System.out.println(\"Lỗi A\");\n} catch (NullPointerException _) {\n    System.out.println(\"Lỗi B\");\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không hợp lệ vì biến `_` bị trùng tên."
+        },
+        {
+          "key": "B",
+          "text": "Hợp lệ, chương trình biên dịch bình thường."
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch, `_` chỉ được dùng cho biến cục bộ, không dùng được cho tham số ngoại lệ."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Tính năng mới (JEP 456) cho phép sử dụng ký tự `_` nhiều lần mà không bị lỗi \"variable already defined\"."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 4,
+      "question": "Tính năng \"Module Import Declarations\". Khi bạn viết đoạn code sau:\n```java\nimport module java.base;\nimport module java.sql;\n// Cả hai module đều export lớp Date\n```\nVà bạn sử dụng class `Date` trong mã nguồn mà không import tường minh class nào. Chuyện gì sẽ xảy ra?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ưu tiên sử dụng `java.util.Date` vì `java.base` là module cốt lõi."
+        },
+        {
+          "key": "B",
+          "text": "Ưu tiên sử dụng `java.sql.Date`."
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch do nhập nhằng (ambiguous) giữa 2 lớp Date."
+        },
+        {
+          "key": "D",
+          "text": "Trình biên dịch cảnh báo nhưng chọn class đầu tiên được phát hiện."
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Bị lỗi nhập nhằng (ambiguous). Bạn phải phân giải nó bằng cách `import java.sql.Date;` hoặc dùng FQCN (Fully Qualified Class Name)."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 5,
+      "question": "Kết quả của đoạn code sử dụng Stream Gatherers sau đây là gì?\n```java\nvar result = Stream.of(\"A\", \"B\", \"C\", \"D\")\n                   .gather(Gatherers.windowSliding(2))\n                   .toList();\nSystem.out.println(result.size());\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "2"
+        },
+        {
+          "key": "B",
+          "text": "3"
+        },
+        {
+          "key": "C",
+          "text": "4"
+        },
+        {
+          "key": "D",
+          "text": "5"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`windowSliding(2)` trên `[A, B, C, D]` sẽ tạo ra 3 lists: `[A, B]`, `[B, C]`, `[C, D]`. Kết quả in ra `3`."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 6,
+      "question": "Khi làm việc với `ScopedValue`, phương thức nào dùng để tạo ra một ScopedValue mới?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`new ScopedValue<>()`"
+        },
+        {
+          "key": "B",
+          "text": "`ScopedValue.create()`"
+        },
+        {
+          "key": "C",
+          "text": "`ScopedValue.newInstance()`"
+        },
+        {
+          "key": "D",
+          "text": "`ScopedValue.of()`"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Cú pháp đúng là `ScopedValue.newInstance()`."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 7,
+      "question": "(Chọn HAI đáp án). Những hành động nào bị CẤM thực hiện **trước** lệnh `super()` trong Java 25 (Flexible Constructor Bodies)?",
+      "isMulti": true,
+      "options": [
+        {
+          "key": "A",
+          "text": "Gọi một phương thức static của lớp đó."
+        },
+        {
+          "key": "B",
+          "text": "Gọi một phương thức instance của lớp đó."
+        },
+        {
+          "key": "C",
+          "text": "Gán giá trị cho một biến instance của lớp đó."
+        },
+        {
+          "key": "D",
+          "text": "Truyền tham chiếu `this` vào một phương thức thuộc lớp khác."
+        },
+        {
+          "key": "E",
+          "text": "Khai báo và gán giá trị cho một biến cục bộ (local variable)."
+        }
+      ],
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "Bạn không được phép gọi instance method (B) và không được rò rỉ con trỏ `this` (D) trước lệnh `super()`. Lựa chọn (A) và (C) được phép."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 8,
+      "question": "Xem đoạn mã sau:\n```java\nvoid process(int code) {\n    switch (code) {\n        case 1, _ -> System.out.println(\"One or other\"); // Dòng 1\n        default -> System.out.println(\"Default\");\n    }\n}\n```\nKhẳng định nào đúng?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Dòng 1 bị lỗi biên dịch vì không thể dùng `_` (unnamed pattern) cho kiểu nguyên thuỷ (primitive type) trong case switch (không phải pattern switch)."
+        },
+        {
+          "key": "B",
+          "text": "Hợp lệ, in ra \"One or other\"."
+        },
+        {
+          "key": "C",
+          "text": "Dòng 1 hợp lệ, nhưng báo lỗi vì `_` và `default` gây trùng lặp logic."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`case 1, _` là không hợp lệ đối với hằng số và switch truyền thống. Unnamed pattern `_` dùng cho cấu trúc pattern matching (vd: `case Point(_, int y)` hoặc `case String _`)."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 9,
+      "question": "Output của đoạn mã sau là gì?\n```java\npublic class Demo {\n    static final ScopedValue<String> SV = ScopedValue.newInstance();\n    public static void main(String[] args) {\n        ScopedValue.where(SV, \"Value1\").run(() -> {\n            ScopedValue.where(SV, \"Value2\").run(() -> {\n                System.out.print(SV.get() + \" \");\n            });\n            System.out.print(SV.get());\n        });\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Value1 Value1"
+        },
+        {
+          "key": "B",
+          "text": "Value2 Value1"
+        },
+        {
+          "key": "C",
+          "text": "Value2 Value2"
+        },
+        {
+          "key": "D",
+          "text": "Runtime Exception tại lần gọi `where()` thứ hai."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Scoped Value hỗ trợ **rebinding**. Trong lần lồng ghép (nesting) bên trong, giá trị được re-bind thành \"Value2\". Khi ra khỏi phạm vi, giá trị phục hồi lại \"Value1\". Do đó in ra \"Value2 Value1\"."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 10,
+      "question": "Khi sử dụng `Gatherers.fold`, điều gì phân biệt nó với phép toán `reduce` thông thường của Stream?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`fold` không thể trả về giá trị kiểu dữ liệu khác với cấu trúc phần tử của Stream, còn `reduce` thì có thể."
+        },
+        {
+          "key": "B",
+          "text": "`fold` có thể dừng (short-circuit) việc duyệt Stream bất cứ lúc nào, trong khi `reduce` bắt buộc duyệt hết các phần tử."
+        },
+        {
+          "key": "C",
+          "text": "`fold` sinh ra một List các phần tử kết quả, còn `reduce` trả về một số."
+        },
+        {
+          "key": "D",
+          "text": "`fold` không hoạt động với parallel stream."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Tính năng thiết kế nổi bật của Stream Gatherers là cho phép \"short-circuiting\" linh hoạt mà phép toán `reduce` không làm được."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 11,
+      "question": "Trong `StructuredTaskScope.ShutdownOnFailure`, nếu có 3 subtasks, trong đó 1 subtask ném ra ngoại lệ và 2 subtasks khác đang chạy. Điều gì xảy ra?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Scope sẽ tự động gọi phương thức hủy bỏ (cancel) đối với 2 tasks đang chạy còn lại."
+        },
+        {
+          "key": "B",
+          "text": "Scope sẽ chờ 2 tasks còn lại chạy xong rồi mới ném ra lỗi."
+        },
+        {
+          "key": "C",
+          "text": "Scope sẽ bỏ qua lỗi và trả về null cho task thất bại."
+        },
+        {
+          "key": "D",
+          "text": "Chương trình văng `OutOfMemoryError`."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`ShutdownOnFailure` thiết kế theo tư duy \"có lỗi thì dừng tất cả\". Nó sẽ cancel các subtasks còn lại ngay lập tức nếu một subtask fail."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 12,
+      "question": "Lớp `IO` được import ngầm định (implicitly imported) cung cấp phương thức `println`. Có thể sử dụng lớp `IO` trong các class được khai báo `public class` thông thường thay vì implicit class được không?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không, `IO` chỉ dành cho Implicit classes / Instance main methods."
+        },
+        {
+          "key": "B",
+          "text": "Có, nhưng bạn phải tự thêm `import static java.io.IO.*;` hoặc `import module java.base;` đối với class thông thường."
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Đối với class thông thường (có từ khóa class), nó không tự động import `IO`. Bạn cần import thủ công các package liên quan."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 13,
+      "question": "Code sau có in ra lỗi không?\n```java\nBiFunction<String, String, Boolean> isEqual = (_, _) -> true;\nSystem.out.println(isEqual.apply(\"A\", \"B\"));\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Có lỗi vì thiếu dấu gạch dưới hợp lệ."
+        },
+        {
+          "key": "B",
+          "text": "Có lỗi vì nhiều `_` trong cùng một danh sách tham số."
+        },
+        {
+          "key": "C",
+          "text": "Biên dịch thành công và in ra `true`."
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Hợp lệ 100%. Đây là chức năng của Unnamed variable `_` được sử dụng cho cả tham số Lambda."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 14,
+      "question": "Khi chạy phương thức instance `void main()` bằng lệnh `java`, đối tượng của class được khởi tạo như thế nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Bằng constructor ngầm định không tham số. Nếu class chỉ có constructor có tham số, chương trình sẽ báo lỗi."
+        },
+        {
+          "key": "B",
+          "text": "JVM bỏ qua khởi tạo và gọi phương thức thông qua Reflection với con trỏ null."
+        },
+        {
+          "key": "C",
+          "text": "Chương trình dùng Unsafe để cấp phát bộ nhớ."
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "JVM sẽ dùng reflection khởi tạo đối tượng qua **constructor không tham số**. Nếu bạn tự định nghĩa một constructor có tham số nhưng không có constructor không tham số, runtime sẽ quăng exception vì không biết cách khởi tạo class để gọi `main()`."
+    },
+    {
+      "file": "phase6_java22_25_new_features.md",
+      "number": 15,
+      "question": "Điều kiện tiên quyết để được dùng Unnamed variable `_` trong lệnh `try-with-resources` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Biến phải là kiểu nguyên thuỷ (primitive)."
+        },
+        {
+          "key": "B",
+          "text": "Resource phải được gọi phương thức `close()` ngầm định lúc kết thúc và bạn không được phép tham chiếu tới nó bên trong khối `try`."
+        },
+        {
+          "key": "C",
+          "text": "Class của resource phải implement giao diện `AutoCloseable`. (Cả B và C).\n\n---"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Để dùng được trong try-with-resources, đối tượng phải implement `AutoCloseable` và nếu dùng `_`, bạn xác nhận chỉ muốn khối lệnh tự đóng file chứ không dùng đối tượng bên trong block đó. (Cả ý B và C đều là đặc điểm cốt lõi).\n\n---\n*Chúc bạn thi tốt chứng chỉ OCP Java SE 25 (1Z0-831)!*"
+    }
+  ]
+}

@@ -55,14 +55,17 @@ Tính năng quiz đã được gỡ khỏi giao diện (cả trang đọc lẫn 
 Build cố tình bỏ qua file `.quiz.json`; đổi tên hay xoá bài qua trang admin vẫn mang
 theo hoặc dọn file quiz đi kèm, nên không sinh file mồ côi.
 
-> **Dữ liệu quiz hiện KHÔNG còn trong cây làm việc.** Toàn bộ `content/` đã bị xoá
-> (xem lịch sử git), nên 7 file `.quiz.json` chỉ còn trong lịch sử. Commit cuối còn
-> nguyên vẹn là `7aa62e4` — 21 bài `.md` và 7 file quiz. Khôi phục:
+> Đã có lần toàn bộ `content/` bị xoá bằng một loạt commit `Delete content/…`.
+> Nếu cần khôi phục lại, commit ngay TRƯỚC đợt xoá đó là `6dcc6cb` — 22 bài `.md`
+> và 7 file quiz, đủ ba mảng:
 >
 > ```bash
-> git checkout 7aa62e4 -- content/
+> git checkout 6dcc6cb -- content/
 > npm run build
 > ```
+>
+> Đừng dùng `7aa62e4`: chính nó là commit xoá `content/javascript`, nên khôi phục
+> từ đó sẽ thiếu mảng Javascript.
 
 ## Trang /admin — quản lý bài viết
 
