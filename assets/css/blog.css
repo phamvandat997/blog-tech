@@ -1640,14 +1640,6 @@ body.zen-mode #btn-zen-mode {
   margin: 0;
 }
 
-.comments-subtitle {
-  font-size: 0.76rem;
-  color: var(--text-muted);
-  margin: 0.2rem 0 0 0;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
 .comments-icon {
   font-size: 1.3rem;
 }
