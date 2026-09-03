@@ -102,6 +102,59 @@ function trackNavbarHeight() {
  * Tiện thể khử trùng id: hai heading cùng tiêu đề sinh cùng slug, để nguyên thì
  * mọi link đều nhảy về heading đầu tiên.
  */
+/**
+ * Rút ngắn và cô đọng tiêu đề cho Menu mục lục (TOC):
+ * - Bỏ triệt để ký tự '#' từ các nút anchor.
+ * - Loại bỏ các chú thích dài trong ngoặc đơn.
+ * - Rút gọn các cụm từ dài thành ý chính súc tích để menu thanh thoát, dễ quét mắt.
+ */
+function formatTocText(rawText) {
+  if (!rawText) return "";
+  let text = rawText.replace(/#+/g, "").trim();
+
+  if (/java.*is not recognized|command not found.*java/i.test(text)) {
+    return "Lỗi 'java' not recognized";
+  }
+  if (/nhà phát triển chưa được xác minh/i.test(text)) {
+    return "macOS: Lỗi nhà phát triển";
+  }
+  if (/chạy được nhưng javac thì không/i.test(text)) {
+    return "Lỗi javac không chạy";
+  }
+  if (/phiên bản khác với mong đợi/i.test(text)) {
+    return "Sai phiên bản java -version";
+  }
+
+  // Loại bỏ chú thích dài trong ngoặc đơn
+  text = text.replace(/\s*\([^)]*\)/g, "").trim();
+
+  text = text
+    .replace(/^Toàn cảnh quá trình cài đặt/i, "Tổng quan cài đặt")
+    .replace(/^Toàn cảnh quá trình/i, "Tổng quan")
+    .replace(/Chọn phiên bản và bản phân phối JDK/i, "Chọn phiên bản & JDK")
+    .replace(/Dòng thời gian các bản LTS/i, "Dòng thời gian LTS")
+    .replace(/Nên chọn phiên bản nào\??/i, "Chọn phiên bản")
+    .replace(/Nên chọn bản phân phối nào\??/i, "Chọn bản phân phối")
+    .replace(/Dùng bộ cài/i, "Bộ cài")
+    .replace(/Dùng winget/i, "Cài qua Winget")
+    .replace(/Cấu hình biến môi trường thủ công/i, "Cấu hình môi trường")
+    .replace(/Cấu hình biến môi trường trên Linux/i, "Cấu hình môi trường Linux")
+    .replace(/Cấu hình biến môi trường/i, "Cấu hình môi trường")
+    .replace(/Cài thủ công từ file/i, "Cài từ file")
+    .replace(/Chuyển đổi phiên bản bằng/i, "Đổi phiên bản")
+    .replace(/Quản lý nhiều phiên bản Java/i, "Quản lý phiên bản")
+    .replace(/Chương trình đầu tiên/i, "Viết mã đầu tiên")
+    .replace(/Xử lý lỗi thường gặp/i, "Lỗi thường gặp")
+    .replace(/Bảng tổng hợp lỗi thường gặp và cách sửa/i, "Lỗi thường gặp & Sửa lỗi")
+    .replace(/Kiểm tra cài đặt và viết chương trình đầu tiên/i, "Kiểm tra & Viết mã đầu tiên")
+    .replace(/Fedora \/ RHEL \/ CentOS \/ Rocky Linux/i, "Fedora / RHEL / CentOS")
+    .replace(/\s+và\s+/g, " & ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return text;
+}
+
 function collectHeadings() {
   const seen = new Map();
   return qsa("#reader-body h2, #reader-body h3").map((el) => {
@@ -109,7 +162,20 @@ function collectHeadings() {
     const n = (seen.get(base) || 0) + 1;
     seen.set(base, n);
     el.id = n === 1 ? base : `${base}-${n}`;
-    return { el, id: el.id, level: el.tagName === "H2" ? 2 : 3, title: el.textContent.trim() };
+
+    // Tạo bản sao không chứa nút anchor '#' để trích xuất text thuần
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll(".heading-anchor-btn").forEach((b) => b.remove());
+    const fullTitle = clone.textContent.replace(/#+/g, "").trim();
+    const shortTitle = formatTocText(fullTitle);
+
+    return { 
+      el, 
+      id: el.id, 
+      level: el.tagName === "H2" ? 2 : 3, 
+      title: shortTitle,
+      fullTitle 
+    };
   });
 }
 
@@ -133,7 +199,7 @@ function setupToc() {
 
   qs("#toc-nav").innerHTML = `<ul class="toc-list">${headings.map((h) =>
     `<li class="toc-item-h${h.level}">` +
-    `<a class="toc-link" href="#${attr(h.id)}" data-toc-for="${attr(h.id)}">${escapeHtml(h.title)}</a></li>`
+    `<a class="toc-link" href="#${attr(h.id)}" data-toc-for="${attr(h.id)}" title="${attr(h.fullTitle)}">${escapeHtml(h.title)}</a></li>`
   ).join("")}</ul>`;
   qs("#toc-title").textContent = `Mục lục · ${headings.length} phần`;
   aside.hidden = false;
@@ -610,8 +676,8 @@ function renderPreview(preview) {
 
   // Bỏ H1 đầu bài giống hệt luồng thật, để canh đúng bố cục sẽ lên sóng.
   qs("#reader-body").innerHTML = renderMarkdown(body.replace(/^\s*#[^\n]*\r?\n?/, ""));
-  setupHeadingAnchors();
   setupToc();
+  setupHeadingAnchors();
   setupReadingProgress();
   initMermaidDiagrams();
 }
@@ -689,8 +755,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   qs("#reader-body").innerHTML = renderMarkdown(cleanBody);
   renderRelatedSection(doc);
-  setupHeadingAnchors();
   setupToc();
+  setupHeadingAnchors();
   setupReadingProgress();
   setupCompletionWidget(doc);
   setupGiscus(doc);

@@ -1172,6 +1172,9 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   transition: all var(--transition-fast);
   margin-bottom: 2px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .toc-link:hover {
