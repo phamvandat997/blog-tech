@@ -282,7 +282,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     title: `${hub.section.name} | Blog Tech`,
     description: hub.section.tagline || `Danh mục bài viết mảng ${hub.section.name}.`,
   });
+  // Tên mảng là tiêu đề của TRANG, không phải tên của site. Trước đây nó được
+  // ghi đè lên khối thương hiệu ở navbar nên mọi trang danh mục đều hiện
+  // "Java" thay vì "Blog Tech".
   qs("#hub-title").textContent = hub.section.name;
+  const tagline = qs("#hub-tagline");
+  if (tagline) {
+    tagline.textContent = hub.section.tagline || "";
+    tagline.hidden = !hub.section.tagline;
+  }
   document.documentElement.style.setProperty("--section-color", hub.section.color);
 
   els.search.value = hub.query;
