@@ -236,6 +236,20 @@ class GitHubRepo {
   }
 
   /**
+   * Gán người review cho một PR. Chính GitHub sẽ gửi email
+   * "X requested your review" — không cần dựng hạ tầng gửi thư nào.
+   *
+   * Người được gán phải có quyền truy cập kho, và KHÔNG được là tác giả PR
+   * (GitHub trả 422 vì không ai tự review PR của mình).
+   */
+  async requestReviewers(pullNumber, reviewers) {
+    return this.request(`/pulls/${pullNumber}/requested_reviewers`, {
+      method: "POST", label: "gán người review",
+      body: JSON.stringify({ reviewers }),
+    });
+  }
+
+  /**
    * PR đang mở do trang admin tạo, nhận diện bằng tiền tố nhánh.
    * @returns {Promise<Array<{number, title, html_url, head: {ref}}>>}
    */

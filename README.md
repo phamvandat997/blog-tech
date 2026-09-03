@@ -155,6 +155,27 @@ chối, kể cả khi đã vào được màn hình soạn bài. Trang admin cũ
 Hệ quả cần biết: **ai cầm token của bạn thì ghi được vào kho.** Đừng đăng nhập
 trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên GitHub.
 
+### Nhờ người khác review — GitHub tự gửi email
+
+Điền tên đăng nhập GitHub vào `REVIEWERS` ở đầu [assets/js/admin.js](assets/js/admin.js):
+
+```js
+const REVIEWERS = ["ten-dang-nhap-github"];
+```
+
+Mỗi PR do trang admin mở sẽ được gán cho họ, và **chính GitHub gửi email**
+"X requested your review" — không cần máy chủ gửi thư nào.
+
+- Người được gán phải có quyền truy cập kho.
+- Ai trùng với người đang đăng nhập sẽ tự bị bỏ qua, vì GitHub không cho tự
+  review PR của mình (trả lỗi 422).
+- Gán review hỏng thì **PR vẫn được mở** — chỉ hiện cảnh báo, không huỷ bài.
+- Để rỗng thì không gán ai, y như trước.
+
+Muốn đọc thử bài đã render trước khi duyệt thì bật **Preview Deployments** cho
+pull request trong dashboard Vercel: mỗi PR sẽ có một URL riêng và Vercel tự
+bình luận link vào PR. Người review đọc bài thật thay vì đọc diff markdown.
+
 ### Đổi danh sách email được phép
 
 Sửa `ALLOWED_EMAILS` ở đầu [assets/js/admin.js](assets/js/admin.js), rồi build và push.

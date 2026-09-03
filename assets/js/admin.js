@@ -16,6 +16,18 @@
 
 const ALLOWED_EMAILS = ["phamvandat0029@gmail.com"];
 
+/**
+ * Tài khoản GitHub được gán review cho mọi PR do trang này mở. Điền tên đăng
+ * nhập vào đây là GitHub tự gửi email "X requested your review" — không cần
+ * máy chủ gửi thư nào cả.
+ *
+ * Người được gán phải có quyền truy cập kho. Ai trùng với người đang đăng
+ * nhập sẽ bị bỏ qua, vì GitHub không cho tự review PR của mình.
+ *
+ * Để rỗng thì không gán ai — PR vẫn mở bình thường như trước.
+ */
+const REVIEWERS = [];
+
 const DEFAULT_REPO = { owner: "phamvandat997", repo: "blog-tech", branch: "master" };
 const SESSION_KEY = "blog.adminSession";
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -33,6 +45,8 @@ const admin = {
   /** null khi tạo mới; { path, quizPath, quizContent } khi đang sửa bài có sẵn */
   editing: null,
   busy: false,
+  /** Tên đăng nhập GitHub của phiên hiện tại — dùng để không tự gán review mình. */
+  login: "",
   /** Trường frontmatter form không còn ô nhập nhưng phải giữ nguyên khi lưu lại. */
   carried: {},
   filter: "all",       // bộ lọc trạng thái ở màn danh sách
@@ -122,6 +136,7 @@ async function handleLogin(event) {
 }
 
 function enterApp(email, login) {
+  admin.login = login || "";
   qs("#admin-boot").hidden = true;
   qs("#admin-login").hidden = true;
   qs("#admin-tabs").hidden = false;
@@ -526,13 +541,30 @@ async function openPullRequest({ files, message, action, slug, title }) {
   await admin.gh.createBranch(branch);
   try {
     await admin.gh.commitFiles(files, message, branch);
-    return await admin.gh.createPullRequest({
+    const pr = await admin.gh.createPullRequest({
       head: branch,
       title: message,
       body: `Tạo từ trang /admin.\n\n` +
         files.map((f) => `- ${f.remove ? "xoá" : "ghi"} \`${f.path}\``).join("\n") +
         `\n\nMerge vào \`${admin.gh.branch}\` là Vercel build lại và bài "${title}" lên sóng.`,
     });
+
+    // Gán review SAU khi PR đã tạo xong, và hỏng thì không được kéo theo cả
+    // thao tác đăng bài: PR đã tồn tại rồi, ném lỗi ở đây chỉ khiến nhánh vừa
+    // tạo bị xoá trong khối catch bên dưới mà PR thì vẫn nằm đó.
+    pr.reviewRequested = [];
+    pr.reviewError = null;
+    const reviewers = REVIEWERS.filter(
+      (r) => r && r.toLowerCase() !== admin.login.toLowerCase());
+    if (reviewers.length) {
+      try {
+        await admin.gh.requestReviewers(pr.number, reviewers);
+        pr.reviewRequested = reviewers;
+      } catch (err) {
+        pr.reviewError = err.message;
+      }
+    }
+    return pr;
   } catch (error) {
     await admin.gh.deleteBranch(branch).catch(() => { /* dọn được thì tốt */ });
     throw error;
@@ -575,7 +607,8 @@ async function handleSubmit(event) {
     const pr = await openPullRequest(plan);
     showAlert(qs("#post-success"),
       `✅ Đã mở <a href="${attr(pr.html_url)}" target="_blank" rel="noopener">PR #${pr.number}</a>. ` +
-      `Bài chỉ lên sóng sau khi PR được merge — Vercel build lại khoảng một phút sau đó.`, true);
+      `Bài chỉ lên sóng sau khi PR được merge — Vercel build lại khoảng một phút sau đó.` +
+      reviewNote(pr), true);
     clearDraft();
     resetForm();
     await loadSections();
@@ -588,6 +621,19 @@ async function handleSubmit(event) {
     button.disabled = false;
     button.textContent = admin.editing ? "Tạo pull request cập nhật" : "Tạo pull request";
   }
+}
+
+/** Câu mô tả việc gán review, ghép vào thông báo sau khi mở PR. */
+function reviewNote(pr) {
+  if (pr.reviewError) {
+    return ` <br>⚠️ Không gán được người review: ${escapeHtml(pr.reviewError)} ` +
+      `PR vẫn đã mở, bạn báo cho người review thủ công.`;
+  }
+  if (pr.reviewRequested?.length) {
+    const who = pr.reviewRequested.map((r) => `@${escapeHtml(r)}`).join(", ");
+    return ` <br>📧 Đã nhờ ${who} review — GitHub gửi email cho họ.`;
+  }
+  return "";
 }
 
 /* ------------------------------------------------------------ sửa bài */
@@ -662,7 +708,9 @@ async function handleDelete(post) {
       slug: post.slug,
       title: post.title,
     });
-    showToast(`Đã mở PR #${pr.number} để xoá bài.`);
+    showToast(pr.reviewRequested?.length
+      ? `Đã mở PR #${pr.number} để xoá bài và nhờ ${pr.reviewRequested.map((r) => "@" + r).join(", ")} review.`
+      : `Đã mở PR #${pr.number} để xoá bài.`);
     window.open(pr.html_url, "_blank", "noopener");
     await loadPosts();
   } catch (err) {
