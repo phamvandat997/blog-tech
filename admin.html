@@ -135,11 +135,11 @@
         <div class="admin-row">
           <label class="admin-field">
             <span class="admin-label">Mảng nội dung <b class="req">*</b></span>
-            <select id="field-section" required></select>
+            <span class="admin-select"><select id="field-section" required></select></span>
           </label>
           <label class="admin-field">
             <span class="admin-label">Chuyên mục <b class="req">*</b></span>
-            <select id="field-category" required></select>
+            <span class="admin-select"><select id="field-category" required></select></span>
           </label>
         </div>
 
@@ -163,10 +163,12 @@
             </label>
             <label class="admin-field">
               <span class="admin-label">Xếp vào khu</span>
-              <select id="new-section-kind">
-                <option value="language">Ngôn ngữ</option>
-                <option value="topic">Chủ đề</option>
-              </select>
+              <span class="admin-select">
+                <select id="new-section-kind">
+                  <option value="language">Ngôn ngữ</option>
+                  <option value="topic">Chủ đề</option>
+                </select>
+              </span>
             </label>
           </div>
           <label class="admin-field">
@@ -191,8 +193,11 @@
 
         <label class="admin-field">
           <span class="admin-label">Tên file <b class="req">*</b></span>
-          <div class="admin-path-preview"><code id="path-preview">content/…</code></div>
-          <input type="text" id="field-slug" required placeholder="bai-viet-dau-tien">
+          <span class="admin-path">
+            <code class="admin-path-prefix" id="path-prefix">content/…/…/</code>
+            <input type="text" id="field-slug" required placeholder="bai-viet-dau-tien">
+            <code class="admin-path-suffix">.md</code>
+          </span>
           <span class="admin-hint">Tự sinh từ tiêu đề, sửa lại được. Đây cũng là địa chỉ bài trên web.</span>
         </label>
       </section>

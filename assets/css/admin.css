@@ -118,7 +118,11 @@
   padding: 0.55rem 0.75rem;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color var(--transition-fast);
+  /* input và select tự tính line-height khác nhau nên lệch vài px khi đứng
+     cạnh nhau. Chốt cứng một chiều cao cho cả hai. */
+  line-height: 1.5;
+  height: 40px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .admin-field input:focus,
 .admin-field select:focus,
@@ -127,9 +131,96 @@
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-light);
 }
-.admin-field input[type="color"] { padding: 0.2rem; height: 38px; cursor: pointer; }
-.admin-field textarea { resize: vertical; line-height: 1.6; }
+.admin-field input[type="color"] { padding: 0.2rem; cursor: pointer; }
+.admin-field textarea { resize: vertical; line-height: 1.6; height: auto; padding: 0.6rem 0.75rem; }
 .admin-field select:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Mũi tên mặc định của select do hệ điều hành vẽ — mỗi máy một kiểu và không
+   theo bảng màu. Tắt nó đi, tự vẽ bằng ::after của lớp bọc để dùng currentColor
+   (select không nhận pseudo-element nên phải bọc thêm một lớp). */
+.admin-select { position: relative; display: block; width: 100%; }
+.admin-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+.admin-select::after {
+  content: "";
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -3px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(45deg);
+  transform-origin: center;
+  pointer-events: none;
+  transition: border-color var(--transition-fast);
+}
+.admin-select:hover::after { border-color: var(--text-main); }
+.admin-select:focus-within::after { border-color: var(--primary); }
+.admin-select:has(select:disabled)::after { opacity: 0.4; }
+
+/* ==================================== đường dẫn sẽ ghi: một khung liền mạch */
+/* Trước đây phần xem trước là một hộp xám nằm trên ô nhập, trông như hai ô
+   input chồng nhau. Nay tiền tố và đuôi .md ôm sát ô nhập, đọc thẳng ra
+   đường dẫn cuối cùng ngay tại chỗ đang gõ. */
+
+.admin-path {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  /* Bằng đúng chiều cao input/select ở trên — viền của khung đã tính vào đây. */
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.admin-path:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.admin-path-prefix,
+.admin-path-suffix {
+  display: flex;
+  align-items: center;
+  flex: none;
+  padding: 0 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  background: var(--bg-surface-subtle);
+  white-space: nowrap;
+  user-select: none;
+}
+.admin-path-prefix {
+  border-right: 1px solid var(--border-color);
+  max-width: 55%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.admin-path-prefix::-webkit-scrollbar { display: none; }
+.admin-path-suffix { border-left: 1px solid var(--border-color); }
+
+/* Ô nhập nằm trong khung nên tự bỏ viền và bóng của riêng nó. */
+.admin-field .admin-path input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+.admin-field .admin-path input:focus { box-shadow: none; }
+.admin-field .admin-path input { height: 100%; }
 
 .admin-subform {
   border: 1px dashed var(--border-color);
@@ -148,17 +239,6 @@
   letter-spacing: 0.06em;
   color: var(--primary);
   padding: 0 0.4rem;
-}
-
-.admin-path-preview {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  background: var(--bg-surface-subtle);
-  border-radius: var(--radius-md);
-  padding: 0.45rem 0.7rem;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------- soạn thảo */
@@ -546,6 +626,23 @@
   .admin-field input,
   .admin-field select,
   .admin-field textarea { font-size: 16px; padding: 0.7rem 0.75rem; }  /* 16px chặn iOS tự phóng to */
+  .admin-field input,
+  .admin-field select { height: 46px; }
+  /* Khai báo padding gộp ở trên xoá mất chỗ chừa cho mũi tên — trả lại. */
+  .admin-select select { padding-right: 2.4rem; }
+  .admin-field textarea { height: auto; }
+  /* Màn hẹp: tiền tố ăn gần nửa bề ngang, ô gõ chỉ còn hơn 100px. Xếp thành
+     hai dòng trong cùng một khung — vẫn liền mạch, ô gõ được cả bề ngang. */
+  .admin-path { height: auto; flex-wrap: wrap; }
+  .admin-path-prefix {
+    flex: 1 0 100%;
+    max-width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.35rem 0.6rem;
+  }
+  .admin-path-suffix { border-left: 1px solid var(--border-color); }
+  .admin-field .admin-path input { font-size: 16px; height: 46px; flex: 1; }
   .admin-btn-primary,
   .admin-btn-secondary,
   .admin-btn-danger { min-height: 44px; }

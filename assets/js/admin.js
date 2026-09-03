@@ -390,9 +390,9 @@ function resolvePlacement() {
 }
 
 function updatePathPreview() {
-  const { sectionId, categoryId, slug } = resolvePlacement();
-  qs("#path-preview").textContent =
-    `content/${sectionId || "…"}/${categoryId || "…"}/${slug || "…"}.md`;
+  const { sectionId, categoryId } = resolvePlacement();
+  // Tiền tố và đuôi .md nằm ngay hai bên ô nhập, nên chỉ cần cập nhật tiền tố.
+  qs("#path-prefix").textContent = `content/${sectionId || "…"}/${categoryId || "…"}/`;
 }
 
 /* ------------------------------------------------------ nạp nội dung */
