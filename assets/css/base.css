@@ -1717,10 +1717,16 @@ body {
   margin-bottom: 1.3rem;
 }
 
+/* Preflight của Tailwind đặt `menu,ol,ul{list-style:none}` cho toàn trang, nên
+   danh sách trong bài viết mất sạch dấu đầu dòng. Trả lại đúng cho vùng nội
+   dung markdown, không đụng các danh sách điều hướng vốn cố ý không có dấu. */
 .markdown-body ul, .markdown-body ol {
   margin-bottom: 1.25rem;
   padding-left: 1.35rem;
 }
+.markdown-body ul { list-style: disc outside; }
+.markdown-body ol { list-style: decimal outside; }
+.markdown-body ul ul { list-style: circle outside; }
 
 .markdown-body li {
   margin-bottom: 0.45rem;
