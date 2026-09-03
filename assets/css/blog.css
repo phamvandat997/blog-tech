@@ -1644,16 +1644,6 @@ body.zen-mode #btn-zen-mode {
   font-size: 1.3rem;
 }
 
-.comments-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: var(--bg-surface-subtle);
-  border: 1px solid var(--border-color);
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-full);
-}
-
 .giscus-container {
   min-height: 180px;
 }
