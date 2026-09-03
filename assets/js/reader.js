@@ -514,6 +514,68 @@ function showError(title, text, action) {
   qs("#reader-root").innerHTML = emptyState("🔍", title, text, action);
 }
 
+const PREVIEW_KEY = "blog.readerPreview";
+
+/** Bản xem thử do trang admin đặt vào, hoặc null nếu không có / hỏng. */
+function readPreview() {
+  try {
+    const raw = localStorage.getItem(PREVIEW_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    return data && data.doc && typeof data.body === "string" ? data : null;
+  } catch { return null; }
+}
+
+/**
+ * Banner và navbar đều sticky ở đỉnh màn hình, nên navbar chui xuống dưới
+ * banner khi cuộn. Đo chiều cao banner (nó tự xuống dòng trên màn hẹp) rồi đẩy
+ * navbar và mọi thứ neo theo --navbar-h xuống đúng chừng ấy.
+ */
+function trackPreviewBannerHeight() {
+  const banner = qs("#preview-banner");
+  if (!banner) return;
+  const apply = () => document.documentElement.style.setProperty(
+    "--preview-banner-h", `${Math.round(banner.getBoundingClientRect().height)}px`);
+  apply();
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(apply).observe(banner);
+  else window.addEventListener("resize", apply);
+}
+
+/**
+ * Xem thử một bài chưa đăng. Dùng lại đúng trang này để thấy khung thật, chỉ
+ * khác ở chỗ dữ liệu đến từ form thay vì catalog, và ba khối cần dữ liệu thật
+ * (bình luận, bài liên quan, đánh dấu hoàn thành) được ẩn đi.
+ */
+function renderPreview(preview) {
+  const { doc, section, body } = preview;
+
+  qs("#preview-banner").hidden = false;
+  document.body.classList.add("is-preview");
+  trackPreviewBannerHeight();
+  ["#reader-comments-section", "#reader-related-sidebar", "#reader-complete-box"]
+    .forEach((sel) => { const el = qs(sel); if (el) el.remove(); });
+
+  document.title = `Xem thử: ${doc.title}`;
+  document.documentElement.style.setProperty("--section-color", section.color);
+  qs("#reader-title").textContent = doc.title;
+  qs("#reader-breadcrumb").innerHTML =
+    `<a href="admin.html">Quản lý</a> <span>›</span>
+     <span>${escapeHtml(section.name)}</span> <span>›</span>
+     <span>${escapeHtml(preview.categoryName || doc.category)}</span>`;
+  qs("#reader-back").href = "admin.html";
+  qs("#reader-back").textContent = "⬅ Về trang quản lý";
+
+  const readingMinutes = Math.max(1, Math.round(body.trim().split(/\s+/).length / 200));
+  qs("#reader-date").innerHTML =
+    `📝 Bản nháp &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc`;
+
+  // Bỏ H1 đầu bài giống hệt luồng thật, để canh đúng bố cục sẽ lên sóng.
+  qs("#reader-body").innerHTML = renderMarkdown(body.replace(/^\s*#[^\n]*\r?\n?/, ""));
+  setupHeadingAnchors();
+  setupToc();
+  setupReadingProgress();
+  initMermaidDiagrams();
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initBackToTop();
@@ -527,6 +589,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     initMermaidDiagrams();
     updateGiscusTheme(e.detail.theme);
   });
+
+  // Nhánh xem thử tách hẳn khỏi đường đi của bài thật.
+  if (new URLSearchParams(window.location.search).get("preview") === "1") {
+    const preview = readPreview();
+    if (!preview) {
+      return showError("Không có bản xem thử nào",
+        "Bản xem thử được tạo từ trang quản lý và chỉ nằm trong trình duyệt này.",
+        '<a class="btn-primary-link" href="admin.html">⬅ Về trang quản lý</a>');
+    }
+    return renderPreview(preview);
+  }
 
   const params = readParams();
   const home = '<a class="btn-primary-link" href="index.html">⬅ Về trang chủ</a>';

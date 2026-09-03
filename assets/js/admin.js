@@ -24,6 +24,7 @@ const BRANCH_PREFIX = "post/";
 const DRAFT_KEY = "blog.adminDraft";
 const DRAFT_DEBOUNCE_MS = 800;
 const SPLIT_QUERY = "(min-width: 1100px)";
+const PREVIEW_KEY = "blog.readerPreview";
 
 const admin = {
   /** @type {GitHubRepo|null} */ gh: null,
@@ -687,6 +688,78 @@ async function handleDelete(post) {
   }
 }
 
+/* ------------------------------------------------- xem thử trong trang đọc */
+
+/**
+ * Mở bài trong CHÍNH reader.html để thấy đúng thứ sẽ lên sóng — mục lục, cỡ
+ * chữ, zen mode, mermaid đều là hàng thật.
+ *
+ * Bài chưa có trong catalog (và mảng cũng có thể chưa tồn tại), nên gói đủ dữ
+ * liệu để reader tự dựng doc/section giả. Đi qua localStorage chứ không phải
+ * sessionStorage: bản sao sessionStorage sang tab mới tuỳ trình duyệt, còn
+ * localStorage thì tab mới đọc chắc chắn và F5 vẫn còn.
+ */
+function buildPreview() {
+  const body = qs("#field-body").value.trim();
+  if (!body) throw new Error("Chưa có nội dung để xem thử.");
+
+  const { sectionId, categoryId, slug } = resolvePlacement();
+  const isNewSection = qs("#field-section").value === NEW;
+  const section = admin.sections.find((sec) => sec.id === sectionId);
+  const category = section?.categories.find((c) => c.id === categoryId);
+
+  const title = qs("#field-title").value.trim()
+    || (body.match(/^#\s+(.+)$/m)?.[1] || "").trim()
+    || slug
+    || "Bài chưa đặt tên";
+
+  return {
+    savedAt: Date.now(),
+    body,
+    doc: {
+      id: `${sectionId || "preview"}/${categoryId || "preview"}/${slug || "preview"}`,
+      section: sectionId || "preview",
+      category: categoryId || "preview",
+      slug: slug || "preview",
+      title,
+      description: qs("#field-description").value.trim(),
+      tags: qs("#field-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
+      order: admin.carried.order ?? 999,
+      phase: admin.carried.phase ?? "",
+      updatedDate: new Date().toISOString().slice(0, 10),
+    },
+    section: {
+      id: sectionId || "preview",
+      // Mảng mới chưa có trên kho: lấy tên và màu từ form đang điền.
+      name: isNewSection ? (qs("#new-section-name").value.trim() || sectionId) : (section?.name || sectionId || "Xem thử"),
+      color: isNewSection ? qs("#new-section-color").value : (section?.meta?.color || "#4f46e5"),
+    },
+    categoryName: qs("#field-category").value === NEW
+      ? (qs("#new-category-name").value.trim() || categoryId)
+      : (category?.name || categoryId),
+  };
+}
+
+function handlePreview() {
+  showAlert(qs("#post-error"), "");
+  let payload;
+  try {
+    payload = buildPreview();
+  } catch (err) {
+    return showAlert(qs("#post-error"), err.message);
+  }
+
+  try {
+    localStorage.setItem(PREVIEW_KEY, JSON.stringify(payload));
+  } catch {
+    return showAlert(qs("#post-error"),
+      "Không lưu được bản xem thử — bộ nhớ trình duyệt đã đầy. Thử xoá bớt dữ liệu trang rồi làm lại.");
+  }
+
+  const tab = window.open("reader.html?preview=1", "_blank", "noopener");
+  if (!tab) showAlert(qs("#post-error"), "Trình duyệt chặn mở tab mới — cho phép pop-up cho trang này rồi thử lại.");
+}
+
 /* --------------------------------------------- xem trước & bộ dựng markdown */
 
 /**
@@ -889,6 +962,7 @@ function bindEvents() {
     if (btn.dataset.view === "editor" && !admin.editing && isFormEmpty()) offerDraft();
   }));
 
+  qs("#btn-preview").addEventListener("click", handlePreview);
   qs("#btn-cancel-edit").addEventListener("click", () => { resetForm(); switchView("list"); });
   qs("#btn-refresh").addEventListener("click", loadPosts);
   qs("#list-search").addEventListener("input", renderPosts);

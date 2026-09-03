@@ -1513,3 +1513,70 @@ body.zen-mode #btn-zen-mode {
   color: var(--text-muted);
   margin-top: 0.35rem;
 }
+
+
+/* ============================================= banner xem thử bài chưa đăng */
+/* Phải khác hẳn trang thật: người xem không được nhầm bản nháp với bài đã lên. */
+
+.preview-banner {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #78350f;
+  background: #fde68a;
+  border-bottom: 1px solid #f59e0b;
+}
+[data-theme="dark"] .preview-banner {
+  color: #fde68a;
+  background: #3f2d0a;
+  border-bottom-color: #a16207;
+}
+.preview-banner b { font-weight: 800; }
+.preview-banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  flex: none;
+}
+.preview-banner-link {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Không còn sidebar bài liên quan trong chế độ xem thử — trả lại bề ngang
+   cho phần nội dung thay vì để trống một cột. */
+/* Navbar cũng sticky top:0 nên nó chui xuống dưới banner khi cuộn — đẩy nó và
+   mọi thứ neo theo --navbar-h xuống đúng chiều cao banner. */
+body.is-preview .navbar { top: var(--preview-banner-h, 0px); }
+body.is-preview .reader-toc { top: calc(var(--navbar-h, 65px) + var(--preview-banner-h, 0px) + 1.25rem); }
+
+body.is-preview .reader-shell { grid-template-columns: var(--toc-w) minmax(0, 1fr); }
+body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
+
+@media (max-width: 640px) {
+  /* Banner dính suốt phiên xem thử, nên trên màn hẹp phải gọn: bỏ vế giải
+     thích và giữ nó trên một dòng thay vì ăn 1/8 chiều cao màn hình. */
+  .preview-banner {
+    font-size: 0.74rem;
+    padding: 0.45rem 0.6rem;
+    gap: 0.45rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  .preview-banner-more { display: none; }
+  .preview-banner > span:not(.preview-banner-dot) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
