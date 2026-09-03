@@ -1826,3 +1826,50 @@ body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
     text-overflow: ellipsis;
   }
 }
+
+/* =============================== điện thoại: bài đọc tràn hết bề ngang */
+/*
+ * Đo ở màn 375px trước khi sửa: chữ trong bài chỉ chiếm 282px, tức 75% bề
+ * ngang máy. 93px còn lại là ba lớp lề lồng nhau — .reader-shell 20px,
+ * .reader-layout 8px, rồi .reader-content-card 18.4px, nhân đôi hai bên.
+ * Các trang khác chỉ dùng một lớp lề 12px nên đạt 81-84%; trang đọc là ngoại lệ.
+ *
+ * PHẢI đặt ở cuối file: khối @media (max-width: 900px) phía trên cũng khai
+ * padding cho .reader-shell và .reader-layout với cùng độ đặc hiệu, nên quy
+ * tắc nào đứng sau thì thắng.
+ *
+ * Cách sửa: giữ MỘT lớp lề duy nhất ở .reader-layout cho phần chữ phụ
+ * (breadcrumb, tiêu đề, ngày) khỏi dính mép, rồi cho riêng thẻ bài thò ra
+ * bằng margin âm để chạy sát hai mép màn hình.
+ */
+@media (max-width: 640px) {
+  .reader-shell { padding: 0; }
+
+  .reader-layout {
+    padding-left: var(--phone-pad, 0.75rem);
+    padding-right: var(--phone-pad, 0.75rem);
+  }
+
+  .reader-content-card {
+    /* Thò ra đúng bằng lề của khối cha để chạm hai mép màn hình. */
+    margin-left: calc(var(--phone-pad, 0.75rem) * -1);
+    margin-right: calc(var(--phone-pad, 0.75rem) * -1);
+    /* Ba thứ cùng chặn phần thò ra, phải gỡ đủ cả ba thì margin âm mới ăn:
+       - base.css đặt max-width:100% cho .markdown-body
+       - blog.css đặt width:100% cho .reader-content-card
+       - thẻ còn mang utility .w-full và .max-w-full của Tailwind
+       width:100% khoá bề ngang đúng bằng khối cha nên margin âm chỉ dịch chỗ
+       chứ không nới rộng; phải trả về auto. */
+    width: auto;
+    max-width: none;
+    padding: 1.25rem 0.9rem;
+    /* Đã sát mép thì bo góc và viền hai bên chỉ còn là đường kẻ thừa. */
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  /* Những khối khác trong cột vẫn là thẻ, giữ nguyên trong lề. */
+  .reader-complete-box,
+  .reader-comments-section { margin-left: 0; margin-right: 0; }
+}

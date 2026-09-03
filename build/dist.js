@@ -16,6 +16,7 @@ const ENTRIES = [
   "reader.html",
   "admin.html",
   "404.html",
+  "favicon.svg",
   "assets",
   "generated",
 ];
@@ -69,4 +70,8 @@ function main() {
   console.log("  (content/, build/, docs/ không đưa lên production)");
 }
 
-main();
+if (require.main === module) main();
+
+// Xuất ra để build/dist.test.js đối chiếu: mọi tệp cục bộ mà các trang HTML
+// tham chiếu đều phải nằm trong danh sách này, nếu không production sẽ 404.
+module.exports = { ENTRIES };
