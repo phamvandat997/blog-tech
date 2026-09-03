@@ -1562,20 +1562,39 @@ body {
 }
 
 .code-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: #1e293b;
-  border: none;
+  border: 1px solid #334155;
   color: #cbd5e1;
-  padding: 0.25rem 0.55rem;
-  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-md);
   font-size: 0.72rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  user-select: none;
+}
+
+.code-copy-btn .copy-icon {
+  font-size: 0.8rem;
+  line-height: 1;
 }
 
 .code-copy-btn:hover {
   background: var(--primary);
+  border-color: var(--primary);
   color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.code-copy-btn.copied {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
 }
 
 .markdown-body pre {
@@ -2000,23 +2019,23 @@ body {
   }
 }
 
-/* === FLOATING BACK TO TOP BUTTON === */
+/* === FLOATING BACK TO TOP BUTTON WITH CIRCULAR PROGRESS RING === */
 .btn-back-to-top {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: var(--radius-full);
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35), var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.1), 0 2px 6px -1px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.15rem;
   z-index: 45;
   opacity: 0;
   visibility: hidden;
@@ -2025,13 +2044,22 @@ body {
               transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
               visibility 0.3s ease, 
               background-color var(--transition-fast),
+              border-color var(--transition-fast),
               box-shadow var(--transition-fast);
+  padding: 0;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .btn-back-to-top {
+  background: rgba(30, 41, 59, 0.88);
+  border-color: rgba(99, 102, 241, 0.28);
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.4), 0 0 12px rgba(99, 102, 241, 0.2);
 }
 
 .btn-back-to-top:hover {
-  background: var(--primary-hover);
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45), var(--shadow-xl);
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 24px -2px rgba(99, 102, 241, 0.35), var(--shadow-xl);
+  border-color: var(--primary);
 }
 
 .btn-back-to-top:active {
@@ -2042,6 +2070,55 @@ body {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
+}
+
+.btn-back-to-top .progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.btn-back-to-top .progress-ring-track {
+  stroke: rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="dark"] .btn-back-to-top .progress-ring-track {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.btn-back-to-top .progress-ring-indicator {
+  stroke: var(--primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+[data-theme="dark"] .btn-back-to-top .progress-ring-indicator {
+  stroke: #818cf8;
+}
+
+.btn-back-to-top .back-to-top-icon {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+[data-theme="dark"] .btn-back-to-top .back-to-top-icon {
+  color: #818cf8;
+}
+
+.btn-back-to-top:hover .back-to-top-icon {
+  transform: translateY(-2px);
+  color: #4f46e5;
+}
+
+[data-theme="dark"] .btn-back-to-top:hover .back-to-top-icon {
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {

@@ -470,6 +470,45 @@ function setupHeadingAnchors() {
   });
 }
 
+function setupDocActions() {
+  const copyBtn = qs("#btn-copy-doc-link");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("✓ Đã sao chép liên kết bài viết!");
+        const label = copyBtn.querySelector(".action-label");
+        const originalText = label?.textContent || "Sao chép link";
+        if (label) label.textContent = "Đã chép!";
+        copyBtn.classList.add("text-emerald-600");
+        setTimeout(() => {
+          if (label) label.textContent = originalText;
+          copyBtn.classList.remove("text-emerald-600");
+        }, 1800);
+      }, () => showToast("Trình duyệt chặn sao chép"));
+    });
+  }
+
+  const shareBtn = qs("#btn-share-doc");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", async () => {
+      const title = qs("#reader-title")?.textContent || document.title;
+      const url = window.location.href;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url, text: `${title} — Blog kỹ thuật` });
+        } catch (e) {
+          if (e.name !== "AbortError") showToast("Không thể mở hộp thoại chia sẻ");
+        }
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast("✓ Đã sao chép liên kết bài viết để chia sẻ!");
+        });
+      }
+    });
+  }
+}
+
 function setupGiscus(doc) {
   const container = qs("#giscus-container");
   if (!container || !doc) return;
@@ -585,6 +624,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initSearchShortcut("#reader-search");
   setupFontSizeAdjuster();
   setupZenMode();
+  setupDocActions();
 
   window.addEventListener("theme-changed", (e) => {
     initMermaidDiagrams();

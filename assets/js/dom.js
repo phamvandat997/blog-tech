@@ -55,9 +55,24 @@ function emptyState(icon, title, text, actionHtml = "") {
 function initBackToTop() {
   const btn = qs("#btn-back-to-top");
   if (!btn) return;
-  window.addEventListener("scroll", () => {
-    btn.classList.toggle("visible", window.scrollY > 280);
-  }, { passive: true });
+  const indicator = btn.querySelector(".progress-ring-indicator");
+  const CIRCUMFERENCE = 125.66; // 2 * Math.PI * 20
+
+  const updateProgress = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    btn.classList.toggle("visible", scrollY > 180);
+
+    if (indicator && maxScroll > 0) {
+      const pct = Math.min(1, Math.max(0, scrollY / maxScroll));
+      const offset = CIRCUMFERENCE * (1 - pct);
+      indicator.style.strokeDashoffset = String(offset);
+    }
+  };
+
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  updateProgress();
+
   btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 }
 

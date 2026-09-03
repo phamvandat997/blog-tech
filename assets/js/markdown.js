@@ -138,7 +138,7 @@ function renderMarkdown(md) {
       blocks.push(`<div class="mermaid-block-wrapper">
         <div class="mermaid-block-header">
           <span>📊 SƠ ĐỒ HỆ THỐNG (MERMAID)</span>
-          <button class="code-copy-btn" type="button" data-copy-code>Sao chép mã</button>
+          <button class="code-copy-btn" type="button" data-copy-code aria-label="Sao chép mã"><span class="copy-icon">📋</span> <span class="copy-label">Sao chép</span></button>
         </div>
         <div class="mermaid-diagram-container">
           <pre class="mermaid">${escapeHtml(trimmed)}</pre>
@@ -152,7 +152,7 @@ function renderMarkdown(md) {
     blocks.push(`<div class="code-block-wrapper">
       <div class="code-block-header">
         <span>${escapeHtml(label)}</span>
-        <button class="code-copy-btn" type="button" data-copy-code>Sao chép mã</button>
+        <button class="code-copy-btn" type="button" data-copy-code aria-label="Sao chép mã"><span class="copy-icon">📋</span> <span class="copy-label">Sao chép</span></button>
       </div>
       <pre><code class="language-${escapeHtml(lang || "text")}">${highlighted}</code></pre>
     </div>`);
@@ -234,12 +234,15 @@ function renderMarkdown(md) {
 document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-copy-code]");
   if (!button) return;
-  const code = button.closest(".code-block-wrapper")?.querySelector("pre code");
+  const code = button.closest(".code-block-wrapper, .mermaid-block-wrapper")?.querySelector("pre code, pre.mermaid");
   if (!code) return;
   navigator.clipboard.writeText(code.innerText).then(() => {
-    const original = button.textContent;
-    button.textContent = "✓ Đã chép!";
+    const originalHtml = button.innerHTML;
+    button.innerHTML = '<span class="copy-icon">✓</span> <span class="copy-label">Đã chép!</span>';
     button.classList.add("copied");
-    setTimeout(() => { button.textContent = original; button.classList.remove("copied"); }, 1800);
+    setTimeout(() => {
+      button.innerHTML = originalHtml;
+      button.classList.remove("copied");
+    }, 1800);
   }, () => showToast("Trình duyệt chặn truy cập clipboard"));
 });

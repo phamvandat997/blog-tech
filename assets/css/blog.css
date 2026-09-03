@@ -1325,17 +1325,7 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   transform: scale(1.2);
 }
 
-/* === BACK TO TOP BUTTON DESKTOP TWEAK === */
-@media (min-width: 1281px) and (max-width: 1680px) {
-  .btn-back-to-top {
-    right: 0.75rem;
-    bottom: 0.75rem;
-    width: 38px;
-    height: 38px;
-    font-size: 0.95rem;
-    opacity: 0.75;
-  }
-}
+
 
 /* === PRINT / PDF EXPORT STYLES === */
 @media print {
@@ -1503,8 +1493,32 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   font-size: calc(0.95rem * var(--reader-font-scale, 1)) !important;
 }
 
-.reader-content-card blockquote {
-  font-size: calc(1.02rem * var(--reader-font-scale, 1)) !important;
+/* === MODERN ELEGANT BLOCKQUOTE === */
+.reader-content-card blockquote,
+.markdown-body blockquote {
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 1rem 1.35rem 1rem 1.5rem;
+  border-left: 4px solid var(--primary);
+  background: rgba(99, 102, 241, 0.06);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  color: var(--text-main);
+  font-size: calc(1rem * var(--reader-font-scale, 1)) !important;
+  line-height: 1.65;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .reader-content-card blockquote,
+[data-theme="dark"] .markdown-body blockquote {
+  background: rgba(99, 102, 241, 0.12);
+  border-left-color: #818cf8;
+  color: #f1f5f9;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.reader-content-card blockquote p,
+.markdown-body blockquote p {
+  margin: 0;
 }
 
 .font-size-controls {
