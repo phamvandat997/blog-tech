@@ -31,6 +31,7 @@ function sectionCard(section) {
 
 function renderLanding() {
   const root = qs("#sections-root");
+  updateHeroStats();
   if (!hasCatalog || ALL_SECTIONS.length === 0) {
     root.innerHTML = emptyState("📦", "Chưa có nội dung nào",
       "Tạo content/<mảng>/<chuyên-mục>/bai-viet.md rồi chạy: node build/build.js");
@@ -45,18 +46,31 @@ function renderLanding() {
       <div class="section-cards">${sections.map(sectionCard).join("")}</div>
     </section>`;
   }).join("");
+}
 
-  // Cập nhật thống kê tiến độ thực tế trên Hero Banner
-  const allDocs = hasCatalog ? ALL_DOCS : [];
+/** Số liệu Hero Banner lấy từ catalog, không hard-code — catalog rỗng thì về 0. */
+function updateHeroStats() {
+  const allDocs = hasCatalog ? ALL_DOCUMENTS : [];
   const completedTotal = allDocs.filter((d) => isDocCompleted(d.id)).length;
+
+  const docsVal = qs("#hero-docs-val");
+  if (docsVal) docsVal.textContent = String(allDocs.length);
+
+  const sectionsVal = qs("#hero-sections-val");
+  if (sectionsVal) sectionsVal.textContent = String(ALL_SECTIONS.length);
+
   const progressVal = qs("#hero-progress-val");
   const progressLbl = qs("#hero-progress-lbl");
+  if (!progressVal || !progressLbl) return;
 
-  if (progressVal && progressLbl && allDocs.length) {
-    const pct = Math.round((completedTotal / allDocs.length) * 100);
-    progressVal.textContent = `${pct}%`;
-    progressLbl.textContent = `${completedTotal}/${allDocs.length} bài đã hoàn thành`;
+  if (!allDocs.length) {
+    progressVal.textContent = "0%";
+    progressLbl.textContent = "Chưa có bài nào";
+    return;
   }
+  const pct = Math.round((completedTotal / allDocs.length) * 100);
+  progressVal.textContent = `${pct}%`;
+  progressLbl.textContent = `${completedTotal}/${allDocs.length} bài đã hoàn thành`;
 }
 
 /** Tìm kiếm toàn cục: gợi ý bài từ mọi mảng, phím mũi tên & Enter. */

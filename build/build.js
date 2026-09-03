@@ -18,12 +18,16 @@ function writeFile(rel, body) {
 }
 
 function main() {
-  if (!fs.existsSync(CONTENT)) {
-    console.error("Không tìm thấy thư mục content/. Tạo content/<mảng>/<chuyên-mục>/bai.md rồi chạy lại.");
-    process.exit(1);
+  // content/ trống hoặc chưa có: vẫn sinh catalog rỗng để UI đồng bộ (hiện "Chưa có nội dung nào")
+  // thay vì fail build và để deploy cũ tiếp tục hiển thị bài đã xoá.
+  const hasContent = fs.existsSync(CONTENT);
+  if (!hasContent) {
+    console.warn("  ⚠ Không tìm thấy thư mục content/ — sinh catalog rỗng.");
   }
 
-  const { sections, docs, warnings } = scanContent(CONTENT);
+  const { sections, docs, warnings } = hasContent
+    ? scanContent(CONTENT)
+    : { sections: [], docs: [], warnings: [] };
   warnings.forEach((w) => console.warn(`  ⚠ ${w}`));
 
   // Sắp bài theo đúng thứ tự chuyên mục đã khai báo trong _section.json.
