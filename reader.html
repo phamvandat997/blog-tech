@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đang tải bài viết… | Blog kỹ thuật</title>
+  <title>Đang tải bài viết… | Blog Tech</title>
   <meta name="description" content="Bài viết kỹ thuật chuyên sâu, có mục lục, chế độ đọc tập trung và gợi ý bài liên quan.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Đang tải bài viết… | Blog kỹ thuật">
+  <meta property="og:title" content="Đang tải bài viết… | Blog Tech">
   <meta property="og:description" content="Bài viết kỹ thuật chuyên sâu, có mục lục, chế độ đọc tập trung và gợi ý bài liên quan.">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <script>
     // Đặt giao diện TRƯỚC khi vẽ khung đầu tiên, nếu không trang chớp sáng rồi
     // mới lật sang tối. Buộc phải inline và đồng bộ; state.js chạy sau là muộn.
@@ -46,9 +47,14 @@
               aria-label="Mở mục lục" aria-expanded="false" aria-controls="reader-toc" hidden>☰</button>
 
       <a href="index.html" class="brand flex items-center gap-2.5 no-underline group shrink-0">
-        <div class="brand-logo text-2xl group-hover:scale-110 transition-transform">📘</div>
+        <div class="brand-logo">
+          <img src="assets/images/logo.svg" alt="Blog Tech Logo" class="brand-logo-img">
+        </div>
         <div class="brand-text">
-          <h1 class="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight m-0">Blog kỹ thuật</h1>
+          <div class="brand-title flex items-center text-base font-black tracking-tight leading-tight m-0">
+            <span class="text-indigo-600 dark:text-indigo-400">Blog</span>
+            <span class="text-slate-900 dark:text-white ml-1">Tech</span>
+          </div>
         </div>
       </a>
 
@@ -149,7 +155,7 @@
   <footer class="site-footer border-t border-slate-200 dark:border-slate-800/80 py-8 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md mt-auto">
     <div class="footer-inner max-w-6xl mx-auto px-4 text-center">
       <p class="footer-copyright text-sm text-slate-500 dark:text-slate-400">
-        &copy; 2026 <strong class="font-bold text-slate-800 dark:text-slate-200">Blog kỹ thuật</strong>. All rights reserved.
+        &copy; 2026 <strong class="font-bold text-slate-800 dark:text-slate-200">Blog Tech</strong>. All rights reserved.
       </p>
     </div>
   </footer>

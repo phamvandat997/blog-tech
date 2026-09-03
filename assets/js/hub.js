@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   hub.page = params.page || 1;
 
   setPageMeta({
-    title: `${hub.section.name} | Blog kỹ thuật`,
+    title: `${hub.section.name} | Blog Tech`,
     description: hub.section.tagline || `Danh mục bài viết mảng ${hub.section.name}.`,
   });
   qs("#hub-title").textContent = hub.section.name;

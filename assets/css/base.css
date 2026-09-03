@@ -143,15 +143,29 @@ body {
 }
 
 .brand-logo {
-  font-size: 1.5rem;
   width: 38px;
   height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--primary-light);
-  border-radius: var(--radius-md);
   flex-shrink: 0;
+  background: transparent;
+  border-radius: var(--radius-lg);
+}
+
+.brand-logo-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+  filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.35));
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.brand:hover .brand-logo-img {
+  transform: scale(1.08) rotate(-2deg);
+  filter: drop-shadow(0 4px 12px rgba(79, 70, 229, 0.5));
 }
 
 .brand-text {
@@ -159,9 +173,10 @@ body {
   flex-direction: column;
 }
 
+.brand-title,
 .brand-text h1 {
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.02em;
   line-height: 1.2;
   white-space: nowrap;

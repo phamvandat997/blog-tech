@@ -562,7 +562,7 @@ function setupDocActions() {
       const url = window.location.href;
       if (navigator.share) {
         try {
-          await navigator.share({ title, url, text: `${title} — Blog kỹ thuật` });
+          await navigator.share({ title, url, text: `${title} — Blog Tech` });
         } catch (e) {
           if (e.name !== "AbortError") showToast("Không thể mở hộp thoại chia sẻ");
         }

@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Không tìm thấy trang | Blog kỹ thuật</title>
+  <title>Không tìm thấy trang | Blog Tech</title>
   <meta name="description" content="Không tìm thấy trang bạn cần.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Không tìm thấy trang | Blog kỹ thuật">
+  <meta property="og:title" content="Không tìm thấy trang | Blog Tech">
   <meta property="og:description" content="Không tìm thấy trang bạn cần.">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <script>
     // Đặt giao diện TRƯỚC khi vẽ khung đầu tiên, nếu không trang chớp sáng rồi
     // mới lật sang tối. Buộc phải inline và đồng bộ; state.js chạy sau là muộn.
@@ -26,7 +27,7 @@
   <!-- Webfont không được chặn vẽ khung đầu tiên: nạp như stylesheet in ấn rồi
        đổi sang `all` khi tải xong. Chữ hiện ngay bằng font hệ thống. -->
   <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="assets/css/tailwind.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blog.css">
@@ -37,9 +38,14 @@
   <header class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="brand">
-        <div class="brand-logo">📘</div>
+        <div class="brand-logo">
+          <img src="assets/images/logo.svg" alt="Blog Tech Logo" class="brand-logo-img">
+        </div>
         <div class="brand-text">
-          <h1>Blog kỹ thuật</h1>
+          <div class="brand-title flex items-center text-base font-black tracking-tight leading-tight m-0">
+            <span class="text-indigo-600 dark:text-indigo-400">Blog</span>
+            <span class="text-slate-900 dark:text-white ml-1">Tech</span>
+          </div>
           <p>Ghi chép &amp; chia sẻ kiến thức lập trình</p>
         </div>
       </a>
@@ -61,7 +67,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="footer-copyright">
-        &copy; 2026 <strong>Blog kỹ thuật</strong>. All rights reserved.
+        &copy; 2026 <strong>Blog Tech</strong>. All rights reserved.
       </p>
     </div>
   </footer>
