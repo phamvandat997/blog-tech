@@ -91,11 +91,41 @@
           <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-progress-val">0%</span>
           <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400" id="hero-progress-lbl">Tiến độ cá nhân hoá</span>
         </div>
+        <a href="quiz.html" class="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:-translate-y-0.5 hover:border-indigo-500 transition-all no-underline" title="Xem tất cả bài tập trắc nghiệm">
+          <span class="hero-stat-icon text-xl">📝</span>
+          <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-quiz-val">121</span>
+          <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">Câu trắc nghiệm</span>
+        </a>
       </div>
     </section>
 
     <!-- Danh sách bài viết nổi bật (Featured Articles) giữ full screen -->
     <section class="featured-section w-full mb-12" id="featured-root"></section>
+
+    <!-- Lối tắt vào làm bài Quiz nổi bật trên trang chủ (Căn giữa 20% - 60% - 20%) -->
+    <section class="w-full lg:w-[60%] lg:max-w-[60%] mx-auto mb-10">
+      <div class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 text-white shadow-xl shadow-indigo-500/10">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md border border-white/30 text-white">
+              🎯 Ôn luyện thực chiến
+            </span>
+            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight m-0 text-white">
+              Ngân Hàng Câu Hỏi Trắc Nghiệm Có Chấm Điểm
+            </h3>
+            <p class="text-sm text-indigo-100 max-w-xl m-0 leading-relaxed">
+              Luyện tập với 121+ câu hỏi trắc nghiệm OCP Java SE 25, kiểm tra đúng/sai tức thì và giải thích chi tiết từng câu hỏi.
+            </p>
+          </div>
+          <div class="shrink-0 flex items-center gap-3">
+            <a href="quiz.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white text-indigo-700 font-extrabold text-sm hover:bg-indigo-50 hover:shadow-lg transition-all no-underline">
+              <span>Làm Quiz Ngay</span>
+              <span>➔</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Danh sách mảng bài viết căn giữa tỉ lệ 20% - 60% - 20% -->
     <div id="sections-root" class="w-full lg:w-[60%] lg:max-w-[60%] mx-auto space-y-10"></div>

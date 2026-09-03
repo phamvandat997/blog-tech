@@ -41,6 +41,10 @@ function featuredDocCard(doc) {
     ? `<span class="inline-flex items-center gap-1 text-[0.7rem] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">✓ Đã học</span>`
     : "";
 
+  const quizBadge = doc.questions > 0
+    ? `<span class="inline-flex items-center gap-1 text-[0.7rem] font-extrabold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60">🎯 ${doc.questions} quiz</span>`
+    : "";
+
   const tagsHtml = (doc.tags || []).slice(0, 2).map((tag) =>
     `<span class="text-[0.68rem] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300">#${escapeHtml(tag)}</span>`
   ).join("");
@@ -58,6 +62,8 @@ function featuredDocCard(doc) {
             <span class="inline-flex items-center gap-1 text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
               ⭐ Nổi bật
             </span>
+            ${quizBadge}
+            ${completedBadge}
           </div>
           <span class="text-xs font-medium text-slate-400 dark:text-slate-500 whitespace-nowrap">⏱️ ~${doc.readingMinutes}p</span>
         </div>
@@ -187,6 +193,12 @@ function updateHeroStats() {
 
   const sectionsVal = qs("#hero-sections-val");
   if (sectionsVal) sectionsVal.textContent = String(ALL_SECTIONS.length);
+
+  const quizVal = qs("#hero-quiz-val");
+  if (quizVal) {
+    const totalQuiz = allDocs.reduce((sum, d) => sum + (d.questions || 0), 0);
+    quizVal.textContent = String(totalQuiz);
+  }
 
   const progressVal = qs("#hero-progress-val");
   const progressLbl = qs("#hero-progress-lbl");

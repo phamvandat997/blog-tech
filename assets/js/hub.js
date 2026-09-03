@@ -46,6 +46,7 @@ function docCard(doc) {
   const isCompleted = isDocCompleted(doc.id);
   const readingTime = doc.readingMinutes || 5;
   const phaseBadge = doc.phase ? `<span class="doc-badge doc-badge-phase inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/60">${escapeHtml(doc.phase)}</span>` : "";
+  const quizBadge = doc.questions > 0 ? `<span class="doc-badge doc-badge-quiz inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">🎯 ${doc.questions} quiz</span>` : "";
   const completedBadge = isCompleted ? `<span class="doc-badge doc-badge-completed inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">✓ Đã học</span>` : "";
   const tagsHtml = (doc.tags || []).slice(0, 2).map((t) => `<span class="doc-tag text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-full">#${escapeHtml(t)}</span>`).join("");
 
@@ -53,6 +54,7 @@ function docCard(doc) {
     <div class="doc-card-top flex items-center justify-between gap-2 mb-3">
       <div class="doc-badges flex items-center gap-1.5 flex-wrap">
         ${phaseBadge}
+        ${quizBadge}
         ${completedBadge}
       </div>
       <span class="doc-reading-time text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1">⏱️ ~${readingTime}p</span>
