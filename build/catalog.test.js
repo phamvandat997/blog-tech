@@ -29,7 +29,7 @@ const SOURCE = fs.readFileSync(
 // trong vm nằm ở phạm vi từ vựng toàn cục chứ không thành thuộc tính của
 // sandbox. Chạy thêm một biểu thức trong CÙNG ngữ cảnh để lấy chúng ra.
 const EXPORTS = `({ hasCatalog, ALL_SECTIONS, ALL_DOCUMENTS, getSection, getDoc,
-  docsOfSection, filterDocs, readParams, hubUrl, readerUrl })`;
+  docsOfSection, filterDocs, featuredDocs, readParams, hubUrl, readerUrl })`;
 
 /** @param {string} search phần query string, ví dụ "?s=java&c=core" */
 function load(search = "", catalog = true) {
@@ -134,3 +134,10 @@ test("readerUrl đi được vòng tròn qua readParams", () => {
   const p = load(url.slice(url.indexOf("?"))).readParams();
   assert.equal(p.doc.id, "java/core/b");
 });
+
+test("featuredDocs ưu tiên bài có featured và fallback hợp lý", () => {
+  const c = load();
+  const res = c.featuredDocs(2);
+  assert.equal(res.length, 2);
+});
+

@@ -1,5 +1,8 @@
 ---
 title: "Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux"
+featured: true
+order: 1
+tags: ["Java", "Setup", "JDK"]
 ---
 
 # Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux

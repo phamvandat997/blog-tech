@@ -102,6 +102,7 @@ function scanContent(contentDir) {
           title: data.title || firstHeading(body) || slug,
           description: data.description || firstParagraph(body),
           phase: data.phase || "",
+          featured: Boolean(data.featured || data.pinned),
           tags: Array.isArray(data.tags) ? data.tags : [],
           order: typeof data.order === "number" ? data.order : 999,
           readingMinutes,

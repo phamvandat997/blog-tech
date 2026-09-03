@@ -346,10 +346,39 @@ function bindReaderSearch() {
     });
   };
 
+  const showFeaturedSuggestions = () => {
+    selectedIdx = -1;
+    const fDocs = typeof featuredDocs === "function" ? featuredDocs(4) : [];
+    if (!fDocs.length) return;
+    panel.innerHTML = `
+      <div class="px-3 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+        <span>⭐</span> Gợi ý bài viết nổi bật
+      </div>
+      ${fDocs.map((doc) => {
+        const section = getSection(doc.section);
+        const category = section?.categories?.find((c) => c.id === doc.category);
+        return `<a class="search-hit" href="${attr(readerUrl(doc))}">
+          <span class="search-hit-body">
+            <span class="search-hit-title">${escapeHtml(doc.title)}</span>
+            <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(category?.name || doc.category)}</span>
+          </span>
+        </a>`;
+      }).join("")}
+    `;
+    panel.classList.add("open");
+  };
+
+  input.addEventListener("focus", () => {
+    if (input.value.trim().length < 2) showFeaturedSuggestions();
+  });
+
   input.addEventListener("input", () => {
     selectedIdx = -1;
     const query = input.value.trim();
-    if (query.length < 2) return close();
+    if (query.length < 2) {
+      showFeaturedSuggestions();
+      return;
+    }
     const hits = filterDocs({ query }).slice(0, 8);
     if (!hits.length) {
       panel.innerHTML = `<div class="search-hit search-hit-empty">Không có bài nào khớp “${escapeHtml(query)}”</div>`;

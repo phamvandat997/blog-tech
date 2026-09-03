@@ -32,9 +32,93 @@ function sectionCard(section) {
   </a>`;
 }
 
+function featuredDocCard(doc) {
+  const section = getSection(doc.section);
+  const isCompleted = isDocCompleted(doc.id);
+  const sectionColor = section?.color || "#6366f1";
+
+  const completedBadge = isCompleted
+    ? `<span class="inline-flex items-center gap-1 text-[0.7rem] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">✓ Đã học</span>`
+    : "";
+
+  const tagsHtml = (doc.tags || []).slice(0, 2).map((tag) =>
+    `<span class="text-[0.68rem] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300">#${escapeHtml(tag)}</span>`
+  ).join("");
+
+  return `
+    <a href="${attr(readerUrl(doc))}" class="featured-card group relative flex flex-col justify-between p-6 rounded-2xl backdrop-blur-md bg-white/95 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all no-underline overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1" style="background: ${attr(sectionColor)}"></div>
+      
+      <div>
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center text-xs font-black px-2.5 py-0.5 rounded-full" style="background: ${attr(sectionColor)}18; color: ${attr(sectionColor)}; border: 1px solid ${attr(sectionColor)}33">
+              ${escapeHtml(section?.name || doc.section)}
+            </span>
+            <span class="inline-flex items-center gap-1 text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
+              ⭐ Nổi bật
+            </span>
+          </div>
+          <span class="text-xs font-medium text-slate-400 dark:text-slate-500 whitespace-nowrap">⏱️ ~${doc.readingMinutes}p</span>
+        </div>
+
+        <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 mb-2 leading-snug">
+          ${escapeHtml(doc.title)}
+        </h3>
+
+        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4">
+          ${escapeHtml(doc.description)}
+        </p>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          ${completedBadge}
+          ${tagsHtml}
+        </div>
+        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">
+          Đọc ngay ➔
+        </span>
+      </div>
+    </a>
+  `;
+}
+
+function renderFeaturedSection() {
+  const root = qs("#featured-root");
+  if (!root) return;
+
+  const docs = typeof featuredDocs === "function" ? featuredDocs(6) : [];
+  if (!docs.length) {
+    root.hidden = true;
+    return;
+  }
+
+  root.hidden = false;
+  root.innerHTML = `
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+      <div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold tracking-wider uppercase bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50 mb-2">
+          🔥 GỢI Ý ĐỌC NHIỀU
+        </div>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
+          Bài Viết Nổi Bật Dành Cho Bạn
+        </h2>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 m-0 max-w-md">
+        Các bài hướng dẫn cốt lõi, chọn lọc kỹ càng để bạn bắt đầu lộ trình học tập hiệu quả nhất.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      ${docs.map(featuredDocCard).join("")}
+    </div>
+  `;
+}
+
 function renderLanding() {
   const root = qs("#sections-root");
   updateHeroStats();
+  renderFeaturedSection();
   if (!hasCatalog || ALL_SECTIONS.length === 0) {
     root.innerHTML = emptyState("📦", "Chưa có nội dung nào",
       "Tạo content/<mảng>/<chuyên-mục>/bai-viet.md rồi chạy: node build/build.js");
@@ -100,10 +184,39 @@ function bindGlobalSearch() {
     });
   };
 
+  const showFeaturedSuggestions = () => {
+    selectedIdx = -1;
+    const fDocs = typeof featuredDocs === "function" ? featuredDocs(4) : [];
+    if (!fDocs.length) return;
+    panel.innerHTML = `
+      <div class="px-3 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+        <span>⭐</span> Gợi ý bài viết nổi bật
+      </div>
+      ${fDocs.map((doc) => {
+        const section = getSection(doc.section);
+        const category = section?.categories?.find((c) => c.id === doc.category);
+        return `<a class="search-hit" href="${attr(readerUrl(doc))}">
+          <span class="search-hit-body">
+            <span class="search-hit-title">${escapeHtml(doc.title)}</span>
+            <span class="search-hit-path">${escapeHtml(section?.name || doc.section)} › ${escapeHtml(category?.name || doc.category)}</span>
+          </span>
+        </a>`;
+      }).join("")}
+    `;
+    panel.classList.add("open");
+  };
+
+  input.addEventListener("focus", () => {
+    if (input.value.trim().length < 2) showFeaturedSuggestions();
+  });
+
   input.addEventListener("input", () => {
     selectedIdx = -1;
     const query = input.value.trim();
-    if (query.length < 2) return close();
+    if (query.length < 2) {
+      showFeaturedSuggestions();
+      return;
+    }
     const hits = filterDocs({ query }).slice(0, 8);
     if (!hits.length) {
       panel.innerHTML = `<div class="search-hit search-hit-empty">Không có bài nào khớp “${escapeHtml(query)}”</div>`;

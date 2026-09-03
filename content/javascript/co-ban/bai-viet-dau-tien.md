@@ -1,6 +1,7 @@
 ---
 title: "JavaScript Cơ Bản — Nhập Môn & Tổng Quan"
 order: 1
+featured: true
 tags: ["JavaScript", "Basics", "Fundamentals"]
 ---
 

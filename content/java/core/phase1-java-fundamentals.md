@@ -2,6 +2,7 @@
 title: "Phase 1: Nền tảng Java (Java Fundamentals) - Luyện thi OCP Java SE 25 (1Z0-831)"
 order: 1
 phase: "Phase 1"
+featured: true
 tags: ["Primitives", "String Pool", "var", "Switch", "Stack Memory"]
 ---
 # Phase 1: Nền tảng Java (Java Fundamentals) - Luyện thi OCP Java SE 25 (1Z0-831)
