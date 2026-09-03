@@ -290,15 +290,6 @@
   .admin-whoami { display: none; }
 }
 
-/* ------------------------------------------------------- gợi ý icon */
-
-
-
-
-
-@media (max-width: 768px) {
-  }
-
 /* ------------------------------------------------------- danh sách bài */
 
 .admin-list-bar { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; }
@@ -368,3 +359,213 @@
   .admin-list-side { width: 100%; }
 }
 .admin-status.is-removing { background: rgba(225, 29, 72, 0.13); color: var(--accent-rose); }
+
+
+/* =================================================== màn chờ khởi động */
+/* Trước đây trang trắng trơn cho tới khi verify() xong — nay có phản hồi ngay. */
+
+.admin-boot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-height: 55vh;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+.admin-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: var(--radius-full);
+  animation: admin-spin 0.7s linear infinite;
+}
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+
+/* ======================================================== khung xương */
+
+.admin-skeleton { display: flex; flex-direction: column; gap: 0.6rem; }
+.admin-skeleton-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+.skeleton-line {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg,
+    var(--bg-surface-subtle) 25%, var(--border-color) 37%, var(--bg-surface-subtle) 63%);
+  background-size: 400% 100%;
+  animation: admin-shimmer 1.3s ease infinite;
+}
+.skeleton-title { width: 42%; }
+.skeleton-path  { width: 68%; height: 8px; }
+@keyframes admin-shimmer { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+
+/* Tôn trọng người tắt hiệu ứng chuyển động trong cài đặt hệ thống. */
+@media (prefers-reduced-motion: reduce) {
+  .admin-spinner, .skeleton-line { animation: none; }
+}
+
+/* ====================================================== bộ lọc danh sách */
+
+.admin-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.admin-filter {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast),
+              background var(--transition-fast);
+}
+.admin-filter:hover { color: var(--text-main); border-color: var(--border-subtle); }
+.admin-filter.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.admin-filter-count {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-subtle);
+}
+.admin-filter.active .admin-filter-count { background: var(--bg-surface); }
+
+/* ==================================================== nhóm theo mảng */
+
+.admin-group { display: flex; flex-direction: column; gap: 0.6rem; }
+.admin-group + .admin-group { margin-top: 1.4rem; }
+.admin-group-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.45rem 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-body);
+}
+.admin-group-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-subtle);
+  color: var(--text-subtle);
+}
+
+/* ================================================ soạn thảo hai cột */
+
+.admin-panes { display: block; }
+.admin-pane { min-width: 0; }
+.admin-pane-label { display: none; }
+
+.admin-panes.is-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+.admin-panes.is-split .admin-pane-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+/* Hai cột phải cao bằng nhau, và preview tự cuộn thay vì kéo dài trang. */
+.admin-panes.is-split .admin-textarea { min-height: 520px; height: 520px; resize: none; }
+.admin-panes.is-split .admin-preview  { height: 520px; min-height: 0; overflow-y: auto; }
+/* Nhãn cột phải đẩy preview xuống ngang tầm textarea. */
+.admin-panes.is-split [data-pane="write"] { padding-top: 1.42rem; }
+
+/* ====================================================== bản nháp & phím tắt */
+
+.admin-alert-draft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: rgba(217, 119, 6, 0.11);
+  color: var(--accent-amber);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+.admin-alert-draft .admin-btn-link { color: inherit; }
+
+.admin-kbd-hint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-subtle);
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+.admin-list-search { position: relative; }
+.admin-list-search .admin-kbd-hint {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.admin-list-search input { padding-right: 4rem; }
+
+/* ============================================ tinh chỉnh cho màn hẹp */
+
+@media (max-width: 768px) {
+  /* Vùng bấm đủ lớn để không phải nhắm — 44px theo hướng dẫn cảm ứng. */
+  .admin-field input,
+  .admin-field select,
+  .admin-field textarea { font-size: 16px; padding: 0.7rem 0.75rem; }  /* 16px chặn iOS tự phóng to */
+  .admin-btn-primary,
+  .admin-btn-secondary,
+  .admin-btn-danger { min-height: 44px; }
+  .admin-btn-xs { min-height: 38px; }
+  .admin-filter { min-height: 38px; }
+  .admin-list-search .admin-kbd-hint { display: none; }
+  .admin-list-search input { padding-right: 0.75rem; }
+
+  .admin-list-row { flex-direction: column; align-items: stretch; gap: 0.7rem; }
+  .admin-list-side { justify-content: flex-start; }
+
+  /* Nút gửi luôn trong tầm ngón tay. */
+  .admin-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin: 0 -0.75rem -4rem;
+    padding: 0.85rem 0.75rem;
+    background: var(--bg-body);
+    border-top: 1px solid var(--border-color);
+  }
+  .admin-actions .admin-btn-primary { flex: 1; }
+}

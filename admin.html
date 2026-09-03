@@ -7,7 +7,15 @@
   <title>Quản lý bài viết | Blog kỹ thuật</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Webfont không được chặn vẽ khung đầu tiên: nạp như stylesheet in ấn rồi
+       đổi sang `all` khi tải xong. Chữ hiện ngay bằng font hệ thống, đổi sang
+       Inter khi font về. -->
+  <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  </noscript>
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blog.css">
   <link rel="stylesheet" href="assets/css/admin.css">
@@ -36,6 +44,12 @@
       </div>
     </div>
   </header>
+
+  <!-- KHỞI ĐỘNG: hiện ngay, tránh trang trắng trong lúc kiểm token phiên cũ -->
+  <main class="admin-boot" id="admin-boot">
+    <div class="admin-spinner" aria-hidden="true"></div>
+    <p>Đang kiểm tra phiên đăng nhập…</p>
+  </main>
 
   <!-- ĐĂNG NHẬP -->
   <main class="admin-login" id="admin-login" hidden>
@@ -97,9 +111,12 @@
     <div class="admin-list-bar">
       <div class="admin-field admin-list-search">
         <input type="search" id="list-search" placeholder="Lọc theo tiêu đề hoặc đường dẫn…">
+        <kbd class="admin-kbd-hint">Ctrl K</kbd>
       </div>
       <button class="admin-btn-secondary" id="btn-refresh" type="button">↻ Tải lại</button>
     </div>
+
+    <div class="admin-filters" id="list-filters" role="group" aria-label="Lọc theo trạng thái"></div>
 
     <div class="admin-alert admin-alert-error" id="list-error" hidden></div>
     <div class="admin-list" id="post-list"></div>
@@ -110,6 +127,7 @@
     <form class="admin-form" id="post-form">
 
       <div class="admin-alert admin-alert-info" id="edit-banner" hidden></div>
+      <div class="admin-alert admin-alert-draft" id="draft-banner" hidden></div>
 
       <section class="admin-card">
         <h2 class="admin-card-title">Nơi lưu bài</h2>
@@ -188,14 +206,21 @@
           <span class="admin-hint" id="file-markdown-name">Hoặc gõ thẳng vào ô bên dưới</span>
         </div>
 
-        <div class="admin-tabs">
+        <div class="admin-tabs" id="editor-tabs">
           <button type="button" class="admin-tab active" data-editor-tab="write">Soạn</button>
           <button type="button" class="admin-tab" data-editor-tab="preview">Xem trước</button>
         </div>
 
-        <textarea id="field-body" class="admin-textarea" spellcheck="false"
-                  placeholder="# Tiêu đề bài&#10;&#10;Nội dung markdown…"></textarea>
-        <div class="admin-preview markdown-body" id="body-preview" hidden></div>
+        <div class="admin-panes" id="editor-panes">
+          <div class="admin-pane" data-pane="write">
+            <textarea id="field-body" class="admin-textarea" spellcheck="false"
+                      placeholder="# Tiêu đề bài&#10;&#10;Nội dung markdown…"></textarea>
+          </div>
+          <div class="admin-pane" data-pane="preview">
+            <div class="admin-pane-label">Xem trước</div>
+            <div class="admin-preview markdown-body" id="body-preview"></div>
+          </div>
+        </div>
       </section>
 
       <section class="admin-card">
@@ -238,7 +263,7 @@
       <div class="admin-actions">
         <button class="admin-btn-primary" id="post-submit" type="submit">Tạo pull request</button>
         <button class="admin-btn-link" id="btn-cancel-edit" type="button" hidden>Huỷ, quay lại danh sách</button>
-        <span class="admin-hint" id="post-status"></span>
+        <span class="admin-hint" id="post-status"><kbd class="admin-kbd-hint">Ctrl S</kbd> để gửi</span>
       </div>
     </form>
   </main>
@@ -257,7 +282,6 @@
 <script src="assets/js/dom.js"></script>
 <script src="assets/js/state.js"></script>
 <script src="assets/js/frontmatter.js"></script>
-<script src="assets/js/markdown.js"></script>
 <script src="assets/js/github.js"></script>
 <script src="assets/js/admin.js"></script>
 </body>

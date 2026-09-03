@@ -21,6 +21,9 @@ const SESSION_KEY = "blog.adminSession";
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const NEW = "__new__";
 const BRANCH_PREFIX = "post/";
+const DRAFT_KEY = "blog.adminDraft";
+const DRAFT_DEBOUNCE_MS = 800;
+const SPLIT_QUERY = "(min-width: 1100px)";
 
 const admin = {
   /** @type {GitHubRepo|null} */ gh: null,
@@ -29,6 +32,10 @@ const admin = {
   /** null khi tạo mới; { path, quizPath, quizContent } khi đang sửa bài có sẵn */
   editing: null,
   busy: false,
+  filter: "all",       // bộ lọc trạng thái ở màn danh sách
+  postsToken: 0,       // chống kết quả của lượt loadPosts cũ ghi đè lượt mới
+  dirty: false,        // form có thay đổi chưa gửi
+  restoring: false,    // đang đổ dữ liệu vào form, đừng coi là người dùng gõ
 };
 
 /* ------------------------------------------------------------- tiện ích */
@@ -102,7 +109,7 @@ async function handleLogin(event) {
     const user = await gh.verify();
     admin.gh = gh;
     writeSession({ email, token, ...config, login: user.login });
-    await enterApp(email, user.login);
+    enterApp(email, user.login);
   } catch (err) {
     showAlert(error, err.message);
   } finally {
@@ -111,14 +118,19 @@ async function handleLogin(event) {
   }
 }
 
-async function enterApp(email, login) {
+function enterApp(email, login) {
+  qs("#admin-boot").hidden = true;
   qs("#admin-login").hidden = true;
   qs("#admin-tabs").hidden = false;
   qs("#btn-logout").hidden = false;
   const who = qs("#admin-whoami");
   who.textContent = `${email} · @${login}`;
   who.hidden = false;
-  await loadSections();
+
+  // Hai lời gọi này không phụ thuộc nhau — danh sách bài không cần cây thư mục,
+  // cây thư mục chỉ cần cho màn soạn bài. Chạy nối đuôi thì mất gấp đôi số vòng
+  // round-trip trước khi thấy bài đầu tiên, nên bắn song song.
+  loadSections();
   switchView("list");
 }
 
@@ -129,6 +141,7 @@ function switchView(view) {
   qs("#admin-list").hidden = view !== "list";
   qs("#admin-editor").hidden = view !== "editor";
   if (view === "list") loadPosts();
+  else syncEditorPanes();
 }
 
 /* --------------------------------------- đọc cây thư mục từ GitHub */
@@ -158,6 +171,9 @@ async function loadSections() {
       };
     }));
     renderSectionSelect(keep);
+    // Chạy song song với loadPosts nên có thể về sau: danh sách đã vẽ bằng id
+    // thư mục, giờ mới có tên hiển thị — vẽ lại nhãn nhóm cho đúng.
+    if (admin.posts.length) renderPosts();
   } catch (err) {
     select.innerHTML = '<option value="">Không đọc được</option>';
     showAlert(qs("#post-error"), `Không đọc được thư mục content/: ${err.message}`);
@@ -218,16 +234,30 @@ function renderCategorySelect(keepCategory) {
  *   có trên nhánh chính, đang có PR đụng   → chờ duyệt thay đổi
  *   chưa có trên nhánh chính, nằm trong PR → chờ duyệt bài mới
  */
+function listSkeleton(rows = 5) {
+  return `<div class="admin-skeleton" aria-busy="true" aria-label="Đang tải danh sách bài">` +
+    Array.from({ length: rows }, () => `<div class="admin-skeleton-row">
+      <div class="skeleton-line skeleton-title"></div>
+      <div class="skeleton-line skeleton-path"></div>
+    </div>`).join("") + `</div>`;
+}
+
 async function loadPosts() {
   const list = qs("#post-list");
   showAlert(qs("#list-error"), "");
-  list.innerHTML = '<p class="admin-hint">Đang đọc danh sách bài…</p>';
+  list.innerHTML = listSkeleton();
+  qs("#list-filters").hidden = true;
+
+  // Bấm "Tải lại" liên tục thì lượt chậm về sau không được ghi đè lượt mới.
+  const token = ++admin.postsToken;
+  const stale = () => token !== admin.postsToken;
 
   try {
     const [paths, pulls] = await Promise.all([
       admin.gh.listContentFiles(),
       admin.gh.listOpenPullRequests(BRANCH_PREFIX),
     ]);
+    if (stale()) return;
 
     // Mỗi PR đụng file nào — cần để gắn trạng thái cho đúng bài.
     const prFiles = await Promise.all(pulls.map((p) => admin.gh.pullRequestFiles(p.number)));
@@ -253,8 +283,10 @@ async function loadPosts() {
       };
     }).sort((a, b) => a.path.localeCompare(b.path));
 
+    if (stale()) return;
     renderPosts();
   } catch (err) {
+    if (stale()) return;
     list.innerHTML = "";
     showAlert(qs("#list-error"), err.message);
   }
@@ -267,42 +299,82 @@ const STATUS_LABEL = {
   removing: ["Chờ duyệt xoá", "is-removing"],
 };
 
+const FILTERS = [
+  ["all",     "Tất cả",     () => true],
+  ["active",  "Đang đăng",  (p) => p.status === "active"],
+  ["waiting", "Chờ duyệt",  (p) => p.status === "pending" || p.status === "changing"],
+  ["removing","Chờ xoá",    (p) => p.status === "removing"],
+];
+
+function renderFilters() {
+  const bar = qs("#list-filters");
+  const counts = new Map(FILTERS.map(([id, , match]) => [id, admin.posts.filter(match).length]));
+
+  bar.innerHTML = FILTERS
+    // Đừng bày ra ô lọc rỗng — trừ "Tất cả", luôn cần để quay về.
+    .filter(([id]) => id === "all" || counts.get(id) > 0)
+    .map(([id, label]) => `<button type="button" class="admin-filter${id === admin.filter ? " active" : ""}"
+        data-filter="${attr(id)}" aria-pressed="${id === admin.filter}">
+      ${escapeHtml(label)}<span class="admin-filter-count">${counts.get(id)}</span>
+    </button>`).join("");
+  bar.hidden = !admin.posts.length;
+}
+
 function renderPosts() {
+  renderFilters();
+
   const query = qs("#list-search").value.trim().toLowerCase();
-  const posts = query
-    ? admin.posts.filter((p) => `${p.title} ${p.path}`.toLowerCase().includes(query))
-    : admin.posts;
+  const match = (FILTERS.find(([id]) => id === admin.filter) || FILTERS[0])[2];
+  const posts = admin.posts
+    .filter(match)
+    .filter((p) => !query || `${p.title} ${p.path}`.toLowerCase().includes(query));
 
   const list = qs("#post-list");
   if (!posts.length) {
     list.innerHTML = admin.posts.length
-      ? '<p class="admin-hint">Không có bài nào khớp từ khoá.</p>'
+      ? '<p class="admin-hint">Không có bài nào khớp bộ lọc hiện tại.</p>'
       : '<p class="admin-hint">Chưa có bài nào. Bấm “Soạn bài mới” để bắt đầu.</p>';
     return;
   }
 
-  const waiting = admin.posts.filter((p) => p.pr).length;
-  list.innerHTML =
-    `<p class="admin-list-count">${posts.length} bài${waiting ? ` · ${waiting} đang chờ duyệt` : ""}</p>` +
-    posts.map((post) => {
-      const [label, cls] = STATUS_LABEL[post.status];
-      const prLink = post.pr
-        ? `<a class="admin-pr-link" href="${attr(post.pr.html_url)}" target="_blank" rel="noopener">PR #${post.pr.number} ↗</a>`
-        : "";
-      return `<article class="admin-list-row" data-path="${attr(post.path)}">
-        <div class="admin-list-main">
-          <span class="admin-list-title">${escapeHtml(post.title)}</span>
-          <code class="admin-list-path">${escapeHtml(post.path)}</code>
-        </div>
-        <div class="admin-list-side">
-          <span class="admin-status ${cls}">${label}</span>
-          ${prLink}
-          <button class="admin-btn-secondary admin-btn-xs" type="button" data-edit>Sửa</button>
-          ${post.status === "removing" ? ""
-            : '<button class="admin-btn-danger admin-btn-xs" type="button" data-delete>Xoá</button>'}
-        </div>
-      </article>`;
-    }).join("");
+  // Nhóm theo mảng, giữ đúng thứ tự đã sắp của admin.posts.
+  const groups = new Map();
+  posts.forEach((p) => {
+    if (!groups.has(p.section)) groups.set(p.section, []);
+    groups.get(p.section).push(p);
+  });
+
+  const sectionName = (id) =>
+    admin.sections.find((sec) => sec.id === id)?.name || id;
+
+  list.innerHTML = [...groups].map(([section, rows]) =>
+    `<section class="admin-group">
+      <h3 class="admin-group-head">
+        ${escapeHtml(sectionName(section))}
+        <span class="admin-group-count">${rows.length}</span>
+      </h3>
+      ${rows.map(postRow).join("")}
+    </section>`).join("");
+}
+
+function postRow(post) {
+  const [label, cls] = STATUS_LABEL[post.status];
+  const prLink = post.pr
+    ? `<a class="admin-pr-link" href="${attr(post.pr.html_url)}" target="_blank" rel="noopener">PR #${post.pr.number} ↗</a>`
+    : "";
+  return `<article class="admin-list-row" data-path="${attr(post.path)}">
+    <div class="admin-list-main">
+      <span class="admin-list-title">${escapeHtml(post.title)}</span>
+      <code class="admin-list-path">${escapeHtml(post.path)}</code>
+    </div>
+    <div class="admin-list-side">
+      <span class="admin-status ${cls}">${label}</span>
+      ${prLink}
+      <button class="admin-btn-secondary admin-btn-xs" type="button" data-edit>Sửa</button>
+      ${post.status === "removing" ? ""
+        : '<button class="admin-btn-danger admin-btn-xs" type="button" data-delete>Xoá</button>'}
+    </div>
+  </article>`;
 }
 
 /* ----------------------------------------------- đường dẫn sẽ ghi */
@@ -357,6 +429,8 @@ function handleMarkdownFile(file) {
     qs("#file-markdown-name").textContent = `Đã nạp ${file.name}`;
     updatePathPreview();
     showAlert(qs("#post-error"), "");
+    markDirty();
+    schedulePreview();
   };
   reader.onerror = () => showAlert(qs("#post-error"), `Không đọc được ${file.name}.`);
   reader.readAsText(file);
@@ -510,6 +584,7 @@ async function handleSubmit(event) {
     showAlert(qs("#post-success"),
       `✅ Đã mở <a href="${attr(pr.html_url)}" target="_blank" rel="noopener">PR #${pr.number}</a>. ` +
       `Bài chỉ lên sóng sau khi PR được merge — Vercel build lại khoảng một phút sau đó.`, true);
+    clearDraft();
     resetForm();
     await loadSections();
     qs("#field-section").value = plan.sectionId;
@@ -552,6 +627,8 @@ async function startEdit(post) {
 
 
     updatePathPreview();
+    admin.dirty = false;
+    if (isSplit()) renderPreview();
     showAlert(banner,
       `Đang sửa <code>${escapeHtml(post.path)}</code>` +
       (post.pr ? ` — đọc từ nhánh của PR #${post.pr.number}.` : ".") +
@@ -602,6 +679,168 @@ async function handleDelete(post) {
   }
 }
 
+/* --------------------------------------------- xem trước & bộ dựng markdown */
+
+/**
+ * markdown.js chỉ cần khi thật sự xem trước, nên không nạp tĩnh trong <head>.
+ * Nạp một lần, các lần sau dùng lại cùng promise.
+ */
+let markdownReady = null;
+function loadMarkdownRenderer() {
+  if (typeof renderMarkdown === "function") return Promise.resolve();
+  if (markdownReady) return markdownReady;
+  markdownReady = new Promise((resolve, reject) => {
+    const el = document.createElement("script");
+    el.src = "assets/js/markdown.js";
+    el.onload = resolve;
+    el.onerror = () => reject(new Error("Không nạp được assets/js/markdown.js"));
+    document.head.appendChild(el);
+  });
+  return markdownReady;
+}
+
+let previewTimer = null;
+async function renderPreview() {
+  const target = qs("#body-preview");
+  const text = qs("#field-body").value.trim();
+  if (!text) {
+    target.innerHTML = '<p class="admin-hint">Chưa có nội dung để xem trước.</p>';
+    return;
+  }
+  try {
+    await loadMarkdownRenderer();
+    target.innerHTML = renderMarkdown(text);
+  } catch (err) {
+    target.innerHTML = `<p class="admin-hint">${escapeHtml(err.message)}</p>`;
+  }
+}
+
+/** Gõ liên tục thì đừng dựng lại markdown mỗi phím. */
+function schedulePreview() {
+  if (!isSplit()) return;              // chế độ tab chỉ dựng khi bấm sang tab
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(renderPreview, 250);
+}
+
+const isSplit = () => window.matchMedia(SPLIT_QUERY).matches;
+
+/**
+ * Màn rộng: soạn và xem trước cạnh nhau, ẩn thanh tab.
+ * Màn hẹp: giữ hai tab như cũ, mỗi lúc hiện một pane.
+ */
+function syncEditorPanes() {
+  const split = isSplit();
+  const panes = qs("#editor-panes");
+  if (!panes) return;
+
+  panes.classList.toggle("is-split", split);
+  qs("#editor-tabs").hidden = split;
+
+  if (split) {
+    qsa("[data-pane]", panes).forEach((el) => { el.hidden = false; });
+    renderPreview();
+    return;
+  }
+  const active = qsa("[data-editor-tab]").find((b) => b.classList.contains("active"));
+  showPane(active?.dataset.editorTab || "write");
+}
+
+function showPane(name) {
+  qsa("[data-pane]", qs("#editor-panes")).forEach((el) => {
+    el.hidden = el.dataset.pane !== name;
+  });
+  if (name === "preview") renderPreview();
+}
+
+/* ------------------------------------------------------------- bản nháp */
+
+// Nháp chỉ áp dụng cho bài tạo mới. Bài đang sửa đọc thẳng từ nhánh Git nên
+// khôi phục nửa vời sẽ nguy hiểm hơn là mất công gõ lại.
+const DRAFT_FIELDS = [
+  "#field-section", "#field-category", "#field-slug", "#field-title",
+  "#field-description", "#field-order", "#field-phase", "#field-tags", "#field-body",
+  "#new-section-id", "#new-section-name", "#new-section-tagline",
+  "#new-section-color", "#new-section-kind",
+  "#new-category-id", "#new-category-name",
+];
+
+const isFormEmpty = () =>
+  !qs("#field-body").value.trim() && !qs("#field-title").value.trim() && !qs("#field-slug").value.trim();
+
+let draftTimer = null;
+function scheduleDraftSave() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, DRAFT_DEBOUNCE_MS);
+}
+
+function saveDraft() {
+  if (admin.editing || isFormEmpty()) return;
+  const values = {};
+  DRAFT_FIELDS.forEach((id) => { values[id] = qs(id).value; });
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), values }));
+  } catch { /* hết chỗ thì thôi, không chặn việc soạn bài */ }
+}
+
+const clearDraft = () => { try { localStorage.removeItem(DRAFT_KEY); } catch { /* bỏ qua */ } };
+
+function readDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    const draft = raw ? JSON.parse(raw) : null;
+    return draft && draft.values ? draft : null;
+  } catch { return null; }
+}
+
+/** Chào mời khôi phục, không tự áp — người dùng quyết. */
+function offerDraft() {
+  const draft = readDraft();
+  const banner = qs("#draft-banner");
+  if (!draft) return;
+
+  const when = new Date(draft.savedAt);
+  const hhmm = `${String(when.getHours()).padStart(2, "0")}:${String(when.getMinutes()).padStart(2, "0")}`;
+  const sameDay = when.toDateString() === new Date().toDateString();
+  const label = sameDay ? `lúc ${hhmm}` : `ngày ${when.toLocaleDateString("vi-VN")} ${hhmm}`;
+  const title = draft.values["#field-title"] || draft.values["#field-slug"] || "bài chưa đặt tên";
+
+  showAlert(banner,
+    `Có bản nháp chưa gửi ${escapeHtml(label)} — <b>${escapeHtml(title)}</b>. ` +
+    `<button type="button" class="admin-btn-link" data-draft="restore">Khôi phục</button>` +
+    `<button type="button" class="admin-btn-link" data-draft="discard">Bỏ qua</button>`, true);
+}
+
+function applyDraft() {
+  const draft = readDraft();
+  if (!draft) return;
+  admin.restoring = true;
+  try {
+    // Mảng và chuyên mục phải đặt trước rồi mới dựng lại dropdown con.
+    DRAFT_FIELDS.forEach((id) => {
+      const el = qs(id);
+      if (el && draft.values[id] !== undefined) el.value = draft.values[id];
+    });
+    renderCategorySelect(draft.values["#field-category"]);
+    qs("#field-category").value = draft.values["#field-category"] || "";
+    qs("#new-section-form").hidden = qs("#field-section").value !== NEW;
+    qs("#new-category-form").hidden = qs("#field-category").value !== NEW;
+    if (qs("#field-slug").value) qs("#field-slug").dataset.touched = "1";
+    updatePathPreview();
+  } finally {
+    admin.restoring = false;
+  }
+  admin.dirty = true;
+  showAlert(qs("#draft-banner"), "");
+  schedulePreview();
+  showToast("Đã khôi phục bản nháp.");
+}
+
+function markDirty() {
+  if (admin.restoring) return;
+  admin.dirty = true;
+  scheduleDraftSave();
+}
+
 /* ------------------------------------------------------------- form */
 
 function resetForm() {
@@ -612,6 +851,10 @@ function resetForm() {
   ["#field-slug", "#new-section-id", "#new-category-id"].forEach((id) => { qs(id).dataset.touched = ""; });
 
   admin.editing = null;
+  admin.dirty = false;
+  clearTimeout(draftTimer);
+  qs("#body-preview").innerHTML = "";
+  showAlert(qs("#draft-banner"), "");
   qs("#file-markdown").value = "";
   qs("#file-markdown-name").textContent = "Hoặc gõ thẳng vào ô bên dưới";
   qs("#edit-banner").hidden = true;
@@ -632,6 +875,7 @@ function bindEvents() {
     // Bấm "Soạn bài mới" khi đang sửa dở thì phải về trạng thái tạo mới.
     if (btn.dataset.view === "editor" && admin.editing) resetForm();
     switchView(btn.dataset.view);
+    if (btn.dataset.view === "editor" && !admin.editing && isFormEmpty()) offerDraft();
   }));
 
   qs("#btn-cancel-edit").addEventListener("click", () => { resetForm(); switchView("list"); });
@@ -685,17 +929,53 @@ function bindEvents() {
   });
 
   qsa("[data-editor-tab]").forEach((btn) => btn.addEventListener("click", () => {
-    const isPreview = btn.dataset.editorTab === "preview";
     qsa("[data-editor-tab]").forEach((b) => b.classList.toggle("active", b === btn));
-    qs("#field-body").hidden = isPreview;
-    qs("#body-preview").hidden = !isPreview;
-    if (isPreview) {
-      const text = qs("#field-body").value.trim();
-      qs("#body-preview").innerHTML = text
-        ? renderMarkdown(text)
-        : '<p class="admin-hint">Chưa có nội dung để xem trước.</p>';
-    }
+    showPane(btn.dataset.editorTab);
   }));
+
+  // Đổi bề ngang màn hình thì đổi giữa hai cột và hai tab.
+  window.matchMedia(SPLIT_QUERY).addEventListener("change", syncEditorPanes);
+
+  // Bộ lọc trạng thái ở màn danh sách.
+  delegate(qs("#list-filters"), "click", "[data-filter]", (_, btn) => {
+    admin.filter = btn.dataset.filter;
+    renderPosts();
+  });
+
+  // Nháp: mọi ô trong form đều đánh dấu bẩn và hẹn giờ lưu.
+  qs("#post-form").addEventListener("input", markDirty);
+  qs("#post-form").addEventListener("change", markDirty);
+  qs("#field-body").addEventListener("input", schedulePreview);
+
+  delegate(qs("#draft-banner"), "click", "[data-draft]", (_, btn) => {
+    if (btn.dataset.draft === "restore") return applyDraft();
+    clearDraft();
+    showAlert(qs("#draft-banner"), "");
+  });
+
+  // Rời trang khi còn thay đổi chưa gửi — trình duyệt sẽ tự hỏi lại.
+  window.addEventListener("beforeunload", (event) => {
+    if (!admin.dirty || isFormEmpty()) return;
+    saveDraft();
+    event.preventDefault();
+    event.returnValue = "";
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const mod = event.metaKey || event.ctrlKey;
+    if (!mod) return;
+    const key = event.key.toLowerCase();
+
+    if (key === "s" && !qs("#admin-editor").hidden) {
+      event.preventDefault();
+      qs("#post-form").requestSubmit();
+    }
+    if (key === "k" && !qs("#admin-list").hidden) {
+      event.preventDefault();
+      qs("#list-search").focus();
+      qs("#list-search").select();
+    }
+  });
 }
 
 /* -------------------------------------------------------------- khởi động */
@@ -710,20 +990,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   qs("#login-branch").value = session?.branch || DEFAULT_REPO.branch;
   qs("#login-email").value = session?.email || "";
 
-  if (!session?.token) {
+  const showLogin = (message) => {
+    qs("#admin-boot").hidden = true;
     qs("#admin-login").hidden = false;
-    return;
-  }
+    if (message) showAlert(qs("#login-error"), message);
+  };
+
+  if (!session?.token) return showLogin();
 
   // Có phiên cũ: kiểm token còn dùng được không rồi mới vào thẳng.
   try {
     const gh = new GitHubRepo(session);
     const user = await gh.verify();
     admin.gh = gh;
-    await enterApp(session.email, user.login);
+    enterApp(session.email, user.login);
   } catch (err) {
     clearSession();
-    qs("#admin-login").hidden = false;
-    showAlert(qs("#login-error"), `Phiên cũ không dùng được nữa — ${err.message}`);
+    showLogin(`Phiên cũ không dùng được nữa — ${err.message}`);
   }
 });
