@@ -1845,3 +1845,28 @@ body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
   .reader-complete-box,
   .reader-comments-section { margin-left: 0; margin-right: 0; }
 }
+
+/* =============================== Carousel bài viết nổi bật */
+.featured-carousel {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.featured-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-carousel-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  user-select: none;
+}
+

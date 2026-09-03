@@ -46,7 +46,7 @@ function featuredDocCard(doc) {
   ).join("");
 
   return `
-    <a href="${attr(readerUrl(doc))}" class="featured-card group relative flex flex-col justify-between p-6 rounded-2xl backdrop-blur-md bg-white/95 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all no-underline overflow-hidden">
+    <a href="${attr(readerUrl(doc))}" class="featured-card group relative flex-none w-[285px] sm:w-[325px] md:w-[350px] snap-start flex flex-col justify-between p-5 sm:p-6 rounded-2xl backdrop-blur-md bg-white/95 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all no-underline overflow-hidden">
       <div class="absolute top-0 left-0 right-0 h-1" style="background: ${attr(sectionColor)}"></div>
       
       <div>
@@ -88,7 +88,7 @@ function renderFeaturedSection() {
   const root = qs("#featured-root");
   if (!root) return;
 
-  const docs = typeof featuredDocs === "function" ? featuredDocs(6) : [];
+  const docs = typeof featuredDocs === "function" ? featuredDocs(8) : [];
   if (!docs.length) {
     root.hidden = true;
     return;
@@ -96,23 +96,56 @@ function renderFeaturedSection() {
 
   root.hidden = false;
   root.innerHTML = `
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
-      <div>
-        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold tracking-wider uppercase bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50 mb-2">
-          🔥 GỢI Ý ĐỌC NHIỀU
-        </div>
-        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
-          Bài Viết Nổi Bật Dành Cho Bạn
-        </h2>
+    <div class="flex items-center justify-between gap-4 mb-4">
+      <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
+        Bài Viết Nổi Bật Dành Cho Bạn
+      </h2>
+      <div class="carousel-nav flex items-center gap-2">
+        <button id="featured-prev" class="featured-carousel-btn rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Bài trước" title="Bài trước">
+          ‹
+        </button>
+        <button id="featured-next" class="featured-carousel-btn rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Bài tiếp" title="Bài tiếp">
+          ›
+        </button>
       </div>
-      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 m-0 max-w-md">
-        Các bài hướng dẫn cốt lõi, chọn lọc kỹ càng để bạn bắt đầu lộ trình học tập hiệu quả nhất.
-      </p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      ${docs.map(featuredDocCard).join("")}
+    <div class="featured-carousel-container relative">
+      <div id="featured-carousel" class="featured-carousel flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 px-1">
+        ${docs.map(featuredDocCard).join("")}
+      </div>
     </div>
   `;
+
+  setupFeaturedCarousel();
+}
+
+function setupFeaturedCarousel() {
+  const carousel = qs("#featured-carousel");
+  const prevBtn = qs("#featured-prev");
+  const nextBtn = qs("#featured-next");
+  if (!carousel || !prevBtn || !nextBtn) return;
+
+  const updateButtons = () => {
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    prevBtn.disabled = carousel.scrollLeft <= 10;
+    nextBtn.disabled = carousel.scrollLeft >= maxScroll - 10;
+  };
+
+  prevBtn.addEventListener("click", () => {
+    const slide = carousel.querySelector(".featured-card");
+    const amount = slide ? slide.offsetWidth + 20 : 340;
+    carousel.scrollBy({ left: -amount, behavior: "smooth" });
+  });
+
+  nextBtn.addEventListener("click", () => {
+    const slide = carousel.querySelector(".featured-card");
+    const amount = slide ? slide.offsetWidth + 20 : 340;
+    carousel.scrollBy({ left: amount, behavior: "smooth" });
+  });
+
+  carousel.addEventListener("scroll", updateButtons, { passive: true });
+  window.addEventListener("resize", updateButtons);
+  updateButtons();
 }
 
 function renderLanding() {
