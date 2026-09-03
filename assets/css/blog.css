@@ -1382,11 +1382,24 @@ body.zen-mode #btn-zen-mode {
   gap: 0.5rem;
 }
 
+.comments-title-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .comments-title h3 {
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-main);
   margin: 0;
+}
+
+.comments-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0 0;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .comments-icon {

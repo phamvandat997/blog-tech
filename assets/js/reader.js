@@ -470,89 +470,33 @@ function setupHeadingAnchors() {
   });
 }
 
-async function setupGiscus(doc) {
+function setupGiscus(doc) {
   const container = qs("#giscus-container");
   if (!container || !doc) return;
 
-  const repo = "phamvandat997/blog-tech";
-  const repoId = "R_kgDOULiDYw";
+  container.innerHTML = "";
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const giscusTheme = isDark ? "dark" : "light";
 
-  try {
-    const res = await fetch(`https://giscus.app/api/discussions/categories?repo=${encodeURIComponent(repo)}`);
-    const data = await res.json();
+  const script = document.createElement("script");
+  script.src = "https://giscus.app/client.js";
+  script.setAttribute("data-repo", "phamvandat997/blog-tech");
+  script.setAttribute("data-repo-id", "R_kgDOULiDYw");
+  script.setAttribute("data-category", "General");
+  script.setAttribute("data-category-id", "DIC_kwDOULiDY84DEw-j");
+  script.setAttribute("data-mapping", "specific");
+  script.setAttribute("data-term", doc.id);
+  script.setAttribute("data-strict", "0");
+  script.setAttribute("data-reactions-enabled", "1");
+  script.setAttribute("data-emit-metadata", "0");
+  script.setAttribute("data-input-position", "top");
+  script.setAttribute("data-theme", giscusTheme);
+  script.setAttribute("data-lang", "vi");
+  script.setAttribute("data-loading", "lazy");
+  script.crossOrigin = "anonymous";
+  script.async = true;
 
-    if (data.error || !Array.isArray(data) || data.length === 0) {
-      const isSuspended = typeof data.error === "string" && data.error.toLowerCase().includes("suspended");
-
-      if (isSuspended) {
-        container.innerHTML = `
-          <div class="giscus-setup-guide">
-            <div class="setup-guide-icon">⚠️</div>
-            <h4>Ứng dụng Giscus đang bị Tạm ngưng (Suspended) trên GitHub</h4>
-            <p>Giscus App đã được cài vào tài khoản của bạn nhưng đang ở trạng thái <b>Suspended</b> (tạm ngưng). Bạn chỉ cần bấm vào liên kết bên dưới để Mở lại (Unsuspend) hoặc Cài đặt lại:</p>
-            <div class="setup-guide-steps">
-              <a class="setup-btn setup-btn-primary" href="https://github.com/settings/installations" target="_blank" rel="noopener">
-                🔓 Mở lại Giscus (Bấm Configure ➔ Unsuspend) ↗
-              </a>
-              <a class="setup-btn" href="https://github.com/apps/giscus" target="_blank" rel="noopener">
-                🔄 Cài đặt lại Giscus App ↗
-              </a>
-            </div>
-            <span class="setup-guide-note">Thao tác: Vào link trên ➔ Tìm <b>Giscus</b> ➔ Chọn <b>Unsuspend</b> (hoặc Uninstall rồi cài lại). Sau đó F5 trang là bình luận được ngay!</span>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = `
-        <div class="giscus-setup-guide">
-          <div class="setup-guide-icon">⚙️</div>
-          <h4>Kích hoạt tính năng Bình luận (Giscus)</h4>
-          <p>Kho chứa GitHub <code>${escapeHtml(repo)}</code> cần bật <b>Discussions</b> và cấp quyền cho <b>Giscus App</b> để bắt đầu lưu bình luận:</p>
-          <div class="setup-guide-steps">
-            <a class="setup-btn" href="https://github.com/${repo}/settings" target="_blank" rel="noopener">
-              1️⃣ Bật Discussions (Settings → Features) ↗
-            </a>
-            <a class="setup-btn setup-btn-primary" href="https://github.com/apps/giscus" target="_blank" rel="noopener">
-              2️⃣ Cài đặt Giscus App ↗
-            </a>
-          </div>
-          <span class="setup-guide-note">Sau khi bật xong 2 bước trên, tải lại trang (F5) là khung bình luận sẽ hoạt động ngay lập tức!</span>
-        </div>
-      `;
-      return;
-    }
-
-    const targetCat = data.find((c) => c.name === "General") || data[0];
-    const categoryName = targetCat.name;
-    const categoryId = targetCat.id;
-
-    container.innerHTML = "";
-    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-    const giscusTheme = isDark ? "dark" : "light";
-
-    const script = document.createElement("script");
-    script.src = "https://giscus.app/client.js";
-    script.setAttribute("data-repo", repo);
-    script.setAttribute("data-repo-id", repoId);
-    script.setAttribute("data-category", categoryName);
-    script.setAttribute("data-category-id", categoryId);
-    script.setAttribute("data-mapping", "specific");
-    script.setAttribute("data-term", doc.id);
-    script.setAttribute("data-strict", "0");
-    script.setAttribute("data-reactions-enabled", "1");
-    script.setAttribute("data-emit-metadata", "0");
-    script.setAttribute("data-input-position", "top");
-    script.setAttribute("data-theme", giscusTheme);
-    script.setAttribute("data-lang", "vi");
-    script.setAttribute("data-loading", "lazy");
-    script.crossOrigin = "anonymous";
-    script.async = true;
-
-    container.appendChild(script);
-  } catch (err) {
-    console.warn("Không thể tải cấu hình Giscus:", err);
-  }
+  container.appendChild(script);
 }
 
 function updateGiscusTheme(theme) {
