@@ -81,3 +81,39 @@ test("nhãn liên kết không thoát ra khỏi thẻ a", () => {
   const html = renderMarkdown('[a"onmouseover="x](https://example.com)');
   assert.equal(hrefOf(html), "https://example.com");
 });
+
+/* ------------------------------------------------------------- danh sách */
+
+// Giữa các <li> có xuống dòng, nên so khớp bỏ qua khoảng trắng.
+const squash = (html) => html.replace(/>\s+</g, "><");
+
+test("danh sách gạch đầu dòng ra <ul>", () => {
+  const html = squash(renderMarkdown("- Một\n- Hai"));
+  assert.match(html, /<ul><li>Một<\/li><li>Hai<\/li><\/ul>/);
+  assert.doesNotMatch(html, /<ol/);
+});
+
+test("danh sách đánh số ra <ol>, không phải <ul>", () => {
+  const html = squash(renderMarkdown("1. Bước một\n2. Bước hai"));
+  assert.match(html, /<ol><li>Bước một<\/li><li>Bước hai<\/li><\/ol>/);
+  assert.doesNotMatch(html, /<ul/);
+});
+
+test("hai loại danh sách liền nhau không bị gộp làm một", () => {
+  const html = squash(renderMarkdown("- Gạch đầu dòng\n1. Đánh số"));
+  assert.match(html, /<ul><li>Gạch đầu dòng<\/li><\/ul><ol><li>Đánh số<\/li><\/ol>/);
+});
+
+test("danh sách đánh số không bắt đầu từ 1 thì giữ đúng số bắt đầu", () => {
+  const html = renderMarkdown("3. Ba\n4. Bốn");
+  assert.match(html, /<ol start="3">/);
+});
+
+test("bắt đầu từ 1 thì không cần thuộc tính start", () => {
+  assert.doesNotMatch(renderMarkdown("1. Một\n2. Hai"), /start=/);
+});
+
+test("số thứ tự trong khối mã không bị biến thành danh sách", () => {
+  const html = renderMarkdown("```java\n1. day la ma nguon\n```");
+  assert.doesNotMatch(html, /<ol|<li/);
+});

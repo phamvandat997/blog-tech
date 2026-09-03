@@ -1676,6 +1676,17 @@ body {
 .markdown-body a {
   color: var(--primary);
   word-break: break-word;
+  /* Preflight của Tailwind đặt a{text-decoration:inherit}, xoá mất gạch chân
+     mặc định của trình duyệt. Trong thân bài thì chỉ còn màu làm dấu hiệu —
+     người mù màu không phân biệt được đâu là liên kết. Trả lại gạch chân,
+     nhưng chỉ trong vùng nội dung; liên kết điều hướng vẫn để trơn. */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+.markdown-body a:hover {
+  text-decoration-color: var(--primary);
 }
 
 /*

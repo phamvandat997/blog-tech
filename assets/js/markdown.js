@@ -213,9 +213,45 @@ function renderMarkdown(md) {
     return `<div class="table-responsive-wrapper"><table>${head}${tbody}</table></div>`;
   });
 
-  // 7. Danh sách: bọc các <li> liền nhau vào <ul>.
-  text = text.replace(/^[ \t]*(?:[-*+]|\d+\.)\s+(.*)$/gim, (_, t) => `<li>${t}</li>`);
-  text = text.replace(/(?:<li>[\s\S]*?<\/li>\s*)+/g, (items) => `<ul>${items.trim()}</ul>`);
+  // 7. Danh sách. Ghi luôn loại và số thứ tự vào <li> khi tạo, vì tới bước bọc
+  //    thì dấu đầu dòng gốc đã mất — không còn cách nào biết nên dùng <ul> hay
+  //    <ol>. Thuộc tính tạm này bị gỡ ngay sau đó, không lọt ra HTML cuối.
+  text = text.replace(/^[ \t]*([-*+]|\d+)[.)]?\s+(.*)$/gim, (full, marker, t) => {
+    if (/^[-*+]$/.test(marker)) return `<li data-l="u">${t}</li>`;
+    // "1" trần không có dấu chấm thì là văn bản thường, đừng biến thành danh sách.
+    if (!/^\s*\d+[.)]/.test(full)) return full;
+    return `<li data-l="o" data-n="${marker}">${t}</li>`;
+  });
+
+  // Một chuỗi <li> liền nhau có thể trộn cả hai loại (gạch đầu dòng rồi tới
+  // đánh số). Cắt theo từng đoạn cùng loại, mỗi đoạn một thẻ bọc riêng.
+  text = text.replace(/(?:<li data-l="[uo]"(?: data-n="\d+")?>[\s\S]*?<\/li>\s*)+/g, (block) => {
+    const items = [...block.matchAll(/<li data-l="([uo])"(?: data-n="(\d+)")?>([\s\S]*?)<\/li>/g)];
+    let html = "";
+    let kind = null;
+    let start = null;
+    let buffer = [];
+
+    const flush = () => {
+      if (!buffer.length) return;
+      if (kind === "o") {
+        // Danh sách bị cắt giữa chừng bởi khối mã hay đoạn văn thì phải đánh
+        // số tiếp, không quay về 1.
+        const attr = start && start !== "1" ? ` start="${start}"` : "";
+        html += `<ol${attr}>${buffer.join("")}</ol>`;
+      } else {
+        html += `<ul>${buffer.join("")}</ul>`;
+      }
+      buffer = [];
+    };
+
+    for (const [, type, num, content] of items) {
+      if (type !== kind) { flush(); kind = type; start = num || null; }
+      buffer.push(`<li>${content}</li>`);
+    }
+    flush();
+    return html;
+  });
 
   // 8. Đoạn văn.
   text = `<p>${text}</p>`.replace(/\r?\n\s*\r?\n/g, "</p><p>");
