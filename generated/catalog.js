@@ -43,11 +43,17 @@ const SECTIONS = [
     "name": "Sổ tay, Lab & Đề thi thử",
     "order": 6,
     "docCount": 6
+   },
+   {
+    "id": "cai-dat-moi-truong",
+    "name": "Cài Đặt Môi Trường",
+    "order": 7,
+    "docCount": 1
    }
   ],
   "phases": [],
   "phaseDetails": [],
-  "docCount": 22
+  "docCount": 23
  },
  {
   "id": "dsa",
@@ -531,6 +537,20 @@ const DOCUMENTS = [
   "order": 6,
   "readingMinutes": 7,
   "updatedDate": "2026-09-02"
+ },
+ {
+  "id": "java/cai-dat-moi-truong/setup-environment",
+  "section": "java",
+  "category": "cai-dat-moi-truong",
+  "slug": "setup-environment",
+  "contentFile": "java__cai-dat-moi-truong__setup-environment",
+  "title": "Hướng dẫn cài đặt và cấu hình Java trên Windows, macOS và Linux",
+  "description": "Từ Java 11 trở đi, Oracle không còn phát hành JRE riêng nữa. Cứ cài JDK là đủ.",
+  "phase": "",
+  "tags": [],
+  "order": 999,
+  "readingMinutes": 12,
+  "updatedDate": "2026-09-03"
  },
  {
   "id": "dsa/roadmap/dsa-roadmap",
