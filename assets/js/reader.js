@@ -60,16 +60,16 @@ function renderRelatedSection(doc) {
     const completedMark = isCompleted ? `<span class="related-card-completed">✓ Đã học</span>` : "";
 
     return `
-      <a class="related-card ${isCompleted ? "is-completed" : ""}" href="${attr(readerUrl(d))}">
-        <div class="related-card-meta">
+      <a class="related-card ${isCompleted ? "is-completed" : ""} group block p-3.5 rounded-xl backdrop-blur-sm bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-xs hover:shadow-sm hover:-translate-y-0.5 transition-all no-underline" href="${attr(readerUrl(d))}">
+        <div class="related-card-meta flex items-center justify-between gap-2 mb-2 text-xs">
           ${phaseBadge}
-          <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div class="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 font-semibold">
             ${completedMark}
             ${readingTime}
           </div>
         </div>
-        <h4 class="related-card-title">${escapeHtml(d.title)}</h4>
-        <p class="related-card-desc">${escapeHtml(d.description)}</p>
+        <h4 class="related-card-title text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug m-0 mb-1">${escapeHtml(d.title)}</h4>
+        <p class="related-card-desc text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed m-0">${escapeHtml(d.description)}</p>
       </a>
     `;
   }).join("");

@@ -32,33 +32,32 @@
   <link rel="stylesheet" href="assets/css/blog.css">
 </head>
 <body>
-<div class="app-container" id="hub-root">
+<div class="app-container min-h-screen flex flex-col transition-colors duration-200" id="hub-root">
 
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a href="index.html" class="brand">
-        <div class="brand-logo">📘</div>
+  <header class="navbar sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="navbar-inner max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <a href="index.html" class="brand flex items-center gap-3 no-underline group">
+        <div class="brand-logo text-2xl group-hover:scale-110 transition-transform">📘</div>
         <div class="brand-text">
-          <h1 id="hub-title">Đang tải…</h1>
+          <h1 id="hub-title" class="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight m-0">Đang tải…</h1>
         </div>
       </a>
 
-
-      <div class="search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" class="search-input"
+      <div class="search-wrapper relative flex items-center bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/70 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all w-full max-w-md">
+        <span class="search-icon text-slate-400 mr-2 text-sm">🔍</span>
+        <input type="text" id="search-input" class="search-input bg-transparent border-none outline-none w-full text-sm text-slate-900 dark:text-white placeholder-slate-400"
                placeholder="Tìm bài viết…" autocomplete="off">
-        <kbd class="search-kbd">⌘K</kbd>
-        <button id="search-clear-btn" class="search-clear" type="button" title="Xoá tìm kiếm" hidden>✕</button>
+        <kbd class="search-kbd text-xs font-mono px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold shadow-xs">⌘K</kbd>
+        <button id="search-clear-btn" class="search-clear text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 ml-2" type="button" title="Xoá tìm kiếm" hidden>✕</button>
       </div>
 
-      <div class="nav-actions">
-        <button class="btn-icon" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
+      <div class="nav-actions flex items-center gap-2">
+        <button class="btn-icon p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
       </div>
     </div>
   </header>
 
-  <main class="main-wrapper">
+  <main class="main-wrapper max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
     <aside class="sidebar">
       <div class="category-list" id="category-container"></div>
     </aside>
@@ -71,10 +70,10 @@
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <p class="footer-copyright">
-        &copy; 2026 <strong>Blog kỹ thuật</strong>. All rights reserved.
+  <footer class="site-footer border-t border-slate-200 dark:border-slate-800/80 py-8 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md mt-auto">
+    <div class="footer-inner max-w-6xl mx-auto px-4 text-center">
+      <p class="footer-copyright text-sm text-slate-500 dark:text-slate-400">
+        &copy; 2026 <strong class="font-bold text-slate-800 dark:text-slate-200">Blog kỹ thuật</strong>. All rights reserved.
       </p>
     </div>
   </footer>

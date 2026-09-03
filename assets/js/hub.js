@@ -45,25 +45,25 @@ function renderSidebar() {
 function docCard(doc) {
   const isCompleted = isDocCompleted(doc.id);
   const readingTime = doc.readingMinutes || 5;
-  const phaseBadge = doc.phase ? `<span class="doc-badge doc-badge-phase">${escapeHtml(doc.phase)}</span>` : "";
-  const completedBadge = isCompleted ? `<span class="doc-badge doc-badge-completed">✓ Đã học</span>` : "";
-  const tagsHtml = (doc.tags || []).slice(0, 2).map((t) => `<span class="doc-tag">#${escapeHtml(t)}</span>`).join("");
+  const phaseBadge = doc.phase ? `<span class="doc-badge doc-badge-phase inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/60">${escapeHtml(doc.phase)}</span>` : "";
+  const completedBadge = isCompleted ? `<span class="doc-badge doc-badge-completed inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">✓ Đã học</span>` : "";
+  const tagsHtml = (doc.tags || []).slice(0, 2).map((t) => `<span class="doc-tag text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-full">#${escapeHtml(t)}</span>`).join("");
 
-  return `<a class="doc-card ${isCompleted ? "is-completed" : ""}" href="${attr(readerUrl(doc))}">
-    <div class="doc-card-top">
-      <div class="doc-badges">
+  return `<a class="doc-card ${isCompleted ? "is-completed" : ""} group relative flex flex-col justify-between p-5 rounded-2xl backdrop-blur-md bg-white/95 dark:bg-slate-800/85 border border-slate-200/90 dark:border-slate-700/70 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all no-underline" href="${attr(readerUrl(doc))}">
+    <div class="doc-card-top flex items-center justify-between gap-2 mb-3">
+      <div class="doc-badges flex items-center gap-1.5 flex-wrap">
         ${phaseBadge}
         ${completedBadge}
       </div>
-      <span class="doc-reading-time">⏱️ ~${readingTime}p</span>
+      <span class="doc-reading-time text-xs font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-1">⏱️ ~${readingTime}p</span>
     </div>
-    <span class="doc-card-body">
-      <span class="doc-title">${escapeHtml(doc.title)}</span>
-      <span class="doc-desc">${escapeHtml(doc.description)}</span>
+    <span class="doc-card-body block flex-1 mb-4">
+      <span class="doc-title block text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug mb-1.5">${escapeHtml(doc.title)}</span>
+      <span class="doc-desc block text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">${escapeHtml(doc.description)}</span>
     </span>
-    <div class="doc-card-footer">
-      <div class="doc-tags">${tagsHtml}</div>
-      <span class="doc-arrow">➔</span>
+    <div class="doc-card-footer flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/60">
+      <div class="doc-tags flex items-center gap-1.5 flex-wrap">${tagsHtml}</div>
+      <span class="doc-arrow text-indigo-600 dark:text-indigo-400 text-sm font-bold group-hover:translate-x-1 transition-transform">➔</span>
     </div>
   </a>`;
 }

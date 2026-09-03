@@ -10,22 +10,25 @@ const KIND_GROUPS = [
 function sectionCard(section) {
   const docs = docsOfSection(section.id);
   const completedCount = docs.filter((d) => isDocCompleted(d.id)).length;
-  let meta = docs.length ? `${docs.length} bài` : "Sắp có nội dung";
+  let meta = docs.length ? `${docs.length} bài viết` : "Sắp có nội dung";
   let progressBadge = "";
 
   if (docs.length > 0 && completedCount > 0) {
     const pct = Math.round((completedCount / docs.length) * 100);
-    progressBadge = `<span class="section-card-progress">✓ ${completedCount}/${docs.length} bài (${pct}%)</span>`;
+    progressBadge = `<span class="section-card-progress inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">✓ ${completedCount}/${docs.length} (${pct}%)</span>`;
   }
 
-  return `<a class="section-card ${docs.length ? "" : "is-empty"}" href="${attr(hubUrl(section.id))}"
+  return `<a class="section-card ${docs.length ? "" : "is-empty"} group relative flex flex-col justify-between p-6 rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/85 border border-slate-200/90 dark:border-slate-700/70 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all no-underline" href="${attr(hubUrl(section.id))}"
        style="--section-color: ${attr(section.color)}">
-    <div class="section-card-header">
-      <h3 class="section-card-name">${escapeHtml(section.name)}</h3>
+    <div class="section-card-header flex items-start justify-between gap-3 mb-2">
+      <h3 class="section-card-name text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors m-0">${escapeHtml(section.name)}</h3>
       ${progressBadge}
     </div>
-    <p class="section-card-tagline">${escapeHtml(section.tagline)}</p>
-    <div class="section-card-meta">${escapeHtml(meta)}</div>
+    <p class="section-card-tagline text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 leading-relaxed">${escapeHtml(section.tagline)}</p>
+    <div class="section-card-meta flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/60 text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <span>${escapeHtml(meta)}</span>
+      <span class="text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">Khám phá ➔</span>
+    </div>
   </a>`;
 }
 
@@ -41,9 +44,12 @@ function renderLanding() {
   root.innerHTML = KIND_GROUPS.map((group) => {
     const sections = ALL_SECTIONS.filter((s) => s.kind === group.kind);
     if (!sections.length) return "";
-    return `<section class="section-group">
-      <h2 class="section-group-head">${escapeHtml(group.title)}</h2>
-      <div class="section-cards">${sections.map(sectionCard).join("")}</div>
+    return `<section class="section-group mb-10">
+      <h2 class="section-group-head text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-4 flex items-center gap-2">
+        <span>${escapeHtml(group.title)}</span>
+        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800"></span>
+      </h2>
+      <div class="section-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">${sections.map(sectionCard).join("")}</div>
     </section>`;
   }).join("");
 }
