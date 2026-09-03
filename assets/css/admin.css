@@ -239,6 +239,8 @@
   letter-spacing: 0.06em;
   color: var(--primary);
   padding: 0 0.4rem;
+}
+
 .admin-checkbox-group {
   margin-top: 0.75rem;
   padding: 0.85rem 1rem;

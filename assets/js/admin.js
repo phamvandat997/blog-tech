@@ -92,10 +92,15 @@ function showAlert(el, message, html = false) {
   el.hidden = !message;
 }
 
-/** Tiêu đề lấy từ catalog đã build; bài chờ duyệt chưa có trong đó. */
-function titleFromCatalog(id) {
+/** Tra cứu bài viết từ catalog đã build; bài chờ duyệt chưa có trong đó. */
+function docFromCatalog(id) {
   if (typeof DOCUMENTS === "undefined") return null;
-  return DOCUMENTS.find((d) => d.id === id)?.title || null;
+  return DOCUMENTS.find((d) => d.id === id) || null;
+}
+
+/** Tiêu đề lấy từ catalog đã build. */
+function titleFromCatalog(id) {
+  return docFromCatalog(id)?.title || null;
 }
 
 /** Một client đọc cùng kho nhưng ở nhánh khác — dùng khi sửa bài đang chờ duyệt. */
@@ -292,7 +297,7 @@ async function loadPosts() {
       const [, section, category, file] = path.split("/");
       const slug = (file || "").replace(/\.md$/, "");
       const hit = touched.get(path) || null;
-      const doc = typeof getDoc === "function" ? getDoc(`${section}/${category}/${slug}`) : null;
+      const doc = docFromCatalog(`${section}/${category}/${slug}`);
       return {
         path, section, category, slug,
         pr: hit?.pr || null,
