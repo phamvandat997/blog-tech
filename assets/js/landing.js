@@ -172,7 +172,7 @@ function renderLanding() {
         <span>${escapeHtml(group.title)}</span>
         <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800"></span>
       </h2>
-      <div class="section-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">${sections.map(sectionCard).join("")}</div>
+      <div class="section-cards grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${sections.map(sectionCard).join("")}</div>
     </section>`;
   }).join("");
 }
