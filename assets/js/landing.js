@@ -100,7 +100,7 @@ function renderFeaturedSection() {
       <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
         Bài Viết Nổi Bật Dành Cho Bạn
       </h2>
-      <div class="carousel-nav flex items-center gap-2">
+      <div class="carousel-nav flex items-center gap-2" id="featured-nav">
         <button id="featured-prev" class="featured-carousel-btn rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Bài trước" title="Bài trước">
           ‹
         </button>
@@ -123,10 +123,14 @@ function setupFeaturedCarousel() {
   const carousel = qs("#featured-carousel");
   const prevBtn = qs("#featured-prev");
   const nextBtn = qs("#featured-next");
+  const nav = qs("#featured-nav");
   if (!carousel || !prevBtn || !nextBtn) return;
 
   const updateButtons = () => {
+    // Không đủ số lượng item để cuộn (scrollWidth <= clientWidth) -> ẩn 2 nút điều hướng
     const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    const canScroll = maxScroll > 15;
+    if (nav) nav.style.display = canScroll ? "flex" : "none";
     prevBtn.disabled = carousel.scrollLeft <= 10;
     nextBtn.disabled = carousel.scrollLeft >= maxScroll - 10;
   };
@@ -146,6 +150,8 @@ function setupFeaturedCarousel() {
   carousel.addEventListener("scroll", updateButtons, { passive: true });
   window.addEventListener("resize", updateButtons);
   updateButtons();
+  requestAnimationFrame(updateButtons);
+  setTimeout(updateButtons, 100);
 }
 
 function renderLanding() {
