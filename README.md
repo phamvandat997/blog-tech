@@ -17,7 +17,7 @@ Frontmatter — mọi trường đều tuỳ chọn, thiếu thì build tự suy
 title: "Phase 1: Nền tảng Java"       # thiếu → lấy heading # đầu tiên
 description: "Kiểu dữ liệu, toán tử"  # thiếu → lấy đoạn văn xuôi đầu tiên
 order: 2                               # thứ tự trong chuyên mục
-phase: "Phase 1"                       # không hiện ra, chỉ giúp tìm kiếm
+phase: "Phase 1"                       # hiện thành chip lọc và badge ở trang mảng
 tags: [Java, OOP]                      # không hiện ra, chỉ giúp tìm kiếm
 ---
 ```
@@ -52,9 +52,17 @@ Thẻ Python xuất hiện ngay trên trang chủ. Không phải sửa dòng Jav
 ## Quiz — đang tạm gỡ
 
 Tính năng quiz đã được gỡ khỏi giao diện (cả trang đọc lẫn trang admin) để làm sau.
-**Dữ liệu vẫn còn nguyên**: 8 file `<tên-bài>.quiz.json` với 112 câu hỏi nằm y chỗ cũ
-trong `content/`. Build cố tình bỏ qua chúng; đổi tên hay xoá bài qua trang admin vẫn
-mang theo hoặc dọn file quiz đi kèm, nên không mất dữ liệu và không sinh file mồ côi.
+Build cố tình bỏ qua file `.quiz.json`; đổi tên hay xoá bài qua trang admin vẫn mang
+theo hoặc dọn file quiz đi kèm, nên không sinh file mồ côi.
+
+> **Dữ liệu quiz hiện KHÔNG còn trong cây làm việc.** Toàn bộ `content/` đã bị xoá
+> (xem lịch sử git), nên 7 file `.quiz.json` chỉ còn trong lịch sử. Commit cuối còn
+> nguyên vẹn là `7aa62e4` — 21 bài `.md` và 7 file quiz. Khôi phục:
+>
+> ```bash
+> git checkout 7aa62e4 -- content/
+> npm run build
+> ```
 
 ## Trang /admin — quản lý bài viết
 

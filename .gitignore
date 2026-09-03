@@ -1,3 +1,8 @@
 .DS_Store
 node_modules/
 dist/
+
+# Sản phẩm build, sinh lại bằng `npm run build`. Commit nó vào git là nguồn của
+# một lớp lỗi: content/ thay đổi mà bản đã commit vẫn được phục vụ khi build
+# hỏng, nên giao diện hiện những bài không còn tồn tại.
+generated/

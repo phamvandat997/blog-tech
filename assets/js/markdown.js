@@ -17,6 +17,27 @@ const ALERTS = {
 
 const escapeText = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
+/**
+ * Chỉ cho qua những scheme vô hại. Thoát ký tự thôi là chưa đủ: `javascript:`
+ * và `data:` không phá được thuộc tính href nhưng vẫn chạy khi người ta bấm —
+ * và trang xem thử chạy cùng origin với /admin, nơi token GitHub nằm trong
+ * localStorage. Một file .md lấy từ nguồn lạ là đủ để mất token.
+ *
+ * Cho phép: http, https, mailto, tel, neo #… và mọi đường dẫn tương đối.
+ * Chặn phần còn lại bằng cách trả về "#".
+ */
+function safeUrl(url) {
+  const u = String(url ?? "").trim();
+  // Ký tự điều khiển và khoảng trắng chen giữa dùng để né bộ lọc:
+  // "java\tscript:" vẫn được trình duyệt hiểu là javascript:
+  const probe = u.replace(/[\u0000-\u0020]/g, "").toLowerCase();
+  if (/^[a-z][a-z0-9+.-]*:/.test(probe)) {
+    const scheme = probe.slice(0, probe.indexOf(":"));
+    if (!["http", "https", "mailto", "tel"].includes(scheme)) return "#";
+  }
+  return u;
+}
+
 function headingSlug(title) {
   const base = title.trim().toLowerCase()
     .replace(/[`*_]/g, "")
@@ -161,7 +182,7 @@ function renderMarkdown(md) {
   text = text
     .replace(/^\s*(?:---|\*\*\*|___)\s*$/gim, "<hr>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
-      const u = url.trim();
+      const u = safeUrl(url.trim());
       const isExternal = /^https?:\/\//i.test(u);
       return `<a href="${attr(u)}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""}>${label}</a>`;
     })
