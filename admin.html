@@ -310,9 +310,6 @@
     <div class="admin-quiz-header mb-6">
       <div class="pb-4 border-b border-slate-200 dark:border-slate-700/60">
         <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white m-0">🎯 Quản Lý &amp; Soạn Bài Quiz</h1>
-        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 m-0">
-          Liên kết tới bài viết lý thuyết, soạn câu hỏi và xem trước bài thi thực tế.
-        </p>
       </div>
     </div>
 
@@ -320,22 +317,7 @@
       <div class="admin-alert admin-alert-error" id="quiz-error" hidden></div>
       <div class="admin-alert admin-alert-ok" id="quiz-success" hidden></div>
 
-      <!-- CARD 1: LIÊN KẾT BÀI VIẾT LÝ THUYẾT -->
-      <section class="admin-card">
-        <h2 class="admin-card-title flex items-center gap-2">
-          <span>🔗</span>
-          <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
-        </h2>
-
-        <label class="admin-field">
-          <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
-          <span class="admin-select">
-            <select id="quiz-doc-select" required></select>
-          </span>
-        </label>
-      </section>
-
-      <!-- CARD 2: TIÊU ĐỀ & NỘI DUNG QUIZ -->
+      <!-- NỘI DUNG & THÔNG TIN BÀI QUIZ -->
       <section class="admin-card">
         <h2 class="admin-card-title flex items-center gap-2">
           <span>📝</span>
@@ -345,6 +327,13 @@
         <label class="admin-field mb-4">
           <span class="admin-label">Tiêu đề bài trắc nghiệm <b class="req">*</b></span>
           <input type="text" id="quiz-title" placeholder="VD: Chapter 1: OOP Approach - Part 1 (24 Practice Questions)" required>
+        </label>
+
+        <label class="admin-field mb-4">
+          <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
+          <span class="admin-select">
+            <select id="quiz-doc-select" required></select>
+          </span>
         </label>
 
         <div class="admin-field mb-4" id="quiz-tags-group">
@@ -357,9 +346,6 @@
             <span class="admin-tags-suggestions-label">Gợi ý tag có sẵn:</span>
             <div class="admin-tags-suggestions-list" id="quiz-tags-suggestions"></div>
           </div>
-          <span class="admin-hint">
-            Tag được lưu vào trường <code>tags</code> trong file <code>.quiz.json</code> và hiện thành thanh lọc dạng carousel trên trang Luyện Quiz.
-          </span>
         </div>
 
         <!-- Thống kê nhanh câu hỏi (Live Stats) -->
@@ -411,7 +397,7 @@
       <div class="admin-actions flex items-center justify-end flex-wrap gap-3 pt-2">
         <button class="admin-btn-primary flex items-center gap-1.5 font-bold" id="btn-quiz-submit-pr" type="submit">
           <span>🚀</span>
-          <span>Đăng lên GitHub (Tạo PR)</span>
+          <span>Đăng bài quiz</span>
         </button>
       </div>
     </form>
