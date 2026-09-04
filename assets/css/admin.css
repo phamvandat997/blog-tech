@@ -911,6 +911,16 @@
   color: var(--text-main);
   background: rgba(0, 0, 0, 0.08);
 }
+[data-theme="dark"] .quiz-custom-select-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.quiz-custom-select-empty {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
 
 .quiz-custom-select-list {
   max-height: 280px;

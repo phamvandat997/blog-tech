@@ -79,7 +79,6 @@ function featuredDocCard(doc) {
 
       <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
         <div class="flex items-center gap-1.5 flex-wrap">
-          ${completedBadge}
           ${tagsHtml}
         </div>
         <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform whitespace-nowrap">

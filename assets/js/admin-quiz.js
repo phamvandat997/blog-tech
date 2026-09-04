@@ -255,7 +255,6 @@ function initDocSelector() {
     html += "</optgroup>";
   });
 
-  html += '<option value="__custom__">➕ Nhập bài viết / slug tuỳ chỉnh...</option>';
   select.innerHTML = html;
 
   // Nếu bài đầu tiên khớp với template docId thì chọn
@@ -388,6 +387,46 @@ function bindCustomSelectEvents() {
 
   if (!container || !triggerBtn || !menu || !listEl) return;
 
+  let highlightedIndex = -1;
+
+  function getVisibleOptions() {
+    return Array.from(listEl.querySelectorAll(".quiz-custom-option")).filter(
+      (opt) => opt.style.display !== "none" && opt.closest(".quiz-custom-optgroup")?.style.display !== "none"
+    );
+  }
+
+  function highlightOption(index) {
+    const visible = getVisibleOptions();
+    if (!visible.length) {
+      highlightedIndex = -1;
+      return;
+    }
+    highlightedIndex = Math.max(0, Math.min(index, visible.length - 1));
+    visible.forEach((opt, idx) => {
+      const isFocused = idx === highlightedIndex;
+      opt.classList.toggle("is-focused", isFocused);
+      if (isFocused) {
+        opt.scrollIntoView({ block: "nearest" });
+        opt.id = "quiz-custom-opt-active";
+        if (searchInput) searchInput.setAttribute("aria-activedescendant", "quiz-custom-opt-active");
+      } else if (opt.id === "quiz-custom-opt-active") {
+        opt.removeAttribute("id");
+      }
+    });
+  }
+
+  function selectOption(option) {
+    if (!option) return;
+    const docId = option.dataset.docId;
+    if (select) {
+      select.value = docId;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    syncCustomDocSelect();
+    closeMenu();
+    triggerBtn.focus();
+  }
+
   function openMenu() {
     menu.hidden = false;
     container.classList.add("is-open");
@@ -403,6 +442,9 @@ function bindCustomSelectEvents() {
     menu.hidden = true;
     container.classList.remove("is-open");
     triggerBtn.setAttribute("aria-expanded", "false");
+    highlightedIndex = -1;
+    listEl.querySelectorAll(".quiz-custom-option.is-focused").forEach((opt) => opt.classList.remove("is-focused"));
+    if (searchInput) searchInput.removeAttribute("aria-activedescendant");
   }
 
   triggerBtn.addEventListener("click", (e) => {
@@ -411,6 +453,15 @@ function bindCustomSelectEvents() {
       openMenu();
     } else {
       closeMenu();
+    }
+  });
+
+  triggerBtn.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (menu.hidden) {
+        openMenu();
+      }
     }
   });
 
@@ -443,13 +494,15 @@ function bindCustomSelectEvents() {
     if (totalVisible === 0) {
       if (!emptyMsg) {
         emptyMsg = document.createElement("div");
-        emptyMsg.className = "quiz-custom-select-empty p-4 text-center text-xs text-slate-400";
+        emptyMsg.className = "quiz-custom-select-empty";
         emptyMsg.textContent = "🔍 Không tìm thấy bài viết nào phù hợp";
         listEl.appendChild(emptyMsg);
       }
       emptyMsg.style.display = "block";
-    } else if (emptyMsg) {
-      emptyMsg.style.display = "none";
+      highlightedIndex = -1;
+    } else {
+      if (emptyMsg) emptyMsg.style.display = "none";
+      highlightOption(0);
     }
   }
 
@@ -457,10 +510,28 @@ function bindCustomSelectEvents() {
     searchInput.addEventListener("input", () => {
       filterOptions(searchInput.value);
     });
+
     searchInput.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
+      const visible = getVisibleOptions();
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        highlightOption(highlightedIndex + 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        highlightOption(highlightedIndex - 1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (highlightedIndex >= 0 && visible[highlightedIndex]) {
+          selectOption(visible[highlightedIndex]);
+        } else if (visible.length === 1) {
+          selectOption(visible[0]);
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
         closeMenu();
         triggerBtn.focus();
+      } else if (e.key === "Tab") {
+        closeMenu();
       }
     });
   }
@@ -478,16 +549,7 @@ function bindCustomSelectEvents() {
   // Chọn option
   listEl.addEventListener("click", (e) => {
     const option = e.target.closest(".quiz-custom-option");
-    if (!option) return;
-
-    const docId = option.dataset.docId;
-    if (select) {
-      select.value = docId;
-      select.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    syncCustomDocSelect();
-    closeMenu();
-    triggerBtn.focus();
+    if (option) selectOption(option);
   });
 
   // Đóng khi click ngoài
@@ -534,28 +596,6 @@ function updateDocLinkInfo() {
   }
 }
 
-/**
- * Tải file về máy tính
- */
-function downloadFile(filename, text, mimeType = "application/json;charset=utf-8") {
-  const blob = new Blob([text], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-/**
- * Tải template mẫu quiz JSON
- */
-function exportQuizTemplate() {
-  const content = JSON.stringify(QUIZ_TEMPLATE, null, 2);
-  downloadFile("quiz-template.json", content);
-}
 
 /**
  * Phân tích JSON và cập nhật thông số thống kê câu hỏi
@@ -726,100 +766,7 @@ function formatQuizJson() {
 }
 
 /**
- * Mở bài thi thử (Preview Exam Page) trong tab mới
- */
-function launchQuizTestRun() {
-  const jsonEl = qs("#quiz-json-content");
-  const titleEl = qs("#quiz-title");
-  const selectEl = qs("#quiz-doc-select");
-
-  if (!jsonEl) return;
-
-  try {
-    const raw = jsonEl.value.trim();
-    if (!raw) {
-      showQuizAlert("error", "Vui lòng nhập hoặc tải lên nội dung câu hỏi JSON trước khi thi thử!");
-      return;
-    }
-
-    const data = JSON.parse(raw);
-    const quizzes = Array.isArray(data.quizzes) ? data.quizzes : (Array.isArray(data) ? data : []);
-
-    if (!quizzes.length) {
-      showQuizAlert("error", "Bộ câu hỏi trắc nghiệm đang rỗng (không có câu hỏi nào)!");
-      return;
-    }
-
-    const title = (titleEl?.value || data.title || "Bài thi trắc nghiệm xem thử").trim();
-    const docId = selectEl?.value || data.docId || "preview/quiz";
-
-    const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
-    const linkedDoc = docs.find((d) => d.id === docId);
-
-    const previewPayload = {
-      docId,
-      title,
-      tags: getQuizTags(),
-      doc: linkedDoc || {
-        id: docId,
-        title,
-        section: "preview",
-        category: "quiz",
-        slug: "preview",
-        questions: quizzes.length,
-        readingMinutes: Math.max(1, Math.round(quizzes.length * 1.5))
-      },
-      quizzes
-    };
-
-    sessionStorage.setItem("blog.quiz.preview", JSON.stringify(previewPayload));
-    window.open("quiz.html?preview=1", "_blank");
-  } catch (err) {
-    showQuizAlert("error", `Lỗi cú pháp JSON khi thi thử: ${err.message}`);
-  }
-}
-
-/**
- * Tải về file .quiz.json
- */
-function downloadCurrentQuizFile() {
-  const jsonEl = qs("#quiz-json-content");
-  const titleEl = qs("#quiz-title");
-  const selectEl = qs("#quiz-doc-select");
-
-  if (!jsonEl) return;
-
-  try {
-    const raw = jsonEl.value.trim();
-    if (!raw) {
-      showQuizAlert("error", "Chưa có nội dung JSON để tải về!");
-      return;
-    }
-
-    const data = JSON.parse(raw);
-    if (!data.title && titleEl?.value.trim()) {
-      data.title = titleEl.value.trim();
-    }
-    if (!data.docId && selectEl?.value && selectEl.value !== "__custom__") {
-      data.docId = selectEl.value;
-    }
-    const tags = getQuizTags();
-    if (tags.length) data.tags = tags;
-    else delete data.tags;
-
-    const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
-    const doc = docs.find((d) => d.id === selectEl?.value);
-    const filename = (doc?.slug || "quiz-bank") + ".quiz.json";
-
-    downloadFile(filename, JSON.stringify(data, null, 2));
-    showQuizAlert("ok", `Đã tải về file "${filename}". Bạn có thể đặt file này vào thư mục content/... của bài viết.`);
-  } catch (err) {
-    showQuizAlert("error", `Lỗi JSON: ${err.message}`);
-  }
-}
-
-/**
- * Đăng lên GitHub (Tạo PR) nếu đã đăng nhập token
+ * Đăng bài quiz lên GitHub (Tạo PR)
  */
 async function submitQuizPullRequest(event) {
   event.preventDefault();
@@ -832,7 +779,7 @@ async function submitQuizPullRequest(event) {
   if (!jsonEl || !titleEl || !selectEl) return;
 
   const docId = selectEl.value;
-  if (!docId || docId === "__custom__") {
+  if (!docId) {
     showQuizAlert("error", "Vui lòng chọn bài viết lý thuyết trong danh sách để liên kết và xác định đường dẫn lưu file!");
     return;
   }
@@ -869,7 +816,7 @@ async function submitQuizPullRequest(event) {
 
   // Kiểm tra nếu admin chưa đăng nhập GitHub
   if (!window.admin || !window.admin.gh) {
-    showQuizAlert("error", `Bạn chưa đăng nhập GitHub Personal Access Token trong Admin. Vui lòng đăng nhập ở trang Quản lý bài viết để tạo Pull Request tự động, hoặc bấm nút "💾 Tải về file .quiz.json" để lưu thủ công vào "${targetPath}".`);
+    showQuizAlert("error", `Bạn chưa đăng nhập GitHub trong Admin. Vui lòng đăng nhập bằng Personal Access Token ở tab Đăng nhập để tạo Pull Request tự động lên kho.`);
     return;
   }
 
@@ -900,7 +847,7 @@ async function submitQuizPullRequest(event) {
     showQuizAlert("error", `Lỗi khi đẩy lên GitHub: ${err.message}`);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.innerHTML = "<span>🚀</span> <span>Đăng lên GitHub (Tạo PR)</span>";
+    submitBtn.innerHTML = "<span>🚀</span> <span>Đăng bài quiz</span>";
   }
 }
 
@@ -933,11 +880,6 @@ function bindQuizManagerEvents() {
     select.addEventListener("change", updateDocLinkInfo);
   }
 
-  const exportBtn = qs("#btn-export-template");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", exportQuizTemplate);
-  }
-
   const loadSampleBtn = qs("#btn-load-sample");
   if (loadSampleBtn) {
     loadSampleBtn.addEventListener("click", () => {
@@ -955,14 +897,6 @@ function bindQuizManagerEvents() {
   const formatBtn = qs("#btn-format-json");
   if (formatBtn) {
     formatBtn.addEventListener("click", formatQuizJson);
-  }
-
-  const fileInput = qs("#quiz-file-input");
-  if (fileInput) {
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files?.[0];
-      if (file) handleQuizFileUpload(file);
-    });
   }
 
   const jsonContent = qs("#quiz-json-content");
@@ -987,16 +921,6 @@ function bindQuizManagerEvents() {
       }
     });
   });
-
-  const testRunBtn = qs("#btn-quiz-test-run");
-  if (testRunBtn) {
-    testRunBtn.addEventListener("click", launchQuizTestRun);
-  }
-
-  const downloadBtn = qs("#btn-download-quiz-file");
-  if (downloadBtn) {
-    downloadBtn.addEventListener("click", downloadCurrentQuizFile);
-  }
 
   const form = qs("#quiz-form");
   if (form) {
