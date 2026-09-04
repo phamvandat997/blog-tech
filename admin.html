@@ -308,24 +308,11 @@
   <!-- QUẢN LÝ / TẠO BÀI QUIZ -->
   <main class="admin-editor" id="admin-quiz" hidden>
     <div class="admin-quiz-header mb-6">
-      <div class="flex items-center justify-between gap-4 flex-wrap pb-4 border-b border-slate-200 dark:border-slate-700/60">
-        <div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white m-0">🎯 Quản Lý &amp; Tải Lên Bài Quiz</h1>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 m-0">
-            Tải file câu hỏi, liên kết tới bài viết lý thuyết, tải template mẫu và xem trước bài thi thực tế.
-          </p>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <button class="admin-btn-secondary flex items-center gap-1.5 text-xs font-bold" id="btn-export-template" type="button" title="Tải file template quiz mẫu chuẩn định dạng">
-            <span>📥</span>
-            <span>Tải Template Mẫu (.json)</span>
-          </button>
-          <label class="admin-btn-secondary flex items-center gap-1.5 text-xs font-bold cursor-pointer" for="quiz-file-input">
-            <span>📁</span>
-            <span>Upload File Quiz</span>
-            <input type="file" id="quiz-file-input" accept=".json,.quiz.json" hidden>
-          </label>
-        </div>
+      <div class="pb-4 border-b border-slate-200 dark:border-slate-700/60">
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white m-0">🎯 Quản Lý &amp; Soạn Bài Quiz</h1>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 m-0">
+          Liên kết tới bài viết lý thuyết, soạn câu hỏi và xem trước bài thi thực tế.
+        </p>
       </div>
     </div>
 
@@ -335,25 +322,9 @@
 
       <!-- CARD 1: LIÊN KẾT BÀI VIẾT LÝ THUYẾT -->
       <section class="admin-card">
-        <h2 class="admin-card-title flex items-center gap-2 flex-wrap">
+        <h2 class="admin-card-title flex items-center gap-2">
           <span>🔗</span>
           <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
-          <span class="admin-tooltip-wrap" tabindex="0" role="button" aria-describedby="tooltip-quiz-link" aria-label="Hướng dẫn liên kết">
-            <span class="admin-tooltip-trigger" aria-hidden="true">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-            </span>
-            <span class="admin-tooltip-bubble" id="tooltip-quiz-link" role="tooltip">
-              <span class="admin-tooltip-arrow" aria-hidden="true"></span>
-              <span class="admin-tooltip-text">
-                Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại:
-              </span>
-              <code class="admin-tooltip-code">content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>
-            </span>
-          </span>
         </h2>
 
         <div class="admin-row">
