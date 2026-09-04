@@ -1,219 +1,476 @@
 {
   "title": "Quiz: Tiếp cận hướng đối tượng trong Java - Phần 2",
-  "tags": ["Java", "OCP", "OOP", "Inheritance", "Polymorphism", "Interface", "Encapsulation", "var", "Sealed"],
+  "tags": [
+    "Java",
+    "OCP",
+    "OOP",
+    "Inheritance",
+    "Polymorphism",
+    "Interface",
+    "Encapsulation",
+    "var",
+    "Sealed"
+  ],
   "quizzes": [
     {
       "number": 1,
       "question": "Kết quả của việc biên dịch và chạy đoạn mã sau là gì?\n\n```java\nvoid myMethod() {\n    int x = 1;\n    if (x > 0) { \n        int y = 2;\n        System.out.println(x + y);\n    }\n    System.out.println(x);\n    System.out.println(y);\n}\n```",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Mã biên dịch được và in ra `3` rồi `1`." },
-        { "key": "B", "text": "Mã biên dịch được và in ra `3` rồi `1` và một giá trị không xác định cho `y`." },
-        { "key": "C", "text": "Mã không biên dịch được vì `y` bị truy cập ngoài phạm vi của nó." },
-        { "key": "D", "text": "Mã biên dịch được nhưng ném exception lúc chạy khi cố in `y`." }
+        {
+          "key": "A",
+          "text": "Mã biên dịch được và in ra `3` rồi `1`."
+        },
+        {
+          "key": "B",
+          "text": "Mã biên dịch được và in ra `3` rồi `1` và một giá trị không xác định cho `y`."
+        },
+        {
+          "key": "C",
+          "text": "Mã không biên dịch được vì `y` bị truy cập ngoài phạm vi của nó."
+        },
+        {
+          "key": "D",
+          "text": "Mã biên dịch được nhưng ném exception lúc chạy khi cố in `y`."
+        }
       ],
-      "correctAnswers": ["C"],
-      "explanation": "Biến `y` được khai báo bên trong khối `if` nên phạm vi của nó kết thúc ở dấu `}` đóng khối đó. Câu lệnh `System.out.println(y);` nằm ngoài khối nên gây lỗi biên dịch — đây là lỗi lúc biên dịch, không phải lúc chạy."
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là C.**\n\n**Giải thích chi tiết:**\n- **A sai:** Mặc dù code in ra `3` rồi `1` do biến `x` nằm trong phạm vi (scope) của phương thức, nhưng việc cố gắng truy cập biến `y` bên ngoài khối lệnh khai báo nó (khối `if`) sẽ gây ra lỗi biên dịch (compile-time error).\n- **B sai:** Java không cho phép truy cập biến cục bộ bên ngoài phạm vi của nó. Khái niệm \"giá trị không xác định (undefined) cho y\" không tồn tại trong Java; trình biên dịch sẽ từ chối biên dịch ngay lập tức.\n- **C đúng:** Biến cục bộ `y` được khai báo bên trong khối `if { ... }`, do đó phạm vi tồn tại của nó chỉ giới hạn bên trong cặp ngoặc nhọn của khối đó. Câu lệnh `System.out.println(y);` ở cuối nằm ngoài khối `if`, khiến trình biên dịch báo lỗi không tìm thấy ký hiệu `y` (`cannot find symbol: variable y`).\n- **D sai:** Lỗi xảy ra ở giai đoạn biên dịch (compile time), không phải giai đoạn thực thi (runtime). Mã nguồn sẽ không thể sinh ra file bytecode `.class` để chạy, vì vậy không thể phát sinh ngoại lệ lúc chạy (runtime exception)."
     },
     {
       "number": 2,
       "question": "Những câu lệnh khai báo biến nào sau đây hợp lệ? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "`double x, double y;`" },
-        { "key": "B", "text": "`int i = 0, String s = \"hello\";`" },
-        { "key": "C", "text": "`float f1 = 3.14f, f2 = 6.28f;`" },
-        { "key": "D", "text": "`char a = 'A', b, c = 'C';`" }
+        {
+          "key": "A",
+          "text": "`double x, double y;`"
+        },
+        {
+          "key": "B",
+          "text": "`int i = 0, String s = \"hello\";`"
+        },
+        {
+          "key": "C",
+          "text": "`float f1 = 3.14f, f2 = 6.28f;`"
+        },
+        {
+          "key": "D",
+          "text": "`char a = 'A', b, c = 'C';`"
+        }
       ],
-      "correctAnswers": ["C", "D"],
-      "explanation": "Khi khai báo nhiều biến trên một dòng, kiểu chỉ được viết một lần ở đầu. A sai vì lặp lại `double`. B sai vì trộn hai kiểu khác nhau trong một câu lệnh. C hợp lệ: hai biến `float` cùng được khởi tạo. D hợp lệ: ba biến `char`, trong đó `b` chưa khởi tạo — điều này được phép miễn là `b` được gán trước khi dùng."
+      "correctAnswers": [
+        "C",
+        "D"
+      ],
+      "explanation": "**Đáp án đúng là C và D.**\n\n**Giải thích chi tiết:**\n- **A sai:** `double x, double y;` sai cú pháp. Khi khai báo nhiều biến cùng kiểu dữ liệu trong một câu lệnh, không được lặp lại tên kiểu dữ liệu trước mỗi biến. Cú pháp đúng phải là `double x, y;`.\n- **B sai:** `int i = 0, String s = \"hello\";` sai cú pháp vì Java không cho phép khai báo các biến có kiểu dữ liệu khác nhau (`int` và `String`) trong cùng một câu lệnh phân cách bằng dấu phẩy.\n- **C đúng:** `float f1 = 3.14f, f2 = 6.28f;` hợp lệ vì khai báo nhiều biến cùng kiểu `float` trong một câu lệnh và khởi tạo giá trị cho chúng.\n- **D đúng:** `char a = 'A', b, c = 'C';` hợp lệ. Trong một câu lệnh có thể khai báo nhiều biến cùng kiểu `char`, trong đó có biến được khởi tạo ngay (`a`, `c`) và có biến không khởi tạo (`b`)."
     },
     {
       "number": 3,
       "question": "Những phát biểu nào sau đây đúng về việc dùng `var` trong Java? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "`var` dùng được để khai báo cả biến cục bộ trong method lẫn instance variable trong class." },
-        { "key": "B", "text": "Việc dùng `var` chỉ giới hạn ở biến cục bộ trong method, constructor hoặc khối initializer." },
-        { "key": "C", "text": "`var` dùng được để khai báo tham số method." },
-        { "key": "D", "text": "`var` tăng tính dễ đọc bằng cách suy luận kiểu ở những chỗ ngữ cảnh đã rõ, nhưng không được phép dùng trong method signature để giữ sự rõ ràng." },
-        { "key": "E", "text": "`var` dùng được để khai báo biến class (static)." }
+        {
+          "key": "A",
+          "text": "`var` dùng được để khai báo cả biến cục bộ trong method lẫn instance variable trong class."
+        },
+        {
+          "key": "B",
+          "text": "Việc dùng `var` chỉ giới hạn ở biến cục bộ trong method, constructor hoặc khối initializer."
+        },
+        {
+          "key": "C",
+          "text": "`var` dùng được để khai báo tham số method."
+        },
+        {
+          "key": "D",
+          "text": "`var` tăng tính dễ đọc bằng cách suy luận kiểu ở những chỗ ngữ cảnh đã rõ, nhưng không được phép dùng trong method signature để giữ sự rõ ràng."
+        },
+        {
+          "key": "E",
+          "text": "`var` dùng được để khai báo biến class (static)."
+        }
       ],
-      "correctAnswers": ["B", "D"],
-      "explanation": "`var` chỉ dùng được cho biến cục bộ trong method, constructor hoặc khối initializer (B đúng), và không dùng được cho tham số method vì method signature là một phần API công khai của class (D đúng). Do đó A, C, E đều sai: `var` không dùng được cho instance variable, biến static hay tham số method."
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "**Đáp án đúng là B và D.**\n\n**Giải thích chi tiết:**\n- **A sai:** `var` không thể dùng để khai báo instance variable (thuộc tính của đối tượng). `var` chỉ được giới hạn sử dụng cho biến cục bộ bên trong method, constructor hoặc khối khởi tạo (initializer block) để tránh làm mơ hồ API công khai của lớp.\n- **B đúng:** Cơ chế suy luận kiểu biến cục bộ (`var` - Local Variable Type Inference) chỉ được phép áp dụng cho các biến cục bộ có khởi tạo giá trị trong thân method, constructor hoặc khối initializer.\n- **C sai:** `var` không được phép sử dụng cho tham số của phương thức. Quy tắc này đảm bảo chữ ký phương thức (method signature) luôn tường minh về kiểu dữ liệu.\n- **D đúng:** `var` giúp tăng tính gọn gàng và dễ đọc của code khi kiểu dữ liệu đã rõ ràng qua biểu thức khởi tạo, nhưng nó bị cấm trong chữ ký phương thức để duy trì tính minh bạch và ổn định của API.\n- **E sai:** Tương tự instance variable, `var` không được phép dùng để khai báo biến tĩnh của lớp (static / class variables)."
     },
     {
       "number": 4,
       "question": "Những phát biểu nào sau đây mô tả đúng việc dùng inheritance trong Java? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "Lớp con chỉ truy cập trực tiếp được thành phần `protected` và `public` của lớp cha." },
-        { "key": "B", "text": "Trong Java, một class extends được nhiều class để đạt đa kế thừa." },
-        { "key": "C", "text": "Keyword `extends` được dùng trong Java để tạo lớp con kế thừa từ lớp cha." },
-        { "key": "D", "text": "Lớp con trong Java truy cập trực tiếp được thành phần `private` của lớp cha." }
+        {
+          "key": "A",
+          "text": "Lớp con chỉ truy cập trực tiếp được thành phần `protected` và `public` của lớp cha."
+        },
+        {
+          "key": "B",
+          "text": "Trong Java, một class extends được nhiều class để đạt đa kế thừa."
+        },
+        {
+          "key": "C",
+          "text": "Keyword `extends` được dùng trong Java để tạo lớp con kế thừa từ lớp cha."
+        },
+        {
+          "key": "D",
+          "text": "Lớp con trong Java truy cập trực tiếp được thành phần `private` của lớp cha."
+        }
       ],
-      "correctAnswers": ["A", "C"],
-      "explanation": "A đúng: lớp con không truy cập trực tiếp được thành phần `private` của lớp cha, chỉ `protected` và `public` (và package-private nếu cùng package). C đúng: `extends` là keyword tạo quan hệ kế thừa. B sai: Java chỉ hỗ trợ đơn kế thừa với class, nhằm tránh vấn đề kim cương. D sai vì trái với A."
+      "correctAnswers": [
+        "A",
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là A và C.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Lớp con chỉ có thể truy cập trực tiếp các thành viên `protected` và `public` (và package-private nếu cùng package) của lớp cha; các thành viên `private` của lớp cha bị ẩn hoàn toàn để đảm bảo tính đóng gói (encapsulation).\n- **B sai:** Java không hỗ trợ đa kế thừa giữa các lớp (`class`). Một lớp trong Java chỉ được phép `extends` trực tiếp một lớp duy nhất, nhằm tránh vấn đề kim cương (diamond problem) và sự phức tạp của đa kế thừa.\n- **C đúng:** Từ khóa `extends` trong Java được dùng để định nghĩa một lớp con kế thừa các thuộc tính và phương thức từ một siêu lớp (superclass), thiết lập quan hệ IS-A (là một).\n- **D sai:** Lớp con không thể truy cập trực tiếp các thành viên `private` của lớp cha. Nếu muốn tương tác với dữ liệu `private` đó, lớp con phải thông qua các getter/setter hoặc phương thức `public`/`protected` do lớp cha cung cấp."
     },
     {
       "number": 5,
       "question": "Xét đoạn mã sau:\n\n```java\nabstract class Animal {\n    abstract void eat();\n}\n\nclass Dog extends Animal {\n    void eat() {\n        System.out.println(\"Dog eats\");\n    }\n}\n\nclass Cat extends Animal {\n    void eat() {\n        System.out.println(\"Cat eats\");\n    }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Animal myAnimal = new Dog();\n        myAnimal.eat();\n    }\n}\n```\n\nNhững phát biểu nào đúng? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "Mã sẽ biên dịch được và in ra `\"Dog eats\"` khi chạy." },
-        { "key": "B", "text": "Class `Animal` khởi tạo được." },
-        { "key": "C", "text": "Bỏ method `eat` khỏi class `Dog` sẽ gây lỗi biên dịch." },
-        { "key": "D", "text": "Class `Cat` là cần thiết để mã biên dịch và chạy được." }
+        {
+          "key": "A",
+          "text": "Mã sẽ biên dịch được và in ra `\"Dog eats\"` khi chạy."
+        },
+        {
+          "key": "B",
+          "text": "Class `Animal` khởi tạo được."
+        },
+        {
+          "key": "C",
+          "text": "Bỏ method `eat` khỏi class `Dog` sẽ gây lỗi biên dịch."
+        },
+        {
+          "key": "D",
+          "text": "Class `Cat` là cần thiết để mã biên dịch và chạy được."
+        }
       ],
-      "correctAnswers": ["A", "C"],
-      "explanation": "A đúng: nhờ polymorphism, lời gọi `myAnimal.eat()` chạy phiên bản override trong `Dog`. C đúng: `Dog` là concrete class nên bắt buộc cài đặt abstract method `eat()`; bỏ nó đi thì `Dog` phải được khai báo abstract, nếu không sẽ lỗi biên dịch. B sai: abstract class không khởi tạo được. D sai: `Cat` hoàn toàn không liên quan tới việc mã này chạy."
+      "correctAnswers": [
+        "A",
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là A và C.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Lớp `Dog` đã ghi đè (override) và cài đặt cụ thể cho phương thức trừu tượng `eat()` của `Animal`. Khi thực thi `Animal myAnimal = new Dog(); myAnimal.eat();`, nhờ tính đa hình (polymorphism / dynamic method dispatch), phương thức `eat()` của đối tượng thực tế `Dog` sẽ được gọi và in ra `\"Dog eats\"`.\n- **B sai:** `Animal` là một lớp trừu tượng (abstract class) nên không thể khởi tạo trực tiếp (`new Animal()` sẽ gây lỗi biên dịch).\n- **C đúng:** Vì `Dog` kế thừa lớp trừu tượng `Animal` mà trong `Animal` có phương thức trừu tượng `eat()`, lớp con cụ thể `Dog` bắt buộc phải hiện thực phương thức `eat()`. Nếu xóa phương thức `eat()` trong `Dog`, bản thân `Dog` sẽ bị coi là lớp trừu tượng chưa hoàn thiện và gây lỗi biên dịch nếu không được khai báo với từ khóa `abstract`.\n- **D sai:** Lớp `Cat` không hề được sử dụng hay tham chiếu trong hàm `main` cũng như đoạn mã chạy thử, vì vậy sự tồn tại của `Cat` không ảnh hưởng tới việc biên dịch và chạy đoạn code trên."
     },
     {
       "number": 6,
       "question": "Xét các interface sau:\n\n```java\ninterface Walkable {\n    int distance = 10;\n    void walk();\n}\n\ninterface Runnable {\n    void run();\n    default void getSpeed() {\n        System.out.println(\"Default speed\");\n    }\n}\n\nclass Person implements Walkable, Runnable {\n    public void walk() { System.out.println(\"Walking...\"); }\n    public void run() { System.out.println(\"Running...\"); }\n}\n```\n\nPhát biểu nào đúng? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "Class `Person` bắt buộc phải override method `getSpeed`." },
-        { "key": "B", "text": "Biến `distance` trong interface `Walkable` ngầm định là `public`, `static` và `final`." },
-        { "key": "C", "text": "Một object `Person` gọi được method `getSpeed` mà không cần cài đặt gì trong class `Person`." },
-        { "key": "D", "text": "Interface `Runnable` gây lỗi biên dịch do xung đột tên với `java.lang.Runnable`." }
+        {
+          "key": "A",
+          "text": "Class `Person` bắt buộc phải override method `getSpeed`."
+        },
+        {
+          "key": "B",
+          "text": "Biến `distance` trong interface `Walkable` ngầm định là `public`, `static` và `final`."
+        },
+        {
+          "key": "C",
+          "text": "Một object `Person` gọi được method `getSpeed` mà không cần cài đặt gì trong class `Person`."
+        },
+        {
+          "key": "D",
+          "text": "Interface `Runnable` gây lỗi biên dịch do xung đột tên với `java.lang.Runnable`."
+        }
       ],
-      "correctAnswers": ["B", "C"],
-      "explanation": "B đúng: mọi biến khai báo trong interface đều ngầm định là `public static final`. C đúng: `getSpeed` là default method nên đã có sẵn cài đặt, class implement không bắt buộc override. A sai vì default method không bắt buộc override. D sai: interface `Runnable` tự định nghĩa trong package hiện tại che khuất `java.lang.Runnable`, không gây lỗi biên dịch."
+      "correctAnswers": [
+        "B",
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là B và C.**\n\n**Giải thích chi tiết:**\n- **A sai:** Lớp `Person` không bắt buộc phải override phương thức `getSpeed()`. Vì `getSpeed()` là một **default method** trong interface `Runnable`, nó đã có sẵn thân hàm mặc định. Lớp cài đặt có thể chọn override lại hoặc tái sử dụng trực tiếp cài đặt mặc định này.\n- **B đúng:** Trong Java, tất cả các biến khai báo trong interface đều ngầm định (implicitly) mang các modifier: `public static final`. Biến `distance` trong `Walkable` là một hằng số, phải được gán giá trị tại nơi khai báo và có thể truy cập thông qua tên interface (`Walkable.distance`).\n- **C đúng:** Vì interface `Runnable` đã cung cấp sẵn phần thân thực thi mặc định cho `getSpeed()`, một đối tượng `Person` có thể gọi trực tiếp `person.getSpeed()` mà không cần bất kỳ dòng mã bổ sung nào trong class `Person`.\n- **D sai:** Interface `Runnable` tự định nghĩa trong package cục bộ không gây lỗi biên dịch với `java.lang.Runnable` trừ khi có sự nhập nhằng trong câu lệnh import cùng file; cơ chế namespace và package của Java hoàn toàn xử lý được điều này."
     },
     {
       "number": 7,
       "question": "Xét đoạn mã sau liên quan tới sealed class:\n\n```java\nsealed abstract class Shape permits Circle, Square {\n    abstract double area();\n}\n\nfinal class Circle extends Shape {\n    private final double radius;\n    Circle(double radius) { this.radius = radius; }\n    public double area() { return Math.PI * radius * radius; }\n}\n\nnon-sealed class Square extends Shape {\n    private final double side;\n    Square(double side) { this.side = side; }\n    public double area() { return side * side; }\n}\n```\n\nPhát biểu nào đúng?",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Class `Shape` được định nghĩa đúng như một sealed class, chỉ cho phép những class đã nêu extends nó." },
-        { "key": "B", "text": "Class `Square` extends class `Shape` không đúng vì nó không được đánh dấu `final`." },
-        { "key": "C", "text": "Class `Circle` có thể bị các class khác extends thêm." },
-        { "key": "D", "text": "Method `area` trong class `Shape` bắt buộc phải có cài đặt mặc định." }
+        {
+          "key": "A",
+          "text": "Class `Shape` được định nghĩa đúng như một sealed class, chỉ cho phép những class đã nêu extends nó."
+        },
+        {
+          "key": "B",
+          "text": "Class `Square` extends class `Shape` không đúng vì nó không được đánh dấu `final`."
+        },
+        {
+          "key": "C",
+          "text": "Class `Circle` có thể bị các class khác extends thêm."
+        },
+        {
+          "key": "D",
+          "text": "Method `area` trong class `Shape` bắt buộc phải có cài đặt mặc định."
+        }
       ],
-      "correctAnswers": ["A"],
-      "explanation": "A đúng: `Shape` khai báo `sealed` cùng mệnh đề `permits` liệt kê `Circle` và `Square`, và cả hai lớp con đều chỉ định đúng một modifier bắt buộc (`final` và `non-sealed`). B sai: `non-sealed` là một trong ba lựa chọn hợp lệ. C sai: `Circle` là `final` nên không extends thêm được. D sai: `area` là abstract method trong abstract class nên không cần cài đặt."
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "**Đáp án đúng là A.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Lớp `Shape` được khai báo hợp lệ là một `sealed class`, sử dụng mệnh đề `permits Circle, Square` để giới hạn chỉ cho phép đúng 2 lớp `Circle` và `Square` được quyền kế thừa nó. Cả `Circle` (`final`) và `Square` (`non-sealed`) đều tuân thủ đúng quy tắc kế thừa lớp sealed.\n- **B sai:** Lớp con kế thừa từ một sealed class không bắt buộc phải là `final`. Java cho phép lớp con được đánh dấu là `final` (không cho kế thừa tiếp), `sealed` (tiếp tục giới hạn kế thừa), hoặc `non-sealed` (mở rộng tự do cho các lớp khác kế thừa tiếp). `Square` sử dụng `non-sealed` là hoàn toàn đúng chuẩn.\n- **C sai:** Lớp `Circle` được khai báo với từ khóa `final`, nghĩa là nó hoàn toàn không thể bị kế thừa bởi bất kỳ lớp nào khác.\n- **D sai:** `Shape` là một lớp trừu tượng (`abstract class`), do đó phương thức `area()` của nó được phép là phương thức trừu tượng (`abstract`) mà không cần phần thân mặc định; các lớp con sẽ chịu trách nhiệm cài đặt cụ thể."
     },
     {
       "number": 8,
       "question": "Trong đoạn mã sau, ở dòng đánh dấu `// Line 14`, keyword `this` đại diện cho điều gì?\n\n```java\npublic class Widget {\n    private int size;\n\n    public Widget() { this(10); }\n    public Widget(int size) { this.size = size; }\n\n    public void resize(int size) {\n        if (size > this.size) {\n            this.size = size; // Line 14\n            updateWidget();\n        }\n    }\n\n    private void updateWidget() {\n        System.out.println(\"Widget updated to size \" + this.size);\n    }\n}\n```",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Tham chiếu tới ngữ cảnh `static` của class, cho phép truy cập static method và static field." },
-        { "key": "B", "text": "Một biến đặc biệt lưu giá trị trả về của method." },
-        { "key": "C", "text": "Một keyword tuỳ chọn, luôn bỏ đi được mà không ảnh hưởng tới chức năng của mã." },
-        { "key": "D", "text": "Tham chiếu tới object hiện tại, mà instance variable của nó đang được gọi tới." }
+        {
+          "key": "A",
+          "text": "Tham chiếu tới ngữ cảnh `static` của class, cho phép truy cập static method và static field."
+        },
+        {
+          "key": "B",
+          "text": "Một biến đặc biệt lưu giá trị trả về của method."
+        },
+        {
+          "key": "C",
+          "text": "Một keyword tuỳ chọn, luôn bỏ đi được mà không ảnh hưởng tới chức năng của mã."
+        },
+        {
+          "key": "D",
+          "text": "Tham chiếu tới object hiện tại, mà instance variable của nó đang được gọi tới."
+        }
       ],
-      "correctAnswers": ["D"],
-      "explanation": "D đúng: `this` là tham chiếu tới instance hiện tại. Ở đây `this.size` bắt buộc phải có để phân biệt field `size` của object với tham số `size` đang che khuất nó — nên C sai, bỏ `this` đi sẽ đổi hoàn toàn ý nghĩa. A sai vì `this` không dùng được trong ngữ cảnh static. B sai hoàn toàn."
+      "correctAnswers": [
+        "D"
+      ],
+      "explanation": "**Đáp án đúng là D.**\n\n**Giải thích chi tiết:**\n- **A sai:** Từ khóa `this` không tham chiếu đến ngữ cảnh tĩnh (static context) của lớp. `this` đại diện cho instance (đối tượng cụ thể) hiện tại. Các thành phần static thuộc về lớp chứ không thuộc về instance nên không thể dùng `this` trong ngữ cảnh static.\n- **B sai:** `this` không phải biến lưu giá trị trả về của phương thức.\n- **C sai:** Mặc dù trong một số trường hợp không có sự trùng tên biến thì `this` có thể được lược bỏ, nhưng trong các trường hợp như gọi constructor cùng lớp (`this(...)`) hoặc khi tên tham số làm lu mờ tên trường thực thể (shadowing: `this.size = size;`), việc sử dụng `this` là **bắt buộc** để chỉ rõ ta đang thao tác trên trường của đối tượng.\n- **D đúng:** Từ khóa `this` trong Java tham chiếu trực tiếp đến đối tượng hiện tại mà phương thức hoặc constructor đang được thực thi trên đó. Tại dòng 14 (`this.size = size;`), `this.size` chỉ rõ trường thực thể `size` của đối tượng, giúp phân biệt rõ ràng với tham số cục bộ `size` được truyền vào."
     },
     {
       "number": 9,
       "question": "Xét các class sau:\n\n```java\nclass Animal {\n    String name;\n    Animal(String name) { this.name = name; }\n    protected void eat() { System.out.println(\"Animal eats\"); }\n}\n\nclass Dog extends Animal {\n    Dog(String name) { super(name); }\n    @Override\n    protected void eat() {\n        super.eat();\n        System.out.println(name + \" (Dog) eats\");\n    }\n}\n```\n\nNhững phát biểu nào đúng về việc dùng `super`? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "Keyword `super` được dùng trong constructor của `Dog` để gọi constructor của lớp cha." },
-        { "key": "B", "text": "Method `eat` trong class `Dog` dùng `super` để gọi method `eat` của lớp cha." },
-        { "key": "C", "text": "Bỏ lời gọi `super.eat();` trong method `eat` của `Dog` sẽ khiến class `Dog` không biên dịch được." },
-        { "key": "D", "text": "Keyword `super` dùng được để truy cập static method của lớp cha." }
+        {
+          "key": "A",
+          "text": "Keyword `super` được dùng trong constructor của `Dog` để gọi constructor của lớp cha."
+        },
+        {
+          "key": "B",
+          "text": "Method `eat` trong class `Dog` dùng `super` để gọi method `eat` của lớp cha."
+        },
+        {
+          "key": "C",
+          "text": "Bỏ lời gọi `super.eat();` trong method `eat` của `Dog` sẽ khiến class `Dog` không biên dịch được."
+        },
+        {
+          "key": "D",
+          "text": "Keyword `super` dùng được để truy cập static method của lớp cha."
+        }
       ],
-      "correctAnswers": ["A", "B"],
-      "explanation": "A đúng: `super(name)` gọi constructor `Animal(String)` — bắt buộc vì `Animal` không có constructor không tham số. B đúng: `super.eat()` gọi cài đặt gốc ở lớp cha. C sai: gọi `super.eat()` là tuỳ chọn, bỏ đi vẫn biên dịch bình thường. D sai: static method thuộc về class và được truy cập qua tên class, không qua `super`."
+      "correctAnswers": [
+        "A",
+        "B"
+      ],
+      "explanation": "**Đáp án đúng là A và B.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Trong constructor của `Dog`, câu lệnh `super(name);` được dùng để gọi tường minh constructor của siêu lớp (`Animal`) với tham số `name`. Điều này bắt buộc nhằm khởi tạo trường `name` kế thừa từ `Animal` trước khi thực thi code của `Dog`.\n- **B đúng:** Trong phương thức `eat()` của `Dog`, câu lệnh `super.eat();` được dùng để kích hoạt phương thức `eat()` nguyên bản được định nghĩa ở lớp cha `Animal`, cho phép mở rộng chức năng mà không làm mất đi hành vi gốc.\n- **C sai:** Việc xóa lời gọi `super.eat();` không làm cho class `Dog` bị lỗi biên dịch; nó chỉ làm thay đổi hành vi thực thi (không còn gọi logic của lớp cha nữa) nhưng code vẫn hoàn toàn hợp lệ về mặt cú pháp.\n- **D sai:** `super` chủ yếu được dùng để tham chiếu đến constructor và instance method/field của lớp cha. Các phương thức static thuộc về lớp nên cần được gọi trực tiếp thông qua tên lớp (`ClassName.staticMethod()`), không phải mục đích của `super`."
     },
     {
       "number": 10,
       "question": "Kết quả của việc biên dịch và chạy đoạn mã sau là gì?\n\n```java\nclass Vehicle {\n    public void drive(int speed) {\n        System.out.println(\"Vehicle driving at speed: \" + speed);\n    }\n}\n\nclass Car extends Vehicle {\n    @Override\n    public void drive(long speed) {\n        System.out.println(\"Car driving at speed: \" + speed);\n    }\n}\n\npublic class TestDrive {\n    public static void main(String[] args) {\n        Vehicle myCar = new Car();\n        myCar.drive(60);\n    }\n}\n```",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Mã biên dịch được và in ra `\"Car driving at speed: 60\"`." },
-        { "key": "B", "text": "Mã không biên dịch được vì method `drive` không gọi được qua tham chiếu `Vehicle`." },
-        { "key": "C", "text": "Mã không biên dịch được vì method `drive` trong `Car` không override đúng method `drive` của `Vehicle`." },
-        { "key": "D", "text": "Mã biên dịch được và in ra `\"Vehicle driving at speed: 60\"` vì method `drive` trong `Car` là overload chứ không phải override." }
+        {
+          "key": "A",
+          "text": "Mã biên dịch được và in ra `\"Car driving at speed: 60\"`."
+        },
+        {
+          "key": "B",
+          "text": "Mã không biên dịch được vì method `drive` không gọi được qua tham chiếu `Vehicle`."
+        },
+        {
+          "key": "C",
+          "text": "Mã không biên dịch được vì method `drive` trong `Car` không override đúng method `drive` của `Vehicle`."
+        },
+        {
+          "key": "D",
+          "text": "Mã biên dịch được và in ra `\"Vehicle driving at speed: 60\"` vì method `drive` trong `Car` là overload chứ không phải override."
+        }
       ],
-      "correctAnswers": ["C"],
-      "explanation": "`drive(long)` có danh sách tham số khác `drive(int)` nên nó là overload chứ không phải override. Vì method được đánh dấu `@Override`, trình biên dịch kiểm tra và báo lỗi rằng nó không override method nào. Không có annotation đó thì mã sẽ biên dịch được và in ra kết quả như phương án D."
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là C.**\n\n**Giải thích chi tiết:**\n- **A sai:** Đoạn mã hoàn toàn không thể biên dịch thành công nên không thể chạy và in ra kết quả.\n- **B sai:** Phương thức `drive(int)` được định nghĩa hợp lệ trong `Vehicle` nên hoàn toàn có thể được gọi thông qua biến tham chiếu kiểu `Vehicle`.\n- **C đúng:** Annotation `@Override` là một chỉ thị nghiêm ngặt yêu cầu trình biên dịch kiểm tra xem phương thức có thực sự ghi đè một phương thức từ lớp cha hay không. Trong lớp `Vehicle`, phương thức có chữ ký là `drive(int speed)` (tham số kiểu `int`). Trong lớp `Car`, phương thức lại nhận tham số `drive(long speed)` (kiểu `long`). Do khác biệt về kiểu tham số, `drive(long)` trong `Car` là **nạp chồng (overload)** chứ không phải **ghi đè (override)**. Trình biên dịch sẽ báo lỗi: `method does not override or implement a method from a supertype` và từ chối biên dịch.\n- **D sai:** Lựa chọn này giải thích đúng bản chất `drive(long)` là overload, nhưng kết luận sai vì sự có mặt của annotation `@Override` đã chặn đứng quá trình biên dịch."
     },
     {
       "number": 11,
       "question": "Trong đoạn mã sau, nếu bỏ chú thích ở dòng `// myFruit.color();` thì kết quả là gì?\n\n```java\nclass Fruit {\n    public void flavor() { System.out.println(\"Fruit flavor\"); }\n}\n\nclass Apple extends Fruit {\n    @Override\n    public void flavor() { System.out.println(\"Apple flavor\"); }\n    public void color() { System.out.println(\"Red\"); }\n}\n\npublic class TestFruit {\n    public static void main(String[] args) {\n        Fruit myFruit = new Apple();\n        myFruit.flavor();\n        // myFruit.color();\n    }\n}\n```",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Mã biên dịch được và in ra `\"Apple flavor\"` rồi `\"Red\"`." },
-        { "key": "B", "text": "Mã biên dịch được và in ra `\"Fruit flavor\"`." },
-        { "key": "C", "text": "Mã biên dịch được nhưng ném exception lúc chạy khi cố gọi `color()`." },
-        { "key": "D", "text": "Mã không biên dịch được vì `Apple` không phải một kiểu hợp lệ của `Fruit`." },
-        { "key": "E", "text": "Mã không biên dịch được vì method `color` không được định nghĩa trong class `Fruit`." }
+        {
+          "key": "A",
+          "text": "Mã biên dịch được và in ra `\"Apple flavor\"` rồi `\"Red\"`."
+        },
+        {
+          "key": "B",
+          "text": "Mã biên dịch được và in ra `\"Fruit flavor\"`."
+        },
+        {
+          "key": "C",
+          "text": "Mã biên dịch được nhưng ném exception lúc chạy khi cố gọi `color()`."
+        },
+        {
+          "key": "D",
+          "text": "Mã không biên dịch được vì `Apple` không phải một kiểu hợp lệ của `Fruit`."
+        },
+        {
+          "key": "E",
+          "text": "Mã không biên dịch được vì method `color` không được định nghĩa trong class `Fruit`."
+        }
       ],
-      "correctAnswers": ["E"],
-      "explanation": "Kiểu tham chiếu quyết định method nào gọi được lúc biên dịch. `myFruit` có kiểu `Fruit`, mà `Fruit` không định nghĩa `color()`, nên lời gọi gây lỗi biên dịch. Muốn gọi được phải downcast: `((Apple) myFruit).color();`."
+      "correctAnswers": [
+        "E"
+      ],
+      "explanation": "**Đáp án đúng là E.**\n\n**Giải thích chi tiết:**\n- **A sai:** Lời gọi `myFruit.color()` gây lỗi biên dịch nên chương trình không thể chạy để in ra kết quả.\n- **B sai:** Lời gọi `myFruit.flavor()` nếu chạy độc lập sẽ in ra `\"Apple flavor\"` nhờ tính đa hình (dynamic binding gọi phương thức trong `Apple`). Tuy nhiên dòng `myFruit.color()` khiến toàn bộ code không biên dịch được.\n- **C sai:** Lỗi xảy ra ở giai đoạn biên dịch (compile-time error), không phải ngoại lệ lúc chạy (runtime exception). Trình biên dịch Java kiểm tra sự tồn tại của phương thức dựa trên kiểu của biến tham chiếu tại thời điểm biên dịch.\n- **D sai:** `Apple` kế thừa từ `Fruit` (`Apple extends Fruit`), vì vậy `Apple` là một kiểu con hợp lệ của `Fruit`.\n- **E đúng:** Biến tham chiếu `myFruit` có kiểu dữ liệu khai báo là `Fruit`. Trình biên dịch chỉ cho phép gọi các phương thức có trong lớp `Fruit` (hoặc các lớp cha của nó). Vì phương thức `color()` chỉ được định nghĩa riêng trong `Apple` mà không có trong `Fruit`, lời gọi `myFruit.color()` sẽ bị trình biên dịch từ chối. Đây là nguyên lý then chốt của Java: **Kiểu của biến tham chiếu (reference type) quyết định những phương thức nào được phép gọi lúc biên dịch; còn kiểu của đối tượng thực tế (object type) quyết định phiên bản nào của phương thức sẽ thực thi lúc runtime**."
     },
     {
       "number": 12,
       "question": "Xét đoạn mã sau:\n\n```java\nclass Animal {}\nclass Dog extends Animal { public void bark() { System.out.println(\"Woof\"); } }\nclass Cat extends Animal { public void meow() { System.out.println(\"Meow\"); } }\n\npublic class TestCasting {\n    public static void main(String[] args) {\n        Animal animal = new Dog();\n        ((Dog)animal).bark();\n\n        Animal anotherAnimal = new Animal();\n        // Line 1\n    }\n}\n```\n\nNhững dòng nào, nếu chèn độc lập vào Line 1, sẽ biên dịch được mà không gây exception lúc chạy? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "`((Dog)anotherAnimal).bark();`" },
-        { "key": "B", "text": "`if (anotherAnimal instanceof Dog) ((Dog)anotherAnimal).bark();`" },
-        { "key": "C", "text": "`((Cat)animal).meow();`" },
-        { "key": "D", "text": "`if (anotherAnimal instanceof Cat) ((Cat)anotherAnimal).meow();`" }
+        {
+          "key": "A",
+          "text": "`((Dog)anotherAnimal).bark();`"
+        },
+        {
+          "key": "B",
+          "text": "`if (anotherAnimal instanceof Dog) ((Dog)anotherAnimal).bark();`"
+        },
+        {
+          "key": "C",
+          "text": "`((Cat)animal).meow();`"
+        },
+        {
+          "key": "D",
+          "text": "`if (anotherAnimal instanceof Cat) ((Cat)anotherAnimal).meow();`"
+        }
       ],
-      "correctAnswers": ["B", "D"],
-      "explanation": "B và D đều biên dịch được và an toàn vì `instanceof` kiểm tra kiểu trước khi ép — điều kiện trả về `false` nên phần ép kiểu không bao giờ chạy. A biên dịch được nhưng ném `ClassCastException` vì `anotherAnimal` là `Animal` thuần. C cũng biên dịch được nhưng ném `ClassCastException` vì `animal` thực chất là `Dog`, không phải `Cat`."
+      "correctAnswers": [
+        "B",
+        "D"
+      ],
+      "explanation": "**Đáp án đúng là B và D.**\n\n**Giải thích chi tiết:**\n- **A sai:** `((Dog)anotherAnimal).bark();` biên dịch được nhưng sẽ ném ngoại lệ `ClassCastException` khi chạy. Đối tượng thực tế được tạo bởi `new Animal()` là một `Animal` thuần túy, không phải là một `Dog`, nên không thể ép kiểu xuống `Dog`.\n- **B đúng:** `if (anotherAnimal instanceof Dog) ((Dog)anotherAnimal).bark();` sử dụng toán tử `instanceof` để kiểm tra an toàn trước khi ép kiểu. Vì `anotherAnimal` không phải là instance của `Dog`, điều kiện trả về `false`, khối lệnh ép kiểu không bao giờ được thực thi, giúp tránh hoàn toàn ngoại lệ `ClassCastException`.\n- **C sai:** `((Cat)animal).meow();` biên dịch được nhưng sẽ ném ngoại lệ `ClassCastException` lúc chạy, vì đối tượng thực tế của `animal` được khởi tạo là `new Dog()`, không thể ép kiểu sang `Cat`.\n- **D đúng:** `if (anotherAnimal instanceof Cat) ((Cat)anotherAnimal).meow();` kiểm tra xem `anotherAnimal` có phải là `Cat` hay không trước khi ép kiểu. Vì điều kiện là `false`, câu lệnh ép kiểu bị bỏ qua một cách an toàn lúc chạy."
     },
     {
       "number": 13,
       "question": "Xét đoạn mã sau:\n\n```java\npublic class AdvancedPatternMatching {\n    public static void process(Object input) {\n        if (input instanceof String s && s.contains(\"Java\")) {\n            System.out.println(\"String with Java: \" + s);\n        } else if (input instanceof Integer i && i > 10) {\n            System.out.println(\"Integer greater than 10: \" + i);\n        }\n    }\n\n    public static void main(String[] args) {\n        process(\"Hello Java!\");\n        process(15);\n        process(\"Just a string\");\n        process(5);\n    }\n}\n```\n\nPhát biểu nào mô tả chính xác kết quả thực thi?",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Mã biên dịch được và in ra `\"String with Java: Hello Java!\"` rồi `\"Integer greater than 10: 15\"`." },
-        { "key": "B", "text": "Mã biên dịch được nhưng chỉ in ra `\"String with Java: Hello Java!\"` vì số nguyên không được hỗ trợ với pattern matching." },
-        { "key": "C", "text": "Mã không biên dịch được vì pattern matching trong `instanceof` không kết hợp được với toán tử logic như `&&`." },
-        { "key": "D", "text": "Mã biên dịch được nhưng in ra cả bốn dòng do dùng pattern matching sai khiến kết quả luôn là `true`." }
+        {
+          "key": "A",
+          "text": "Mã biên dịch được và in ra `\"String with Java: Hello Java!\"` rồi `\"Integer greater than 10: 15\"`."
+        },
+        {
+          "key": "B",
+          "text": "Mã biên dịch được nhưng chỉ in ra `\"String with Java: Hello Java!\"` vì số nguyên không được hỗ trợ với pattern matching."
+        },
+        {
+          "key": "C",
+          "text": "Mã không biên dịch được vì pattern matching trong `instanceof` không kết hợp được với toán tử logic như `&&`."
+        },
+        {
+          "key": "D",
+          "text": "Mã biên dịch được nhưng in ra cả bốn dòng do dùng pattern matching sai khiến kết quả luôn là `true`."
+        }
       ],
-      "correctAnswers": ["A"],
-      "explanation": "Pattern matching kết hợp hợp lệ với toán tử `&&` nhờ tính đoản mạch: biến pattern chắc chắn đã khởi tạo khi vế phải được đánh giá. `\"Hello Java!\"` khớp nhánh đầu; `15` khớp nhánh thứ hai; `\"Just a string\"` không chứa \"Java\" và `5` không lớn hơn 10 nên hai lời gọi cuối không in gì."
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "**Đáp án đúng là A.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Đoạn mã minh họa tính năng **Pattern Matching cho toán tử instanceof** (được chính thức hóa từ Java 16). Cú pháp `input instanceof String s` vừa kiểm tra kiểu vừa tự động ép kiểu và gán vào biến pattern `s`. Toán tử logic `&&` được sử dụng hoàn toàn hợp lệ để bổ sung thêm điều kiện (`s.contains(\"Java\")` và `i > 10`). Lời gọi `process(\"Hello Java!\")` thỏa mãn điều kiện đầu in `\"String with Java: Hello Java!\"`; lời gọi `process(15)` thỏa mãn điều kiện thứ hai in `\"Integer greater than 10: 15\"`. Các trường hợp còn lại không thỏa mãn nên không in gì.\n- **B sai:** Pattern matching trong Java hỗ trợ mọi kiểu tham chiếu (reference type), bao gồm cả lớp bao bọc đối tượng như `Integer`.\n- **C sai:** Pattern matching với `instanceof` hoàn toàn có thể kết hợp cùng toán tử logic `&&` nhờ cơ chế đoản mạch (short-circuit evaluation), đảm bảo biến pattern đã được gán giá trị hợp lệ trước khi biểu thức bên phải `&&` được đánh giá.\n- **D sai:** Pattern matching hoạt động chính xác theo điều kiện logic và chỉ đánh giá thành `true` khi kiểu và điều kiện đi kèm đều khớp."
     },
     {
       "number": 14,
       "question": "Xét class `Product` có field `private`, constructor gọi các setter `private` có kiểm tra giá trị, và getter `public` cho mọi field. Phát biểu nào đúng về tính đóng gói của class này?",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Đổi các method `setName`, `setPrice` và `setStock` thành `public` sẽ tăng tính đóng gói của class." },
-        { "key": "B", "text": "Class không được đóng gói vì các field của `Product` là `private`." },
-        { "key": "C", "text": "Tính đóng gói bị suy yếu vì constructor cho phép gán trực tiếp field mà không kiểm tra." },
-        { "key": "D", "text": "Class `Product` nên có getter package-private để cải thiện tính đóng gói." },
-        { "key": "E", "text": "Class được đóng gói đúng cách nhờ cung cấp getter `public` cho mọi field và setter `private` có kiểm tra, đảm bảo kiểm soát trạng thái của object." }
+        {
+          "key": "A",
+          "text": "Đổi các method `setName`, `setPrice` và `setStock` thành `public` sẽ tăng tính đóng gói của class."
+        },
+        {
+          "key": "B",
+          "text": "Class không được đóng gói vì các field của `Product` là `private`."
+        },
+        {
+          "key": "C",
+          "text": "Tính đóng gói bị suy yếu vì constructor cho phép gán trực tiếp field mà không kiểm tra."
+        },
+        {
+          "key": "D",
+          "text": "Class `Product` nên có getter package-private để cải thiện tính đóng gói."
+        },
+        {
+          "key": "E",
+          "text": "Class được đóng gói đúng cách nhờ cung cấp getter `public` cho mọi field và setter `private` có kiểm tra, đảm bảo kiểm soát trạng thái của object."
+        }
       ],
-      "correctAnswers": ["E"],
-      "explanation": "E đúng: field `private`, getter `public` để đọc có kiểm soát, setter `private` kèm logic kiểm tra — trạng thái object luôn hợp lệ và không sửa được từ bên ngoài. A sai: mở setter thành `public` làm giảm đóng gói. B sai: field `private` chính là điều kiện của đóng gói. C sai: constructor gọi qua các setter đã có kiểm tra. D sai: getter package-private không cải thiện gì mà chỉ làm class khó dùng hơn."
+      "correctAnswers": [
+        "E"
+      ],
+      "explanation": "**Đáp án đúng là E.**\n\n**Giải thích chi tiết:**\n- **A sai:** Đổi các setter thành `public` sẽ làm suy yếu tính đóng gói (encapsulation), vì các lớp bên ngoài có thể tự do can thiệp và sửa đổi trạng thái đối tượng, có nguy cơ bỏ qua các quy tắc kiểm tra logic.\n- **B sai:** Khai báo các trường là `private` là nền tảng cốt lõi của tính đóng gói, giúp ẩn giấu dữ liệu nội bộ khỏi sự truy cập tùy tiện từ bên ngoài.\n- **C sai:** Constructor không làm suy yếu tính đóng gói vì nó không gán trực tiếp dữ liệu thô mà gọi thông qua các setter nội bộ `private` đã có sẵn logic kiểm tra (validation).\n- **D sai:** Chuyển getter thành package-private chỉ làm thu hẹp phạm vi sử dụng của lớp chứ không cải thiện tính đóng gói; các getter `public` là chuẩn mực để thế giới bên ngoài đọc dữ liệu an toàn mà không sửa đổi được.\n- **E đúng:** Lớp `Product` minh họa hoàn hảo nguyên lý đóng gói (encapsulation) trong OOP: các trường dữ liệu được bảo vệ bằng `private`, cung cấp getter `public` để đọc dữ liệu an toàn, và sử dụng setter `private` tích hợp sẵn logic kiểm tra hợp lệ để kiểm soát chặt chẽ trạng thái khởi tạo của đối tượng."
     },
     {
       "number": 15,
       "question": "Xét `Account` (field `balance` là `private`, method `deposit` package-private, `getBalance` là `protected`) và `SavingsAccount extends Account` dùng `getBalance()` cùng `deposit()` trong `applyInterest()`. Phát biểu nào đúng? (Chọn tất cả đáp án đúng.)",
       "isMulti": true,
       "options": [
-        { "key": "A", "text": "Class `SavingsAccount` không truy cập trực tiếp được field `balance` do access modifier `private` của nó trong class `Account`." },
-        { "key": "B", "text": "Method `getBalance` nên là `public` để cho phép `SavingsAccount` truy cập số dư tài khoản." },
-        { "key": "C", "text": "Method `deposit` trong class `Account` nên được đánh dấu `final` để ngăn việc override." },
-        { "key": "D", "text": "Field `interestRate` trong `SavingsAccount` vi phạm nguyên lý đóng gói vì nó là `private`." },
-        { "key": "E", "text": "Class `Account` đóng gói field `balance` đúng cách, và `SavingsAccount` tuân thủ đóng gói khi truy cập `balance` thông qua `getBalance` và `deposit`." }
+        {
+          "key": "A",
+          "text": "Class `SavingsAccount` không truy cập trực tiếp được field `balance` do access modifier `private` của nó trong class `Account`."
+        },
+        {
+          "key": "B",
+          "text": "Method `getBalance` nên là `public` để cho phép `SavingsAccount` truy cập số dư tài khoản."
+        },
+        {
+          "key": "C",
+          "text": "Method `deposit` trong class `Account` nên được đánh dấu `final` để ngăn việc override."
+        },
+        {
+          "key": "D",
+          "text": "Field `interestRate` trong `SavingsAccount` vi phạm nguyên lý đóng gói vì nó là `private`."
+        },
+        {
+          "key": "E",
+          "text": "Class `Account` đóng gói field `balance` đúng cách, và `SavingsAccount` tuân thủ đóng gói khi truy cập `balance` thông qua `getBalance` và `deposit`."
+        }
       ],
-      "correctAnswers": ["A", "E"],
-      "explanation": "A đúng: thành phần `private` không được kế thừa cho truy cập trực tiếp, kể cả bởi lớp con. E đúng: `SavingsAccount` chỉ đọc và thay đổi số dư qua `getBalance()` và `deposit()` — đúng tinh thần đóng gói. B sai: `protected` đã đủ cho lớp con, để `public` là nới lỏng không cần thiết. C sai: `final` không liên quan tới đóng gói ở đây. D sai: field `private` củng cố chứ không vi phạm đóng gói."
+      "correctAnswers": [
+        "A",
+        "E"
+      ],
+      "explanation": "**Đáp án đúng là A và E.**\n\n**Giải thích chi tiết:**\n- **A đúng:** Lớp con `SavingsAccount` không thể truy cập trực tiếp trường `balance` vì nó được khai báo với access modifier là `private` trong lớp cha `Account`. Đây là thiết kế có chủ đích nhằm bảo vệ tính toàn vẹn của dữ liệu số dư.\n- **B sai:** Phương thức `getBalance()` được khai báo `protected` đã hoàn toàn đủ quyền hạn cho phép lớp con `SavingsAccount` truy cập. Việc nâng lên `public` là không cần thiết và mở rộng phạm vi truy cập quá mức cần thiết.\n- **C sai:** Đánh dấu `deposit` là `final` ngăn cản lớp con ghi đè, đây là quyết định thiết kế tùy chọn chứ không phải là yêu cầu bắt buộc của nguyên lý đóng gói.\n- **D sai:** Khai báo `interestRate` là `private` trong `SavingsAccount` là thực hành đúng chuẩn của đóng gói, giúp hạn chế truy cập trái phép từ bên ngoài.\n- **E đúng:** Lớp `Account` đóng gói đúng đắn trường `balance` bằng phạm vi `private`, đồng thời cung cấp phương thức `getBalance()` (`protected`) và `deposit()` (package-private) để kiểm soát việc đọc và sửa đổi số dư. Lớp con `SavingsAccount` tuân thủ nghiêm ngặt tính đóng gói khi thao tác với số dư chỉ thông qua các phương thức được kiểm soát này."
     },
     {
       "number": 16,
       "question": "Xét class `Contact` khai báo `final`, mọi field là `private final`, constructor tạo bản sao mới của `Address` truyền vào, và `getAddress()` trả về một `Address` mới. Phát biểu nào mô tả chính xác object `Contact`?",
       "isMulti": false,
       "options": [
-        { "key": "A", "text": "Object `Contact` là khả biến vì class `Address` không phải `final`." },
-        { "key": "B", "text": "Object `Contact` là bất biến, nhưng chỉ vì nó không cung cấp setter." },
-        { "key": "C", "text": "Object `Contact` là bất biến, và nó ngăn được việc rò rỉ trạng thái nội bộ khả biến nhờ sao chép phòng vệ." },
-        { "key": "D", "text": "Object `Contact` là khả biến vì object `Address` có thể bị thay đổi qua method `getAddress`." },
-        { "key": "E", "text": "Object `Contact` là bất biến nhưng không ngăn được việc truy cập trạng thái nội bộ khả biến của nó." }
+        {
+          "key": "A",
+          "text": "Object `Contact` là khả biến vì class `Address` không phải `final`."
+        },
+        {
+          "key": "B",
+          "text": "Object `Contact` là bất biến, nhưng chỉ vì nó không cung cấp setter."
+        },
+        {
+          "key": "C",
+          "text": "Object `Contact` là bất biến, và nó ngăn được việc rò rỉ trạng thái nội bộ khả biến nhờ sao chép phòng vệ."
+        },
+        {
+          "key": "D",
+          "text": "Object `Contact` là khả biến vì object `Address` có thể bị thay đổi qua method `getAddress`."
+        },
+        {
+          "key": "E",
+          "text": "Object `Contact` là bất biến nhưng không ngăn được việc truy cập trạng thái nội bộ khả biến của nó."
+        }
       ],
-      "correctAnswers": ["C"],
-      "explanation": "C đúng: class là `final`, mọi field `private final`, không có setter, và quan trọng nhất là constructor lẫn getter đều tạo bản sao phòng vệ (defensive copy) của `Address` nên tham chiếu nội bộ không bao giờ bị rò ra ngoài. B chưa đủ vì thiếu setter không đảm bảo bất biến khi có thành phần khả biến. D và E sai vì `getAddress()` trả về bản sao chứ không phải tham chiếu gốc."
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "**Đáp án đúng là C.**\n\n**Giải thích chi tiết:**\n- **A sai:** Tính bất biến của `Contact` không phụ thuộc vào việc lớp `Address` có phải là `final` hay không, vì `Contact` đã áp dụng kỹ thuật sao chép phòng vệ (defensive copying) để tạo bản sao độc lập của đối tượng `Address`.\n- **B sai:** Việc không có setter chỉ là một điều kiện cần nhưng chưa đủ để tạo nên đối tượng bất biến (immutable). Một đối tượng chỉ thực sự bất biến khi tất cả các trường đều là `private final`, lớp là `final` (chống kế thừa), và phải có chiến lược sao chép phòng vệ cho các trường kiểu tham chiếu khả biến.\n- **C đúng:** Lớp `Contact` đạt chuẩn đối tượng bất biến (immutable object) tuyệt đối: lớp được khai báo `final` (ngăn chặn việc bị kế thừa và override hành vi), toàn bộ trường là `private final`, không có setter, và quan trọng nhất là áp dụng kỹ thuật **Sao chép phòng vệ (Defensive Copying)** cả ở constructor (tạo bản sao mới từ đối tượng `Address` truyền vào) lẫn getter (trả về một bản sao `Address` mới). Nhờ vậy, trạng thái nội bộ của `Contact` hoàn toàn không bị rò rỉ ra ngoài và không thể bị sửa đổi bởi bất kỳ tác nhân bên ngoài nào.\n- **D sai:** `Contact` không phải là khả biến vì phương thức `getAddress()` trả về một đối tượng `Address` mới độc lập (bản sao), việc sửa đổi đối tượng trả về này hoàn toàn không ảnh hưởng đến đối tượng `Address` lưu bên trong `Contact`.\n- **E sai:** `Contact` đã ngăn chặn triệt để sự rò rỉ trạng thái nội bộ thông qua việc sao chép phòng vệ hai chiều."
     }
   ]
 }
