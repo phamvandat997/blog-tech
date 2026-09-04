@@ -269,6 +269,19 @@
                     placeholder="Thiếu thì lấy đoạn văn xuôi đầu tiên"></textarea>
         </label>
 
+        <div class="admin-field" id="field-tags-group">
+          <span class="admin-label">Thẻ phân loại (Tags)</span>
+          <div class="admin-tags-container" id="tags-container">
+            <div class="admin-tags-list" id="tags-list"></div>
+            <input type="text" id="field-tags-input" class="admin-tags-input" placeholder="Nhập tag rồi ấn Enter hoặc dấu phẩy..." autocomplete="off">
+          </div>
+          <div class="admin-tags-suggestions" id="tags-suggestions-box">
+            <span class="admin-tags-suggestions-label">Gợi ý tag có sẵn:</span>
+            <div class="admin-tags-suggestions-list" id="tags-suggestions"></div>
+          </div>
+          <span class="admin-hint">Gắn từ khóa giúp người đọc dễ tìm kiếm và lọc bài viết (VD: Java, OOP, Spring, Concurrency, Virtual Threads...).</span>
+        </div>
+
         <div class="admin-checkbox-group">
           <label class="admin-checkbox-label" for="field-featured">
             <input type="checkbox" id="field-featured">
@@ -378,6 +391,21 @@
           <span class="admin-label">Tiêu đề bài trắc nghiệm <b class="req">*</b></span>
           <input type="text" id="quiz-title" placeholder="VD: Chapter 1: OOP Approach - Part 1 (24 Practice Questions)" required>
         </label>
+
+        <div class="admin-field mb-4" id="quiz-tags-group">
+          <span class="admin-label">Thẻ phân loại bài quiz (Tags)</span>
+          <div class="admin-tags-container" id="quiz-tags-container">
+            <div class="admin-tags-list" id="quiz-tags-list"></div>
+            <input type="text" id="quiz-tags-input" class="admin-tags-input" placeholder="Nhập tag rồi ấn Enter hoặc dấu phẩy..." autocomplete="off">
+          </div>
+          <div class="admin-tags-suggestions" id="quiz-tags-suggestions-box">
+            <span class="admin-tags-suggestions-label">Gợi ý tag có sẵn:</span>
+            <div class="admin-tags-suggestions-list" id="quiz-tags-suggestions"></div>
+          </div>
+          <span class="admin-hint">
+            Tag được lưu vào trường <code>tags</code> trong file <code>.quiz.json</code> và hiện thành thanh lọc dạng carousel trên trang Luyện Quiz.
+          </span>
+        </div>
 
         <!-- Thống kê nhanh câu hỏi (Live Stats) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-center">

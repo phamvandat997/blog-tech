@@ -36,6 +36,9 @@ function main() {
     const qz = quizBank[doc.id];
     if (qz) {
       doc.questions = qz.quizzes.length;
+      // Tag của bộ quiz nằm trong file .quiz.json, tách khỏi tag bài viết —
+      // trang Luyện Quiz lọc theo trường này.
+      if (qz.tags && qz.tags.length) doc.quizTags = qz.tags;
     }
   });
 

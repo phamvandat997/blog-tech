@@ -144,6 +144,27 @@ function scanContent(contentDir) {
 }
 
 /**
+ * Chuẩn hoá danh sách tag của một bộ quiz: bỏ khoảng trắng thừa, bỏ dấu "#"
+ * đầu, bỏ trùng (không phân biệt hoa thường) và giữ nguyên thứ tự admin nhập.
+ */
+function normalizeQuizTags(value) {
+  const list = Array.isArray(value)
+    ? value
+    : String(value || "").split(",");
+  const seen = new Set();
+  const out = [];
+  for (const item of list) {
+    const clean = String(item ?? "").trim().replace(/^#+/, "").trim();
+    if (!clean) continue;
+    const lower = clean.toLowerCase();
+    if (seen.has(lower)) continue;
+    seen.add(lower);
+    out.push(clean);
+  }
+  return out;
+}
+
+/**
  * Quét tất cả file <slug>.quiz.json trong content/ và trả về map:
  * { [docId]: { docId, section, category, title, quizzes: [...] } }
  */
@@ -169,6 +190,7 @@ function scanQuizzes(contentDir) {
               section: sectionId,
               category: categoryId,
               title: raw.title || slug,
+              tags: normalizeQuizTags(raw.tags),
               quizzes: raw.quizzes.map(({ file, ...q }) => q),
             };
           }
@@ -181,5 +203,5 @@ function scanQuizzes(contentDir) {
   return bank;
 }
 
-module.exports = { scanContent, scanQuizzes, flatten, SLUG };
+module.exports = { scanContent, scanQuizzes, normalizeQuizTags, flatten, SLUG };
 

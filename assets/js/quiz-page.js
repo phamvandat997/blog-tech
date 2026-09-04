@@ -35,6 +35,7 @@ function initQuizPage() {
 function openQuizPreview() {
   const root = qs("#quiz-root");
   if (!root) return;
+  setNavSearchVisible(false);
 
   try {
     const raw = sessionStorage.getItem("blog.quiz.preview");
@@ -76,6 +77,17 @@ function openQuizPreview() {
   }
 }
 
+/**
+ * Ô tìm kiếm nằm trên navbar nên chỉ có nghĩa ở màn hình danh sách — vào làm
+ * bài thì ẩn đi để tránh gõ vào một bộ lọc không còn hiển thị.
+ */
+let _tagNavResizeHandler = null;
+
+function setNavSearchVisible(visible) {
+  const box = qs("#nav-quiz-search");
+  if (box) box.classList.toggle("hidden", !visible);
+}
+
 const getDocs = () => (typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []));
 const getSections = () => (typeof ALL_SECTIONS !== "undefined" ? ALL_SECTIONS : (typeof SECTIONS !== "undefined" ? SECTIONS : []));
 
@@ -86,9 +98,13 @@ function openQuizList() {
   const root = qs("#quiz-root");
   if (!root) return;
 
+  const searchInput = qs("#quiz-search-input");
+  setNavSearchVisible(true);
+
   const docsWithQuiz = getDocs().filter((d) => (d.questions || 0) > 0);
 
   if (!docsWithQuiz.length) {
+    setNavSearchVisible(false);
     root.innerHTML = emptyState(
       "📝",
       "Chưa có bài tập trắc nghiệm nào",
@@ -118,26 +134,45 @@ function openQuizList() {
     ...getSections().filter((s) => docsWithQuiz.some((d) => d.section === s.id))
   ];
 
+  // Tag của bộ đề nằm trong file .quiz.json, build gắn vào catalog thành
+  // doc.quizTags. Xếp theo số bài dùng tag đó giảm dần cho carousel.
+  const tagCounts = new Map();
+  docsWithQuiz.forEach((d) => {
+    (d.quizTags || []).forEach((t) => {
+      const clean = String(t).trim();
+      if (!clean) return;
+      const lower = clean.toLowerCase();
+      const cur = tagCounts.get(lower) || { name: clean, count: 0 };
+      cur.count++;
+      tagCounts.set(lower, cur);
+    });
+  });
+  const allTags = Array.from(tagCounts.values()).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
   let currentSection = "all";
-  let searchQuery = "";
+  let currentTag = "";   // "" = tất cả tag
+  let searchQuery = searchInput?.value || "";
 
   function renderCards() {
     const query = searchQuery.trim().toLowerCase();
     const filtered = docsWithQuiz.filter((d) => {
       const matchSec = currentSection === "all" || d.section === currentSection;
+      const matchTag = !currentTag ||
+        (d.quizTags || []).some((t) => t.toLowerCase() === currentTag);
       const matchQ = !query ||
         d.title.toLowerCase().includes(query) ||
         (d.description || "").toLowerCase().includes(query) ||
         (d.phase || "").toLowerCase().includes(query) ||
+        (d.quizTags || []).some((t) => t.toLowerCase().includes(query)) ||
         (d.tags || []).some((t) => t.toLowerCase().includes(query));
-      return matchSec && matchQ;
+      return matchSec && matchTag && matchQ;
     });
 
     const listEl = qs("#quiz-list-items");
     if (!listEl) return;
 
     if (!filtered.length) {
-      listEl.innerHTML = emptyState("🔍", "Không tìm thấy bài quiz phù hợp", "Thử đổi từ khoá hoặc chọn mảng công nghệ khác.");
+      listEl.innerHTML = emptyState("🔍", "Không tìm thấy bài quiz phù hợp", "Thử đổi từ khoá, bỏ bớt tag hoặc chọn mảng công nghệ khác.");
       return;
     }
 
@@ -145,6 +180,10 @@ function openQuizList() {
       const sec = getSections().find((s) => s.id === doc.section);
       const cat = (sec?.categories || []).find((c) => c.id === doc.category);
       const sc = scoreOf(doc.id);
+
+      const tagChips = (doc.quizTags || []).slice(0, 3).map((t) =>
+        `<button type="button" class="quiz-tag-chip" data-tag-pick="${attr(t.toLowerCase())}">#${escapeHtml(t)}</button>`
+      ).join("");
 
       const scoreText = sc.answered > 0
         ? `<span class="text-indigo-600 dark:text-indigo-400 font-bold">Đã làm: ${sc.correct}/${sc.total} (${sc.pct}%)</span>`
@@ -169,6 +208,7 @@ function openQuizList() {
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
             ${escapeHtml(doc.description || "Bài tập trắc nghiệm chọn lọc rèn luyện kỹ năng.")}
           </p>
+          ${tagChips ? `<div class="flex items-center gap-1.5 flex-wrap mt-2.5">${tagChips}</div>` : ""}
         </div>
 
         <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-500 dark:text-slate-400">
@@ -201,16 +241,9 @@ function openQuizList() {
         </p>
       </div>
 
-      <!-- Thanh công cụ tìm kiếm và lọc mảng -->
-      <div class="quiz-search-toolbar bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm mb-8 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        <div class="relative flex-1 max-w-md">
-          <input type="text" id="quiz-search-input"
-                 placeholder="Tìm kiếm bài trắc nghiệm theo từ khoá, chuyên mục..."
-                 class="w-full pl-9 pr-4 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
-        </div>
-
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+      <!-- Thanh lọc: mảng công nghệ + carousel tag (ô tìm kiếm đã nằm trên nav) -->
+      <div class="quiz-search-toolbar bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm mb-8 flex flex-col gap-3">
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
           ${sectionTabs.map((sec) => `
             <button class="quiz-section-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sec.id === currentSection ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}"
                     data-section-id="${attr(sec.id)}">
@@ -218,6 +251,24 @@ function openQuizList() {
             </button>
           `).join("")}
         </div>
+
+        ${allTags.length ? `
+        <div class="quiz-tag-carousel pt-3 border-t border-slate-100 dark:border-slate-700/60" id="quiz-tag-carousel">
+          <div class="flex items-center gap-2">
+            <button type="button" class="quiz-tag-nav" data-tag-scroll="-1" aria-label="Xem tag phía trước" hidden>‹</button>
+            <div class="quiz-tag-track" id="quiz-tag-track" role="group" aria-label="Lọc bài quiz theo tag">
+              <button type="button" class="quiz-tag-pill is-active" data-tag-filter="">
+                Tất cả tag
+              </button>
+              ${allTags.map((t) => `
+                <button type="button" class="quiz-tag-pill" data-tag-filter="${attr(t.name.toLowerCase())}">
+                  #${escapeHtml(t.name)} <span class="quiz-tag-count">${t.count}</span>
+                </button>
+              `).join("")}
+            </div>
+            <button type="button" class="quiz-tag-nav" data-tag-scroll="1" aria-label="Xem tag tiếp theo" hidden>›</button>
+          </div>
+        </div>` : ""}
       </div>
 
       <div id="quiz-list-items" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"></div>
@@ -226,14 +277,92 @@ function openQuizList() {
 
   renderCards();
 
-  // Bắt sự kiện tìm kiếm
-  const searchInput = qs("#quiz-search-input");
+  // Ô tìm kiếm nằm ngoài #quiz-root nên không bị render lại — gán thẳng
+  // handler (không addEventListener) để quay lại danh sách không chồng listener.
   if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      searchQuery = e.target.value;
+    searchInput.oninput = () => {
+      searchQuery = searchInput.value;
       renderCards();
+    };
+  }
+
+  /* ------------------------------------------------ carousel lọc theo tag */
+
+  const tagTrack = qs("#quiz-tag-track", root);
+
+  /** Ẩn / hiện hai nút mũi tên tuỳ theo còn chỗ để cuộn hay không. */
+  function updateTagNav() {
+    if (!tagTrack) return;
+    const max = tagTrack.scrollWidth - tagTrack.clientWidth;
+    const overflow = max > 4;
+    qsa("[data-tag-scroll]", root).forEach((btn) => {
+      const dir = Number(btn.dataset.tagScroll);
+      btn.hidden = !overflow;
+      btn.disabled = dir < 0 ? tagTrack.scrollLeft <= 2 : tagTrack.scrollLeft >= max - 2;
     });
   }
+
+  if (tagTrack) {
+    tagTrack.addEventListener("scroll", updateTagNav, { passive: true });
+    // Mỗi lần quay lại danh sách là một closure mới — gỡ handler cũ để không
+    // tích tụ listener trỏ vào DOM đã bị thay.
+    if (_tagNavResizeHandler) window.removeEventListener("resize", _tagNavResizeHandler);
+    _tagNavResizeHandler = updateTagNav;
+    window.addEventListener("resize", _tagNavResizeHandler);
+    updateTagNav();
+  }
+
+  // Cuộn mượt tự cài bằng requestAnimationFrame: scrollTo({behavior:"smooth"})
+  // bị vô hiệu trong vài trình duyệt nhúng, nút bấm khi đó không nhúc nhích.
+  let tagScrollAnim = 0;
+  function animateTagScroll(target) {
+    if (!tagTrack) return;
+    cancelAnimationFrame(tagScrollAnim);
+    const from = tagTrack.scrollLeft;
+    const delta = target - from;
+    if (!delta) return;
+    const started = performance.now();
+    const DURATION = 260;
+    const step = (now) => {
+      const t = Math.min(1, (now - started) / DURATION);
+      const eased = 1 - Math.pow(1 - t, 3);
+      tagTrack.scrollLeft = from + delta * eased;
+      if (t < 1) tagScrollAnim = requestAnimationFrame(step);
+      else updateTagNav();
+    };
+    tagScrollAnim = requestAnimationFrame(step);
+  }
+
+  delegate(root, "click", "[data-tag-scroll]", (e, btn) => {
+    if (!tagTrack) return;
+    const step = Math.max(160, Math.round(tagTrack.clientWidth * 0.8));
+    const max = tagTrack.scrollWidth - tagTrack.clientWidth;
+    const target = Math.max(0, Math.min(max, tagTrack.scrollLeft + step * Number(btn.dataset.tagScroll)));
+    animateTagScroll(target);
+  });
+
+  /** Chọn một tag (bấm lại tag đang chọn thì bỏ lọc). */
+  function selectTag(tag) {
+    currentTag = currentTag === tag ? "" : tag;
+    qsa(".quiz-tag-pill", root).forEach((pill) => {
+      pill.classList.toggle("is-active", pill.dataset.tagFilter === currentTag);
+    });
+    renderCards();
+  }
+
+  delegate(root, "click", ".quiz-tag-pill", (e, pill) => selectTag(pill.dataset.tagFilter));
+
+  // Bấm tag ngay trên thẻ bài quiz cũng lọc theo tag đó. Handler này được gắn
+  // TRƯỚC handler mở bài, nên stopImmediatePropagation chặn được việc vào thi.
+  delegate(root, "click", "[data-tag-pick]", (e, chip) => {
+    e.stopImmediatePropagation();
+    selectTag(chip.dataset.tagPick);
+    const active = qsa(".quiz-tag-pill", root).find((p) => p.dataset.tagFilter === currentTag);
+    if (active && tagTrack) {
+      const offset = active.offsetLeft - (tagTrack.clientWidth - active.offsetWidth) / 2;
+      animateTagScroll(Math.max(0, Math.min(tagTrack.scrollWidth - tagTrack.clientWidth, offset)));
+    }
+  });
 
   // Bắt sự kiện chuyển tab mảng
   delegate(root, "click", ".quiz-section-tab", (e, btn) => {
@@ -260,6 +389,7 @@ function openQuizList() {
 function openQuizPlayer(docId) {
   const root = qs("#quiz-root");
   if (!root) return;
+  setNavSearchVisible(false);
 
   const doc = getDocs().find((d) => d.id === docId);
   if (!doc) {

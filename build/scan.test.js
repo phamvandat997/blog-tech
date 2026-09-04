@@ -4,7 +4,7 @@ const assert = require("node:assert");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { scanContent, flatten } = require("./lib/scan");
+const { scanContent, scanQuizzes, flatten } = require("./lib/scan");
 
 function fixture(tree) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "scan-"));
@@ -155,4 +155,27 @@ test("file .quiz.json cạnh bài được giữ nguyên nhưng build bỏ qua",
 test("id phẳng hoá không đụng nhau", () => {
   assert.equal(flatten("java/core/phase1"), "java__core__phase1");
   assert.notEqual(flatten("a/b-c/d"), flatten("a/b/c-d"));
+});
+
+test("tag của bộ quiz được chuẩn hoá: bỏ #, bỏ trùng, giữ thứ tự", () => {
+  const dir = fixture({
+    "java/_section.json": SECTION,
+    "java/core/a.md": "---\ntitle: A\n---\nx",
+    "java/core/a.quiz.json": JSON.stringify({
+      title: "Quiz A",
+      tags: ["#OOP", " Java ", "oop", ""],
+      quizzes: [{ number: 1 }],
+    }),
+  });
+  const bank = scanQuizzes(dir);
+  assert.deepEqual(bank["java/core/a"].tags, ["OOP", "Java"]);
+});
+
+test("bộ quiz không khai báo tag thì trả về mảng rỗng", () => {
+  const dir = fixture({
+    "java/_section.json": SECTION,
+    "java/core/a.md": "---\ntitle: A\n---\nx",
+    "java/core/a.quiz.json": JSON.stringify({ quizzes: [{ number: 1 }] }),
+  });
+  assert.deepEqual(scanQuizzes(dir)["java/core/a"].tags, []);
 });

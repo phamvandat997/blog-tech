@@ -1867,3 +1867,118 @@ body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
   user-select: none;
 }
 
+
+/* =============================== Carousel tag lọc bài quiz */
+/* Một hàng tag cuộn ngang, hai nút mũi tên chỉ hiện khi thực sự tràn hàng.
+   Thanh cuộn bị ẩn giống .featured-carousel để giữ nét gọn của thanh lọc. */
+.quiz-tag-track {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  /* Cuộn mượt do JS quyết định (scrollBy behavior), không đặt ở CSS: đặt ở đây
+     khiến mọi thao tác gán scrollLeft đều phải chờ animation. */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0.15rem 0;
+}
+
+.quiz-tag-track::-webkit-scrollbar {
+  display: none;
+}
+
+.quiz-tag-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-subtle);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.quiz-tag-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.quiz-tag-pill.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.quiz-tag-count {
+  font-size: 0.65rem;
+  font-weight: 800;
+  opacity: 0.7;
+}
+
+.quiz-tag-nav {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
+}
+
+.quiz-tag-nav:hover:not(:disabled) {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.quiz-tag-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Tag hiển thị ngay trên thẻ bài quiz — bấm vào là lọc theo tag đó */
+.quiz-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--bg-surface-subtle);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.quiz-tag-chip:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Nút mũi tên dùng thuộc tính hidden; display:flex ở trên sẽ đè nếu không chặn */
+.quiz-tag-nav[hidden] {
+  display: none;
+}
+
+/* Ô tìm kiếm trên nav: đủ chỗ cho cả logo và nhóm nút bên phải */
+.nav-quiz-search {
+  min-width: 7rem;
+}

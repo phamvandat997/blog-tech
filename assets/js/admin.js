@@ -306,6 +306,7 @@ async function loadPosts() {
         pr: hit?.pr || null,
         title: titleFromCatalog(`${section}/${category}/${slug}`) || slug,
         featured: Boolean(doc?.featured),
+        tags: doc?.tags || [],
         status: !hit ? "active"
           : hit.fileStatus === "removed" ? "removing"
           : !onMaster.has(path) ? "pending"
@@ -357,7 +358,7 @@ function renderPosts() {
   const match = (FILTERS.find(([id]) => id === admin.filter) || FILTERS[0])[2];
   const posts = admin.posts
     .filter(match)
-    .filter((p) => !query || `${p.title} ${p.path}`.toLowerCase().includes(query));
+    .filter((p) => !query || `${p.title} ${p.path} ${(p.tags || []).join(" ")}`.toLowerCase().includes(query));
 
   const list = qs("#post-list");
   const pager = qs("#post-pagination");
@@ -393,10 +394,17 @@ function postRow(post) {
   const featuredBadge = post.featured
     ? `<span class="inline-flex items-center gap-1 text-[0.7rem] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 ml-2">⭐ Nổi bật</span>`
     : "";
+  const tagsHtml = (post.tags || []).slice(0, 3).map((t) =>
+    `<span class="text-[0.65rem] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">#${escapeHtml(t)}</span>`
+  ).join("");
+
   return `<article class="admin-list-row" data-path="${attr(post.path)}">
     <div class="admin-list-main">
       <span class="admin-list-title">${escapeHtml(post.title)}${featuredBadge}</span>
-      <code class="admin-list-path">${escapeHtml(post.path)}</code>
+      <div class="flex items-center gap-2 mt-1 flex-wrap">
+        <code class="admin-list-path">${escapeHtml(post.path)}</code>
+        ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap">${tagsHtml}</div>` : ""}
+      </div>
     </div>
     <div class="admin-list-side">
       <span class="admin-status ${cls}">${label}</span>
@@ -426,6 +434,155 @@ function updatePathPreview() {
   qs("#path-prefix").textContent = `content/${sectionId || "…"}/${categoryId || "…"}/`;
 }
 
+/* ------------------------------------------------------------- quản lý tags */
+
+let _editorTags = [];
+
+function getEditorTags() {
+  return [..._editorTags];
+}
+
+function setEditorTags(tags, silent = false) {
+  const list = Array.isArray(tags)
+    ? tags
+    : String(tags || "").split(",").map((t) => t.trim()).filter(Boolean);
+
+  const seen = new Set();
+  _editorTags = [];
+  list.forEach((t) => {
+    const clean = String(t).trim().replace(/^#+/, "");
+    const lower = clean.toLowerCase();
+    if (clean && !seen.has(lower)) {
+      seen.add(lower);
+      _editorTags.push(clean);
+    }
+  });
+
+  renderTagChips();
+  updateTagSuggestionsState();
+  if (!silent) markDirty();
+}
+
+function addEditorTag(tag) {
+  const clean = String(tag || "").trim().replace(/^#+/, "");
+  if (!clean) return;
+  const lower = clean.toLowerCase();
+  if (_editorTags.some((t) => t.toLowerCase() === lower)) return;
+
+  _editorTags.push(clean);
+  renderTagChips();
+  updateTagSuggestionsState();
+  markDirty();
+}
+
+function removeEditorTag(tag) {
+  const lower = String(tag || "").trim().toLowerCase();
+  _editorTags = _editorTags.filter((t) => t.toLowerCase() !== lower);
+  renderTagChips();
+  updateTagSuggestionsState();
+  markDirty();
+}
+
+function renderTagChips() {
+  const container = qs("#tags-list");
+  if (!container) return;
+
+  container.innerHTML = _editorTags.map((t) =>
+    `<span class="admin-tag-chip">
+      <span>#${escapeHtml(t)}</span>
+      <button type="button" class="admin-tag-remove" data-remove-tag="${attr(t)}" title="Xoá tag ${attr(t)}">✕</button>
+    </span>`
+  ).join("");
+}
+
+function updateTagSuggestionsState() {
+  const lowerSet = new Set(_editorTags.map((t) => t.toLowerCase()));
+  qsa("#tags-suggestions .admin-tag-suggestion-chip").forEach((chip) => {
+    const isSel = lowerSet.has(chip.dataset.tag.toLowerCase());
+    chip.classList.toggle("is-selected", isSel);
+    chip.setAttribute("aria-disabled", String(isSel));
+  });
+}
+
+function initTagsManager() {
+  const container = qs("#tags-container");
+  const input = qs("#field-tags-input");
+  const suggestionsList = qs("#tags-suggestions");
+  if (!container || !input) return;
+
+  // Lấy danh sách tag có sẵn từ toàn bộ documents trong hệ thống
+  const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
+  const tagCounts = new Map();
+  docs.forEach((d) => {
+    (d.tags || []).forEach((t) => {
+      const clean = String(t).trim();
+      if (!clean) return;
+      tagCounts.set(clean, (tagCounts.get(clean) || 0) + 1);
+    });
+  });
+
+  // Sắp xếp các tag theo độ phổ biến giảm dần, lấy top 16 tag gợi ý
+  const sortedTags = Array.from(tagCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag]) => tag)
+    .slice(0, 16);
+
+  if (suggestionsList) {
+    if (sortedTags.length) {
+      suggestionsList.innerHTML = sortedTags.map((t) =>
+        `<button type="button" class="admin-tag-suggestion-chip" data-tag="${attr(t)}">#${escapeHtml(t)}</button>`
+      ).join("");
+    } else {
+      const box = qs("#tags-suggestions-box");
+      if (box) box.hidden = true;
+    }
+  }
+
+  // Sự kiện nhập tag
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (val) {
+        val.split(",").forEach((sub) => addEditorTag(sub));
+        input.value = "";
+      }
+    } else if (e.key === "Backspace" && !input.value && _editorTags.length > 0) {
+      removeEditorTag(_editorTags[_editorTags.length - 1]);
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    const val = input.value.trim();
+    if (val) {
+      val.split(",").forEach((sub) => addEditorTag(sub));
+      input.value = "";
+    }
+  });
+
+  // Bấm vào container thì focus vào input
+  container.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest("[data-remove-tag]");
+    if (removeBtn) {
+      removeEditorTag(removeBtn.dataset.removeTag);
+      input.focus();
+    } else {
+      input.focus();
+    }
+  });
+
+  // Bấm vào chip gợi ý tag
+  if (suggestionsList) {
+    suggestionsList.addEventListener("click", (e) => {
+      const chip = e.target.closest("[data-tag]");
+      if (chip && !chip.classList.contains("is-selected")) {
+        addEditorTag(chip.dataset.tag);
+        input.focus();
+      }
+    });
+  }
+}
+
 /* ------------------------------------------------------ nạp nội dung */
 
 /** Đổ frontmatter + thân bài vào form. `overwrite` dùng khi mở bài để sửa. */
@@ -446,7 +603,13 @@ function fillEditor(data, body, { overwrite = false } = {}) {
     else if (data.featured !== undefined) featuredEl.checked = Boolean(data.featured || data.pinned);
   }
 
-  // order, phase và tags không còn ô nhập trên form. Bài cũ có sẵn các trường
+  // Tags: nạp vào tag manager
+  const rawTags = Array.isArray(data.tags)
+    ? data.tags
+    : String(data.tags || "").split(",").map((t) => t.trim()).filter(Boolean);
+  setEditorTags(rawTags, true);
+
+  // order và phase không còn ô nhập trên form. Bài cũ có sẵn các trường
   // này thì giữ nguyên giá trị, đừng để việc lưu lại làm mất chúng khỏi file.
   const carry = (key, value) => {
     if (value === undefined || value === null || value === "") return;
@@ -455,9 +618,6 @@ function fillEditor(data, body, { overwrite = false } = {}) {
   };
   carry("order", data.order);
   carry("phase", data.phase);
-  carry("tags", Array.isArray(data.tags)
-    ? data.tags
-    : String(data.tags || "").split(",").map((t) => t.trim()).filter(Boolean));
 
   if (!qs("#field-title").value) {
     const heading = body.match(/^#\s+(.+)$/m);
@@ -520,7 +680,7 @@ function buildChange() {
     featured: isFeatured ? true : undefined,
     order: admin.carried.order ?? "",
     phase: admin.carried.phase ?? "",
-    tags: admin.carried.tags ?? [],
+    tags: getEditorTags(),
   }, body);
 
   const dir = `content/${sectionId}/${categoryId}`;
@@ -794,7 +954,7 @@ function buildPreview() {
       title,
       description: qs("#field-description").value.trim(),
       featured: qs("#field-featured")?.checked ?? false,
-      tags: admin.carried.tags ?? [],
+      tags: getEditorTags(),
       order: admin.carried.order ?? 999,
       phase: admin.carried.phase ?? "",
       updatedDate: new Date().toISOString().slice(0, 10),
@@ -930,6 +1090,7 @@ function saveDraft() {
   const values = {};
   DRAFT_FIELDS.forEach((id) => { values[id] = qs(id).value; });
   values["#field-featured"] = qs("#field-featured")?.checked || false;
+  values["tags"] = getEditorTags();
   try {
     localStorage.setItem(DRAFT_KEY,
       JSON.stringify({ savedAt: Date.now(), values, carried: admin.carried }));
@@ -978,6 +1139,9 @@ function applyDraft() {
       const feat = qs("#field-featured");
       if (feat) feat.checked = Boolean(draft.values["#field-featured"]);
     }
+    if (draft.values["tags"] && Array.isArray(draft.values["tags"])) {
+      setEditorTags(draft.values["tags"], true);
+    }
     admin.carried = draft.carried || {};
     renderCategorySelect(draft.values["#field-category"]);
     qs("#field-category").value = draft.values["#field-category"] || "";
@@ -1007,6 +1171,8 @@ function resetForm() {
    "#field-body"].forEach((id) => { qs(id).value = ""; });
   const feat = qs("#field-featured");
   if (feat) feat.checked = false;
+  setEditorTags([], true);
+  if (qs("#field-tags-input")) qs("#field-tags-input").value = "";
   admin.carried = {};
   ["#new-section-id", "#new-section-name", "#new-section-tagline",
    "#new-category-id", "#new-category-name"].forEach((id) => { qs(id).value = ""; });
@@ -1028,6 +1194,7 @@ function resetForm() {
 /* ------------------------------------------------------------- sự kiện */
 
 function bindEvents() {
+  initTagsManager();
   qs("#login-form").addEventListener("submit", handleLogin);
   qs("#post-form").addEventListener("submit", handleSubmit);
 

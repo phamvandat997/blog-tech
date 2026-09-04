@@ -703,6 +703,19 @@ function renderPreview(preview) {
   qs("#reader-date").innerHTML =
     `📝 Bản nháp &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc`;
 
+  const previewTagsEl = qs("#reader-tags");
+  if (previewTagsEl) {
+    const tags = Array.isArray(doc.tags) ? doc.tags : [];
+    if (tags.length) {
+      previewTagsEl.innerHTML = tags.map((t) =>
+        `<span class="doc-tag text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 px-2.5 py-0.5 rounded-full">#${escapeHtml(t)}</span>`
+      ).join("");
+      previewTagsEl.hidden = false;
+    } else {
+      previewTagsEl.hidden = true;
+    }
+  }
+
   // Bỏ H1 đầu bài giống hệt luồng thật, để canh đúng bố cục sẽ lên sóng.
   qs("#reader-body").innerHTML = renderMarkdown(body.replace(/^\s*#[^\n]*\r?\n?/, ""));
   setupToc();
@@ -781,6 +794,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     ? ` &nbsp;·&nbsp; <a href="quiz.html?id=${encodeURIComponent(doc.id)}" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"><span>🎯</span> <span>Làm Quiz (${doc.questions} câu)</span></a>`
     : "";
   qs("#reader-date").innerHTML = `📅 Cập nhật ${doc.updatedDate} &nbsp;·&nbsp; ⏱️ ~${readingMinutes} phút đọc${quizLinkHtml}`;
+
+  const tagsEl = qs("#reader-tags");
+  if (tagsEl) {
+    const tags = Array.isArray(doc.tags) ? doc.tags : [];
+    if (tags.length) {
+      tagsEl.innerHTML = tags.map((t) =>
+        `<a href="${attr(hubUrl(section.id, { q: t }))}" class="doc-tag text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 px-2.5 py-0.5 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors no-underline">#${escapeHtml(t)}</a>`
+      ).join("");
+      tagsEl.hidden = false;
+    } else {
+      tagsEl.hidden = true;
+    }
+  }
 
   // Bỏ heading H1 đầu bài nếu có vì đã hiển thị ở phần header #reader-title
   const cleanBody = body.replace(/^\s*#[^\n]*\r?\n?/, "");

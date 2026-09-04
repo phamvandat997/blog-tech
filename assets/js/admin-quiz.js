@@ -9,6 +9,7 @@
 const QUIZ_TEMPLATE = {
   title: "Mẫu bài trắc nghiệm — Ví dụ: Luyện tập Java OOP Cốt lõi",
   docId: "java/core/chapter-1-utilizing-java-oop-approach-part-1",
+  tags: ["Java", "OOP", "Cơ bản"],
   quizzes: [
     {
       number: 1,
@@ -42,6 +43,162 @@ const QUIZ_TEMPLATE = {
 
 let _quizInitialized = false;
 
+/* --------------------------------------------------- tag của bộ đề trắc nghiệm */
+// Tag được lưu thẳng vào trường `tags` của file .quiz.json. build/lib/scan.js
+// đọc lên và gắn vào catalog thành doc.quizTags để trang Luyện Quiz lọc theo.
+
+let _quizTags = [];
+
+const getQuizTags = () => [..._quizTags];
+
+/** Bỏ khoảng trắng thừa và dấu "#" đầu; trả về "" nếu tag rỗng. */
+function cleanQuizTag(tag) {
+  return String(tag ?? "").trim().replace(/^#+/, "").trim();
+}
+
+function setQuizTags(tags) {
+  const list = Array.isArray(tags) ? tags : String(tags || "").split(",");
+  const seen = new Set();
+  _quizTags = [];
+  list.forEach((t) => {
+    const clean = cleanQuizTag(t);
+    const lower = clean.toLowerCase();
+    if (clean && !seen.has(lower)) {
+      seen.add(lower);
+      _quizTags.push(clean);
+    }
+  });
+  renderQuizTagChips();
+  updateQuizTagSuggestionsState();
+}
+
+function addQuizTag(tag) {
+  const clean = cleanQuizTag(tag);
+  if (!clean) return;
+  if (_quizTags.some((t) => t.toLowerCase() === clean.toLowerCase())) return;
+  _quizTags.push(clean);
+  renderQuizTagChips();
+  updateQuizTagSuggestionsState();
+  syncQuizTagsIntoJson();
+}
+
+function removeQuizTag(tag) {
+  const lower = cleanQuizTag(tag).toLowerCase();
+  _quizTags = _quizTags.filter((t) => t.toLowerCase() !== lower);
+  renderQuizTagChips();
+  updateQuizTagSuggestionsState();
+  syncQuizTagsIntoJson();
+}
+
+function renderQuizTagChips() {
+  const container = qs("#quiz-tags-list");
+  if (!container) return;
+  container.innerHTML = _quizTags.map((t) =>
+    `<span class="admin-tag-chip">
+      <span>#${escapeHtml(t)}</span>
+      <button type="button" class="admin-tag-remove" data-remove-quiz-tag="${attr(t)}" title="Xoá tag ${attr(t)}">✕</button>
+    </span>`
+  ).join("");
+}
+
+function updateQuizTagSuggestionsState() {
+  const lowerSet = new Set(_quizTags.map((t) => t.toLowerCase()));
+  qsa("#quiz-tags-suggestions .admin-tag-suggestion-chip").forEach((chip) => {
+    const isSel = lowerSet.has(chip.dataset.tag.toLowerCase());
+    chip.classList.toggle("is-selected", isSel);
+    chip.setAttribute("aria-disabled", String(isSel));
+  });
+}
+
+/**
+ * Ghi danh sách tag hiện tại vào ô soạn JSON để admin luôn nhìn thấy đúng nội
+ * dung sẽ được lưu. JSON hỏng cú pháp thì bỏ qua — người dùng đang gõ dở.
+ */
+function syncQuizTagsIntoJson() {
+  const jsonEl = qs("#quiz-json-content");
+  if (!jsonEl || !jsonEl.value.trim()) return;
+  try {
+    const data = JSON.parse(jsonEl.value);
+    if (!data || Array.isArray(data) || typeof data !== "object") return;
+    if (_quizTags.length) data.tags = getQuizTags();
+    else delete data.tags;
+    jsonEl.value = JSON.stringify(data, null, 2);
+  } catch (err) {
+    /* JSON đang dở dang — tag vẫn được ghép lại lúc tải về / tạo PR */
+  }
+}
+
+/**
+ * Gợi ý tag: gộp tag của các bộ quiz đã có (doc.quizTags) và tag bài viết,
+ * xếp theo độ phổ biến giảm dần.
+ */
+function initQuizTagsManager() {
+  const container = qs("#quiz-tags-container");
+  const input = qs("#quiz-tags-input");
+  const suggestionsList = qs("#quiz-tags-suggestions");
+  if (!container || !input) return;
+
+  const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
+  const counts = new Map();
+  docs.forEach((d) => {
+    [...(d.quizTags || []), ...(d.tags || [])].forEach((t) => {
+      const clean = cleanQuizTag(t);
+      if (clean) counts.set(clean, (counts.get(clean) || 0) + 1);
+    });
+  });
+
+  const sorted = Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag]) => tag)
+    .slice(0, 16);
+
+  if (suggestionsList) {
+    if (sorted.length) {
+      suggestionsList.innerHTML = sorted.map((t) =>
+        `<button type="button" class="admin-tag-suggestion-chip" data-tag="${attr(t)}">#${escapeHtml(t)}</button>`
+      ).join("");
+    } else {
+      const box = qs("#quiz-tags-suggestions-box");
+      if (box) box.hidden = true;
+    }
+  }
+
+  const flushInput = () => {
+    const val = input.value.trim();
+    if (!val) return;
+    val.split(",").forEach((sub) => addQuizTag(sub));
+    input.value = "";
+  };
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      flushInput();
+    } else if (e.key === "Backspace" && !input.value && _quizTags.length) {
+      removeQuizTag(_quizTags[_quizTags.length - 1]);
+    }
+  });
+  input.addEventListener("blur", flushInput);
+
+  container.addEventListener("click", (e) => {
+    if (e.target === container || e.target.id === "quiz-tags-list") input.focus();
+  });
+
+  delegate(container, "click", "[data-remove-quiz-tag]", (e, btn) => {
+    e.preventDefault();
+    removeQuizTag(btn.dataset.removeQuizTag);
+  });
+
+  if (suggestionsList) {
+    delegate(suggestionsList, "click", ".admin-tag-suggestion-chip", (e, chip) => {
+      e.preventDefault();
+      const tag = chip.dataset.tag;
+      if (_quizTags.some((t) => t.toLowerCase() === tag.toLowerCase())) removeQuizTag(tag);
+      else addQuizTag(tag);
+    });
+  }
+}
+
 /**
  * Khởi tạo bộ điều khiển Quản lý Quiz trong trang Admin
  */
@@ -50,6 +207,7 @@ function initQuizManager() {
   _quizInitialized = true;
 
   initDocSelector();
+  initQuizTagsManager();
   bindQuizManagerEvents();
 
   // Nạp sẵn template nếu ô soạn còn trống
@@ -57,6 +215,7 @@ function initQuizManager() {
   if (jsonEl && !jsonEl.value.trim()) {
     jsonEl.value = JSON.stringify(QUIZ_TEMPLATE, null, 2);
     qs("#quiz-title").value = QUIZ_TEMPLATE.title;
+    setQuizTags(QUIZ_TEMPLATE.tags);
     updateQuizLiveStats();
   }
 }
@@ -144,6 +303,12 @@ function updateDocLinkInfo() {
     }
   }
 
+  // Chưa gắn tag nào thì mượn tạm tag của bài viết lý thuyết làm điểm khởi đầu
+  if (!getQuizTags().length) {
+    const seed = (doc.quizTags && doc.quizTags.length) ? doc.quizTags : (doc.tags || []);
+    if (seed.length) setQuizTags(seed);
+  }
+
   // Tự điền tiêu đề nếu đang trống
   const titleInput = qs("#quiz-title");
   if (titleInput && (!titleInput.value.trim() || titleInput.value.startsWith("Mẫu bài trắc nghiệm"))) {
@@ -198,6 +363,9 @@ function updateQuizLiveStats() {
 
     const data = JSON.parse(raw);
     const list = Array.isArray(data.quizzes) ? data.quizzes : (Array.isArray(data) ? data : []);
+
+    // Mã JSON là nguồn sự thật khi admin gõ tay: đồng bộ ngược tag ra ô chip.
+    if (!Array.isArray(data)) setQuizTags(Array.isArray(data.tags) ? data.tags : []);
 
     const total = list.length;
     const single = list.filter((q) => !q.isMulti).length;
@@ -294,6 +462,9 @@ function handleQuizFileUpload(file) {
         qs("#quiz-title").value = data.title;
       }
 
+      // Tag đi kèm file (nếu có) — không có thì xoá sạch ô tag cho khỏi lẫn
+      setQuizTags(Array.isArray(data.tags) ? data.tags : []);
+
       // Tự chọn bài liên kết nếu file có docId
       if (data.docId && qs("#quiz-doc-select")) {
         qs("#quiz-doc-select").value = data.docId;
@@ -370,6 +541,7 @@ function launchQuizTestRun() {
     const previewPayload = {
       docId,
       title,
+      tags: getQuizTags(),
       doc: linkedDoc || {
         id: docId,
         title,
@@ -413,6 +585,9 @@ function downloadCurrentQuizFile() {
     if (!data.docId && selectEl?.value && selectEl.value !== "__custom__") {
       data.docId = selectEl.value;
     }
+    const tags = getQuizTags();
+    if (tags.length) data.tags = tags;
+    else delete data.tags;
 
     const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
     const doc = docs.find((d) => d.id === selectEl?.value);
@@ -468,6 +643,9 @@ async function submitQuizPullRequest(event) {
   const title = titleEl.value.trim() || doc.title;
   data.title = title;
   data.docId = doc.id;
+  const tags = getQuizTags();
+  if (tags.length) data.tags = tags;
+  else delete data.tags;
 
   const targetPath = `content/${doc.section}/${doc.category}/${doc.slug}.quiz.json`;
 
@@ -549,6 +727,7 @@ function bindQuizManagerEvents() {
       if (jsonEl) {
         jsonEl.value = JSON.stringify(QUIZ_TEMPLATE, null, 2);
         qs("#quiz-title").value = QUIZ_TEMPLATE.title;
+        setQuizTags(QUIZ_TEMPLATE.tags);
         updateQuizLiveStats();
         showQuizAlert("ok", "Đã nạp template câu hỏi mẫu vào ô soạn!");
       }

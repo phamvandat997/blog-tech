@@ -48,7 +48,7 @@ function docCard(doc) {
   const phaseBadge = doc.phase ? `<span class="doc-badge doc-badge-phase inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/60">${escapeHtml(doc.phase)}</span>` : "";
   const quizBadge = doc.questions > 0 ? `<span class="doc-badge doc-badge-quiz inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">🎯 ${doc.questions} quiz</span>` : "";
   const completedBadge = isCompleted ? `<span class="doc-badge doc-badge-completed inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">✓ Đã học</span>` : "";
-  const tagsHtml = (doc.tags || []).slice(0, 2).map((t) => `<span class="doc-tag text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-full">#${escapeHtml(t)}</span>`).join("");
+  const tagsHtml = (doc.tags || []).slice(0, 3).map((t) => `<button type="button" class="doc-tag text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300 px-2 py-0.5 rounded-full transition-colors border-0 cursor-pointer" data-tag="${attr(t)}" title="Lọc theo #${attr(t)}">#${escapeHtml(t)}</button>`).join("");
 
   return `<a class="doc-card ${isCompleted ? "is-completed" : ""} group relative flex flex-col justify-between p-5 rounded-2xl backdrop-blur-md bg-white/95 dark:bg-slate-800/85 border border-slate-200/90 dark:border-slate-700/70 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all no-underline" href="${attr(readerUrl(doc))}">
     <div class="doc-card-top flex items-center justify-between gap-2 mb-3">
@@ -207,6 +207,16 @@ function bindEvents() {
       render();
     });
   }
+
+  delegate(els.docs, "click", "[data-tag]", (e, btn) => {
+    e.preventDefault();
+    e.stopPropagation();
+    hub.query = btn.dataset.tag;
+    hub.page = 1;
+    if (els.search) els.search.value = hub.query;
+    if (els.searchClear) els.searchClear.hidden = false;
+    render();
+  });
 
   delegate(els.docs, "click", "#btn-reset-filters", () => {
     hub.category = "all";
