@@ -24,16 +24,15 @@ export function HeroSection() {
         </span>
         <span className="text-indigo-600 dark:text-indigo-400 font-black">TechMentor Pro</span>
         <span className="text-slate-300 dark:text-slate-600">/</span>
-        <span>Kho Tri Thức &amp; Ôn Luyện Kỹ Thuật Chuyên Sâu</span>
+        <span>Nền Tảng Học Tập &amp; Ôn Luyện Kỹ Thuật</span>
       </div>
 
       {/* High-Impact Hero Title */}
       <h1 className="hero-title text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15] mb-5">
-        Kho Tri Thức &amp; <br className="hidden sm:inline" />
+        Chia Sẽ <br className="hidden sm:inline" />
         <span className="hero-gradient-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">
-          Kỹ Thuật Lập Trình
-        </span>{' '}
-        Chuyên Sâu
+          Kiến Thức Lập Trình
+        </span>
       </h1>
 
       {/* Quick Action CTA Buttons */}
