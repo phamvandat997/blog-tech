@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" preserveAspectRatio="xMidYMin slice">
+  <defs>
+    <!-- Gradients for circuit traces -->
+    <linearGradient id="trace-cyan-indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.2"/>
+    </linearGradient>
+
+    <linearGradient id="trace-indigo-violet" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.15"/>
+    </linearGradient>
+
+    <linearGradient id="laser-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Node glow filter -->
+    <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#06b6d4" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow-indigo" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#6366f1" flood-opacity="0.45"/>
+    </filter>
+
+    <!-- Engineering Grid Pattern (48x48) -->
+    <pattern id="tech-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#6366f1" stroke-width="0.75" stroke-opacity="0.08"/>
+      <!-- Crosshair at intersection -->
+      <path d="M 0 -2.5 L 0 2.5 M -2.5 0 L 2.5 0" stroke="#4f46e5" stroke-width="1" stroke-opacity="0.22"/>
+      <circle cx="0" cy="0" r="1.2" fill="#6366f1" fill-opacity="0.28"/>
+    </pattern>
+
+    <!-- Major Grid Pattern (240x240) -->
+    <pattern id="major-grid" width="240" height="240" patternUnits="userSpaceOnUse">
+      <path d="M 240 0 L 0 0 0 240" fill="none" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.12"/>
+      <circle cx="0" cy="0" r="2.5" fill="#4f46e5" fill-opacity="0.35"/>
+      <!-- Small technical corner bracket -->
+      <path d="M 6 1 L 1 1 1 6" fill="none" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <!-- 1. Background Grid Layers -->
+  <rect width="100%" height="100%" fill="url(#tech-grid)"/>
+  <rect width="100%" height="100%" fill="url(#major-grid)"/>
+
+  <!-- 2. High-Tech Laser Beam Accent across top header -->
+  <line x1="100" y1="120" x2="1820" y2="120" stroke="url(#laser-glow)" stroke-width="1.5"/>
+
+  <!-- 3. Left Circuit Board Infrastructure (Subtle & Elegant) -->
+  <g opacity="0.85">
+    <!-- Trace Highway 1 -->
+    <path d="M -40 280 L 180 280 L 320 420 L 520 420 L 580 480 L 760 480" 
+          fill="none" stroke="url(#trace-cyan-indigo)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M -40 300 L 170 300 L 310 440 L 510 440 L 570 500 L 680 500" 
+          fill="none" stroke="url(#trace-cyan-indigo)" stroke-width="1.5" stroke-opacity="0.6" stroke-linecap="round"/>
+    <path d="M -40 320 L 160 320 L 300 460 L 480 460" 
+          fill="none" stroke="url(#trace-cyan-indigo)" stroke-width="1.2" stroke-opacity="0.4" stroke-linecap="round"/>
+
+    <!-- Terminal Nodes with glow -->
+    <circle cx="760" cy="480" r="4.5" fill="#06b6d4" filter="url(#glow-cyan)"/>
+    <circle cx="760" cy="480" r="2" fill="#ffffff"/>
+    <circle cx="680" cy="500" r="3.5" fill="#6366f1" filter="url(#glow-indigo)"/>
+    <circle cx="680" cy="500" r="1.5" fill="#ffffff"/>
+    <circle cx="480" cy="460" r="3" fill="#8b5cf6"/>
+
+    <!-- Vertical Branching Line -->
+    <path d="M 320 420 L 320 620 L 380 680 L 500 680" 
+          fill="none" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="6,4"/>
+    <circle cx="500" cy="680" r="3" fill="#6366f1" fill-opacity="0.6"/>
+
+    <!-- Micro Chip Footprint (Left) -->
+    <rect x="140" y="160" width="60" height="60" rx="4" fill="none" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.3"/>
+    <rect x="150" y="170" width="40" height="40" rx="2" fill="#6366f1" fill-opacity="0.05"/>
+    <line x1="130" y1="175" x2="140" y2="175" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+    <line x1="130" y1="190" x2="140" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+    <line x1="130" y1="205" x2="140" y2="205" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+    <line x1="200" y1="175" x2="210" y2="175" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+    <line x1="200" y1="190" x2="210" y2="190" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+    <line x1="200" y1="205" x2="210" y2="205" stroke="#6366f1" stroke-width="1.5" stroke-opacity="0.35"/>
+  </g>
+
+  <!-- 4. Right Circuit Board Highway -->
+  <g opacity="0.85">
+    <!-- Trace Highway 2 -->
+    <path d="M 1960 220 L 1740 220 L 1600 360 L 1400 360 L 1320 440 L 1180 440" 
+          fill="none" stroke="url(#trace-indigo-violet)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 1960 240 L 1750 240 L 1610 380 L 1410 380 L 1330 460 L 1240 460" 
+          fill="none" stroke="url(#trace-indigo-violet)" stroke-width="1.5" stroke-opacity="0.6" stroke-linecap="round"/>
+    <path d="M 1960 260 L 1760 260 L 1620 400 L 1460 400" 
+          fill="none" stroke="url(#trace-indigo-violet)" stroke-width="1.2" stroke-opacity="0.4" stroke-linecap="round"/>
+
+    <!-- Terminal Nodes with glow -->
+    <circle cx="1180" cy="440" r="4.5" fill="#6366f1" filter="url(#glow-indigo)"/>
+    <circle cx="1180" cy="440" r="2" fill="#ffffff"/>
+    <circle cx="1240" cy="460" r="3.5" fill="#06b6d4" filter="url(#glow-cyan)"/>
+    <circle cx="1240" cy="460" r="1.5" fill="#ffffff"/>
+    <circle cx="1460" cy="400" r="3" fill="#8b5cf6"/>
+
+    <!-- Downward circuit branch -->
+    <path d="M 1600 360 L 1600 580 L 1520 660 L 1380 660" 
+          fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="6,4"/>
+    <circle cx="1380" cy="660" r="3" fill="#06b6d4" fill-opacity="0.7"/>
+
+    <!-- Micro Chip Footprint (Right) -->
+    <rect x="1720" y="520" width="70" height="70" rx="4" fill="none" stroke="#06b6d4" stroke-width="1.2" stroke-opacity="0.3"/>
+    <rect x="1730" y="530" width="50" height="50" rx="2" fill="#06b6d4" fill-opacity="0.05"/>
+    <circle cx="1755" cy="555" r="5" fill="#06b6d4" fill-opacity="0.25"/>
+  </g>
+
+  <!-- 5. Technical Crosshairs & Coordinate Marks in Content Margins -->
+  <g stroke="#6366f1" stroke-width="1" stroke-opacity="0.3">
+    <!-- Top left corner marker -->
+    <path d="M 60 40 L 40 40 L 40 60"/>
+    <text x="45" y="80" font-family="'JetBrains Mono', monospace" font-size="9" fill="#6366f1" fill-opacity="0.4" font-weight="600">SYS.01 // ARCH</text>
+
+    <!-- Top right corner marker -->
+    <path d="M 1860 40 L 1880 40 L 1880 60"/>
+    <text x="1810" y="80" font-family="'JetBrains Mono', monospace" font-size="9" fill="#6366f1" fill-opacity="0.4" font-weight="600">LOC.NODE // 48X</text>
+
+    <!-- Floating Technical Crosses -->
+    <path d="M 280 180 L 290 180 M 285 175 L 285 185" stroke-opacity="0.4"/>
+    <path d="M 880 140 L 890 140 M 885 135 L 885 145" stroke-opacity="0.3"/>
+    <path d="M 1040 140 L 1050 140 M 1045 135 L 1045 145" stroke-opacity="0.3"/>
+    <path d="M 1640 180 L 1650 180 M 1645 175 L 1645 185" stroke-opacity="0.4"/>
+    
+    <path d="M 240 820 L 250 820 M 245 815 L 245 825" stroke-opacity="0.3"/>
+    <path d="M 1680 820 L 1690 820 M 1685 815 L 1685 825" stroke-opacity="0.3"/>
+  </g>
+</svg>
