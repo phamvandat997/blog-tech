@@ -102,8 +102,25 @@ export function highlightCode(rawCode, lang = "text") {
   return result;
 }
 
+/**
+ * Dựng HTML và trả kèm danh sách đề mục đúng như đã render.
+ *
+ * Mục lục phải lấy id từ đây chứ không tự tính lại: id sinh sau escapeText nên
+ * "&" thành "amp", và đề mục trùng tên được đánh số để không đụng id. Tự suy
+ * lại ở nơi khác là cách chắc chắn để mục lục trỏ vào id không tồn tại — highlight
+ * theo cuộn và bấm chuyển mục đều chết lặng.
+ */
+export function renderMarkdownWithHeadings(md) {
+  return renderInternal(md);
+}
+
 export function renderMarkdown(md) {
-  if (!md) return "";
+  return renderInternal(md).html;
+}
+
+function renderInternal(md) {
+  const headings = [];
+  if (!md) return { html: "", headings };
 
   const blocks = [];
   let text = md.replace(/```([\w+-]*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
@@ -122,13 +139,9 @@ export function renderMarkdown(md) {
       return `%%CODE${blocks.length - 1}%%`;
     }
 
-    const label = (lang || "text").toUpperCase();
+    // Khối mã trần: không thanh tiêu đề ngôn ngữ, không nút sao chép.
     const highlighted = highlightCode(code, lang);
     blocks.push(`<div class="code-block-wrapper">
-      <div class="code-block-header">
-        <span>${escapeHtml(label)}</span>
-        <button class="code-copy-btn" type="button" data-copy-code aria-label="Sao chép mã"><span class="copy-icon">📋</span> <span class="copy-label">Sao chép</span></button>
-      </div>
       <pre><code class="language-${escapeHtml(lang || "text")}">${highlighted}</code></pre>
     </div>`);
     return `%%CODE${blocks.length - 1}%%`;
@@ -144,10 +157,23 @@ export function renderMarkdown(md) {
   });
   text = text.replace(/^>\s+(.*)$/gim, (_, line) => `<blockquote>${line}</blockquote>`);
 
+  // h2/h3 xử lý trong MỘT lượt để id được đánh theo đúng thứ tự tài liệu —
+  // tách hai lượt thì mọi h3 sẽ được đánh số trước mọi h2.
+  const usedIds = new Map();
   text = text
     .replace(/^#{4,6}\s+(.*)$/gim, (_, t) => `<h4>${t}</h4>`)
-    .replace(/^###\s+(.*)$/gim, (_, t) => `<h3 id="${escapeHtml(headingSlug(t))}">${t}</h3>`)
-    .replace(/^##\s+(.*)$/gim, (_, t) => `<h2 id="${escapeHtml(headingSlug(t))}">${t}</h2>`)
+    .replace(/^(#{2,3})\s+(.*)$/gim, (_, hashes, t) => {
+      const level = hashes.length;
+      const base = headingSlug(t);
+      const seen = (usedIds.get(base) || 0) + 1;
+      usedIds.set(base, seen);
+      const id = seen === 1 ? base : `${base}-${seen}`;
+      // t đã đi qua escapeText nên "&" đang là "&amp;" — mục lục hiển thị bằng
+      // text thuần (React tự escape), phải trả về ký tự gốc kẻo lòi ra "&amp;".
+      const title = t.trim().replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      headings.push({ id, title, level });
+      return `<h${level} id="${escapeHtml(id)}">${t}</h${level}>`;
+    })
     .replace(/^#\s+(.*)$/gim, (_, t) => `<h1>${t}</h1>`);
 
   text = text
@@ -220,5 +246,5 @@ export function renderMarkdown(md) {
   text = text.replace(/<p>\s*<\/p>/g, "")
              .replace(/<p>\s*(<(?:div|table|ul|ol|h[1-6]|hr|blockquote)[\s\S]*?<\/(?:div|table|ul|ol|h[1-6]|blockquote)>|<hr>)\s*<\/p>/g, "$1");
 
-  return `<div class="markdown-content">${text}</div>`;
+  return { html: `<div class="markdown-content">${text}</div>`, headings };
 }

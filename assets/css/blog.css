@@ -1173,9 +1173,8 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
 .toc-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.85rem 1rem;
+  padding: 0.8rem 0.95rem;
   border-bottom: 1px solid var(--border-color);
 }
 .toc-title {
@@ -1184,27 +1183,79 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-muted);
+  margin-right: auto;
+}
+
+/* Số phần: viên nhỏ cạnh tiêu đề, thay cho chuỗi "· 19 PHẦN" dính vào tiêu đề */
+.toc-count {
+  flex: none;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-subtle);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 .toc-close { display: none; }
 
-.toc-nav { overflow-y: auto; padding: 0.75rem 0.6rem 1rem; scrollbar-width: thin; flex: 1; min-height: 0; }
+.toc-nav {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.6rem 0.5rem 1rem;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+.toc-nav::-webkit-scrollbar { width: 6px; }
+.toc-nav::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+.toc-nav::-webkit-scrollbar-track { background: transparent; }
+
 .toc-list { list-style: none; margin: 0; padding: 0; }
 
 .toc-link {
   display: block;
-  padding: 0.42rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  background: none;
+  border: 0;
   border-left: 3px solid transparent;
-  font-size: 0.84rem;
+  padding: 0.4rem 0.65rem;
+  font: inherit;
+  font-size: 0.82rem;
   line-height: 1.45;
+  font-weight: 500;
   color: var(--text-muted);
   text-decoration: none;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast),
+              border-color var(--transition-fast);
   margin-bottom: 2px;
-  font-weight: 500;
-  white-space: nowrap;
+  cursor: pointer;
+  display: block;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+/* Cắt ở dòng thứ hai thay vì ellipsis giữa chừng: tiêu đề mục thường dài hơn
+   bề ngang cột, cắt một dòng thì mục nào cũng cụt như nhau. Clamp phải nằm ở
+   span bên trong — <button> luôn bị blockify nên -webkit-box trên nút vô hiệu. */
+.toc-link-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 
 .toc-link:hover {
@@ -1232,7 +1283,29 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   box-shadow: 0 0 14px rgba(99, 102, 241, 0.2);
 }
 
-.toc-item-h3 .toc-link { padding-left: 1.45rem; font-size: 0.79rem; }
+/* Phân cấp: h2 là mốc chính, h3 thụt vào và có vạch dẫn mảnh bên trái */
+.toc-item-h2 > .toc-link {
+  font-weight: 650;
+  color: var(--text-main);
+}
+.toc-item-h2 + .toc-item-h2 > .toc-link,
+.toc-item-h3 + .toc-item-h2 > .toc-link { margin-top: 0.3rem; }
+
+.toc-item-h3 { position: relative; }
+.toc-item-h3::before {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 0.15rem;
+  bottom: 0.25rem;
+  width: 1px;
+  background: var(--border-color);
+}
+.toc-item-h3 > .toc-link {
+  padding-left: 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
 .toc-link code {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.9em;
@@ -1243,7 +1316,47 @@ body.no-toc .reader-shell { grid-template-columns: minmax(0, 80fr) minmax(0, 20f
   scroll-margin-top: calc(var(--navbar-h, 65px) + 1rem);
 }
 
-.btn-toc-toggle { display: none; }
+/* Nút mở mục lục: chỉ xuất hiện khi mục lục chuyển thành ngăn kéo (≤1150px) */
+.btn-toc-toggle {
+  display: none;
+  position: fixed;
+  left: 1rem;
+  bottom: 1.25rem;
+  z-index: 115;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.9rem;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--primary-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 10px 24px -8px rgba(79, 70, 229, 0.7);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.btn-toc-toggle:hover { transform: translateY(-1px); }
+.btn-toc-toggle:active { transform: translateY(0); }
+
+.toc-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.25rem -0.3rem -0.25rem 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.toc-close:hover { background: var(--bg-surface-subtle); color: var(--text-main); }
+
 .toc-backdrop { display: none; }
 
 /* Màn hình trung bình (Laptop nhỏ: 901px - 1150px): hạ sidebar phải xuống dưới nội dung */
@@ -2042,4 +2155,52 @@ body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
 /* Ô tìm kiếm trên nav: đủ chỗ cho cả logo và nhóm nút bên phải */
 .nav-quiz-search {
   min-width: 7rem;
+}
+
+/* =============================== Lưới trang đọc (React ReaderPage)
+   Một nguồn duy nhất quyết định điểm gãy: 900px — cùng mốc mà mục lục đổi từ
+   cột dính sang ngăn kéo. Trước đây lưới dùng `xl:` (1280px) của Tailwind nên
+   dải 901–1279px có mục lục nằm chình ình full-width phía trên bài viết. */
+/* Trang đọc dùng trọn bề ngang màn hình: màn 1600px+ mà bó trong 1280px thì
+   hai bên trống hoác trong khi cột bài viết vẫn hẹp. */
+.reader-wrapper {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem 1.5rem 2.5rem;
+}
+
+.reader-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.reader-main-column { grid-column: 1; min-width: 0; }
+
+/* Cột chỉ là vỏ bọc của React; contents để .reader-toc tự vào lưới với
+   grid-column: 1 mà nó đã khai báo sẵn. */
+.toc-column { display: contents; }
+
+/* 901px: đúng mốc mà mục lục thôi làm ngăn kéo (xem @media max-width: 900px).
+   Lệch mốc thì có dải bề ngang mà mục lục nằm full-width đè lên bài viết. */
+/* Cột phải cũng chỉ là vỏ bọc React — .reader-related-sidebar tự vào lưới với
+   grid-column mà blog.css đã đặt cho từng bề ngang. */
+.related-column { display: contents; }
+
+@media (min-width: 901px) {
+  /* Tỉ lệ thay vì px cố định: cột bài viết nở theo màn hình, mục lục vẫn đủ
+     rộng để đọc nhãn nhờ minmax. */
+  .reader-grid { grid-template-columns: minmax(230px, 24fr) minmax(0, 76fr); }
+  .reader-main-column { grid-column: 2; }
+}
+
+/* Desktop: ba cột — mục lục | bài viết | bài viết liên quan (20/60/20) */
+@media (min-width: 1151px) {
+  .reader-grid { grid-template-columns: minmax(230px, 20fr) minmax(0, 60fr) minmax(270px, 20fr); }
+}
+
+@media (max-width: 900px) {
+  .reader-wrapper { padding: 1rem var(--page-pad, 0.75rem) 2rem; }
 }

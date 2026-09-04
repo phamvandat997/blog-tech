@@ -43,6 +43,18 @@
 
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
+
+  /* Khối mã: nền phải đổi theo giao diện. Bảng màu token (.tok-*) có hai bản
+     sáng/tối, nên nền cứng màu tối ở mode sáng sẽ cho chữ tím/cam đậm nằm trên
+     nền gần đen — đúng chỗ khó đọc nhất. */
+  --code-bg: #f8fafc;
+  --code-fg: #0f172a;
+  --code-border: #e2e8f0;
+  --code-header-bg: #f1f5f9;
+  --code-header-fg: #475569;
+  --code-btn-bg: #ffffff;
+  --code-btn-border: #cbd5e1;
+  --code-btn-fg: #334155;
 }
 
 [data-theme="dark"] {
@@ -67,6 +79,15 @@
   --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.25);
   --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.35);
   --shadow-xl: 0 20px 32px -6px rgba(0, 0, 0, 0.45);
+
+  --code-bg: #0f172a;
+  --code-fg: #f8fafc;
+  --code-border: #1e293b;
+  --code-header-bg: #0b1120;
+  --code-header-fg: #94a3b8;
+  --code-btn-bg: #1e293b;
+  --code-btn-border: #334155;
+  --code-btn-fg: #cbd5e1;
 }
 
 /* === BASE STYLES === */
@@ -1277,8 +1298,9 @@ body {
 
 .quiz-question-body pre {
   margin: 0.85rem 0;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border: 1px solid var(--code-border);
   padding: 0.9rem;
   border-radius: var(--radius-md);
   font-family: var(--font-mono);
@@ -1565,30 +1587,30 @@ body {
   margin: 1.25rem 0;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--code-border);
   min-width: 0;
   max-width: 100%;
 }
 
 .code-block-header {
-  background: #0b1120;
-  color: #94a3b8;
+  background: var(--code-header-bg);
+  color: var(--code-header-fg);
   padding: 0.45rem 0.9rem;
   font-size: 0.75rem;
   font-family: var(--font-mono);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--code-border);
 }
 
 .code-copy-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #cbd5e1;
+  background: var(--code-btn-bg);
+  border: 1px solid var(--code-btn-border);
+  color: var(--code-btn-fg);
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-md);
   font-size: 0.72rem;
@@ -1619,8 +1641,8 @@ body {
 }
 
 .markdown-body pre {
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--code-bg);
+  color: var(--code-fg);
   padding: 1rem;
   overflow-x: auto;
   font-family: var(--font-mono);

@@ -1,45 +1,48 @@
 import { useEffect, useRef } from 'react';
-import { renderMarkdown } from '../../services/markdown';
 import { showToast } from '../common/Toast';
 
-export function MarkdownViewer({ markdown, isDark }) {
+export function MarkdownViewer({ html, isDark }) {
   const containerRef = useRef(null);
 
+  // Nút "Sao chép" đã nằm sẵn trong header mỗi khối mã do renderMarkdown sinh
+  // ra (data-copy-code) — chỉ cần gắn hành vi. Trước đây effect bên dưới còn
+  // chèn thêm một nút thứ hai vào <pre>, nên khối mã nào cũng có hai nút.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // 1. Setup Copy Code Buttons
-    const codeBlocks = container.querySelectorAll('pre');
-    codeBlocks.forEach((pre) => {
-      if (pre.querySelector('.code-copy-btn')) return; // already added
+    const onCopyClick = (event) => {
+      const button = event.target.closest('[data-copy-code]');
+      if (!button || !container.contains(button)) return;
+      event.preventDefault();
 
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'code-copy-btn';
-      button.innerHTML = '📋 Sao chép';
-      button.title = 'Sao chép đoạn mã này';
+      const block = button.closest('.code-block-wrapper, .mermaid-block-wrapper');
+      const source = block?.querySelector('code, pre.mermaid');
+      const text = source?.innerText ?? '';
+      if (!text) return;
 
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        const codeText = pre.querySelector('code')?.innerText || pre.innerText;
-        navigator.clipboard.writeText(codeText).then(
-          () => {
-            button.innerHTML = '✓ Đã chép!';
-            button.classList.add('copied');
-            showToast('✓ Đã sao chép đoạn mã!');
-            setTimeout(() => {
-              button.innerHTML = '📋 Sao chép';
-              button.classList.remove('copied');
-            }, 2000);
-          },
-          () => showToast('Không thể sao chép vào bộ nhớ tạm')
-        );
-      });
+      const label = button.querySelector('.copy-label');
+      navigator.clipboard.writeText(text).then(
+        () => {
+          button.classList.add('copied');
+          if (label) label.textContent = 'Đã chép!';
+          showToast('✓ Đã sao chép đoạn mã!');
+          setTimeout(() => {
+            button.classList.remove('copied');
+            if (label) label.textContent = 'Sao chép';
+          }, 2000);
+        },
+        () => showToast('Không thể sao chép vào bộ nhớ tạm')
+      );
+    };
 
-      pre.style.position = 'relative';
-      pre.appendChild(button);
-    });
+    container.addEventListener('click', onCopyClick);
+    return () => container.removeEventListener('click', onCopyClick);
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
     // 2. Setup Heading Anchors
     const headings = container.querySelectorAll('h2[id], h3[id]');
@@ -97,15 +100,18 @@ export function MarkdownViewer({ markdown, isDark }) {
         renderMermaid();
       }
     }
-  }, [markdown, isDark]);
+  }, [html, isDark]);
 
-  const htmlContent = renderMarkdown(markdown || '');
+  const htmlContent = html || '';
 
   return (
+    // markdown-body + reader-content-card là hai lớp mang toàn bộ typography và
+    // nền/padding của khung đọc trong assets/css — thiếu chúng thì chữ chạy sát
+    // mép nền, không còn thẻ nội dung.
     <article
       ref={containerRef}
       id="reader-body"
-      className="reader-body prose prose-slate dark:prose-invert max-w-none transition-colors"
+      className="reader-body reader-content-card markdown-body max-w-none transition-colors"
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
   );
