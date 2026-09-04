@@ -25,7 +25,7 @@ export function QuizQuestionCard({
       id={`${docId}#${question.number}`}
     >
       {/* Top Header */}
-      <div className="quiz-card-top flex items-center justify-between gap-2 mb-3">
+      <div className="quiz-card-top flex items-center justify-between gap-2 mb-2">
         <div className="quiz-question-badge font-bold text-xs px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50">
           Câu {question.number}
         </div>
@@ -36,12 +36,12 @@ export function QuizQuestionCard({
 
       {/* Question Body */}
       <div
-        className="quiz-question-body prose prose-slate dark:prose-invert max-w-none text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed"
+        className="quiz-question-body prose prose-slate dark:prose-invert max-w-none text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-3 leading-snug [&_p]:my-1 [&_p]:leading-snug [&_.markdown-content]:leading-snug"
         dangerouslySetInnerHTML={{ __html: renderMarkdown(question.question || '') }}
       />
 
       {/* Options List */}
-      <div className="quiz-options-list flex flex-col gap-2 mb-4">
+      <div className="quiz-options-list flex flex-col gap-2 mb-3">
         {question.options.map((opt) => {
           const selected = pickedSet.has(opt.key);
           let cls = selected ? 'selected' : '';
@@ -57,10 +57,7 @@ export function QuizQuestionCard({
           return (
             <label
               key={opt.key}
-              onClick={() => {
-                if (!checked) onToggleOption(opt.key, isMulti);
-              }}
-              className={`quiz-option-label ${cls} flex items-start gap-3 p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all ${
+              className={`quiz-option-label ${cls} flex items-start gap-3 py-2.5 px-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all leading-snug ${
                 checked ? 'cursor-default' : 'cursor-pointer hover:border-indigo-400 dark:hover:border-indigo-500'
               }`}
             >
@@ -70,14 +67,16 @@ export function QuizQuestionCard({
                 value={opt.key}
                 checked={selected}
                 disabled={checked}
-                onChange={() => {}}
-                className="mt-0.5 pointer-events-none"
+                onChange={() => {
+                  if (!checked) onToggleOption(opt.key, isMulti);
+                }}
+                className="mt-0.5 cursor-pointer"
               />
               <span className="quiz-option-key font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
                 {opt.key}.
               </span>
               <span
-                className="quiz-option-text flex-1 text-slate-800 dark:text-slate-200"
+                className="quiz-option-text flex-1 text-slate-800 dark:text-slate-200 leading-snug [&_p]:m-0 [&_p]:leading-snug [&_.markdown-content]:leading-snug"
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(opt.text || '') }}
               />
             </label>
@@ -86,7 +85,7 @@ export function QuizQuestionCard({
       </div>
 
       {/* Card Footer */}
-      <div className="quiz-card-footer flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/60 flex-wrap gap-2">
+      <div className="quiz-card-footer flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex-wrap gap-2">
         <div className="quiz-footer-status text-xs sm:text-sm">
           {!checked ? (
             <span className="quiz-status-idle text-xs font-semibold text-slate-500 dark:text-slate-400">
@@ -118,7 +117,7 @@ export function QuizQuestionCard({
       {/* Explanation Box */}
       {checked && (
         <div
-          className={`quiz-explanation-box show ${!isCorrect ? 'wrong-exp' : ''} mt-4 p-4 rounded-xl text-xs leading-relaxed border ${
+          className={`quiz-explanation-box show ${!isCorrect ? 'wrong-exp' : ''} mt-3 p-3.5 rounded-xl text-xs leading-normal border ${
             isCorrect
               ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/50 text-emerald-900 dark:text-emerald-200'
               : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/50 text-rose-900 dark:text-rose-200'
@@ -129,7 +128,7 @@ export function QuizQuestionCard({
             <span>GIẢI THÍCH (Đáp án: {question.correctAnswers.join(', ')})</span>
           </div>
           <div
-            className="quiz-exp-text prose prose-sm dark:prose-invert max-w-none text-xs"
+            className="quiz-exp-text prose prose-sm dark:prose-invert max-w-none text-xs leading-normal [&_p]:my-1 [&_p]:leading-normal"
             dangerouslySetInnerHTML={{
               __html: renderMarkdown(question.explanation || 'Không có giải thích bổ sung.'),
             }}

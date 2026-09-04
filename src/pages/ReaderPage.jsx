@@ -11,7 +11,6 @@ import { TableOfContents } from '../components/reader/TableOfContents';
 import { MarkdownViewer } from '../components/reader/MarkdownViewer';
 import { renderMarkdownWithHeadings } from '../services/markdown';
 import { DocCompletionButton } from '../components/reader/DocCompletionButton';
-import { DocQuizWidget } from '../components/reader/DocQuizWidget';
 import { RelatedDocs } from '../components/reader/RelatedDocs';
 import { DocComments } from '../components/reader/DocComments';
 import { EmptyState } from '../components/common/EmptyState';
@@ -355,11 +354,6 @@ export function ReaderPage() {
                     isCompleted={isCompleted(currentDoc.id)}
                     onToggle={() => toggleCompleted(currentDoc.id)}
                   />
-                )}
-
-                {/* Embedded Quiz Section (if available) */}
-                {currentDoc && currentDoc.questions > 0 && !isPreview && (
-                  <DocQuizWidget doc={currentDoc} />
                 )}
 
                 {/* Bình luận qua GitHub Discussions */}

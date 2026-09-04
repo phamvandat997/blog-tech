@@ -200,7 +200,7 @@ export function QuizPlayer({ doc, bank, isPreview = false, onBack }) {
       </div>
 
       {/* Questions List */}
-      <div className="quiz-cards-wrapper flex flex-col gap-6 mb-8">
+      <div className="quiz-cards-wrapper flex flex-col gap-4 mb-6">
         {filteredQuizzes.map((q) => {
           const qKey = qKeyOf(docId, q.number);
           const checked = isChecked(qKey);
