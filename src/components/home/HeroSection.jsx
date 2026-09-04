@@ -49,7 +49,9 @@ export function HeroSection() {
         >
           <span>🎯</span>
           <span>Luyện Quiz Ngay</span>
-          <span className="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">121+ câu</span>
+          <span className="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">
+            {totalQuizzes > 0 ? `${totalQuizzes}+ câu` : '0 câu'}
+          </span>
         </Link>
         <button
           type="button"

@@ -14,7 +14,7 @@ export function QuizPromoCard() {
               Ngân Hàng Câu Hỏi Trắc Nghiệm Có Chấm Điểm
             </h3>
             <p className="text-sm text-indigo-100 max-w-xl m-0 leading-relaxed">
-              Luyện tập với 121+ câu hỏi trắc nghiệm OCP Java SE 25, kiểm tra đúng/sai tức thì và giải thích chi tiết từng câu hỏi.
+              Luyện tập với hệ thống câu hỏi trắc nghiệm kỹ thuật, kiểm tra đúng/sai tức thì và giải thích chi tiết từng câu hỏi.
             </p>
           </div>
           <div className="shrink-0 flex items-center gap-3">
