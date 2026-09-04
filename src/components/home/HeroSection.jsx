@@ -43,16 +43,18 @@ export function HeroSection() {
 
       {/* Quick Action CTA Buttons */}
       <div className="hero-cta flex items-center justify-center gap-3 sm:gap-4 flex-wrap mb-9">
-        <Link
-          to="/quiz"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all no-underline"
-        >
-          <span>🎯</span>
-          <span>Luyện Quiz Ngay</span>
-          <span className="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">
-            {totalQuizzes > 0 ? `${totalQuizzes}+ câu` : '0 câu'}
-          </span>
-        </Link>
+        {totalQuizzes > 0 && (
+          <Link
+            to="/quiz"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all no-underline"
+          >
+            <span>🎯</span>
+            <span>Luyện Quiz Ngay</span>
+            <span className="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">
+              {totalQuizzes}+ câu
+            </span>
+          </Link>
+        )}
         <button
           type="button"
           onClick={() => {
@@ -101,19 +103,21 @@ export function HeroSection() {
             {completedCount}/{totalDocs} bài đã hoàn thành
           </span>
         </div>
-        <Link
-          to="/quiz"
-          className="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all no-underline"
-          title="Xem tất cả bài tập trắc nghiệm"
-        >
-          <span className="hero-stat-icon text-xl">📝</span>
-          <span className="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-quiz-val">
-            {totalQuizzes}
-          </span>
-          <span className="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">
-            Câu trắc nghiệm
-          </span>
-        </Link>
+        {totalQuizzes > 0 && (
+          <Link
+            to="/quiz"
+            className="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all no-underline"
+            title="Xem tất cả bài tập trắc nghiệm"
+          >
+            <span className="hero-stat-icon text-xl">📝</span>
+            <span className="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-quiz-val">
+              {totalQuizzes}
+            </span>
+            <span className="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Câu trắc nghiệm
+            </span>
+          </Link>
+        )}
       </div>
     </section>
   );

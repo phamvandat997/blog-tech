@@ -1,0 +1,552 @@
+{
+  "title": "Quiz: Lập Trình Hướng Đối Tượng (OOP) Java",
+  "tags": [
+    "Java",
+    "OOP",
+    "Polymorphism",
+    "Interface",
+    "Inheritance"
+  ],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Java không hỗ trợ đa kế thừa (Multiple Inheritance) đối với class vì nguyên nhân chính nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Do thiếu tài nguyên bộ nhớ RAM"
+        },
+        {
+          "key": "B",
+          "text": "Để tránh vấn đề xung đột phương thức hình thoi (Diamond Problem)"
+        },
+        {
+          "key": "C",
+          "text": "Vì cú pháp từ khoá extends không cho phép dấu phẩy"
+        },
+        {
+          "key": "D",
+          "text": "JVM không thể nạp quá một class cùng lúc"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu một class kế thừa đồng thời từ 2 class cha có cùng phương thức, JVM sẽ không xác định được nên thực thi phương thức của cha nào (Diamond Problem)."
+    },
+    {
+      "number": 2,
+      "question": "Tính chất nào của OOP cho phép che giấu thông tin nội bộ của đối tượng và chỉ mở ra các hàm tương tác an toàn?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tính Kế Thừa (Inheritance)"
+        },
+        {
+          "key": "B",
+          "text": "Tính Đa Hình (Polymorphism)"
+        },
+        {
+          "key": "C",
+          "text": "Tính Đóng Gói (Encapsulation)"
+        },
+        {
+          "key": "D",
+          "text": "Tính Trừu Tượng (Abstraction)"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Tính đóng gói (Encapsulation) giấu kín trạng thái dữ liệu (dùng `private`) và chỉ cung cấp các phương thức công khai (getter/setter) để kiểm soát truy cập."
+    },
+    {
+      "number": 3,
+      "question": "Trong Java, thứ tự ưu tiên về phạm vi truy cập (Access Modifiers) từ hẹp nhất đến rộng nhất là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "private < default < protected < public"
+        },
+        {
+          "key": "B",
+          "text": "default < private < protected < public"
+        },
+        {
+          "key": "C",
+          "text": "private < protected < default < public"
+        },
+        {
+          "key": "D",
+          "text": "protected < private < default < public"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`private` (chỉ trong class) < `default` (trong cùng package) < `protected` (cùng package + con khác package) < `public` (toàn cầu)."
+    },
+    {
+      "number": 4,
+      "question": "Điều gì xảy ra nếu phương thức của lớp con ghi đè (`@Override`) phương thức của lớp cha nhưng thu hẹp phạm vi truy cập (ví dụ từ `public` xuống `private`)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Chương trình chạy bình thường"
+        },
+        {
+          "key": "B",
+          "text": "Báo lỗi biên dịch (Cannot reduce visibility of the inherited method)"
+        },
+        {
+          "key": "C",
+          "text": "JVM tự động đổi thành protected"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ phát sinh cảnh báo warning lúc chạy"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Quy tắc ghi đè phương thức (Method Overriding) nghiêm cấm việc thu hẹp phạm vi truy cập so với phương thức ở lớp cha (nguyên lý Liskov Substitution)."
+    },
+    {
+      "number": 5,
+      "question": "Lệnh `super()` hoặc `this()` khi gọi constructor phải nằm ở vị trí nào trong thân constructor?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Bất kỳ vị trí nào"
+        },
+        {
+          "key": "B",
+          "text": "Dòng lệnh đầu tiên"
+        },
+        {
+          "key": "C",
+          "text": "Dòng lệnh cuối cùng"
+        },
+        {
+          "key": "D",
+          "text": "Bên trong khối try-catch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong Java (trước Java 22 Preview), lệnh gọi `super(...)` hoặc `this(...)` bắt buộc phải là câu lệnh đầu tiên trong thân constructor."
+    },
+    {
+      "number": 6,
+      "question": "Đặc điểm nào dưới đây là ĐÚNG đối với một phương thức được khai báo với từ khoá `static`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Nó có thể truy cập trực tiếp các biến instance không tĩnh bằng `this`"
+        },
+        {
+          "key": "B",
+          "text": "Nó thuộc về Class, có thể gọi mà không cần khởi tạo đối tượng"
+        },
+        {
+          "key": "C",
+          "text": "Nó có thể bị ghi đè đa hình runtime bởi lớp con"
+        },
+        {
+          "key": "D",
+          "text": "Nó được lưu trữ trên bộ nhớ Heap của từng đối tượng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Phương thức `static` thuộc về lớp (class-level), được nạp vào bộ nhớ Metaspace và gọi thông qua `ClassName.methodName()`. Nó không có tham chiếu `this`."
+    },
+    {
+      "number": 7,
+      "question": "Khi một class được đánh dấu là `final`, điều đó có nghĩa là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không thể tạo đối tượng từ class đó bằng từ khoá new"
+        },
+        {
+          "key": "B",
+          "text": "Class đó không thể bị kế thừa bởi bất kỳ class nào khác"
+        },
+        {
+          "key": "C",
+          "text": "Tất cả các biến trong class đều tự động là null"
+        },
+        {
+          "key": "D",
+          "text": "Class đó chỉ chứa các static method"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Một class `final` (như `java.lang.String`, `Integer`) ngăn chặn việc bị mở rộng hoặc kế thừa bởi lớp khác."
+    },
+    {
+      "number": 8,
+      "question": "Method Overloading (nạp chồng phương thức) xảy ra khi nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Các phương thức có cùng tên, nằm trong cùng class nhưng khác nhau về danh sách tham số"
+        },
+        {
+          "key": "B",
+          "text": "Phương thức ở lớp con thay thế hoàn toàn phương thức lớp cha"
+        },
+        {
+          "key": "C",
+          "text": "Phương thức có cùng tên và cùng tham số nhưng chỉ khác nhau kiểu trả về"
+        },
+        {
+          "key": "D",
+          "text": "Phương thức được khai báo trừu tượng trong interface"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Overloading yêu cầu cùng tên phương thức nhưng phải khác số lượng, thứ tự hoặc kiểu của các tham số. Chỉ khác kiểu trả về sẽ báo lỗi biên dịch."
+    },
+    {
+      "number": 9,
+      "question": "Kể từ Java 8, interface có thể chứa loại phương thức nào có thân hàm (body implementation)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Chỉ duy nhất abstract method"
+        },
+        {
+          "key": "B",
+          "text": "Phương thức `default` và `static`"
+        },
+        {
+          "key": "C",
+          "text": "Tất cả các phương thức private protected"
+        },
+        {
+          "key": "D",
+          "text": "Phương thức synchronized"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Java 8 cho phép `default` method và `static` method có thân hàm trong interface; Java 9 bổ sung thêm `private` method hỗ trợ tái sử dụng code nội bộ."
+    },
+    {
+      "number": 10,
+      "question": "Đoạn code sau in ra gì?\n```java\nclass Parent { void show() { System.out.print(\"P\"); } }\nclass Child extends Parent { void show() { System.out.print(\"C\"); } }\nParent obj = new Child();\nobj.show();\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "P"
+        },
+        {
+          "key": "B",
+          "text": "C"
+        },
+        {
+          "key": "C",
+          "text": "PC"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Đây là cơ chế Runtime Polymorphism (Dynamic Binding). Mặc dù kiểu biến tham chiếu là `Parent`, đối tượng thực tế trên Heap là `Child`, nên `Child.show()` được gọi."
+    },
+    {
+      "number": 11,
+      "question": "Đặc điểm nào dưới đây là ĐÚNG khi nói về Abstract Class trong Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Một abstract class bắt buộc phải chứa ít nhất 1 abstract method"
+        },
+        {
+          "key": "B",
+          "text": "Không thể khởi tạo đối tượng trực tiếp từ abstract class bằng toán tử `new`"
+        },
+        {
+          "key": "C",
+          "text": "Abstract class không được phép có constructor"
+        },
+        {
+          "key": "D",
+          "text": "Tất cả biến trong abstract class đều phải là hằng số static final"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Abstract class không thể tạo instance trực tiếp qua `new`. Tuy nhiên, nó vẫn có thể có constructor (được gọi từ lớp con qua `super`) và có thể có 0 abstract method."
+    },
+    {
+      "number": 12,
+      "question": "Toán tử `instanceof` dùng để làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tạo một bản sao của đối tượng"
+        },
+        {
+          "key": "B",
+          "text": "Kiểm tra xem một đối tượng có phải là một thể hiện của một Class hoặc Interface cụ thể hay không"
+        },
+        {
+          "key": "C",
+          "text": "Lấy kích thước bộ nhớ của instance"
+        },
+        {
+          "key": "D",
+          "text": "Ép kiểu không an toàn"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`instanceof` kiểm tra quan hệ kiểu dữ liệu tại runtime và trả về `true` nếu đối tượng tương thích với kiểu được so sánh."
+    },
+    {
+      "number": 13,
+      "question": "Từ Java 16, tính năng 'Pattern Matching for instanceof' mang lại lợi ích gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tự động ép kiểu và gán vào biến mới trong cùng câu lệnh kiểm tra, loại bỏ ép kiểu tường minh dư thừa"
+        },
+        {
+          "key": "B",
+          "text": "Tự động bắt ngoại lệ NullPointerException"
+        },
+        {
+          "key": "C",
+          "text": "Chuyển đổi kiểu dữ liệu mà không cần kiểm tra"
+        },
+        {
+          "key": "D",
+          "text": "Tăng tốc độ Garbage Collector"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Ví dụ: `if (obj instanceof String s)` cho phép dùng trực tiếp biến `s` kiểu String mà không cần dòng `String s = (String) obj;`."
+    },
+    {
+      "number": 14,
+      "question": "Từ khoá `permits` trong Sealed Class (Java 17+) dùng để làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Cấp quyền truy cập mạng cho class"
+        },
+        {
+          "key": "B",
+          "text": "Liệt kê rõ ràng danh sách các lớp con cụ thể được phép kế thừa từ Sealed Class đó"
+        },
+        {
+          "key": "C",
+          "text": "Cho phép đa kế thừa với interface"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ định các phương thức có thể override"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`sealed class Shape permits Circle, Square` giới hạn nghiêm ngặt chỉ có Circle và Square được phép extends từ Shape."
+    },
+    {
+      "number": 15,
+      "question": "Một lớp con kế thừa từ một `sealed` class bắt buộc phải được khai báo với một trong ba từ khoá nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "public, private hoặc protected"
+        },
+        {
+          "key": "B",
+          "text": "final, sealed hoặc non-sealed"
+        },
+        {
+          "key": "C",
+          "text": "static, abstract hoặc transient"
+        },
+        {
+          "key": "D",
+          "text": "const, let hoặc var"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mọi lớp con được phép kế thừa từ Sealed Class phải xác định rõ trạng thái tiếp theo: `final` (chặn kế thừa tiếp), `sealed` (tiếp tục giới hạn) hoặc `non-sealed` (mở cho mọi lớp)."
+    },
+    {
+      "number": 16,
+      "question": "Phương thức nào là phương thức gốc của mọi đối tượng trong Java được thừa kế từ lớp `java.lang.Object`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "toString(), equals(), hashCode(), getClass()"
+        },
+        {
+          "key": "B",
+          "text": "print(), scan(), save()"
+        },
+        {
+          "key": "C",
+          "text": "start(), stop(), pause()"
+        },
+        {
+          "key": "D",
+          "text": "compareTo(), serialize()"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`java.lang.Object` là lớp cha gốc của mọi class trong Java, cung cấp các phương thức nền tảng như `equals`, `hashCode`, `toString`, `clone`, `notify`..."
+    },
+    {
+      "number": 17,
+      "question": "Mọi biến (field) được khai báo bên trong một `interface` mặc định có các thuộc tính truy cập nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "private final"
+        },
+        {
+          "key": "B",
+          "text": "public static final"
+        },
+        {
+          "key": "C",
+          "text": "protected volatile"
+        },
+        {
+          "key": "D",
+          "text": "default transient"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong interface, mọi biến khai báo đều mặc định ngầm định là `public static final` (hằng số toàn cục)."
+    },
+    {
+      "number": 18,
+      "question": "Từ khoá `super` KHÔNG THỂ được sử dụng trong ngữ cảnh nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Bên trong constructor của lớp con"
+        },
+        {
+          "key": "B",
+          "text": "Bên trong một phương thức static"
+        },
+        {
+          "key": "C",
+          "text": "Gọi phương thức của lớp cha đã bị ghi đè"
+        },
+        {
+          "key": "D",
+          "text": "Truy cập biến instance của lớp cha"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Tương tự như `this`, `super` đại diện cho thực thể hiện tại nên không thể tồn tại bên trong ngữ cảnh tĩnh (`static`)."
+    },
+    {
+      "number": 19,
+      "question": "Khi lớp con định nghĩa một biến static có cùng tên với biến static của lớp cha, hiện tượng này được gọi là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Method Overriding"
+        },
+        {
+          "key": "B",
+          "text": "Variable Shadowing / Hiding"
+        },
+        {
+          "key": "C",
+          "text": "Dynamic Binding"
+        },
+        {
+          "key": "D",
+          "text": "Type Cast Exception"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Biến (kể cả static hay instance) và phương thức static không thể bị override đa hình, mà bị che khuất (Hiding/Shadowing) dựa trên kiểu biến tham chiếu compile-time."
+    },
+    {
+      "number": 20,
+      "question": "Annotation `@Override` trong Java mang lại lợi ích gì cho lập trình viên?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Bắt buộc phương thức phải chạy đa luồng"
+        },
+        {
+          "key": "B",
+          "text": "Giúp trình biên dịch kiểm tra tính hợp lệ: báo lỗi ngay nếu phương thức không thực sự ghi đè phương thức nào từ lớp cha/interface"
+        },
+        {
+          "key": "C",
+          "text": "Tự động đổi tên phương thức cho ngắn gọn"
+        },
+        {
+          "key": "D",
+          "text": "Tăng dung lượng bộ nhớ cấp cho phương thức"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`@Override` thông báo cho compiler kiểm tra kỹ tên hàm, kiểu tham số; nếu sai lệch sẽ báo lỗi compile time thay vì vô tình tạo ra một method mới (overload)."
+    }
+  ]
+}

@@ -1,0 +1,552 @@
+{
+  "title": "Quiz: Đa Luồng & Lập Trình Đồng Thời Trong Java",
+  "tags": [
+    "Java",
+    "Concurrency",
+    "Multithreading",
+    "Virtual-Threads",
+    "Locks"
+  ],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Phương thức nào dùng để bắt đầu thực thi một luồng mới trong Java và chuyển nó sang trạng thái RUNNABLE?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "run()"
+        },
+        {
+          "key": "B",
+          "text": "start()"
+        },
+        {
+          "key": "C",
+          "text": "execute()"
+        },
+        {
+          "key": "D",
+          "text": "init()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Gọi `start()` yêu cầu hệ điều hành cấp phát call stack mới và khởi chạy phương thức `run()` trên luồng đó. Nếu gọi trực tiếp `run()`, nó chỉ chạy tuần tự trên luồng hiện tại."
+    },
+    {
+      "number": 2,
+      "question": "Sự khác biệt cơ bản giữa interface `Runnable` và `Callable` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Runnable` trả về giá trị, `Callable` thì không"
+        },
+        {
+          "key": "B",
+          "text": "`Runnable.run()` trả về `void` và không ném Checked Exception; `Callable.call()` có thể trả về giá trị `V` và cho phép ném ngoại lệ Checked Exception"
+        },
+        {
+          "key": "C",
+          "text": "`Callable` chỉ dùng được trên Java 8"
+        },
+        {
+          "key": "D",
+          "text": "Hai interface này hoàn toàn giống nhau"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Callable<V>` (từ Java 5) có phương thức `V call() throws Exception` cho phép trả kết quả thông qua `Future` và xử lý ngoại lệ một cách an toàn."
+    },
+    {
+      "number": 3,
+      "question": "Từ khoá `volatile` trong Java giải quyết bài toán nào trong môi trường đa luồng?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Đảm bảo tính nguyên tử (Atomicity) cho phép toán tăng i++"
+        },
+        {
+          "key": "B",
+          "text": "Đảm bảo tính khả kiến (Visibility): mọi luồng luôn đọc giá trị mới nhất của biến từ Main Memory thay vì CPU cache"
+        },
+        {
+          "key": "C",
+          "text": "Tự động khoá phương thức"
+        },
+        {
+          "key": "D",
+          "text": "Chống lại lỗi tràn bộ nhớ Heap"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`volatile` đảm bảo biến được đọc/ghi trực tiếp vào bộ nhớ dùng chung (Main Memory), giải quyết vấn đề CPU cache giữa các core. Nhưng nó KHÔNG đảm bảo tính nguyên tử (Atomicity)."
+    },
+    {
+      "number": 4,
+      "question": "Phép toán `count++` trên một biến int thông thường có phải là thread-safe không?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Có, vì đây là câu lệnh đơn lẻ"
+        },
+        {
+          "key": "B",
+          "text": "Không, vì nó bao gồm 3 thao tác riêng biệt: Đọc giá trị, Tăng giá trị, Ghi lại giá trị (Read-Modify-Write), dễ dẫn tới Race Condition"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ an toàn trên hệ điều hành 64-bit"
+        },
+        {
+          "key": "D",
+          "text": "An toàn nếu biến là static"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`count++` không phải nguyên tử (atomic). Khi nhiều luồng cùng chạy, việc đan xen giữa các bước Read-Modify-Write sẽ làm mất mát kết quả tăng giá trị."
+    },
+    {
+      "number": 5,
+      "question": "Để thực hiện các phép toán tăng giảm an toàn đa luồng trên số nguyên mà không cần dùng khoá `synchronized`, ta nên dùng lớp nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "java.lang.Integer"
+        },
+        {
+          "key": "B",
+          "text": "java.util.concurrent.atomic.AtomicInteger"
+        },
+        {
+          "key": "C",
+          "text": "java.math.BigInteger"
+        },
+        {
+          "key": "D",
+          "text": "volatile int"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`AtomicInteger` sử dụng kỹ thuật không khoá CAS (Compare-And-Swap) ở cấp phần cứng CPU, mang lại hiệu năng cao và an toàn tuyệt đối cho đa luồng."
+    },
+    {
+      "number": 6,
+      "question": "Tình trạng 'Deadlock' (Khoá chết) xảy ra khi nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Khi máy tính hết dung lượng ổ cứng"
+        },
+        {
+          "key": "B",
+          "text": "Khi hai hoặc nhiều luồng bị chặn vĩnh viễn vì luồng này chờ giữ tài nguyên/khoá mà luồng kia đang nắm giữ và ngược lại"
+        },
+        {
+          "key": "C",
+          "text": "Khi có quá nhiều luồng ở trạng thái RUNNABLE"
+        },
+        {
+          "key": "D",
+          "text": "Khi một luồng chạy quá 24 giờ"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Deadlock xảy ra khi luồng A giữ Lock 1 và chờ Lock 2, đồng thời luồng B giữ Lock 2 và chờ Lock 1. Không luồng nào chịu nhả khoá khiến cả hai dừng vô tận."
+    },
+    {
+      "number": 7,
+      "question": "Biến Monitor Lock (Intrinsic Lock) được liên kết với điều gì khi một phương thức instance được đánh dấu là `synchronized`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Toàn bộ máy ảo JVM"
+        },
+        {
+          "key": "B",
+          "text": "Chính đối tượng hiện tại (`this` instance)"
+        },
+        {
+          "key": "C",
+          "text": "Đối tượng Class của class đó"
+        },
+        {
+          "key": "D",
+          "text": "Thread đang chạy"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Phương thức instance `synchronized` khoá trên đối tượng `this`. Nếu là phương thức static `synchronized`, nó khoá trên đối tượng `ClassName.class`."
+    },
+    {
+      "number": 8,
+      "question": "Phương thức nào cho phép luồng hiện tại tạm dừng và chờ đợi một luồng khác kết thúc công việc trước khi chạy tiếp?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "thread.join()"
+        },
+        {
+          "key": "B",
+          "text": "thread.yield()"
+        },
+        {
+          "key": "C",
+          "text": "thread.sleep()"
+        },
+        {
+          "key": "D",
+          "text": "thread.wait()"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`t.join()` khiến luồng gọi nó phải dừng chờ cho đến khi luồng `t` hoàn thành (trạng thái TERMINATED)."
+    },
+    {
+      "number": 9,
+      "question": "Các phương thức `wait()`, `notify()`, `notifyAll()` bắt buộc phải được gọi bên trong ngữ cảnh nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Bên trong khối static"
+        },
+        {
+          "key": "B",
+          "text": "Bên trong một khối hoặc phương thức được đồng bộ hoá (`synchronized`) trên chính đối tượng đó"
+        },
+        {
+          "key": "C",
+          "text": "Bên trong hàm main"
+        },
+        {
+          "key": "D",
+          "text": "Bên trong khối try-with-resources"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu gọi `wait()`/`notify()` mà luồng hiện tại không nắm giữ monitor lock của đối tượng, JVM sẽ ném ngay `IllegalMonitorStateException`."
+    },
+    {
+      "number": 10,
+      "question": "Tại sao việc gọi `Thread.stop()` bị deprecated (không khuyến khích sử dụng) trong Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Vì nó làm chậm CPU"
+        },
+        {
+          "key": "B",
+          "text": "Vì nó ngắt luồng đột ngột, nhả toàn bộ lock ngay lập tức khiến dữ liệu của đối tượng bị rơi vào trạng thái không nhất quán (inconsistent state)"
+        },
+        {
+          "key": "C",
+          "text": "Vì nó không giải phóng bộ nhớ Stack"
+        },
+        {
+          "key": "D",
+          "text": "Vì nó chỉ chạy được trên Linux"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`stop()` nguy hiểm vì nó ép luồng dừng ngay lập tức mà không dọn dẹp tài nguyên, giải phóng mọi lock monitor và làm hỏng tính toàn vẹn của dữ liệu."
+    },
+    {
+      "number": 11,
+      "question": "Cách chuẩn mực nhất để yêu cầu một luồng dừng hoạt động trong Java hiện đại là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Gọi phương thức `interrupt()` và kiểm tra cờ `Thread.currentThread().isInterrupted()` định kỳ"
+        },
+        {
+          "key": "B",
+          "text": "Gán biến tham chiếu Thread về null"
+        },
+        {
+          "key": "C",
+          "text": "Ném ngoại lệ Error"
+        },
+        {
+          "key": "D",
+          "text": "Tắt nguồn hệ điều hành"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Cơ chế `interrupt()` mang tính hợp tác (*cooperative*): gửi tín hiệu ngắt để luồng tự kiểm tra và kết thúc công việc an toàn."
+    },
+    {
+      "number": 12,
+      "question": "Lớp `ReentrantLock` trong `java.util.concurrent.locks` mang lại ưu điểm gì vượt trội so với `synchronized`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không bao giờ bị lỗi"
+        },
+        {
+          "key": "B",
+          "text": "Hỗ trợ thử lấy khoá có giới hạn thời gian (`tryLock()`), khoá có thể bị ngắt (`lockInterruptibly()`) và chính sách công bằng (fairness policy)"
+        },
+        {
+          "key": "C",
+          "text": "Tự động mở khoá mà không cần gọi unlock()"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ dùng cho 1 luồng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`ReentrantLock` cung cấp cơ chế kiểm soát khoá linh hoạt, tránh deadlock nhờ `tryLock(timeout)` và hỗ trợ chia sẻ công bằng (Fair Lock)."
+    },
+    {
+      "number": 13,
+      "question": "Đặc điểm mang tính cách mạng của 'Virtual Threads' (Java 21 LTS) là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tăng tốc độ xung nhịp của CPU"
+        },
+        {
+          "key": "B",
+          "text": "Là các luồng siêu nhẹ do JVM quản lý (không gắn chặt 1-1 với OS thread), giúp tạo hàng triệu luồng đồng thời với chi phí bộ nhớ cực thấp"
+        },
+        {
+          "key": "C",
+          "text": "Loại bỏ hoàn toàn lỗi NullPointerException"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ dùng cho ứng dụng desktop"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Virtual Threads (Project Loom) giải phóng mô hình Thread-per-request khỏi giới hạn phần cứng, cho phép hàng triệu luồng chạy đồng thời mượt mà."
+    },
+    {
+      "number": 14,
+      "question": "Phương thức nào dùng để tạo một ExecutorService sử dụng Virtual Threads trong Java 21?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Executors.newVirtualThreadPool()"
+        },
+        {
+          "key": "B",
+          "text": "Executors.newVirtualThreadPerTaskExecutor()"
+        },
+        {
+          "key": "C",
+          "text": "Executors.newCachedVirtualPool()"
+        },
+        {
+          "key": "D",
+          "text": "new ThreadPoolExecutor(Virtual)"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Executors.newVirtualThreadPerTaskExecutor()` tạo ra một ExecutorService tự động sinh một Virtual Thread mới cho mỗi tác vụ được nộp vào."
+    },
+    {
+      "number": 15,
+      "question": "Điều gì xảy ra khi một Virtual Thread thực hiện một thao tác I/O chặn (như đọc database hoặc gọi HTTP)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Toàn bộ hệ thống bị treo"
+        },
+        {
+          "key": "B",
+          "text": "JVM tự động unmount Virtual Thread khỏi Platform Thread (Carrier Thread), giải phóng Carrier Thread đó cho luồng khác chạy tiếp"
+        },
+        {
+          "key": "C",
+          "text": "Virtual Thread bị huỷ và ném ngoại lệ"
+        },
+        {
+          "key": "D",
+          "text": "Virtual Thread biến thành Platform Thread"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khả năng unmount/mount thông minh của JVM giúp Carrier Thread (OS Thread bên dưới) không bao giờ bị nghẽn trong lúc Virtual Thread chờ I/O."
+    },
+    {
+      "number": 16,
+      "question": "Phương thức `CompletableFuture.supplyAsync(...)` mặc định chạy tác vụ trên Thread Pool nào nếu không chỉ định executor?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "SingleThreadExecutor"
+        },
+        {
+          "key": "B",
+          "text": "ForkJoinPool.commonPool()"
+        },
+        {
+          "key": "C",
+          "text": "CachedThreadPool"
+        },
+        {
+          "key": "D",
+          "text": "Main Thread"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mặc định `CompletableFuture` sử dụng `ForkJoinPool.commonPool()` dùng chung của JVM."
+    },
+    {
+      "number": 17,
+      "question": "Công cụ đồng bộ hoá nào cho phép một hoặc nhiều luồng chờ đợi cho đến khi một số lượng tác vụ nhất định hoàn thành (đếm ngược về 0)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "CyclicBarrier"
+        },
+        {
+          "key": "B",
+          "text": "CountDownLatch"
+        },
+        {
+          "key": "C",
+          "text": "Semaphore"
+        },
+        {
+          "key": "D",
+          "text": "Phaser"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`CountDownLatch` được khởi tạo với một số nguyên đếm ngược. Các luồng gọi `await()` sẽ dừng chờ đến khi các luồng khác gọi `countDown()` đủ số lần về 0."
+    },
+    {
+      "number": 18,
+      "question": "Lớp `ThreadLocal` trong Java dùng để giải quyết bài toán gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Chia sẻ dữ liệu giữa tất cả các luồng"
+        },
+        {
+          "key": "B",
+          "text": "Cung cấp các biến có giá trị độc lập, riêng biệt cho từng luồng cụ thể (mỗi luồng có một bản copy riêng)"
+        },
+        {
+          "key": "C",
+          "text": "Tăng tốc độ kết nối internet của luồng"
+        },
+        {
+          "key": "D",
+          "text": "Ghi dữ liệu luồng ra ổ cứng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`ThreadLocal` lưu trữ trạng thái biệt lập cho từng thread (ví dụ: User Context, Transaction ID), tránh hoàn toàn xung đột chia sẻ dữ liệu giữa các luồng."
+    },
+    {
+      "number": 19,
+      "question": "Lớp `Semaphore` trong gói `java.util.concurrent` được sử dụng để làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Giới hạn số lượng luồng tối đa được phép truy cập đồng thời vào một tài nguyên cụ thể (Permits)"
+        },
+        {
+          "key": "B",
+          "text": "Chỉ cho phép 1 luồng duy nhất chạy"
+        },
+        {
+          "key": "C",
+          "text": "Đo thời gian chạy của phương thức"
+        },
+        {
+          "key": "D",
+          "text": "Đổi tên luồng"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`Semaphore` quản lý một số lượng 'giấy phép' (permits). Luồng cần `acquire()` giấy phép để vào và `release()` khi xong, thích hợp giới hạn số kết nối database connection pool."
+    },
+    {
+      "number": 20,
+      "question": "Khi sử dụng Thread Pool trong ứng dụng doanh nghiệp, điều gì là QUAN TRỌNG NHẤT khi ứng dụng tắt (shutdown)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không cần làm gì, JVM sẽ tự tắt"
+        },
+        {
+          "key": "B",
+          "text": "Phải gọi `shutdown()` hoặc `shutdownNow()` để giải phóng luồng và tài nguyên, tránh ứng dụng bị treo không tắt được"
+        },
+        {
+          "key": "C",
+          "text": "Xoá các class trong pool"
+        },
+        {
+          "key": "D",
+          "text": "Đặt lại kích thước pool về 0"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Các non-daemon worker threads trong pool sẽ giữ cho tiến trình JVM tiếp tục chạy. Bắt buộc phải gọi `shutdown()` để hoàn tất các tác vụ đang dở và đóng pool an toàn."
+    }
+  ]
+}

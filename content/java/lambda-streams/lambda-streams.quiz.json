@@ -1,0 +1,552 @@
+{
+  "title": "Quiz: Lambda Expressions & Stream API",
+  "tags": [
+    "Java",
+    "Lambda",
+    "Streams",
+    "Functional-Programming",
+    "Optional"
+  ],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Điều kiện để một interface được coi là một 'Functional Interface' trong Java là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Phải có đúng 1 phương thức trừu tượng (Single Abstract Method)"
+        },
+        {
+          "key": "B",
+          "text": "Không được chứa bất kỳ default hay static method nào"
+        },
+        {
+          "key": "C",
+          "text": "Bắt buộc phải kế thừa từ java.lang.Runnable"
+        },
+        {
+          "key": "D",
+          "text": "Phải có ít nhất 2 tham số đầu vào"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Functional Interface chỉ được phép có đúng 1 abstract method. Nó vẫn có thể chứa nhiều default method hoặc static method."
+    },
+    {
+      "number": 2,
+      "question": "Functional Interface `Predicate<T>` có phương thức trừu tượng là gì và trả về kiểu dữ liệu nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "apply(T t) trả về Object"
+        },
+        {
+          "key": "B",
+          "text": "test(T t) trả về boolean"
+        },
+        {
+          "key": "C",
+          "text": "accept(T t) trả về void"
+        },
+        {
+          "key": "D",
+          "text": "get() trả về T"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Predicate<T>` định nghĩa hàm `boolean test(T t)` đại diện cho một mệnh đề logic kiểm tra điều kiện."
+    },
+    {
+      "number": 3,
+      "question": "Thao tác nào sau đây trên Stream là một 'Intermediate Operation' (thao tác trung gian)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "forEach"
+        },
+        {
+          "key": "B",
+          "text": "collect"
+        },
+        {
+          "key": "C",
+          "text": "filter"
+        },
+        {
+          "key": "D",
+          "text": "count"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "`filter`, `map`, `distinct`, `sorted` là các thao tác trung gian trả về một Stream mới và được đánh giá lười (lazy)."
+    },
+    {
+      "number": 4,
+      "question": "Điều gì xảy ra nếu cố tình gọi một Terminal Operation lần thứ hai trên cùng một đối tượng Stream đã đóng?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Stream tự động tua lại từ đầu"
+        },
+        {
+          "key": "B",
+          "text": "Ném ngoại lệ `IllegalStateException: stream has already been operated upon or closed`"
+        },
+        {
+          "key": "C",
+          "text": "Trả về kết quả rỗng"
+        },
+        {
+          "key": "D",
+          "text": "Hệ thống bị treo"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Stream trong Java chỉ có thể duyệt qua một lần duy nhất. Sau khi gặp Terminal Operation, Stream bị đóng vĩnh viễn."
+    },
+    {
+      "number": 5,
+      "question": "Khái niệm 'Lazy Evaluation' (đánh giá lười) trong Stream API có ý nghĩa gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Stream thực thi rất chậm"
+        },
+        {
+          "key": "B",
+          "text": "Các thao tác trung gian không được thực thi ngay lập tức mà chỉ chạy khi có một thao tác kết thúc (terminal operation) được gọi"
+        },
+        {
+          "key": "C",
+          "text": "Stream chỉ chạy vào ban đêm"
+        },
+        {
+          "key": "D",
+          "text": "Không bao giờ giải phóng bộ nhớ"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Lazy evaluation giúp tối ưu hoá hiệu năng: các bước filter, map sẽ kết hợp thành 1 vòng lặp duy nhất và dừng sớm (short-circuit) nếu cần."
+    },
+    {
+      "number": 6,
+      "question": "Phương thức `flatMap()` khác với `map()` ở điểm mấu chốt nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`flatMap()` chỉ dùng cho số nguyên"
+        },
+        {
+          "key": "B",
+          "text": "`map()` ánh xạ 1 phần tử thành 1 phần tử; `flatMap()` ánh xạ mỗi phần tử thành một Stream các phần tử con rồi làm phẳng thành một Stream duy nhất"
+        },
+        {
+          "key": "C",
+          "text": "`flatMap()` chạy song song còn `map()` chạy tuần tự"
+        },
+        {
+          "key": "D",
+          "text": "`flatMap()` loại bỏ toàn bộ phần tử null"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khi ánh xạ trả về một Collection/Stream (ví dụ `List<List<T>>`), `flatMap()` sẽ làm phẳng chúng thành một `Stream<T>` phẳng duy nhất."
+    },
+    {
+      "number": 7,
+      "question": "Method reference `String::length` tương đương với biểu thức Lambda nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "() -> String.length()"
+        },
+        {
+          "key": "B",
+          "text": "s -> s.length()"
+        },
+        {
+          "key": "C",
+          "text": "(s1, s2) -> s1.length()"
+        },
+        {
+          "key": "D",
+          "text": "s -> length(s)"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`String::length` là tham chiếu đến phương thức instance của một đối tượng tùy ý của kiểu String: `(String s) -> s.length()`."
+    },
+    {
+      "number": 8,
+      "question": "Đoạn code sau in ra màn hình giá trị gì?\n```java\nList<Integer> nums = List.of(1, 2, 3, 4, 5);\nint sum = nums.stream()\n              .filter(n -> n % 2 == 0)\n              .map(n -> n * 2)\n              .reduce(0, Integer::sum);\nSystem.out.println(sum);\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "6"
+        },
+        {
+          "key": "B",
+          "text": "12"
+        },
+        {
+          "key": "C",
+          "text": "20"
+        },
+        {
+          "key": "D",
+          "text": "30"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Các số chẵn là 2 và 4. Nhân đôi thành 4 và 8. Tổng `reduce(0, Integer::sum)` là 4 + 8 = 12."
+    },
+    {
+      "number": 9,
+      "question": "Trong `Optional<T>`, phương thức nào được khuyến nghị sử dụng để cung cấp giá trị mặc định được tính toán lười (lazy)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "orElse(defaultValue)"
+        },
+        {
+          "key": "B",
+          "text": "orElseGet(Supplier)"
+        },
+        {
+          "key": "C",
+          "text": "get()"
+        },
+        {
+          "key": "D",
+          "text": "isPresent()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`orElseGet(Supplier)` chỉ thực thi hàm Supplier khi Optional thực sự rỗng, tránh lãng phí chi phí khởi tạo như `orElse(...)`."
+    },
+    {
+      "number": 10,
+      "question": "Kể từ Java 16, phương thức nào trên Stream cho phép thu thập trực tiếp thành danh sách bất biến mà không cần gõ `collect(Collectors.toList())` dài dòng?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": ".asList()"
+        },
+        {
+          "key": "B",
+          "text": ".toList()"
+        },
+        {
+          "key": "C",
+          "text": ".toCollection()"
+        },
+        {
+          "key": "D",
+          "text": ".intoList()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Java 16 bổ sung `stream.toList()`, trả về danh sách unmodifiable một cách ngắn gọn và hiệu quả."
+    },
+    {
+      "number": 11,
+      "question": "Thao tác kết thúc nào sau đây thuộc nhóm 'Short-Circuiting' (dừng sớm trước khi duyệt hết toàn bộ phần tử)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "count()"
+        },
+        {
+          "key": "B",
+          "text": "anyMatch()"
+        },
+        {
+          "key": "C",
+          "text": "reduce()"
+        },
+        {
+          "key": "D",
+          "text": "collect()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`anyMatch()`, `allMatch()`, `noneMatch()`, `findFirst()` có thể dừng duyệt ngay khi xác định được điều kiện mà không cần đi qua hết danh sách."
+    },
+    {
+      "number": 12,
+      "question": "Phương thức `Collectors.groupingBy(...)` thường dùng để làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Nối các chuỗi ký tự"
+        },
+        {
+          "key": "B",
+          "text": "Nhóm các phần tử của Stream theo một tiêu chí (classifier) và trả về một Map<K, List<V>>"
+        },
+        {
+          "key": "C",
+          "text": "Sắp xếp theo thứ tự bảng chữ cái"
+        },
+        {
+          "key": "D",
+          "text": "Đếm số lượng phần tử"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`groupingBy` tương tự mệnh đề `GROUP BY` trong SQL, gom nhóm các đối tượng theo thuộc tính thành một Map."
+    },
+    {
+      "number": 13,
+      "question": "Biểu thức Lambda bên trong Java có thể truy cập biến cục bộ bên ngoài với điều kiện gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Biến đó phải là kiểu int"
+        },
+        {
+          "key": "B",
+          "text": "Biến đó phải là `final` hoặc `effectively final` (không bị gán lại giá trị sau khi khởi tạo)"
+        },
+        {
+          "key": "C",
+          "text": "Biến đó phải là static"
+        },
+        {
+          "key": "D",
+          "text": "Không thể truy cập biến cục bộ bên ngoài"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Để đảm bảo an toàn bộ nhớ luồng, Lambda chỉ được chụp (*capture*) các biến cục bộ có tính chất 'effectively final' (giá trị không đổi)."
+    },
+    {
+      "number": 14,
+      "question": "Khi nào nên cân nhắc sử dụng `parallelStream()` thay cho `stream()` thông thường?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Với mọi trường hợp để code chạy nhanh nhất"
+        },
+        {
+          "key": "B",
+          "text": "Chỉ khi tập dữ liệu cực lớn, các tác vụ xử lý trên từng phần tử độc lập hoàn toàn và tốn nhiều CPU tính toán"
+        },
+        {
+          "key": "C",
+          "text": "Khi đang thao tác với cơ sở dữ liệu JDBC"
+        },
+        {
+          "key": "D",
+          "text": "Khi cần ghi file tuần tự"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`parallelStream()` sử dụng ForkJoinPool chung của JVM. Nếu tác vụ nhỏ hoặc dính I/O block, chi phí chia nhỏ luồng và merge kết quả sẽ làm chậm hơn tuần tự."
+    },
+    {
+      "number": 15,
+      "question": "Phương thức `Optional.ofNullable(value)` xử lý thế nào nếu `value` truyền vào là `null`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ném ngoại lệ NullPointerException ngay lập tức"
+        },
+        {
+          "key": "B",
+          "text": "Trả về một `Optional.empty()` an toàn"
+        },
+        {
+          "key": "C",
+          "text": "Tự động gán giá trị mặc định là chuỗi rỗng"
+        },
+        {
+          "key": "D",
+          "text": "Khởi động lại máy ảo"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Optional.of(val)` sẽ ném NPE nếu val null. Còn `Optional.ofNullable(val)` sẽ an toàn trả về `Optional.empty()` nếu val null."
+    },
+    {
+      "number": 16,
+      "question": "Lớp nào chuyên biệt dùng cho Stream số nguyên nguyên thuỷ để tránh chi phí Boxing/Unboxing tự động?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "IntegerStream"
+        },
+        {
+          "key": "B",
+          "text": "IntStream"
+        },
+        {
+          "key": "C",
+          "text": "NumberStream"
+        },
+        {
+          "key": "D",
+          "text": "DigitStream"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`IntStream`, `LongStream`, `DoubleStream` là các Stream nguyên thuỷ chuyên biệt giúp loại bỏ chi phí chuyển đổi wrapper class."
+    },
+    {
+      "number": 17,
+      "question": "Phương thức `peek(Consumer)` trong Stream API nên được sử dụng cho mục đích nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Chỉnh sửa giá trị phần tử của Stream"
+        },
+        {
+          "key": "B",
+          "text": "Chủ yếu phục vụ việc debug (soi dữ liệu trung gian khi Stream đang chảy)"
+        },
+        {
+          "key": "C",
+          "text": "Đóng Stream"
+        },
+        {
+          "key": "D",
+          "text": "Xoá phần tử khỏi danh sách"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`peek` được thiết kế để hỗ trợ debugging, quan sát phần tử tại từng giai đoạn của pipeline mà không làm biến đổi luồng dữ liệu."
+    },
+    {
+      "number": 18,
+      "question": "Cú pháp Constructor Reference nào dùng để tạo mới đối tượng `ArrayList`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "ArrayList::create"
+        },
+        {
+          "key": "B",
+          "text": "ArrayList::new"
+        },
+        {
+          "key": "C",
+          "text": "new::ArrayList"
+        },
+        {
+          "key": "D",
+          "text": "ArrayList()::init"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`ClassName::new` là cú pháp tham chiếu đến Constructor của class tương ứng."
+    },
+    {
+      "number": 19,
+      "question": "Phương thức `Collectors.joining(\", \")` trả về kết quả thuộc kiểu gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "List<String>"
+        },
+        {
+          "key": "B",
+          "text": "String"
+        },
+        {
+          "key": "C",
+          "text": "String[]"
+        },
+        {
+          "key": "D",
+          "text": "StringBuilder"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Collectors.joining(...)` gom tất cả phần tử kiểu CharSequence trong Stream và nối chúng lại thành một chuỗi `String` duy nhất."
+    },
+    {
+      "number": 20,
+      "question": "Đoạn code sau in ra gì?\n```java\nOptional<String> opt = Optional.of(\"Java\");\nSystem.out.println(opt.map(String::length).orElse(0));\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "4"
+        },
+        {
+          "key": "C",
+          "text": "\"Java\""
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`opt.map(String::length)` chuyển `Optional<String>` thành `Optional<Integer>` chứa giá trị 4. `orElse(0)` lấy ra số 4."
+    }
+  ]
+}

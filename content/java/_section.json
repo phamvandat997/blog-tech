@@ -1,0 +1,40 @@
+{
+  "name": "Java",
+  "kind": "language",
+  "color": "#e76f51",
+  "tagline": "Lộ trình làm chủ Java toàn diện từ cài đặt môi trường, cốt lõi đến tính năng hiện đại.",
+  "categories": [
+    {
+      "id": "cai-dat-moi-truong",
+      "name": "Cài đặt môi trường"
+    },
+    {
+      "id": "nen-tang-co-ban",
+      "name": "Nền tảng căn bản"
+    },
+    {
+      "id": "lap-trinh-huong-doi-tuong",
+      "name": "Lập trình hướng đối tượng (OOP)"
+    },
+    {
+      "id": "strings-ngoai-le-io",
+      "name": "Chuỗi, Ngoại lệ & File I/O"
+    },
+    {
+      "id": "collections-generics",
+      "name": "Collections & Generics"
+    },
+    {
+      "id": "lambda-streams",
+      "name": "Lambda & Stream API"
+    },
+    {
+      "id": "da-luong-concurrency",
+      "name": "Đa luồng & Concurrency"
+    },
+    {
+      "id": "tinh-nang-moi-hien-dai",
+      "name": "Tính năng Java hiện đại"
+    }
+  ]
+}

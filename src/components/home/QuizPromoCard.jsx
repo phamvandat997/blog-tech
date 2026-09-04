@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCatalog } from '../../hooks/useCatalog';
 
 export function QuizPromoCard() {
+  const { docs } = useCatalog();
+  const totalQuizzes = docs.reduce((sum, d) => sum + (d.questions || 0), 0);
+
+  if (totalQuizzes === 0) return null;
+
   return (
     <section className="w-full lg:w-[60%] lg:max-w-[60%] mx-auto mb-10">
       <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 text-white shadow-xl shadow-indigo-500/10">

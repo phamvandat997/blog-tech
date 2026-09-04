@@ -1,0 +1,553 @@
+{
+  "title": "Quiz: Tính Năng Java Hiện Đại (Java 8 - 21+)",
+  "tags": [
+    "Java",
+    "Modern-Java",
+    "Records",
+    "Pattern-Matching",
+    "Java21",
+    "Clean-Code"
+  ],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Mục đích chính của tính năng `Record` (chính thức từ Java 16) là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tăng tốc độ truy vấn cơ sở dữ liệu"
+        },
+        {
+          "key": "B",
+          "text": "Tạo các lớp chứa dữ liệu bất biến (immutable data carrier) ngắn gọn, tự động sinh constructor, getters, equals, hashCode và toString"
+        },
+        {
+          "key": "C",
+          "text": "Thay thế hoàn toàn cấu trúc Interface"
+        },
+        {
+          "key": "D",
+          "text": "Cho phép đa kế thừa lớp"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Record giúp loại bỏ hàng chục dòng boilerplate code cho các POJO/DTO bất biến bằng cách tự động sinh mã chuẩn mực tại compile-time."
+    },
+    {
+      "number": 2,
+      "question": "Các trường (fields) được khai báo trong tiêu đề của một Record có đặc tính mặc định nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "public static"
+        },
+        {
+          "key": "B",
+          "text": "private final"
+        },
+        {
+          "key": "C",
+          "text": "protected volatile"
+        },
+        {
+          "key": "D",
+          "text": "default mutable"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mọi component của Record đều tự động là `private final`, đảm bảo tính bất biến toàn vẹn của đối tượng."
+    },
+    {
+      "number": 3,
+      "question": "Tên phương thức getter để truy xuất thuộc tính `name` trong `record Person(String name, int age)` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "getName()"
+        },
+        {
+          "key": "B",
+          "text": "name()"
+        },
+        {
+          "key": "C",
+          "text": "fetchName()"
+        },
+        {
+          "key": "D",
+          "text": "personName()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Record sử dụng quy ước đặt tên getter trùng khớp với tên trường (`name()`), thay vì tiền tố `get` như JavaBean truyền thống."
+    },
+    {
+      "number": 4,
+      "question": "Một `Record` trong Java có thể kế thừa (extends) từ một class khác được không?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Có thể kế thừa từ bất kỳ class nào"
+        },
+        {
+          "key": "B",
+          "text": "Không, vì mọi Record ngầm định đã kế thừa trực tiếp từ `java.lang.Record` và Java không hỗ trợ đa kế thừa class"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ có thể kế thừa từ Abstract Class"
+        },
+        {
+          "key": "D",
+          "text": "Có thể kế thừa nếu class cha là final"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mọi record đều mở rộng từ `java.lang.Record` và ngầm định là `final`, do đó không thể kế thừa bất kỳ class nào khác (nhưng có thể implements nhiều interface)."
+    },
+    {
+      "number": 5,
+      "question": "Ký tự phân cách để bắt đầu và kết thúc một 'Text Block' (Java 15+) là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Dấu ngoặc đơn đôi ''"
+        },
+        {
+          "key": "B",
+          "text": "Ba dấu nháy kép (\"\"\")"
+        },
+        {
+          "key": "C",
+          "text": "Dấu backtick (```)"
+        },
+        {
+          "key": "D",
+          "text": "Thẻ <text></text>"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Text Block sử dụng ba dấu nháy kép `\"\"\"` mở đầu (sau đó phải xuống dòng) và ba dấu nháy kép đóng để biểu diễn chuỗi nhiều dòng."
+    },
+    {
+      "number": 6,
+      "question": "Trong Pattern Matching for switch (Java 21), từ khoá `when` được dùng cho mục đích gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Đặt hẹn giờ thực thi lệnh"
+        },
+        {
+          "key": "B",
+          "text": "Thêm một biểu thức điều kiện bổ sung (guard pattern) cho một case cụ thể"
+        },
+        {
+          "key": "C",
+          "text": "Chuyển sang case tiếp theo"
+        },
+        {
+          "key": "D",
+          "text": "Bắt ngoại lệ"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`when` (trước đây là `&&`) đóng vai trò là mệnh đề bảo vệ (guarded pattern): `case String s when s.length() > 5 -> ...`."
+    },
+    {
+      "number": 7,
+      "question": "Trước Java 21, việc xử lý giá trị `null` trong biểu thức `switch (obj)` thường dẫn tới kết quả gì nếu không kiểm tra từ trước?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tự động nhảy vào case default"
+        },
+        {
+          "key": "B",
+          "text": "Ném ngoại lệ NullPointerException ngay lập tức"
+        },
+        {
+          "key": "C",
+          "text": "Bỏ qua toàn bộ khối switch"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trước Java 21, truyền `null` vào switch luôn ném NPE. Java 21 cho phép khai báo trực tiếp `case null -> ...` một cách tường minh và an toàn."
+    },
+    {
+      "number": 8,
+      "question": "Tính năng 'Sequenced Collections' (Java 21) bổ sung các phương thức đồng nhất nào để thao tác ở hai đầu danh sách?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "pushFirst() và popLast()"
+        },
+        {
+          "key": "B",
+          "text": "getFirst(), getLast(), addFirst(), addLast(), removeFirst(), removeLast()"
+        },
+        {
+          "key": "C",
+          "text": "top() và bottom()"
+        },
+        {
+          "key": "D",
+          "text": "head() và tail()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`SequencedCollection` chuẩn hoá các thao tác lấy/thêm/xoá phần tử đầu và cuối cho List, Deque và SortedSet."
+    },
+    {
+      "number": 9,
+      "question": "Phương thức `reversed()` trong `SequencedCollection` (Java 21) có đặc điểm hiệu năng thế nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tốn O(n) vì phải đảo ngược toàn bộ mảng trong bộ nhớ"
+        },
+        {
+          "key": "B",
+          "text": "Tốn O(1) vì nó trả về một view đảo ngược trỏ tới cùng dữ liệu gốc mà không sao chép phần tử"
+        },
+        {
+          "key": "C",
+          "text": "Tốn O(n log n) do thuật toán sắp xếp"
+        },
+        {
+          "key": "D",
+          "text": "Tạo ra bản sao sâu (deep clone)"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`reversed()` trả về một cấu trúc view đảo ngược tức thì với độ phức tạp O(1), không tốn thêm bộ nhớ RAM để sao chép dữ liệu."
+    },
+    {
+      "number": 10,
+      "question": "Trong Record, khái niệm 'Compact Constructor' có đặc điểm cú pháp nổi bật nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không có cặp dấu ngoặc đơn chứa danh sách tham số `( )`"
+        },
+        {
+          "key": "B",
+          "text": "Không có cặp dấu ngoặc nhọn `{ }`"
+        },
+        {
+          "key": "C",
+          "text": "Bắt buộc phải gọi `super()`"
+        },
+        {
+          "key": "D",
+          "text": "Phải có tiền tố static"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Ví dụ `public User { Objects.requireNonNull(name); }` - không cần danh sách tham số `(String name...)`, giúp code thẩm tra dữ liệu cực kỳ gọn."
+    },
+    {
+      "number": 11,
+      "question": "Nguyên lý 'Single Responsibility Principle' (Chữ S trong SOLID) khuyên lập trình viên điều gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Một class chỉ nên có một lý do duy nhất để thay đổi (chỉ đảm nhận một trách nhiệm)"
+        },
+        {
+          "key": "B",
+          "text": "Mỗi file chỉ được chứa một dòng code"
+        },
+        {
+          "key": "C",
+          "text": "Mỗi phương thức chỉ được gọi 1 lần"
+        },
+        {
+          "key": "D",
+          "text": "Ứng dụng chỉ được chạy đơn luồng"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "SRP yêu cầu một lớp chỉ nên tập trung vào một nhiệm vụ chuyên biệt để tăng tính module và hạn chế tác động lan truyền khi sửa code."
+    },
+    {
+      "number": 12,
+      "question": "Nguyên lý 'Open/Closed Principle' (Chữ O trong SOLID) định nghĩa thế nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Mã nguồn phải được đóng gói thành file .zip"
+        },
+        {
+          "key": "B",
+          "text": "Các thực thể phần mềm nên mở cho việc mở rộng (Open for extension) nhưng đóng cho việc sửa đổi (Closed for modification)"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ sử dụng mã nguồn mở"
+        },
+        {
+          "key": "D",
+          "text": "Luôn mở tất cả các cổng kết nối mạng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "OCP khuyến khích thiết kế dựa trên interface/abstract class để khi thêm tính năng mới, ta chỉ cần tạo class mới kế thừa thay vì đập đi xây lại code cũ."
+    },
+    {
+      "number": 13,
+      "question": "Nguyên lý 'Liskov Substitution Principle' (Chữ L trong SOLID) yêu cầu điều gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Các đối tượng của lớp con phải có thể thay thế hoàn toàn các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình"
+        },
+        {
+          "key": "B",
+          "text": "Lớp con phải ghi đè toàn bộ phương thức của lớp cha"
+        },
+        {
+          "key": "C",
+          "text": "Không được sử dụng tính kế thừa"
+        },
+        {
+          "key": "D",
+          "text": "Tất cả các biến phải là private"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "LSP đảm bảo rằng lớp con phải tuân thủ hợp đồng hành vi của lớp cha, không được ném ngoại lệ bất ngờ hay vi phạm ràng buộc của cha."
+    },
+    {
+      "number": 14,
+      "question": "Nguyên lý 'Dependency Inversion Principle' (Chữ D trong SOLID) là nền tảng của kỹ thuật phổ biến nào trong Spring Framework?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Garbage Collection"
+        },
+        {
+          "key": "B",
+          "text": "Dependency Injection (Inversion of Control - IoC)"
+        },
+        {
+          "key": "C",
+          "text": "Method Overloading"
+        },
+        {
+          "key": "D",
+          "text": "Multi-threading"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "DIP tách rời sự phụ thuộc trực tiếp giữa các class cụ thể, uỷ thác cho Spring Container inject các bean dựa trên Interface trừu tượng."
+    },
+    {
+      "number": 15,
+      "question": "Tính năng 'Unnamed Patterns and Variables' (ký tự `_`) chính thức từ Java 22 cho phép làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Dùng dấu gạch dưới `_` để bỏ qua các biến hoặc tham số không cần sử dụng đến (ví dụ trong catch block hoặc lambda)"
+        },
+        {
+          "key": "B",
+          "text": "Đổi tên class tự động"
+        },
+        {
+          "key": "C",
+          "text": "Tạo biến toàn cục"
+        },
+        {
+          "key": "D",
+          "text": "Tăng dung lượng RAM"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Ví dụ `catch (Exception _)` hoặc `(k, _) -> ...` thể hiện rõ biến đó không được dùng, giúp code sạch và compiler không cảnh báo unused variable."
+    },
+    {
+      "number": 16,
+      "question": "Kể từ Java 9, tính năng Java Platform Module System (Project Jigsaw) sử dụng file nào để định nghĩa module?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "module-info.java"
+        },
+        {
+          "key": "B",
+          "text": "package-info.java"
+        },
+        {
+          "key": "C",
+          "text": "module.xml"
+        },
+        {
+          "key": "D",
+          "text": "jigsaw.json"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`module-info.java` đặt ở thư mục gốc chứa các khai báo `module <name> { requires ...; exports ...; }`."
+    },
+    {
+      "number": 17,
+      "question": "Tính năng 'Scoped Values' (Java 20+ Preview / 21 Incubator) được thiết kế nhằm thay thế cho công nghệ nào trong môi trường Virtual Threads?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "ThreadLocal"
+        },
+        {
+          "key": "B",
+          "text": "ArrayList"
+        },
+        {
+          "key": "C",
+          "text": "HashMap"
+        },
+        {
+          "key": "D",
+          "text": "Garbage Collector"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`ScopedValue` cung cấp cơ chế chia sẻ dữ liệu bất biến an toàn, nhẹ hơn và tối ưu hơn nhiều so với `ThreadLocal` khi có hàng triệu Virtual Threads."
+    },
+    {
+      "number": 18,
+      "question": "Đoạn code sau có hợp lệ không trong Java 21?\n```java\nrecord Point(int x, int y) {}\nObject obj = new Point(10, 20);\nif (obj instanceof Point(int a, int b)) {\n    System.out.println(a + b);\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Hợp lệ, đây là tính năng Record Patterns (JEP 440) giúp deconstruct trực tiếp các trường của record"
+        },
+        {
+          "key": "B",
+          "text": "Lỗi biên dịch vì không được dùng ngoặc đơn trong instanceof"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ chạy được trên Java 8"
+        },
+        {
+          "key": "D",
+          "text": "Ném lỗi ClassCastException"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Record Patterns trong Java 21 cho phép phân rã (deconstruct) các thành phần của record trực tiếp trong biểu thức pattern matching."
+    },
+    {
+      "number": 19,
+      "question": "Trong Clean Code, độ dài lý tưởng khuyến nghị của một phương thức (method) là bao nhiêu?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Càng dài càng tốt (trên 500 dòng)"
+        },
+        {
+          "key": "B",
+          "text": "Ngắn gọn, lý tưởng từ 5 đến 20 dòng và chỉ làm duy nhất một việc (Do one thing well)"
+        },
+        {
+          "key": "C",
+          "text": "Bắt buộc chính xác 50 dòng"
+        },
+        {
+          "key": "D",
+          "text": "Không quan trọng, gộp hết vào main()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Triết lý Clean Code của Uncle Bob nhấn mạnh hàm phải nhỏ gọn, có tính tự diễn giải và chỉ thực hiện duy nhất một chức năng rõ ràng."
+    },
+    {
+      "number": 20,
+      "question": "Tính năng 'Foreign Function & Memory API' (Java 22 LTS - Project Panama) mang lại lợi ích gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Thay thế hoàn toàn ngôn ngữ Python"
+        },
+        {
+          "key": "B",
+          "text": "Cho phép chương trình Java tương tác trực tiếp với mã máy C/C++ và bộ nhớ ngoài Heap (Off-Heap) an toàn, hiệu quả mà không cần JNI cồng kềnh"
+        },
+        {
+          "key": "C",
+          "text": "Tự động dịch mã Java sang Javascript"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ dùng để kết nối mạng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Project Panama thay thế hoàn toàn Java Native Interface (JNI) cổ xưa, giúp gọi thư viện native C/C++ với hiệu năng vượt trội và tính an toàn cao."
+    }
+  ]
+}

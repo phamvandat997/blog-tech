@@ -1,0 +1,552 @@
+{
+  "title": "Quiz: Java Collections Framework & Generics",
+  "tags": [
+    "Java",
+    "Collections",
+    "Generics",
+    "HashMap",
+    "ArrayList"
+  ],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Interface nào là gốc của `List`, `Set` và `Queue` trong Java Collections Framework?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "java.util.Map"
+        },
+        {
+          "key": "B",
+          "text": "java.util.Collection"
+        },
+        {
+          "key": "C",
+          "text": "java.util.AbstractList"
+        },
+        {
+          "key": "D",
+          "text": "java.util.Arrays"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Collection` là root interface của List, Set và Queue. `Map` không kế thừa từ Collection do có cấu trúc key-value riêng."
+    },
+    {
+      "number": 2,
+      "question": "Độ phức tạp thời gian trung bình (Time Complexity) khi truy xuất một phần tử theo index trong `ArrayList` là bao nhiêu?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "O(n)"
+        },
+        {
+          "key": "B",
+          "text": "O(1)"
+        },
+        {
+          "key": "C",
+          "text": "O(log n)"
+        },
+        {
+          "key": "D",
+          "text": "O(n^2)"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Vì `ArrayList` được lưu trữ trên mảng động tuần tự, việc truy xuất `get(index)` đạt tốc độ ngẫu nhiên tức thì O(1)."
+    },
+    {
+      "number": 3,
+      "question": "Khi chèn hoặc xoá phần tử ở vị trí đầu tiên (index 0) liên tục, cấu trúc nào sau đây hiệu quả hơn?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "ArrayList"
+        },
+        {
+          "key": "B",
+          "text": "LinkedList"
+        },
+        {
+          "key": "C",
+          "text": "Vector"
+        },
+        {
+          "key": "D",
+          "text": "Array thông thường"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong `LinkedList`, chèn ở đầu chỉ cần cập nhật con trỏ Node `head` với chi phí O(1). Với `ArrayList`, mọi phần tử phải bị dịch chuyển sang phải một vị trí (O(n))."
+    },
+    {
+      "number": 4,
+      "question": "Cấu trúc nào đảm bảo các phần tử luôn được tự động sắp xếp theo thứ tự tự nhiên (Natural Ordering) hoặc theo một `Comparator`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "HashSet"
+        },
+        {
+          "key": "B",
+          "text": "LinkedHashSet"
+        },
+        {
+          "key": "C",
+          "text": "TreeSet"
+        },
+        {
+          "key": "D",
+          "text": "ArrayList"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "`TreeSet` (cùng `TreeMap`) triển khai dựa trên cây Đỏ-Đen (NavigableSet) tự động duy trì thứ tự sắp xếp của phần tử."
+    },
+    {
+      "number": 5,
+      "question": "Theo hợp đồng (contract) giữa `equals()` và `hashCode()` trong Java, điều nào sau đây là BẮT BUỘC?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Nếu hai đối tượng có cùng hashCode, chúng bắt buộc phải equals() == true"
+        },
+        {
+          "key": "B",
+          "text": "Nếu hai đối tượng equals() == true, chúng bắt buộc phải có cùng giá trị hashCode()"
+        },
+        {
+          "key": "C",
+          "text": "Mỗi đối tượng phải có một hashCode duy nhất toàn hệ thống"
+        },
+        {
+          "key": "D",
+          "text": "Không cần thiết phải ghi đè hashCode() khi đã có equals()"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Quy tắc bắt buộc: Nếu `obj1.equals(obj2)` là true thì `obj1.hashCode() == obj2.hashCode()`. Chiều ngược lại có thể trùng mã băm do va chạm (collision)."
+    },
+    {
+      "number": 6,
+      "question": "Trong Java 8+, khi một bucket trong `HashMap` bị xung đột băm vượt quá ngưỡng bao nhiêu phần tử (với kích thước mảng đủ lớn) thì bucket đó chuyển sang dạng Red-Black Tree?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "4"
+        },
+        {
+          "key": "B",
+          "text": "8"
+        },
+        {
+          "key": "C",
+          "text": "16"
+        },
+        {
+          "key": "D",
+          "text": "32"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Hằng số `TREEIFY_THRESHOLD = 8`. Khi bucket có từ 8 phần tử và tổng dung lượng map >= 64, bucket sẽ chuyển sang Red-Black Tree để cải thiện tìm kiếm từ O(n) về O(log n)."
+    },
+    {
+      "number": 7,
+      "question": "Nguyên tắc 'PECS' trong Java Generics là viết tắt của cụm từ nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Private Extends, Consumer Static"
+        },
+        {
+          "key": "B",
+          "text": "Producer Extends, Consumer Super"
+        },
+        {
+          "key": "C",
+          "text": "Protected Encapsulation, Class Super"
+        },
+        {
+          "key": "D",
+          "text": "Parallel Execution, Concurrent Streams"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "PECS: Producer Extends, Consumer Super. Nếu tập hợp sản xuất ra dữ liệu (chỉ đọc) dùng `? extends T`; nếu tập hợp tiêu thụ dữ liệu (ghi vào) dùng `? super T`."
+    },
+    {
+      "number": 8,
+      "question": "Hiện tượng 'Type Erasure' trong Java Generics diễn ra tại thời điểm nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Khi ứng dụng đang chạy (Runtime)"
+        },
+        {
+          "key": "B",
+          "text": "Khi biên dịch mã nguồn sang bytecode (Compile-time)"
+        },
+        {
+          "key": "C",
+          "text": "Khi Garbage Collector kích hoạt"
+        },
+        {
+          "key": "D",
+          "text": "Khi nạp class vào ClassLoader"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Java sử dụng cơ chế xóa kiểu (Type Erasure) tại compile time để tương thích ngược. Trình biên dịch xóa toàn bộ tham số kiểu generic và thay bằng `Object` hoặc bound tương ứng."
+    },
+    {
+      "number": 9,
+      "question": "Ngoại lệ `ConcurrentModificationException` thường xảy ra trong tình huống nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Hai luồng cùng truy cập file"
+        },
+        {
+          "key": "B",
+          "text": "Sửa đổi (thêm/xoá) cấu trúc của Collection trong khi đang duyệt nó bằng iterator/for-each mà không dùng phương thức `iterator.remove()`"
+        },
+        {
+          "key": "C",
+          "text": "Ép kiểu sai giữa hai Collection"
+        },
+        {
+          "key": "D",
+          "text": "Vượt quá bộ nhớ Heap"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Cơ chế Fail-Fast của Iterator theo dõi biến `modCount`. Nếu phát hiện collection bị thay đổi phần tử trong lúc lặp, nó ném ngay `ConcurrentModificationException`."
+    },
+    {
+      "number": 10,
+      "question": "Sự khác biệt cơ bản giữa `Comparable` và `Comparator` là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Comparable` nằm trong class đối tượng định nghĩa thứ tự tự nhiên (compareTo); `Comparator` là lớp/hàm độc lập định nghĩa chiến lược sắp xếp tuỳ biến (compare)"
+        },
+        {
+          "key": "B",
+          "text": "`Comparable` sắp xếp giảm dần, `Comparator` sắp xếp tăng dần"
+        },
+        {
+          "key": "C",
+          "text": "`Comparator` chỉ dùng cho số nguyên"
+        },
+        {
+          "key": "D",
+          "text": "Cả hai hoàn toàn giống nhau"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`Comparable<T>` yêu cầu class cài đặt hàm `compareTo(T o)` (internal). `Comparator<T>` cho phép tạo nhiều chiến lược so sánh bên ngoài mà không cần sửa code class gốc."
+    },
+    {
+      "number": 11,
+      "question": "Khối dữ liệu nào dưới đây cho phép lưu trữ giá trị `null` làm Key?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "TreeMap"
+        },
+        {
+          "key": "B",
+          "text": "ConcurrentHashMap"
+        },
+        {
+          "key": "C",
+          "text": "HashMap"
+        },
+        {
+          "key": "D",
+          "text": "Hashtable"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "`HashMap` cho phép đúng 1 key `null` (luôn nằm ở bucket 0). `TreeMap`, `Hashtable` và `ConcurrentHashMap` cấm hoàn toàn key `null`."
+    },
+    {
+      "number": 12,
+      "question": "Phương thức `List.of(...)` được giới thiệu từ Java 9 trả về danh sách có đặc tính gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Một danh sách bất biến (Unmodifiable/Immutable), không cho phép thêm/xoá/sửa và cấm phần tử null"
+        },
+        {
+          "key": "B",
+          "text": "Một ArrayList thông thường"
+        },
+        {
+          "key": "C",
+          "text": "Một danh sách đồng bộ hoá đa luồng"
+        },
+        {
+          "key": "D",
+          "text": "Một LinkedList"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`List.of(...)`, `Set.of(...)`, `Map.of(...)` tạo ra các collection bất biến. Cố tình gọi `add()` hay truyền `null` sẽ ném ngoại lệ ngay lập tức."
+    },
+    {
+      "number": 13,
+      "question": "Đoạn code sau có hợp lệ không?\n```java\nList<Object> list = new ArrayList<String>();\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Hợp lệ vì String là con của Object"
+        },
+        {
+          "key": "B",
+          "text": "Lỗi biên dịch (Incompatible types) vì Generics trong Java là bất biến (invariant)"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ phát sinh lỗi khi chạy runtime"
+        },
+        {
+          "key": "D",
+          "text": "Hợp lệ nếu ép kiểu"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Generics có tính bất biến (Invariant): Dù `String` là con của `Object`, `List<String>` KHÔNG PHẢI là con của `List<Object>`. Muốn tham chiếu tổng quát phải dùng `List<?>`."
+    },
+    {
+      "number": 14,
+      "question": "Cấu trúc dữ liệu nào hoạt động theo nguyên lý LIFO (Last In First Out)?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Queue"
+        },
+        {
+          "key": "B",
+          "text": "Deque (hoặc ArrayDeque / Stack)"
+        },
+        {
+          "key": "C",
+          "text": "PriorityQueue"
+        },
+        {
+          "key": "D",
+          "text": "TreeSet"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Cấu trúc ngăn xếp (Stack) tuân theo LIFO. Trong Java hiện đại, khuyến nghị sử dụng `ArrayDeque` thay cho lớp cổ `Stack`."
+    },
+    {
+      "number": 15,
+      "question": "Khi tạo một mảng generic như `T[] arr = new T[10];`, điều gì xảy ra?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Mảng được tạo bình thường"
+        },
+        {
+          "key": "B",
+          "text": "Lỗi biên dịch (Cannot create a generic array of T) do Type Erasure không xác định được kiểu tại runtime"
+        },
+        {
+          "key": "C",
+          "text": "JVM tự chuyển thành mảng int[]"
+        },
+        {
+          "key": "D",
+          "text": "Mảng tự động gán kích thước 0"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Do Type Erasure, thông tin kiểu `T` bị xoá lúc runtime nên JVM không thể biết chính xác loại mảng cần cấp phát, do đó Java cấm `new T[]`."
+    },
+    {
+      "number": 16,
+      "question": "Phương thức `Collections.unmodifiableList(list)` mang lại tính năng gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tạo bản sao sâu (deep-copy) bất biến hoàn toàn"
+        },
+        {
+          "key": "B",
+          "text": "Tạo một lớp vỏ bọc (wrapper view) ngăn sửa đổi qua biến mới; nếu list gốc bị thay đổi thì view vẫn thấy sự thay đổi đó"
+        },
+        {
+          "key": "C",
+          "text": "Mã hoá danh sách"
+        },
+        {
+          "key": "D",
+          "text": "Giải phóng bộ nhớ của list"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Collections.unmodifiableList` chỉ bọc lại (view) collection gốc. Mọi lệnh sửa trên view ném `UnsupportedOperationException`, nhưng sửa trên list gốc thì view vẫn bị ảnh hưởng."
+    },
+    {
+      "number": 17,
+      "question": "Đặc điểm của `PriorityQueue` trong Java là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Lấy phần tử ra theo thứ tự chèn FIFO thuần tuý"
+        },
+        {
+          "key": "B",
+          "text": "Lấy phần tử có mức độ ưu tiên cao nhất trước (dựa trên Min-Heap mặc định)"
+        },
+        {
+          "key": "C",
+          "text": "Không cho phép so sánh phần tử"
+        },
+        {
+          "key": "D",
+          "text": "Tự động sắp xếp lại toàn bộ danh sách mỗi khi thêm"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`PriorityQueue` là hàng đợi ưu tiên triển khai dưới dạng cấu trúc cây nhị phân Min-Heap, phần tử đầu hàng đợi luôn là phần tử nhỏ nhất theo thứ tự so sánh."
+    },
+    {
+      "number": 18,
+      "question": "Khi khai báo `Map<String, Integer> map = new HashMap<>();`, cú pháp `<>` được gọi là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Arrow Operator"
+        },
+        {
+          "key": "B",
+          "text": "Diamond Operator (Java 7+)"
+        },
+        {
+          "key": "C",
+          "text": "Lambda Token"
+        },
+        {
+          "key": "D",
+          "text": "Type Cast Token"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`<>` là Diamond Operator được giới thiệu từ Java 7, cho phép trình biên dịch tự suy luận kiểu generic ở constructor dựa trên vế trái."
+    },
+    {
+      "number": 19,
+      "question": "Trong `ConcurrentHashMap`, tại sao không sử dụng một khoá tổng thể `synchronized` cho toàn bộ map như `Collections.synchronizedMap`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Vì ConcurrentHashMap không phải thread-safe"
+        },
+        {
+          "key": "B",
+          "text": "Để nâng cao thông lượng và hiệu năng, cho phép nhiều luồng đọc đồng thời và chỉ khoá cục bộ ở cấp bucket khi ghi"
+        },
+        {
+          "key": "C",
+          "text": "Do cú pháp Java không cho phép"
+        },
+        {
+          "key": "D",
+          "text": "Để tiết kiệm dung lượng file .class"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`ConcurrentHashMap` sử dụng kỹ thuật CAS (Compare-And-Swap) và khoá ở mức Node/Bucket đầu tiên thay vì toàn bộ bảng, giúp hàng trăm luồng đọc ghi đồng thời với độ trễ thấp."
+    },
+    {
+      "number": 20,
+      "question": "Đoạn mã sau in ra kết quả gì?\n```java\nSet<String> set = new HashSet<>();\nset.add(\"A\");\nset.add(\"B\");\nset.add(\"A\");\nSystem.out.println(set.size());\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi runtime khi thêm phần tử trùng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Set` không cho phép các phần tử trùng lặp. Lần gọi `set.add(\"A\")` thứ hai sẽ trả về `false` và không thêm phần tử, nên kích thước là 2 (\"A\" và \"B\")."
+    }
+  ]
+}
