@@ -338,10 +338,20 @@
         <h2 class="admin-card-title flex items-center gap-2 flex-wrap">
           <span>🔗</span>
           <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
-          <span class="admin-tooltip-wrap" tabindex="0" aria-describedby="tooltip-quiz-link">
-            <span class="admin-tooltip-trigger" aria-hidden="true">ℹ️</span>
+          <span class="admin-tooltip-wrap" tabindex="0" role="button" aria-describedby="tooltip-quiz-link" aria-label="Hướng dẫn liên kết">
+            <span class="admin-tooltip-trigger" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </span>
             <span class="admin-tooltip-bubble" id="tooltip-quiz-link" role="tooltip">
-              Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại <code>content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>.
+              <span class="admin-tooltip-arrow" aria-hidden="true"></span>
+              <span class="admin-tooltip-text">
+                Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại:
+              </span>
+              <code class="admin-tooltip-code">content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>
             </span>
           </span>
         </h2>
