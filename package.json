@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -i assets/css/input.css -o assets/css/tailwind.css --minify",
-    "build": "npm run build:css && node build/build.js",
+    "build": "npm run build:css && node build/build.js && vite build",
+    "dev": "node build/build.js && vite",
+    "preview": "vite preview",
     "dist": "npm run build && node build/dist.js",
     "test": "node --test build/*.test.js",
     "serve": "python3 -m http.server 8080",
@@ -16,6 +18,14 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.20",
-    "tailwindcss": "^3.4.19"
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.5.4",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.1"
   }
 }

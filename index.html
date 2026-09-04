@@ -11,185 +11,28 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <script>
-    // Đặt giao diện TRƯỚC khi vẽ khung đầu tiên, nếu không trang chớp sáng rồi
-    // mới lật sang tối. Buộc phải inline và đồng bộ; state.js chạy sau là muộn.
-    // Cùng quy tắc với preferredTheme() trong assets/js/state.js.
     try {
       var t = localStorage.getItem("blog.theme");
       if (t !== "dark" && t !== "light") {
         t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       }
       document.documentElement.setAttribute("data-theme", t);
-    } catch (e) { /* bỏ qua, giữ nguyên data-theme trong HTML */ }
+    } catch (e) { /* bỏ qua */ }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Webfont không được chặn vẽ khung đầu tiên: nạp như stylesheet in ấn rồi
-       đổi sang `all` khi tải xong. Chữ hiện ngay bằng font hệ thống. -->
   <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  </noscript>
   <link rel="stylesheet" href="assets/css/tailwind.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blog.css">
 </head>
 <body>
-<div class="app-container min-h-screen flex flex-col transition-colors duration-200">
-
-  <header class="navbar sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 transition-colors">
-    <div class="navbar-inner w-full lg:w-[60%] lg:max-w-[60%] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-      <a href="index.html" class="brand flex items-center gap-3 no-underline group">
-        <div class="brand-logo">
-          <img src="assets/images/logo.svg" alt="Blog Tech Logo" class="brand-logo-img">
-        </div>
-        <div class="brand-text">
-          <div class="brand-title flex items-center text-base font-black tracking-tight leading-tight m-0">
-            <span class="text-indigo-600 dark:text-indigo-400">Blog</span>
-            <span class="text-slate-900 dark:text-white ml-1">Tech</span>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium m-0">Ghi chép &amp; chia sẻ kiến thức lập trình</p>
-        </div>
-      </a>
-
-      <div class="search-wrapper is-global">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="global-search" class="search-input"
-               placeholder="Tìm bài viết…" autocomplete="off">
-        <kbd class="search-kbd">⌘K</kbd>
-        <div class="search-results" id="global-search-results"></div>
-      </div>
-
-      <div class="nav-actions flex items-center gap-2">
-        <a href="quiz.html" class="nav-quiz-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-all no-underline shadow-sm" title="Luyện tập trắc nghiệm">
-          <span>🎯</span>
-          <span>Luyện Quiz</span>
-        </a>
-        <button class="btn-icon p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" data-theme-toggle title="Chuyển giao diện sáng / tối">🌙</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="landing-wrapper w-full max-w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-10 flex-1">
-    <section class="hero-section relative text-center py-8 sm:py-12 px-4 sm:px-6 mb-12 w-full lg:w-[60%] lg:max-w-[60%] mx-auto">
-      <!-- Ambient Glow Effect -->
-      <div class="hero-glow pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-[340px] sm:w-[560px] md:w-[680px] h-[260px] sm:h-[340px] bg-gradient-to-tr from-indigo-500/20 via-purple-500/15 to-pink-500/10 dark:from-indigo-500/25 dark:via-purple-500/20 dark:to-pink-500/15 blur-3xl -z-10 rounded-full" aria-hidden="true"></div>
-
-      <!-- Tech Pill Badge -->
-      <div class="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 text-slate-700 dark:text-slate-200 shadow-xs mb-5 transition-all hover:border-indigo-500/50">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span class="text-indigo-600 dark:text-indigo-400 font-black">Blog Tech</span>
-        <span class="text-slate-300 dark:text-slate-600">/</span>
-        <span>Kho Tri Thức &amp; Ôn Luyện Kỹ Thuật Chuyên Sâu</span>
-      </div>
-
-      <!-- High-Impact Hero Title -->
-      <h1 class="hero-title text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15] mb-5">
-        Kho Tri Thức &amp; <br class="hidden sm:inline">
-        <span class="hero-gradient-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">
-          Kỹ Thuật Lập Trình
-        </span> Chuyên Sâu
-      </h1>
-
-      <!-- Refined, Inspiring Description -->
-      <p class="hero-desc text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
-        Hệ thống tài liệu bài bản từ <strong class="font-semibold text-slate-800 dark:text-slate-100">Java Core</strong>, <strong class="font-semibold text-slate-800 dark:text-slate-100">Cấu trúc dữ liệu &amp; Giải thuật</strong> đến <strong class="font-semibold text-slate-800 dark:text-slate-100">Javascript cốt lõi</strong> — thiết kế chuẩn hoá cho phỏng vấn kỹ thuật và chứng chỉ quốc tế.
-      </p>
-
-      <!-- Quick Action CTA Buttons -->
-      <div class="hero-cta flex items-center justify-center gap-3 sm:gap-4 flex-wrap mb-9">
-        <a href="quiz.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all no-underline">
-          <span>🎯</span>
-          <span>Luyện Quiz Ngay</span>
-          <span class="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">121+ câu</span>
-        </a>
-        <a href="#featured-root" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/60 shadow-xs hover:-translate-y-0.5 transition-all no-underline">
-          <span>📚</span>
-          <span>Khám Phá Bài Viết</span>
-          <span>➔</span>
-        </a>
-      </div>
-
-      <!-- Hero Statistics Bar -->
-      <div class="hero-stats flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-        <div class="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all">
-          <span class="hero-stat-icon text-xl">📚</span>
-          <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-docs-val">0</span>
-          <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">Bài viết chuyên sâu</span>
-        </div>
-        <div class="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all">
-          <span class="hero-stat-icon text-xl">⚡</span>
-          <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-sections-val">0</span>
-          <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">Mảng công nghệ</span>
-        </div>
-        <div class="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all" id="hero-stat-progress">
-          <span class="hero-stat-icon text-xl">🎯</span>
-          <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-progress-val">0%</span>
-          <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400" id="hero-progress-lbl">Tiến độ cá nhân hoá</span>
-        </div>
-        <a href="quiz.html" class="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all no-underline" title="Xem tất cả bài tập trắc nghiệm">
-          <span class="hero-stat-icon text-xl">📝</span>
-          <span class="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-quiz-val">121</span>
-          <span class="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">Câu trắc nghiệm</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Danh sách bài viết nổi bật (Featured Articles) giữ full screen -->
-    <section class="featured-section w-full mb-12" id="featured-root"></section>
-
-    <!-- Lối tắt vào làm bài Quiz nổi bật trên trang chủ (Căn giữa 20% - 60% - 20%) -->
-    <section class="w-full lg:w-[60%] lg:max-w-[60%] mx-auto mb-10">
-      <div class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 text-white shadow-xl shadow-indigo-500/10">
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div class="space-y-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md border border-white/30 text-white">
-              🎯 Ôn luyện thực chiến
-            </span>
-            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight m-0 text-white">
-              Ngân Hàng Câu Hỏi Trắc Nghiệm Có Chấm Điểm
-            </h3>
-            <p class="text-sm text-indigo-100 max-w-xl m-0 leading-relaxed">
-              Luyện tập với 121+ câu hỏi trắc nghiệm OCP Java SE 25, kiểm tra đúng/sai tức thì và giải thích chi tiết từng câu hỏi.
-            </p>
-          </div>
-          <div class="shrink-0 flex items-center gap-3">
-            <a href="quiz.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white text-indigo-700 font-extrabold text-sm hover:bg-indigo-50 hover:shadow-lg transition-all no-underline">
-              <span>Làm Quiz Ngay</span>
-              <span>➔</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Danh sách mảng bài viết căn giữa tỉ lệ 20% - 60% - 20% -->
-    <div id="sections-root" class="w-full lg:w-[60%] lg:max-w-[60%] mx-auto space-y-10"></div>
-  </main>
-
-  <footer class="site-footer border-t border-slate-200 dark:border-slate-800/80 py-8 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md mt-auto">
-    <div class="footer-inner w-full lg:w-[60%] lg:max-w-[60%] mx-auto px-4 text-center">
-      <p class="footer-copyright text-sm text-slate-500 dark:text-slate-400">
-        &copy; 2026 <strong class="font-bold text-slate-800 dark:text-slate-200">Blog Tech</strong>. All rights reserved.
-      </p>
-    </div>
-  </footer>
-
-</div>
-
-<button class="btn-back-to-top" id="btn-back-to-top" title="Lên đầu trang" aria-label="Lên đầu trang">
-  <svg class="progress-ring" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
-    <circle class="progress-ring-track" cx="23" cy="23" r="20" fill="none" stroke-width="3"></circle>
-    <circle class="progress-ring-indicator" cx="23" cy="23" r="20" fill="none" stroke-width="3" stroke-dasharray="125.66" stroke-dashoffset="125.66"></circle>
-  </svg>
-  <span class="back-to-top-icon" aria-hidden="true">↑</span>
-</button>
-
-<script src="generated/catalog.js"></script>
-<script src="assets/js/dom.js"></script>
-<script src="assets/js/state.js"></script>
-<script src="assets/js/catalog.js"></script>
-<script src="assets/js/landing.js"></script>
+  <div id="root"></div>
+  <script type="module" src="src/main.jsx"></script>
 </body>
 </html>

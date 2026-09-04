@@ -2,6 +2,8 @@
 module.exports = {
   darkMode: ['selector', '[data-theme="dark"]'],
   content: [
+    "./index.html",
+    "./src/**/*.{js,jsx,ts,tsx}",
     "./*.html",
     "./assets/js/**/*.js",
     "./content/**/*.md",
