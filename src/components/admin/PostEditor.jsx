@@ -26,6 +26,33 @@ export function PostEditor({ sections, editingPost, onSavePost, onCancel, loadin
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Đồng bộ form khi editingPost thay đổi (khi người dùng bấm Sửa bài từ danh sách)
+  useEffect(() => {
+    if (editingPost) {
+      setSection(editingPost.section || sections[0]?.id || 'java');
+      setCategory(editingPost.category || '');
+      setSlug(editingPost.slug || '');
+      setBody(editingPost.body || '');
+      setTitle(editingPost.title || '');
+      setDescription(editingPost.description || '');
+      setTags(Array.isArray(editingPost.tags) ? editingPost.tags : []);
+      setFeatured(Boolean(editingPost.featured));
+      setError('');
+      setSuccess('');
+    } else {
+      setSection(sections[0]?.id || 'java');
+      setCategory('');
+      setSlug('');
+      setBody('');
+      setTitle('');
+      setDescription('');
+      setTags([]);
+      setFeatured(false);
+      setError('');
+      setSuccess('');
+    }
+  }, [editingPost, sections]);
+
   const currentSection = sections.find((s) => s.id === section);
   const categories = currentSection?.categories || [];
 
@@ -131,9 +158,38 @@ export function PostEditor({ sections, editingPost, onSavePost, onCancel, loadin
   return (
     <main className="admin-editor-view w-full max-w-5xl mx-auto py-6 px-4">
       <form onSubmit={handleSubmit} className="admin-form space-y-6">
+        {/* Editing Banner */}
+        {editingPost && (
+          <div className="p-4 rounded-2xl bg-indigo-50/90 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">✏️</span>
+              <div>
+                <div className="text-xs font-bold text-indigo-950 dark:text-indigo-200 flex items-center gap-2">
+                  <span>Chỉnh sửa bài viết:</span>
+                  <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">{title || editingPost.slug}</span>
+                </div>
+                <div className="text-[0.7rem] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+                  Đường dẫn: {editingPost.path}
+                </div>
+              </div>
+            </div>
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-3 py-1 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"
+              >
+                ← Huỷ chỉnh sửa
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Destination Card */}
         <section className="admin-card p-6 rounded-3xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700/80 shadow-sm">
-          <h2 className="text-lg font-black text-slate-900 dark:text-white m-0 mb-4">Nơi lưu bài</h2>
+          <h2 className="text-lg font-black text-slate-900 dark:text-white m-0 mb-4">
+            {editingPost ? 'Thông tin phân loại & đường dẫn' : 'Nơi lưu bài'}
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <label className="admin-field block">
@@ -373,7 +429,7 @@ export function PostEditor({ sections, editingPost, onSavePost, onCancel, loadin
             disabled={loading}
             className="px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50"
           >
-            {loading ? 'Đang gửi...' : 'Tạo pull request'}
+            {loading ? 'Đang gửi...' : editingPost ? '💾 Cập nhật bài viết (Mở PR)' : '🚀 Đăng bài viết (Mở PR)'}
           </button>
         </div>
       </form>

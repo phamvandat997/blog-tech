@@ -17,22 +17,7 @@ import { DocComments } from '../components/reader/DocComments';
 import { EmptyState } from '../components/common/EmptyState';
 import { showToast } from '../components/common/Toast';
 
-const docModules = import.meta.glob('../generated/docs/*.json');
-
-async function fetchDocData(contentFile) {
-  const path = `../generated/docs/${contentFile}.json`;
-  if (docModules[path]) {
-    const mod = await docModules[path]();
-    return mod.default || mod;
-  }
-  try {
-    const res = await fetch(`/generated/docs/${contentFile}.json`);
-    if (res.ok) return await res.json();
-  } catch {
-    // ignore
-  }
-  return null;
-}
+import { fetchDocData } from '../services/docs';
 
 export function ReaderPage() {
   const [searchParams] = useSearchParams();

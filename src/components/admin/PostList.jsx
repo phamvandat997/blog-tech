@@ -143,14 +143,16 @@ export function PostList({ posts, onEditPost, onDeletePost, onRefresh, loading }
                   <button
                     type="button"
                     onClick={() => onEditPost(post)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors"
+                    disabled={loading}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     ✏️ Sửa bài
                   </button>
                   <button
                     type="button"
                     onClick={() => onDeletePost(post)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors"
+                    disabled={loading}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     🗑️ Xoá
                   </button>

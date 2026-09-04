@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { GitHubRepo } from '../services/github';
 import { useCatalog } from '../hooks/useCatalog';
+import { fetchDocData, parseFrontmatter } from '../services/docs';
 import { AdminNavbar } from '../components/admin/AdminNavbar';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { PostList } from '../components/admin/PostList';
@@ -77,9 +78,11 @@ export function AdminPage() {
     }
   }, [searchParams]);
 
-  const changeView = (newView) => {
+  const changeView = (newView, postToEdit = null) => {
     setView(newView);
-    if (newView === 'editor' && view !== 'editor') {
+    if (newView === 'editor') {
+      setEditingPost(postToEdit);
+    } else {
       setEditingPost(null);
     }
     setSearchParams({ view: newView });
@@ -218,12 +221,14 @@ export function AdminPage() {
     const bName = branchName(action, slug);
     const filePath = `content/${section}/${category}/${slug}.md`;
 
-    // Compose frontmatter
+    // Compose frontmatter, preserving extra fields like phase or order if present
     let frontmatter = '---\n';
     frontmatter += `title: "${title.replace(/"/g, '\\"')}"\n`;
     if (description) frontmatter += `description: "${description.replace(/"/g, '\\"')}"\n`;
     if (tags.length) frontmatter += `tags: [${tags.map((t) => `"${t}"`).join(', ')}]\n`;
     if (featured) frontmatter += `featured: true\n`;
+    if (editingPost?.extraData?.phase) frontmatter += `phase: "${editingPost.extraData.phase}"\n`;
+    if (editingPost?.extraData?.order !== undefined) frontmatter += `order: ${editingPost.extraData.order}\n`;
     frontmatter += '---\n\n';
 
     const fullContent = frontmatter + body;
@@ -248,7 +253,7 @@ export function AdminPage() {
     await assignReviewers(pr);
 
     showToast(`✓ Đã mở PR #${pr.number} thành công!`);
-    changeView('list');
+    changeView('list', null);
     loadPosts();
   };
 
@@ -283,36 +288,53 @@ export function AdminPage() {
 
   const handleEditPost = async (post) => {
     if (!gh) return;
+    setLoading(true);
     try {
-      const rawContent = await gh.readFile(post.path);
-      if (!rawContent) {
-        alert('Không tải được nội dung bài từ GitHub.');
-        return;
+      let rawContent = null;
+      try {
+        rawContent = await gh.readFile(post.path);
+      } catch (ghErr) {
+        console.warn('Không thể đọc file từ GitHub:', ghErr);
       }
 
-      // Parse frontmatter
       let title = post.title;
       let description = '';
       let tags = [];
       let featured = false;
-      let body = rawContent;
+      let body = '';
+      let extraData = {};
 
-      const fmMatch = rawContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-      if (fmMatch) {
-        body = fmMatch[2];
-        const fmLines = fmMatch[1].split('\n');
-        fmLines.forEach((line) => {
-          if (line.startsWith('title:')) title = line.replace('title:', '').replace(/["']/g, '').trim();
-          if (line.startsWith('description:')) description = line.replace('description:', '').replace(/["']/g, '').trim();
-          if (line.startsWith('featured:')) featured = /true/i.test(line);
-          if (line.startsWith('tags:')) {
-            const rawTags = line.replace('tags:', '').replace(/[\[\]"']/g, '').split(',');
-            tags = rawTags.map((t) => t.trim()).filter(Boolean);
-          }
-        });
+      if (rawContent) {
+        const { data, body: parsedBody } = parseFrontmatter(rawContent);
+        if (data) {
+          if (data.title) title = String(data.title);
+          if (data.description) description = String(data.description);
+          if (Array.isArray(data.tags)) tags = data.tags.map(String);
+          if (data.featured !== undefined) featured = Boolean(data.featured);
+          extraData = data;
+        }
+        body = parsedBody || '';
+      } else {
+        // Fallback: nếu GitHub chưa có hoặc lỗi kết nối, lấy từ catalog và local generated docs
+        const matchingDoc = docs.find((d) => d.id === `${post.section}/${post.category}/${post.slug}`);
+        const contentFile = matchingDoc?.contentFile || `${post.section}__${post.category}__${post.slug}`;
+        const localDoc = await fetchDocData(contentFile);
+
+        if (localDoc || matchingDoc) {
+          title = matchingDoc?.title || localDoc?.title || post.title;
+          description = matchingDoc?.description || '';
+          tags = Array.isArray(matchingDoc?.tags) ? matchingDoc.tags : [];
+          featured = Boolean(matchingDoc?.featured);
+          body = localDoc?.body || '';
+          extraData = { phase: matchingDoc?.phase, order: matchingDoc?.order };
+          showToast('ℹ Đã nạp nội dung bài viết từ bộ nhớ cục bộ');
+        } else {
+          alert('Không tìm thấy nội dung bài viết từ GitHub hoặc kho lưu trữ cục bộ.');
+          return;
+        }
       }
 
-      setEditingPost({
+      const postData = {
         path: post.path,
         section: post.section,
         category: post.category,
@@ -322,10 +344,15 @@ export function AdminPage() {
         tags,
         featured,
         body,
-      });
-      changeView('editor');
+        extraData,
+      };
+
+      changeView('editor', postData);
+      showToast(`📝 Đang chỉnh sửa: "${title}"`);
     } catch (err) {
       alert(`Lỗi tải bài viết: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
