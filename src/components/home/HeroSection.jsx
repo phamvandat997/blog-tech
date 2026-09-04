@@ -28,9 +28,9 @@ export function HeroSection() {
       </div>
 
       {/* High-Impact Hero Title */}
-      <h1 className="hero-title text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15] mb-5">
+      <h1 className="hero-title text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.3] sm:leading-[1.28] pb-1 mb-5">
         Nền Tảng Học Tập &amp; <br className="hidden sm:inline" />
-        <span className="hero-gradient-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">
+        <span className="hero-gradient-text inline-block py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">
           Ôn Luyện Kỹ Thuật
         </span>
       </h1>
