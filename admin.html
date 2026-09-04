@@ -327,31 +327,12 @@
           <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
         </h2>
 
-        <div class="admin-row">
-          <label class="admin-field" style="flex: 2;">
-            <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
-            <span class="admin-select">
-              <select id="quiz-doc-select" required></select>
-            </span>
-          </label>
-          <div class="admin-field" style="flex: 1; align-self: flex-end;">
-            <a id="quiz-view-doc-btn" class="admin-btn-secondary w-full text-center flex items-center justify-center gap-1.5 text-xs font-bold py-2.5" target="_blank" href="index.html">
-              <span>📖</span>
-              <span>Đọc bài lý thuyết ↗</span>
-            </a>
-          </div>
-        </div>
-
-        <div class="admin-doc-details p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-xs space-y-1.5 mt-2" id="quiz-doc-info">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-bold text-slate-500 dark:text-slate-400">Đường dẫn file quiz:</span>
-            <code class="text-indigo-600 dark:text-indigo-400 font-mono" id="quiz-file-path">content/.../....quiz.json</code>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-bold text-slate-500 dark:text-slate-400">Trạng thái hiện tại:</span>
-            <span id="quiz-current-status" class="font-semibold text-slate-600 dark:text-slate-300">Đang kiểm tra...</span>
-          </div>
-        </div>
+        <label class="admin-field">
+          <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
+          <span class="admin-select">
+            <select id="quiz-doc-select" required></select>
+          </span>
+        </label>
       </section>
 
       <!-- CARD 2: TIÊU ĐỀ & NỘI DUNG QUIZ -->

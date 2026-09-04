@@ -273,35 +273,7 @@ function updateDocLinkInfo() {
   const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
   const doc = docs.find((d) => d.id === docId);
 
-  const viewBtn = qs("#quiz-view-doc-btn");
-  const pathCode = qs("#quiz-file-path");
-  const statusSpan = qs("#quiz-current-status");
-
-  if (!doc) {
-    if (viewBtn) {
-      viewBtn.href = "#";
-      viewBtn.classList.add("opacity-50", "pointer-events-none");
-    }
-    if (pathCode) pathCode.textContent = "content/.../....quiz.json";
-    if (statusSpan) statusSpan.textContent = "Vui lòng chọn bài viết lý thuyết";
-    return;
-  }
-
-  if (viewBtn) {
-    viewBtn.href = `reader.html?s=${encodeURIComponent(doc.section)}&d=${encodeURIComponent(doc.category + "/" + doc.slug)}`;
-    viewBtn.classList.remove("opacity-50", "pointer-events-none");
-  }
-
-  const destPath = `content/${doc.section}/${doc.category}/${doc.slug}.quiz.json`;
-  if (pathCode) pathCode.textContent = destPath;
-
-  if (statusSpan) {
-    if (doc.questions > 0) {
-      statusSpan.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Bài viết này đã có ${doc.questions} câu hỏi quiz. Lưu lại sẽ cập nhật ngân hàng câu hỏi.</span>`;
-    } else {
-      statusSpan.innerHTML = `<span class="text-indigo-600 dark:text-indigo-400 font-medium">✨ Bài viết chưa có câu hỏi trắc nghiệm. Sẽ tạo mới file quiz.</span>`;
-    }
-  }
+  if (!doc) return;
 
   // Chưa gắn tag nào thì mượn tạm tag của bài viết lý thuyết làm điểm khởi đầu
   if (!getQuizTags().length) {
