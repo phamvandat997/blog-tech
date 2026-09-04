@@ -1,50 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 
+/**
+ * Nhãn hiển thị trong mục lục: chỉ dọn dấu markdown còn sót (`code`, **đậm**)
+ * và khoảng trắng thừa. Mục lục xuống được hai dòng nên không rút gọn tiêu đề —
+ * trước đây có một dãy replace viết cứng theo đúng bài cài đặt Java, bài khác
+ * gặp phải là bị đổi chữ oan.
+ */
 function formatTocText(rawText) {
-  if (!rawText) return '';
-  let text = rawText.replace(/#+/g, '').trim();
-
-  if (/java.*is not recognized|command not found.*java/i.test(text)) {
-    return "Lỗi 'java' not recognized";
-  }
-  if (/nhà phát triển chưa được xác minh/i.test(text)) {
-    return 'macOS: Lỗi nhà phát triển';
-  }
-  if (/chạy được nhưng javac thì không/i.test(text)) {
-    return 'Lỗi javac không chạy';
-  }
-  if (/phiên bản khác với mong đợi/i.test(text)) {
-    return 'Sai phiên bản java -version';
-  }
-
-  // Remove long notes in parentheses
-  text = text.replace(/\s*\([^)]*\)/g, '').trim();
-
-  text = text
-    .replace(/^Toàn cảnh quá trình cài đặt/i, 'Tổng quan cài đặt')
-    .replace(/^Toàn cảnh quá trình/i, 'Tổng quan')
-    .replace(/Chọn phiên bản và bản phân phối JDK/i, 'Chọn phiên bản & JDK')
-    .replace(/Dòng thời gian các bản LTS/i, 'Dòng thời gian LTS')
-    .replace(/Nên chọn phiên bản nào\??/i, 'Chọn phiên bản')
-    .replace(/Nên chọn bản phân phối nào\??/i, 'Chọn bản phân phối')
-    .replace(/Dùng bộ cài/i, 'Bộ cài')
-    .replace(/Dùng winget/i, 'Cài qua Winget')
-    .replace(/Cấu hình biến môi trường thủ công/i, 'Cấu hình môi trường')
-    .replace(/Cấu hình biến môi trường trên Linux/i, 'Cấu hình môi trường Linux')
-    .replace(/Cấu hình biến môi trường/i, 'Cấu hình môi trường')
-    .replace(/Cài thủ công từ file/i, 'Cài từ file')
-    .replace(/Chuyển đổi phiên bản bằng/i, 'Đổi phiên bản')
-    .replace(/Quản lý nhiều phiên bản Java/i, 'Quản lý phiên bản')
-    .replace(/Chương trình đầu tiên/i, 'Viết mã đầu tiên')
-    .replace(/Xử lý lỗi thường gặp/i, 'Lỗi thường gặp')
-    .replace(/Bảng tổng hợp lỗi thường gặp và cách sửa/i, 'Lỗi thường gặp & Sửa lỗi')
-    .replace(/Kiểm tra cài đặt và viết chương trình đầu tiên/i, 'Kiểm tra & Viết mã đầu tiên')
-    .replace(/Fedora \/ RHEL \/ CentOS \/ Rocky Linux/i, 'Fedora / RHEL / CentOS')
-    .replace(/\s+và\s+/g, ' & ')
+  return String(rawText || '')
+    .replace(/#+/g, '')
+    .replace(/`+/g, '')
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim();
-
-  return text;
 }
 
 export function TableOfContents({ headings, contentRef }) {
@@ -58,10 +26,14 @@ export function TableOfContents({ headings, contentRef }) {
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
       const OFFSET = 140;
 
-      // Bottom of page check
-      if (scrollY + window.innerHeight >= document.documentElement.scrollHeight - 20) {
+      // Chạm đáy trang thì sáng mục cuối. Chỉ tính khi trang thật sự cuộn được:
+      // lúc mới mount, nội dung chưa dựng xong nên scrollHeight ≈ innerHeight,
+      // không chặn thì mục lục sáng ngay mục CUỐI dù đang ở đầu bài.
+      const scrollable = docHeight > window.innerHeight + 40;
+      if (scrollable && scrollY + window.innerHeight >= docHeight - 20) {
         setActiveId(headings[headings.length - 1].id);
         return;
       }
@@ -83,102 +55,117 @@ export function TableOfContents({ headings, contentRef }) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // Ảnh, webfont và sơ đồ mermaid dựng xong là chiều cao bài đổi — tính lại,
+    // nếu không mục đang sáng sẽ lệch cho tới lần cuộn đầu tiên.
+    const observer = new ResizeObserver(handleScroll);
+    observer.observe(document.body);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, [headings]);
+
+  // Mục lục dài hơn khung: kéo mục đang đọc vào tầm nhìn, nhưng chỉ cuộn trong
+  // khung mục lục (scrollIntoView sẽ kéo cả trang, hỏng luôn vị trí đang đọc).
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || !activeId) return;
+
+    const link = nav.querySelector('.toc-link.is-current');
+    if (!link) return;
+
+    const navBox = nav.getBoundingClientRect();
+    const linkBox = link.getBoundingClientRect();
+    const margin = 24;
+
+    if (linkBox.top < navBox.top + margin) {
+      nav.scrollTop -= navBox.top + margin - linkBox.top;
+    } else if (linkBox.bottom > navBox.bottom - margin) {
+      nav.scrollTop += linkBox.bottom - (navBox.bottom - margin);
+    }
+  }, [activeId]);
+
+  // Khoá cuộn nền khi ngăn kéo mục lục mở trên màn hình hẹp (blog.css dùng
+  // body.toc-open), và luôn dọn lại khi rời trang.
+  useEffect(() => {
+    document.body.classList.toggle('toc-open', isOpen);
+    return () => document.body.classList.remove('toc-open');
+  }, [isOpen]);
 
   if (headings.length <= 3) return null;
 
   const scrollToHeading = (id) => {
     const el = document.getElementById(id);
-    if (el) {
-      const navbarOffset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = el.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - navbarOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-      setActiveId(id);
-      setIsOpen(false);
-    }
+    if (!el) return;
+    // Heading đã có scroll-margin-top trong CSS nên không phải tự trừ navbar.
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveId(id);
+    setIsOpen(false);
   };
 
   return (
     <>
-      {/* Mobile Floating Toggle Button */}
+      {/* Nút mở mục lục — chỉ hiện ở màn hình hẹp, do blog.css quyết định */}
       <button
         id="btn-toc-toggle"
-        className="btn-toc-toggle xl:hidden fixed bottom-6 left-6 z-30 p-3 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center font-bold"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Mở mục lục"
+        type="button"
+        className="btn-toc-toggle"
+        onClick={() => setIsOpen((v) => !v)}
+        aria-expanded={isOpen}
+        aria-controls="reader-toc"
+        aria-label="Mở mục lục bài viết"
         title="Mục lục bài viết"
       >
-        📑
+        <span aria-hidden="true">📑</span>
+        <span className="btn-toc-toggle-label">Mục lục</span>
       </button>
 
-      {/* Backdrop for mobile */}
       {isOpen && (
-        <div
-          id="toc-backdrop"
-          className="toc-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 xl:hidden"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="toc-backdrop" onClick={() => setIsOpen(false)} aria-hidden="true" />
       )}
 
-      {/* Sidebar TOC */}
       <aside
         id="reader-toc"
-        className={`reader-toc w-64 shrink-0 transition-transform ${
-          isOpen ? 'is-open fixed inset-y-0 left-0 z-50 bg-white dark:bg-slate-900 p-6 shadow-2xl overflow-y-auto block' : 'hidden xl:block'
-        }`}
+        className={`reader-toc${isOpen ? ' is-open' : ''}`}
+        aria-label="Mục lục bài viết"
       >
-        <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2 pb-6">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800">
-            <h4 id="toc-title" className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 m-0">
-              Mục lục · {headings.length} phần
-            </h4>
-            {isOpen && (
-              <button
-                id="btn-toc-close"
-                onClick={() => setIsOpen(false)}
-                className="xl:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold p-1 text-sm"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          <nav id="toc-nav" ref={navRef}>
-            <ul className="toc-list space-y-1 text-xs">
-              {headings.map((h) => {
-                const isActive = activeId === h.id;
-                const formatted = formatTocText(h.title);
-
-                return (
-                  <li key={h.id} className={`toc-item-h${h.level}`}>
-                    <button
-                      type="button"
-                      onClick={() => scrollToHeading(h.id)}
-                      className={`toc-link block w-full text-left py-1.5 transition-all text-xs font-medium rounded-md ${
-                        h.level === 3 ? 'pl-4 pr-2' : 'px-2'
-                      } ${
-                        isActive
-                          ? 'is-current text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                      }`}
-                      title={h.title}
-                    >
-                      {formatted}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+        <div className="toc-head">
+          <span className="toc-title">Mục lục</span>
+          <span className="toc-count">{headings.length} phần</span>
+          <button
+            type="button"
+            className="toc-close"
+            onClick={() => setIsOpen(false)}
+            aria-label="Đóng mục lục"
+          >
+            ✕
+          </button>
         </div>
+
+        <nav className="toc-nav" id="toc-nav" ref={navRef}>
+          <ul className="toc-list">
+            {headings.map((h) => {
+              const isActive = activeId === h.id;
+              return (
+                <li key={h.id} className={`toc-item-h${h.level}`}>
+                  <button
+                    type="button"
+                    className={`toc-link${isActive ? ' is-current' : ''}`}
+                    onClick={() => scrollToHeading(h.id)}
+                    aria-current={isActive ? 'true' : undefined}
+                    title={h.title}
+                  >
+                    {/* Cắt hai dòng phải nằm ở span: <button> luôn bị blockify
+                        thành flow-root nên -webkit-line-clamp đặt trên nút vô tác dụng. */}
+                    <span className="toc-link-text">{formatTocText(h.title)}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </aside>
     </>
   );

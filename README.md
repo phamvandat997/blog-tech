@@ -69,7 +69,7 @@ theo hoặc dọn file quiz đi kèm, nên không sinh file mồ côi.
 
 ## Trang /admin — quản lý bài viết
 
-Mở `https://<tên-miền>/admin` (ở máy: `npm run serve` rồi vào `localhost:8080/admin.html`).
+Mở `https://<tên-miền>/admin` (ở máy: `npm run dev` rồi vào `localhost:3000/admin`).
 
 Trang này có hai màn hình: **Danh sách** (xem, sửa, xoá bài) và **Soạn bài mới**.
 
@@ -143,9 +143,10 @@ Lỗi lúc mở PR mà báo thiếu quyền thì gần như chắc là quên b�
 
 ### Mô hình bảo mật — đọc kỹ chỗ này
 
-Ô email chỉ đối chiếu với một danh sách viết cứng trong `assets/js/admin.js`.
-**Đó không phải bảo mật** — ai xem mã nguồn trang cũng đọc được và bỏ qua được.
-Nó chỉ để tránh nhầm lẫn.
+Ô email chỉ đối chiếu với `ALLOWED_EMAILS` viết cứng ở đầu
+[src/pages/AdminPage.jsx](src/pages/AdminPage.jsx).
+**Đó không phải bảo mật** — mã chạy ở trình duyệt nên ai xem mã nguồn cũng đọc
+được và bỏ qua được. Nó chỉ để tránh nhầm lẫn.
 
 Thứ thật sự chặn người lạ là **GitHub**: mọi thao tác ghi đều đi qua GitHub API
 bằng token của người dùng. Không có token đủ quyền đẩy vào kho thì commit bị từ
@@ -157,20 +158,22 @@ trên máy lạ; nếu lỡ thì bấm Đăng xuất và thu hồi token trên G
 
 ### Nhờ người khác review — GitHub tự gửi email
 
-Điền tên đăng nhập GitHub vào `REVIEWERS` ở đầu [assets/js/admin.js](assets/js/admin.js):
+Điền tên đăng nhập GitHub vào `REVIEWERS` ở đầu
+[src/pages/AdminPage.jsx](src/pages/AdminPage.jsx):
 
 ```js
 const REVIEWERS = ["ten-dang-nhap-github"];
 ```
 
-Mỗi PR do trang admin mở sẽ được gán cho họ, và **chính GitHub gửi email**
-"X requested your review" — không cần máy chủ gửi thư nào.
+Mỗi PR do trang admin mở (thêm, sửa, xoá bài và cả đăng quiz) sẽ được gán cho họ,
+và **chính GitHub gửi email** "X requested your review" — không cần máy chủ gửi
+thư nào.
 
 - Người được gán phải có quyền truy cập kho.
 - Ai trùng với người đang đăng nhập sẽ tự bị bỏ qua, vì GitHub không cho tự
   review PR của mình (trả lỗi 422).
-- Gán review hỏng thì **PR vẫn được mở** — chỉ hiện cảnh báo, không huỷ bài.
-- Để rỗng thì không gán ai, y như trước.
+- Gán review hỏng thì **PR vẫn được mở** — chỉ hiện thông báo, không huỷ bài.
+- Để rỗng thì không gán ai.
 
 Muốn đọc thử bài đã render trước khi duyệt thì bật **Preview Deployments** cho
 pull request trong dashboard Vercel: mỗi PR sẽ có một URL riêng và Vercel tự
@@ -178,11 +181,12 @@ bình luận link vào PR. Người review đọc bài thật thay vì đọc di
 
 ### Đổi danh sách email được phép
 
-Sửa `ALLOWED_EMAILS` ở đầu [assets/js/admin.js](assets/js/admin.js), rồi build và push.
+Sửa `ALLOWED_EMAILS` ở đầu [src/pages/AdminPage.jsx](src/pages/AdminPage.jsx)
+(viết thường; để mảng rỗng thì không chặn ai), rồi build và push.
 
 ## SEO — sitemap.xml và robots.txt
 
-Build sinh cả hai vào `generated/`, `npm run dist` đưa chúng lên gốc `dist/`.
+Build sinh cả hai vào `public/`, Vite chép nguyên thư mục này lên gốc `dist/`.
 
 Sitemap cần URL tuyệt đối nên phải biết tên miền:
 
@@ -191,7 +195,7 @@ Sitemap cần URL tuyệt đối nên phải biết tên miền:
 - **Nơi khác / máy cá nhân**: đặt `SITE_URL`, ví dụ
 
   ```bash
-  SITE_URL=blog.example.com npm run dist
+  SITE_URL=blog.example.com npm run build
   ```
 
 Không biết tên miền thì build **bỏ qua sitemap** kèm ghi chú, chứ không sinh URL sai.
@@ -214,29 +218,29 @@ chọn repo `blog-tech`, bấm Deploy. Từ đó mỗi lần `git push` là Verc
 npx vercel --prod
 ```
 
-Vercel sẽ chạy `npm run dist` rồi phục vụ thư mục `dist/`.
+Vercel sẽ chạy `npm run build` rồi phục vụ thư mục `dist/`.
 
 ### Quy trình viết bài hằng ngày
 
 ```bash
 # viết content/java/core/bai-moi.md
-npm run build     # cập nhật generated/ để xem thử ở máy
-npm run serve     # http://localhost:8080
+npm run dev       # build lại dữ liệu rồi mở Vite ở http://localhost:3000
 git add -A && git commit -m "them bai moi" && git push
 ```
 
-Vercel tự build lại từ `content/`. Cả `dist/` lẫn `generated/` đều nằm trong
-`.gitignore` — chỉ commit nguồn, không commit sản phẩm build.
+Vercel tự build lại từ `content/`. `dist/`, `src/generated/` và `public/generated/`
+đều nằm trong `.gitignore` — chỉ commit nguồn, không commit sản phẩm build.
 
 ### Kiểm tra bản deploy ngay tại máy
 
 ```bash
-npm run dist        # đóng gói vào dist/ đúng như Vercel sẽ làm
-npm run serve:dist  # http://localhost:8080
+npm run build     # đóng gói vào dist/ đúng như Vercel sẽ làm
+npm run preview   # phục vụ dist/ qua Vite
 ```
 
-`dist/` chỉ chứa `index.html`, `hub.html`, `reader.html`, `admin.html`, `404.html`,
-`assets/`, `generated/`, cộng `robots.txt` và `sitemap.xml` ở gốc — khoảng 0,3 MB.
+`dist/` là một SPA: `index.html` cùng bundle trong `assets/`, dữ liệu tĩnh trong
+`generated/`, cộng `robots.txt` và `sitemap.xml` ở gốc. Mọi đường dẫn khác được
+`vercel.json` rewrite về `index.html` để React Router tự định tuyến.
 Nguồn markdown trong `content/`, script trong `build/` và tài liệu thiết kế trong
 `docs/` **không** lên production.
 
@@ -247,23 +251,29 @@ content/                     nguồn duy nhất — chỉ sửa ở đây
   <mảng>/_section.json       tên, icon, màu, chuyên mục, lộ trình
   <mảng>/<chuyên-mục>/*.md   bài viết
   <mảng>/<chuyên-mục>/*.quiz.json   (giữ nguyên, build đang bỏ qua)
-build/                       script sinh dữ liệu, đóng gói dist, test
+build/                       script sinh dữ liệu và test
   lib/scan.js                quét content/ thành sections + docs
   lib/seo.js                 dựng sitemap.xml và robots.txt
-generated/                   sản phẩm build — KHÔNG commit (xem .gitignore)
-  catalog.js                 metadata mọi bài (mọi trang đều nạp)
-  docs/<id>.js               nội dung một bài (reader chỉ nạp bài đang mở)
-  robots.txt, sitemap.xml    dist.js đưa lên gốc dist/
+src/                         ứng dụng React (Vite)
+  pages/                     Home · Hub · Reader · Quiz · Admin · NotFound
+  components/                layout · home · hub · reader · quiz · admin · common
+  hooks/                     useCatalog · useQuiz · useTheme · useDocProgress
+  services/                  github · markdown · storage
+  generated/                 sản phẩm build — KHÔNG commit (xem .gitignore)
+    catalog.json             metadata mọi bài + danh sách mảng
+    quizBank.json            toàn bộ ngân hàng câu hỏi
+    docs/<id>.json           nội dung một bài (reader chỉ nạp bài đang mở)
+public/                      Vite chép nguyên lên gốc dist/
+  generated/                 bản sao tĩnh của src/generated/
+  robots.txt, sitemap.xml    do build sinh — KHÔNG commit
 assets/css/base.css          bảng màu, navbar, thẻ bài, markdown (còn CSS quiz để dùng lại)
 assets/css/blog.css          trang chủ, mục lục cột trái, breadcrumb, điều hướng bài
-assets/js/                   dom · state · catalog · frontmatter · markdown
-                             landing · hub · reader · github · admin
-404.html                     trang không tìm thấy (Vercel dùng tự động)
-admin.html                   quản lý bài viết qua pull request (route /admin)
-index.html                   trang chủ — chọn mảng nội dung
-hub.html?s=<mảng>            danh mục bài viết của một mảng
-reader.html?s=<mảng>&d=<chuyên-mục>/<bài>   trang đọc
+assets/js/frontmatter.js     parse/stringify frontmatter — build/lib/scan.js dùng chung
+index.html                   vỏ SPA duy nhất; mọi route do React Router xử lý
 ```
+
+Đường dẫn: `/` trang chủ · `/hub?s=<mảng>` danh mục · `/reader?s=<mảng>&d=<chuyên-mục>/<bài>`
+trang đọc · `/quiz` luyện trắc nghiệm · `/admin` quản lý bài viết.
 
 Giao diện sáng/tối: lần đầu vào trang thì theo cài đặt của hệ điều hành; bấm nút đổi
 một lần là lựa chọn đó được ghi vào `localStorage` và thắng hệ thống từ đó về sau.
@@ -281,7 +291,6 @@ thì ngăn kéo tự đóng. Bài có từ 3 heading trở xuống thì không h
 
 ### Về việc mở bằng `file://`
 
-Nội dung nạp bằng thẻ `<script>` chèn động (không dùng `fetch`), nên về nguyên
-tắc mở thẳng `index.html` bằng `file://` vẫn chạy. Điều này **chưa được kiểm
-chứng** trên máy này vì không có Chrome/Chromium để chạy thử — cách chắc chắn
-là `npm run serve`.
+Không còn chạy được nữa: giao diện là SPA đóng gói bằng Vite, dùng ES module và
+đường dẫn tuyệt đối. Xem thử ở máy bằng `npm run dev`, xem bản deploy bằng
+`npm run build && npm run preview`.

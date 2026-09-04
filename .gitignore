@@ -6,3 +6,7 @@ dist/
 # một lớp lỗi: content/ thay đổi mà bản đã commit vẫn được phục vụ khi build
 # hỏng, nên giao diện hiện những bài không còn tồn tại.
 generated/
+
+# Cùng lý do: robots.txt và sitemap.xml trong public/ do build/build.js sinh ra.
+public/robots.txt
+public/sitemap.xml

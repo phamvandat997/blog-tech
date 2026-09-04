@@ -7,16 +7,8 @@ const { resolveSiteUrl, buildSitemap, buildRobots } = require("./lib/seo");
 
 const ROOT = path.join(__dirname, "..");
 const CONTENT = path.join(ROOT, "content");
-const OUT = path.join(ROOT, "generated");
-
-const banner = "// TỆP SINH TỰ ĐỘNG — đừng sửa tay. Chạy: node build/build.js\n";
-
-function writeFile(rel, body) {
-  const full = path.join(OUT, rel);
-  fs.mkdirSync(path.dirname(full), { recursive: true });
-  fs.writeFileSync(full, banner + body);
-  return Buffer.byteLength(body, "utf8");
-}
+const PUBLIC = path.join(ROOT, "public");
+const SRC_GEN = path.join(ROOT, "src", "generated");
 
 function main() {
   // content/ trống hoặc chưa có: vẫn sinh catalog rỗng để UI đồng bộ (hiện "Chưa có nội dung nào")
@@ -50,42 +42,19 @@ function main() {
     (rank.get(`${a.section}/${a.category}`) ?? 1e9) - (rank.get(`${b.section}/${b.category}`) ?? 1e9) ||
     a.order - b.order || a.slug.localeCompare(b.slug));
 
-  fs.rmSync(OUT, { recursive: true, force: true });
-
-  // 1. catalog.js — metadata, nhẹ, mọi trang đều nạp.
+  // 1. Metadata bài viết, dùng cho cả catalog.json lẫn sitemap.
   const meta = docs.map(({ _body, ...rest }) => rest);
-  writeFile("catalog.js",
-    `const SECTIONS = ${JSON.stringify(sections, null, 1)};\n` +
-    `const DOCUMENTS = ${JSON.stringify(meta, null, 1)};\n`);
 
-  // 2. Một file nội dung cho mỗi bài — reader chỉ nạp đúng bài đang mở.
-  let contentBytes = 0;
-  for (const doc of docs) {
-    contentBytes += writeFile(`docs/${doc.contentFile}.js`,
-      `window.__docLoaded && window.__docLoaded(${JSON.stringify(doc.id)}, ${JSON.stringify(doc._body)});\n`);
-  }
-
-  // 3. Quiz bank - một file cho mỗi mảng, nạp động khi luyện quiz
-  for (const section of sections) {
-    const bank = {};
-    docs.filter((d) => d.section === section.id && quizBank[d.id])
-        .forEach((d) => {
-          bank[d.id] = quizBank[d.id];
-        });
-    writeFile(`quiz-${section.id}.js`,
-      `window.__quizLoaded && window.__quizLoaded(${JSON.stringify(section.id)}, ${JSON.stringify(bank)});\n`);
-  }
-
-  // 4. sitemap.xml + robots.txt. Đặt trong generated/ rồi dist.js đưa lên gốc
-  //    dist/ — nơi công cụ tìm kiếm mong thấy chúng.
+  // 2. sitemap.xml + robots.txt viết thẳng vào public/ — Vite chép nguyên thư
+  //    mục này lên gốc dist/, đúng nơi công cụ tìm kiếm mong thấy chúng.
   const siteUrl = resolveSiteUrl();
-  fs.writeFileSync(path.join(OUT, "robots.txt"), buildRobots(siteUrl));
-  if (siteUrl) {
-    fs.writeFileSync(path.join(OUT, "sitemap.xml"), buildSitemap(siteUrl, sections, meta));
-  }
+  fs.mkdirSync(PUBLIC, { recursive: true });
+  fs.writeFileSync(path.join(PUBLIC, "robots.txt"), buildRobots(siteUrl));
+  const sitemapPath = path.join(PUBLIC, "sitemap.xml");
+  if (siteUrl) fs.writeFileSync(sitemapPath, buildSitemap(siteUrl, sections, meta));
+  else fs.rmSync(sitemapPath, { force: true });
 
-  // 5. Sinh dữ liệu JSON cho React SPA trong src/generated/
-  const SRC_GEN = path.join(ROOT, "src", "generated");
+  // 3. Dữ liệu JSON cho React SPA trong src/generated/
   fs.rmSync(SRC_GEN, { recursive: true, force: true });
   fs.mkdirSync(SRC_GEN, { recursive: true });
 
@@ -111,19 +80,18 @@ function main() {
     });
   }
 
-  // 6. Đồng bộ sang public/generated để Vite phục vụ static asset
-  const PUB_GEN = path.join(ROOT, "public", "generated");
+  // 4. Bản sao tĩnh của src/generated/ trong public/ — ReaderPage fetch
+  //    /generated/docs/<file>.json khi import.meta.glob chưa có bài đó.
+  const PUB_GEN = path.join(PUBLIC, "generated");
   fs.rmSync(PUB_GEN, { recursive: true, force: true });
-  fs.mkdirSync(path.dirname(PUB_GEN), { recursive: true });
-  fs.cpSync(OUT, PUB_GEN, { recursive: true });
+  fs.cpSync(SRC_GEN, PUB_GEN, { recursive: true });
 
   const totalQuestions = docs.reduce((n, d) => n + (d.questions || 0), 0);
   console.log(`✓ ${sections.length} mảng · ${docs.length} bài · ${totalQuestions} câu quiz`);
-  console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
-  console.log(`✓ generated/docs/       ${docs.length} file, ${(contentBytes / 1024).toFixed(0)} KB tổng ` +
-              `(reader chỉ nạp 1 file mỗi lần)`);
+  console.log(`✓ src/generated/catalog.json  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
+  console.log(`✓ src/generated/docs/         ${docs.length} file (reader chỉ nạp bài đang mở)`);
   console.log(siteUrl
-    ? `✓ generated/sitemap.xml   ${1 + sections.length + meta.length} URL · ${siteUrl}`
+    ? `✓ public/sitemap.xml   ${1 + sections.length + meta.length} URL · ${siteUrl}`
     : `· bỏ qua sitemap.xml — chưa biết tên miền. Đặt SITE_URL=... rồi build lại ` +
       `(trên Vercel thì tự có qua VERCEL_PROJECT_PRODUCTION_URL).`);
   sections.forEach((s) => console.log(`   ${s.name}: ${s.docCount} bài, ${s.categories.length} chuyên mục`));

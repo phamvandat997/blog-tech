@@ -26,11 +26,13 @@ export function RelatedDocs({ currentDoc, allDocs, isDocCompleted }) {
   if (related.length === 0) return null;
 
   return (
-    <aside id="reader-related-sidebar" className="reader-related-sidebar mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-      <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
-        <span>📖 Bài viết liên quan</span>
-      </h3>
-      <div id="reader-related-list" className="space-y-3">
+    // Dùng đúng bộ class của blog.css: cột phải dính ở desktop, tự hạ xuống
+    // dưới bài viết ở tablet/mobile.
+    <aside id="reader-related-sidebar" className="reader-related-sidebar" aria-label="Bài viết liên quan">
+      <div className="related-sidebar-head">
+        <h3 className="related-sidebar-title">📖 Bài viết liên quan</h3>
+      </div>
+      <div id="reader-related-list" className="related-sidebar-list">
         {related.map((d) => {
           const completed = isDocCompleted(d.id);
           return (

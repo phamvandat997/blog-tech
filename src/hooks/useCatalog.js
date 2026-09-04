@@ -3,7 +3,9 @@ import catalogData from '../generated/catalog.json';
 
 export function useCatalog() {
   const sections = useMemo(() => catalogData.sections || [], []);
-  const docs = useMemo(() => catalogData.docs || [], []);
+  // build/build.js ghi danh sách bài dưới khoá "documents"; giữ thêm "docs"
+  // để không vỡ nếu tệp catalog cũ còn nằm đâu đó.
+  const docs = useMemo(() => catalogData.documents || catalogData.docs || [], []);
 
   const getSection = (sectionId) => {
     return sections.find((s) => s.id === sectionId) || null;
@@ -15,10 +17,19 @@ export function useCatalog() {
 
   const getDocByRoute = (sectionSlug, docSlug) => {
     if (!docSlug) return null;
-    return docs.find((d) => 
-      (d.slug === docSlug || d.id === docSlug || d.contentFile?.endsWith(docSlug)) &&
-      (!sectionSlug || d.section === sectionSlug)
-    ) || null;
+    // Link trong app có dạng ?s=<mảng>&d=<chuyên mục>/<slug>, nên phải so cả
+    // cặp "category/slug" và id đầy đủ, không chỉ mỗi slug.
+    const wanted = String(docSlug).replace(/^\/+|\/+$/g, '');
+    return docs.find((d) => {
+      if (sectionSlug && d.section !== sectionSlug) return false;
+      return (
+        d.id === wanted ||
+        d.slug === wanted ||
+        `${d.category}/${d.slug}` === wanted ||
+        `${d.section}/${d.category}/${d.slug}` === wanted ||
+        d.contentFile === wanted
+      );
+    }) || null;
   };
 
   const getDocsBySection = (sectionId) => {

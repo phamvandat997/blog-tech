@@ -8,10 +8,7 @@
     "build": "npm run build:css && node build/build.js && vite build",
     "dev": "node build/build.js && vite",
     "preview": "vite preview",
-    "dist": "npm run build && node build/dist.js",
-    "test": "node --test build/*.test.js",
-    "serve": "python3 -m http.server 8080",
-    "serve:dist": "python3 -m http.server 8080 --directory dist"
+    "test": "node --test build/*.test.js"
   },
   "engines": {
     "node": ">=18"

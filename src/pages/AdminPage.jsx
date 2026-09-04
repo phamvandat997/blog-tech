@@ -13,6 +13,25 @@ import { Toast, showToast } from '../components/common/Toast';
 const SESSION_KEY = 'blog.adminSession';
 const BRANCH_PREFIX = 'post/';
 
+/**
+ * Email được phép vào màn quản lý. Để rỗng thì không chặn ai.
+ *
+ * VỀ BẢO MẬT: đây chỉ là rào chắn nhầm lẫn, KHÔNG phải bảo mật — mã chạy ở
+ * trình duyệt nên ai xem mã nguồn cũng đọc và bỏ qua được. Thứ thật sự chặn
+ * người lạ là GitHub: không có token đủ quyền đẩy vào kho thì commit bị từ chối.
+ */
+const ALLOWED_EMAILS = ['phamvandat0029@gmail.com'];
+
+/**
+ * Tài khoản GitHub được gán review cho mọi PR do trang này mở. Điền tên đăng
+ * nhập vào đây là GitHub tự gửi email "X requested your review".
+ *
+ * Người được gán phải có quyền truy cập kho. Ai trùng với người đang đăng nhập
+ * sẽ bị bỏ qua, vì GitHub không cho tự review PR của mình (lỗi 422).
+ * Để rỗng thì không gán ai — PR vẫn mở bình thường.
+ */
+const REVIEWERS = [];
+
 function branchName(action, slug) {
   const now = new Date();
   const pad = (n) => String(n).padStart(2, '0');
@@ -142,6 +161,11 @@ export function AdminPage() {
 
   // Login handler
   const handleLogin = async ({ email, token, owner, repo, branch }) => {
+    if (ALLOWED_EMAILS.length && !ALLOWED_EMAILS.includes(email.toLowerCase())) {
+      setLoginError('Email này không nằm trong danh sách được phép đăng bài.');
+      return;
+    }
+
     setLoading(true);
     setLoginError('');
 
@@ -167,6 +191,23 @@ export function AdminPage() {
     setIsGuestMode(false);
     showToast('Đã đăng xuất.');
   };
+
+  /**
+   * Gán review SAU khi PR đã mở, và hỏng thì chỉ báo chứ không ném lỗi: PR đã
+   * tồn tại rồi, ném ở đây sẽ kéo theo khối catch xoá mất nhánh vừa tạo.
+   */
+  const assignReviewers = useCallback(async (pr) => {
+    const me = session?.user?.login?.toLowerCase();
+    const reviewers = REVIEWERS.filter((r) => r && r.toLowerCase() !== me);
+    if (!gh || !reviewers.length) return;
+
+    try {
+      await gh.requestReviewers(pr.number, reviewers);
+      showToast(`👀 Đã nhờ ${reviewers.join(', ')} review PR #${pr.number}`);
+    } catch (err) {
+      showToast(`PR #${pr.number} đã mở, nhưng gán review hỏng: ${err.message}`);
+    }
+  }, [gh, session]);
 
   // Post operations
   const handleSavePost = async (postData) => {
@@ -204,6 +245,8 @@ export function AdminPage() {
       body: `### Thay đổi từ trang Admin Blog Tech\n\n- **Đường dẫn**: \`${filePath}\`\n- **Tiêu đề**: ${title}\n- **Chuyên mục**: \`${section}/${category}\``,
     });
 
+    await assignReviewers(pr);
+
     showToast(`✓ Đã mở PR #${pr.number} thành công!`);
     changeView('list');
     loadPosts();
@@ -228,6 +271,8 @@ export function AdminPage() {
         title: `Xoá bài viết: ${post.title}`,
         body: `### Xoá bài viết từ trang Admin\n\n- **Đường dẫn**: \`${post.path}\``,
       });
+
+      await assignReviewers(pr);
 
       showToast(`✓ Đã mở PR #${pr.number} xoá bài!`);
       loadPosts();
@@ -307,6 +352,8 @@ export function AdminPage() {
       title: `Cập nhật câu hỏi quiz: ${doc.title}`,
       body: `### Cập nhật Quiz từ Admin Blog Tech\n\n- **Bài viết**: \`${doc.id}\`\n- **File Quiz**: \`${quizPath}\`\n- **Số câu hỏi**: ${quizPayload.quizzes?.length || 0}`,
     });
+
+    await assignReviewers(pr);
 
     showToast(`✓ Đã đăng bài quiz thành công! (PR #${pr.number})`);
   };
