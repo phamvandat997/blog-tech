@@ -41,14 +41,6 @@ export function HeroSection() {
         Chuyên Sâu
       </h1>
 
-      {/* Inspiring Description */}
-      <p className="hero-desc text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
-        Hệ thống tài liệu bài bản từ <strong className="font-semibold text-slate-800 dark:text-slate-100">Java Core</strong>,{' '}
-        <strong className="font-semibold text-slate-800 dark:text-slate-100">Cấu trúc dữ liệu &amp; Giải thuật</strong> đến{' '}
-        <strong className="font-semibold text-slate-800 dark:text-slate-100">Javascript cốt lõi</strong> — thiết kế chuẩn hoá
-        cho phỏng vấn kỹ thuật và chứng chỉ quốc tế.
-      </p>
-
       {/* Quick Action CTA Buttons */}
       <div className="hero-cta flex items-center justify-center gap-3 sm:gap-4 flex-wrap mb-9">
         <Link

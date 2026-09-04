@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 // Import actual stylesheets for 100% visual fidelity
+import '../assets/css/tailwind.css';
 import '../assets/css/base.css';
 import '../assets/css/blog.css';
 import '../assets/css/admin.css';

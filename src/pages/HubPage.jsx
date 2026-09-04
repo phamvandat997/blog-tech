@@ -1,13 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCatalog } from '../hooks/useCatalog';
 import { useDocProgress } from '../hooks/useDocProgress';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { BackToTop } from '../components/layout/BackToTop';
-import { CategorySidebar } from '../components/hub/CategorySidebar';
-import { SectionProgressTracker } from '../components/hub/SectionProgressTracker';
-import { PhaseFilterBar } from '../components/hub/PhaseFilterBar';
+import { HubTagCarousel } from '../components/hub/HubTagCarousel';
 import { HubDocCard } from '../components/hub/HubDocCard';
 import { Pagination } from '../components/common/Pagination';
 import { EmptyState } from '../components/common/EmptyState';
@@ -17,15 +15,12 @@ const PAGE_SIZE = 12;
 export function HubPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { sections, docs, getSection } = useCatalog();
-  const { completedDocs, isCompleted } = useDocProgress();
+  const { isCompleted } = useDocProgress();
 
   const sectionId = searchParams.get('s') || sections[0]?.id || 'java';
-  const categoryId = searchParams.get('c') || 'all';
-  const phaseId = searchParams.get('phase') || 'all';
+  const selectedTag = searchParams.get('tag') || '';
   const queryParam = searchParams.get('q') || '';
   const pageParam = parseInt(searchParams.get('p') || '1', 10);
-
-  const [searchInput, setSearchInput] = useState(queryParam);
 
   const currentSection = getSection(sectionId) || sections[0];
 
@@ -34,10 +29,6 @@ export function HubPage() {
       document.title = `${currentSection.name} — Blog Tech`;
     }
   }, [currentSection]);
-
-  useEffect(() => {
-    setSearchInput(queryParam);
-  }, [queryParam]);
 
   const updateFilters = (newParams) => {
     const updated = new URLSearchParams(searchParams);
@@ -55,37 +46,38 @@ export function HubPage() {
     return docs.filter((d) => d.section === currentSection?.id);
   }, [docs, currentSection]);
 
-  const completedCount = useMemo(() => {
-    return sectionDocs.filter((d) => completedDocs.has(d.id)).length;
-  }, [sectionDocs, completedDocs]);
-
-  const docCountsByCategory = useMemo(() => {
-    const counts = {};
+  const tagList = useMemo(() => {
+    const counts = new Map();
     sectionDocs.forEach((d) => {
-      counts[d.category] = (counts[d.category] || 0) + 1;
+      (d.tags || []).forEach((t) => {
+        const name = String(t || '').trim();
+        if (name) {
+          counts.set(name, (counts.get(name) || 0) + 1);
+        }
+      });
     });
-    return counts;
-  }, [sectionDocs]);
-
-  const phases = useMemo(() => {
-    return Array.from(new Set(sectionDocs.map((d) => d.phase).filter(Boolean)));
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
   }, [sectionDocs]);
 
   const filteredDocs = useMemo(() => {
     const q = queryParam.trim().toLowerCase();
+    const tag = selectedTag.trim().toLowerCase();
     return sectionDocs.filter((doc) => {
-      if (categoryId !== 'all' && doc.category !== categoryId) return false;
-      if (phaseId !== 'all' && doc.phase !== phaseId) return false;
+      if (tag) {
+        const hasTag = Array.isArray(doc.tags) && doc.tags.some((t) => t.toLowerCase() === tag);
+        if (!hasTag) return false;
+      }
       if (q) {
         const matchTitle = doc.title?.toLowerCase().includes(q);
         const matchDesc = doc.description?.toLowerCase().includes(q);
         const matchTags = Array.isArray(doc.tags) && doc.tags.some((t) => t.toLowerCase().includes(q));
-        const matchPhase = doc.phase?.toLowerCase().includes(q);
-        return matchTitle || matchDesc || matchTags || matchPhase;
+        return matchTitle || matchDesc || matchTags;
       }
       return true;
     });
-  }, [sectionDocs, categoryId, phaseId, queryParam]);
+  }, [sectionDocs, selectedTag, queryParam]);
 
   const total = filteredDocs.length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -94,14 +86,8 @@ export function HubPage() {
   const endIdx = Math.min(startIdx + PAGE_SIZE, total);
   const pagedDocs = filteredDocs.slice(startIdx, endIdx);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    updateFilters({ q: searchInput.trim(), p: null });
-  };
-
   const handleResetFilters = () => {
-    setSearchInput('');
-    updateFilters({ c: 'all', phase: 'all', q: '', p: null });
+    updateFilters({ tag: '', q: '', p: null });
   };
 
   if (!currentSection) {
@@ -130,128 +116,69 @@ export function HubPage() {
       <Navbar />
 
       <main className="hub-wrapper w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
-        {/* Breadcrumb & Section Header */}
-        <div className="hub-header mb-8">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-2">
-            <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 no-underline text-slate-500">
-              Trang chủ
-            </Link>
-            <span>›</span>
-            <span className="text-slate-800 dark:text-slate-200">{currentSection.name}</span>
-          </div>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6">
+          <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 no-underline text-slate-500">
+            Trang chủ
+          </Link>
+          <span>›</span>
+          <span className="text-slate-800 dark:text-slate-200">{currentSection.name}</span>
+        </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight m-0 mb-1">
-                {currentSection.name}
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 m-0 max-w-2xl leading-relaxed">
-                {currentSection.tagline}
-              </p>
-            </div>
+        {/* Tag Carousel */}
+        {tagList.length > 0 && (
+          <HubTagCarousel
+            tags={tagList}
+            selectedTag={selectedTag}
+            onSelectTag={(tag) => updateFilters({ tag: tag || null, p: null })}
+          />
+        )}
 
-            {/* In-Hub Search */}
-            <form onSubmit={handleSearchSubmit} className="hub-search relative w-full md:w-72">
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={`Tìm trong ${currentSection.name}...`}
-                className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 outline-hidden focus:border-indigo-500 shadow-xs"
-              />
-              <span className="absolute left-3 top-2.5 text-xs text-slate-400">🔍</span>
-              {searchInput && (
+        {/* Docs Grid */}
+        {!filteredDocs.length ? (
+          <div className="py-12">
+            <EmptyState
+              icon="🔍"
+              title="Không tìm thấy bài viết nào"
+              text="Thử chọn lại tag khác."
+              action={
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearchInput('');
-                    updateFilters({ q: '', p: null });
-                  }}
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs"
+                  onClick={handleResetFilters}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors cursor-pointer border-0"
                 >
-                  ✕
+                  ✕ Xoá bộ lọc &amp; Đặt lại
                 </button>
-              )}
-            </form>
+              }
+            />
           </div>
-        </div>
-
-        {/* Layout Grid: Sidebar (Categories) + Main Content (Docs) */}
-        <div className="hub-layout grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              <CategorySidebar
-                categories={currentSection.categories || []}
-                selectedCategory={categoryId}
-                onSelectCategory={(catId) => updateFilters({ c: catId, p: null })}
-                docCounts={docCountsByCategory}
-                totalDocCount={sectionDocs.length}
-              />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {pagedDocs.map((doc) => (
+                <HubDocCard
+                  key={doc.id}
+                  doc={doc}
+                  isCompleted={isCompleted(doc.id)}
+                  onTagClick={(tag) => updateFilters({ tag, p: null })}
+                />
+              ))}
             </div>
-          </div>
 
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            <SectionProgressTracker
-              section={currentSection}
-              docs={sectionDocs}
-              completedCount={completedCount}
+            <Pagination
+              page={currentPage}
+              totalPages={totalPages}
+              total={total}
+              startIdx={startIdx}
+              endIdx={endIdx}
+              noun="bài viết"
+              onPageChange={(newPage) => {
+                updateFilters({ p: newPage });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
-
-            <PhaseFilterBar
-              phases={phases}
-              selectedPhase={phaseId}
-              onSelectPhase={(pId) => updateFilters({ phase: pId, p: null })}
-            />
-
-            {/* Docs Grid */}
-            {!filteredDocs.length ? (
-              <div className="py-12">
-                <EmptyState
-                  icon="🔍"
-                  title="Không tìm thấy bài viết nào"
-                  text="Thử đổi từ khoá hoặc chọn lại chuyên mục / phase."
-                  action={
-                    <button
-                      type="button"
-                      onClick={handleResetFilters}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors cursor-pointer border-0"
-                    >
-                      ✕ Xoá bộ lọc &amp; Đặt lại
-                    </button>
-                  }
-                />
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                  {pagedDocs.map((doc) => (
-                    <HubDocCard
-                      key={doc.id}
-                      doc={doc}
-                      isCompleted={isCompleted(doc.id)}
-                      onTagClick={(tag) => updateFilters({ q: tag, p: null })}
-                    />
-                  ))}
-                </div>
-
-                <Pagination
-                  page={currentPage}
-                  totalPages={totalPages}
-                  total={total}
-                  startIdx={startIdx}
-                  endIdx={endIdx}
-                  noun="bài viết"
-                  onPageChange={(newPage) => {
-                    updateFilters({ p: newPage });
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </div>
+          </>
+        )}
       </main>
 
       <Footer />

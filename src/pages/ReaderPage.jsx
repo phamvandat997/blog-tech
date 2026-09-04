@@ -63,8 +63,16 @@ export function ReaderPage() {
         // ignore
       }
     }
-    return getDocByRoute(sectionParam, docParam);
-  }, [isPreview, sectionParam, docParam, getDocByRoute]);
+    if (sectionParam || docParam) {
+      const found = getDocByRoute(sectionParam, docParam);
+      if (found) return found;
+      if (sectionParam) {
+        const firstInSec = docs.find((d) => d.section === sectionParam);
+        if (firstInSec) return firstInSec;
+      }
+    }
+    return docs[0] || null;
+  }, [isPreview, sectionParam, docParam, getDocByRoute, docs]);
 
   const currentSection = useMemo(() => {
     if (!currentDoc) return null;

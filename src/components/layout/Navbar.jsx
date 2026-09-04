@@ -95,9 +95,7 @@ export function Navbar() {
               <span className="text-indigo-600 dark:text-indigo-400">Blog</span>
               <span className="text-slate-900 dark:text-white ml-1">Tech</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium m-0">
-              Ghi chép &amp; chia sẻ kiến thức lập trình
-            </p>
+
           </div>
         </Link>
 
