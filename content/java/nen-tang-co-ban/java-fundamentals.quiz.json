@@ -1,70 +1,44 @@
 {
-  "title": "Quiz: Nền Tảng Căn Bản Java",
+  "title": "Quiz: Nền Tảng Căn Bản, Bộ Nhớ & Luồng Điều Khiển Java",
   "tags": [
     "Java",
     "Fundamentals",
     "Data-Types",
-    "Casting",
-    "Control-Flow"
+    "Stack-Heap",
+    "Bitwise",
+    "Autoboxing"
   ],
   "quizzes": [
     {
       "number": 1,
-      "question": "Kiểu dữ liệu nguyên thuỷ `int` trong Java chiếm bao nhiêu byte bộ nhớ?",
+      "question": "Đoạn mã sau in ra kết quả gì và vì sao?\n```java\nInteger a = 127;\nInteger b = 127;\nInteger c = 128;\nInteger d = 128;\nSystem.out.println((a == b) + \", \" + (c == d));\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "2 bytes"
+          "text": "true, true"
         },
         {
           "key": "B",
-          "text": "4 bytes"
+          "text": "true, false"
         },
         {
           "key": "C",
-          "text": "8 bytes"
+          "text": "false, false"
         },
         {
           "key": "D",
-          "text": "Tuỳ thuộc vào hệ điều hành 32-bit hay 64-bit"
+          "text": "false, true"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Trong Java, kiểu `int` luôn cố định 4 bytes (32-bit) có dấu trên mọi kiến trúc phần cứng, đảm bảo tính nhất quán WORA."
+      "explanation": "Theo chuẩn JLS, `Integer.valueOf()` lưu cache các đối tượng số nguyên trong phạm vi từ -128 đến 127 (`IntegerCache`). Do đó `a` và `b` cùng trỏ đến 1 instance (`true`). Còn 128 vượt ngưỡng cache nên `c` và `d` là 2 instance khác nhau trên Heap (`false`)."
     },
     {
       "number": 2,
-      "question": "Đoạn mã sau in ra kết quả gì?\n```java\nint a = 5;\nint b = a++;\nSystem.out.println(a + \", \" + b);\n```",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "5, 5"
-        },
-        {
-          "key": "B",
-          "text": "6, 6"
-        },
-        {
-          "key": "C",
-          "text": "6, 5"
-        },
-        {
-          "key": "D",
-          "text": "5, 6"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "Toán tử hậu tố `a++` gán giá trị hiện tại của `a` (5) cho `b` trước, sau đó mới tăng `a` lên 6. Do đó `a = 6, b = 5`."
-    },
-    {
-      "number": 3,
-      "question": "Giá trị mặc định của một biến thành viên kiểu `boolean` trong một class là gì?",
+      "question": "Phép tính `System.out.println(0.1 + 0.2 == 0.3);` trong Java trả về kết quả gì?",
       "isMulti": false,
       "options": [
         {
@@ -77,169 +51,88 @@
         },
         {
           "key": "C",
-          "text": "null"
+          "text": "Lỗi biên dịch"
         },
         {
           "key": "D",
-          "text": "0"
+          "text": "ArithmeticException"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Các biến thực thể (instance variable) kiểu `boolean` nếu không khởi tạo sẽ có giá trị mặc định là `false`."
+      "explanation": "Do biểu diễn số thực dấu phẩy động theo chuẩn IEEE 754, `0.1 + 0.2` cho kết quả `0.30000000000000004`, khác biệt với giá trị nhị phân của `0.3`, do đó phép so sánh `==` cho kết quả `false`."
+    },
+    {
+      "number": 3,
+      "question": "Điều gì xảy ra khi thực thi đoạn code sau?\n```java\nInteger count = null;\nint val = count;\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "val nhận giá trị mặc định là 0"
+        },
+        {
+          "key": "B",
+          "text": "Ném ngoại lệ java.lang.NullPointerException tại runtime do quá trình Unboxing tự động"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi biên dịch Incompatible types"
+        },
+        {
+          "key": "D",
+          "text": "val nhận giá trị NaN"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Quá trình unboxing tự động biên dịch `int val = count;` thành `int val = count.intValue();`. Khi `count` là `null`, việc gọi phương thức trên đối tượng null sẽ lập tức ném ngoại lệ `NullPointerException`."
     },
     {
       "number": 4,
-      "question": "Đoạn code sau có lỗi gì không?\n```java\nbyte b = 127;\nb++;\nSystem.out.println(b);\n```",
+      "question": "Toán tử dịch phải không dấu `>>>` (Unsigned Right Shift) trong Java khác toán tử dịch phải có dấu `>>` như thế nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Lỗi biên dịch vì vượt quá giá trị của byte"
+          "text": "`>>>` chỉ dùng cho số dương"
         },
         {
           "key": "B",
-          "text": "In ra 128"
+          "text": "`>>` giữ nguyên bit dấu ở vị trí quan trọng nhất (MSB); `>>>` luôn chèn số 0 vào vị trí ngoài cùng bên trái bất kể số âm hay dương"
         },
         {
           "key": "C",
-          "text": "In ra -128 do tràn số vòng tròn (overflow)"
+          "text": "`>>>` thực hiện phép dịch vòng lặp"
         },
         {
           "key": "D",
-          "text": "Lỗi ngoại lệ ArithmeticException lúc chạy"
+          "text": "Hai toán tử có cùng kết quả với mọi số âm"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "Kiểu byte có khoảng giá trị từ -128 đến 127. Khi 127 tăng thêm 1 (dạng nhị phân 01111111 + 1 = 10000000), nó tràn thành -128 trong biểu diễn bù 2."
+      "explanation": "Với số âm dạng bù 2 (bit MSB là 1), toán tử `>>` sẽ chèn thêm số 1 để bảo toàn dấu âm; trong khi `>>>` luôn chèn số 0 vào bên trái, biến số âm thành một số dương rất lớn."
     },
     {
       "number": 5,
-      "question": "Để khai báo một giá trị kiểu số thực chính xác đơn (float), cú pháp nào sau đây là hợp lệ?",
+      "question": "Đoạn code sau in ra giá trị gì?\n```java\nint x = 1;\nif (x > 0 || ++x > 1) {\n    System.out.println(x);\n}\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "float f = 3.14;"
+          "text": "1"
         },
         {
           "key": "B",
-          "text": "float f = 3.14f;"
+          "text": "2"
         },
         {
           "key": "C",
-          "text": "float f = (double) 3.14;"
-        },
-        {
-          "key": "D",
-          "text": "float f = \"3.14\";"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Mặc định hằng số số thực có dấu chấm thập phân (như 3.14) được Java xem là `double`. Cần có hậu tố `f` hoặc `F` để chỉ định kiểu `float`."
-    },
-    {
-      "number": 6,
-      "question": "Toán tử `==` khi so sánh hai biến kiểu nguyên thuỷ (primitive) so sánh điều gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Địa chỉ ô nhớ trên Heap"
-        },
-        {
-          "key": "B",
-          "text": "Giá trị trực tiếp của hai biến"
-        },
-        {
-          "key": "C",
-          "text": "Mã Hashcode của hai biến"
-        },
-        {
-          "key": "D",
-          "text": "Tên biến trong bảng biểu tượng"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Với các kiểu nguyên thuỷ, toán tử `==` so sánh trực tiếp giá trị nhị phân của chúng."
-    },
-    {
-      "number": 7,
-      "question": "Hiện tượng 'Short-circuit evaluation' xảy ra với toán tử nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "& và |"
-        },
-        {
-          "key": "B",
-          "text": "&& và ||"
-        },
-        {
-          "key": "C",
-          "text": "^ và ~"
-        },
-        {
-          "key": "D",
-          "text": "== và !="
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "`&&` và `||` là các toán tử logic điều kiện hỗ trợ short-circuit: bỏ qua vế sau nếu vế trước đã đủ quyết định kết quả biểu thức."
-    },
-    {
-      "number": 8,
-      "question": "Trong Switch Expression (Java 14+), từ khoá nào được dùng để trả về giá trị từ một khối case có nhiều dòng code?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "return"
-        },
-        {
-          "key": "B",
-          "text": "yield"
-        },
-        {
-          "key": "C",
-          "text": "give"
-        },
-        {
-          "key": "D",
-          "text": "break"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "`yield` là ngữ cảnh từ khoá được giới thiệu để trả về giá trị từ một khối lệnh bên trong switch expression."
-    },
-    {
-      "number": 9,
-      "question": "Đoạn code sau in ra màn hình giá trị gì?\n```java\nint x = 10;\nSystem.out.println(x > 5 ? x < 15 ? \"A\" : \"B\" : \"C\");\n```",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "A"
-        },
-        {
-          "key": "B",
-          "text": "B"
-        },
-        {
-          "key": "C",
-          "text": "C"
+          "text": "0"
         },
         {
           "key": "D",
@@ -249,304 +142,412 @@
       "correctAnswers": [
         "A"
       ],
-      "explanation": "Toán tử 3 ngôi kết hợp từ phải qua trái. `x > 5` là true, tiếp tục kiểm tra `x < 15` (10 < 15) là true -> chọn \"A\"."
+      "explanation": "Do tính chất Short-Circuit của toán tử `||`, vì vế trái `x > 0` (1 > 0) đã trả về `true`, JVM không thực thi biểu thức vế phải `++x > 1`. Biến `x` không bị tăng và giữ nguyên giá trị 1."
     },
     {
-      "number": 10,
-      "question": "Kiểu dữ liệu nào dưới đây KHÔNG THỂ sử dụng làm biến biểu thức trong lệnh `switch` cổ điển?",
+      "number": 6,
+      "question": "Biến cục bộ kiểu nguyên thuỷ (ví dụ `int a = 10;`) được khai báo bên trong một phương thức được lưu trữ ở đâu trong bộ nhớ JVM?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "char"
+          "text": "Trên vùng nhớ Heap"
         },
         {
           "key": "B",
-          "text": "String"
+          "text": "Trong Stack Frame của luồng đang thực thi phương thức đó"
         },
         {
           "key": "C",
-          "text": "double"
+          "text": "Trong vùng nhớ Metaspace"
         },
         {
           "key": "D",
-          "text": "enum"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "Các kiểu số thực (`float`, `double`) và `boolean`, `long` không được phép sử dụng trong câu lệnh switch do vấn đề sai số dấu phẩy động."
-    },
-    {
-      "number": 11,
-      "question": "Vòng lặp `do-while` khác biệt cơ bản so với `while` ở điểm nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Không thể bị rơi vào vòng lặp vô tận"
-        },
-        {
-          "key": "B",
-          "text": "Luôn thực hiện thân vòng lặp ít nhất một lần trước khi kiểm tra điều kiện"
-        },
-        {
-          "key": "C",
-          "text": "Tốc độ thực thi luôn nhanh gấp đôi"
-        },
-        {
-          "key": "D",
-          "text": "Chỉ dùng được với mảng 1 chiều"
+          "text": "Trong Program Counter Register"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`do-while` kiểm tra điều kiện ở cuối vòng lặp, do đó khối lệnh trong `do` luôn được chạy ít nhất 1 lần ngay cả khi điều kiện ban đầu là false."
+      "explanation": "Biến cục bộ nguyên thuỷ được lưu trực tiếp trong bảng biến cục bộ (Local Variable Table) của Stack Frame của phương thức đó trên Stack, tự động giải phóng ngay khi phương thức kết thúc."
     },
     {
-      "number": 12,
-      "question": "Đoạn mã sau in ra giá trị gì?\n```java\nint sum = 0;\nfor (int i = 0; i < 5; i++) {\n    if (i == 2) continue;\n    sum += i;\n}\nSystem.out.println(sum);\n```",
+      "number": 7,
+      "question": "Trong Switch Expression của Java 14+, câu lệnh nào bắt buộc phải có nếu tập các trường hợp `case` không bao quát hết mọi giá trị khả dĩ của kiểu dữ liệu đầu vào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "10"
+          "text": "case null"
         },
         {
           "key": "B",
-          "text": "8"
+          "text": "default"
         },
         {
           "key": "C",
-          "text": "7"
+          "text": "break"
         },
         {
           "key": "D",
-          "text": "3"
+          "text": "yield null"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Các giá trị được cộng vào sum là 0, 1, 3, 4 (bỏ qua 2 do `continue`). Tổng là 0 + 1 + 3 + 4 = 8."
+      "explanation": "Switch Expression yêu cầu tính toàn diện (*Exhaustiveness*). Trừ trường hợp dùng với Enum đầy đủ các giá trị hoặc Sealed Class có cây kế thừa khép kín, còn lại bắt buộc phải có nhánh `default`."
     },
     {
-      "number": 13,
-      "question": "Từ khoá `var` (Local Variable Type Inference) được giới thiệu từ Java 10 có thể dùng ở đâu?",
+      "number": 8,
+      "question": "Đoạn code sau in ra giá trị gì?\n```java\nint a = 8; // 1000 nhị phân\nint b = a >> 2;\nSystem.out.println(b);\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Khai báo thuộc tính (field) của class"
+          "text": "16"
         },
         {
           "key": "B",
-          "text": "Khai báo kiểu trả về của method"
+          "text": "4"
         },
         {
           "key": "C",
-          "text": "Khai báo biến cục bộ bên trong phương thức và có gán giá trị khởi tạo ngay lập tức"
-        },
-        {
-          "key": "D",
-          "text": "Khai báo tham số truyền vào của method"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "`var` chỉ được dùng cho biến cục bộ (local variable) và bắt buộc phải có giá trị khởi tạo để trình biên dịch suy luận kiểu dữ liệu."
-    },
-    {
-      "number": 14,
-      "question": "Kết quả của biểu thức `10 / 4` trong Java là gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "2.5"
-        },
-        {
-          "key": "B",
           "text": "2"
         },
         {
+          "key": "D",
+          "text": "1"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Dịch phải 2 bit tương đương phép chia số nguyên cho 2^2 = 4: `8 / 4 = 2` (1000 dịch 2 bit thành 0010)."
+    },
+    {
+      "number": 9,
+      "question": "Toán tử `^` (XOR bitwise) trong biểu thức `5 ^ 5` cho kết quả bằng bao nhiêu?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "5"
+        },
+        {
+          "key": "B",
+          "text": "10"
+        },
+        {
           "key": "C",
-          "text": "3"
+          "text": "0"
         },
         {
           "key": "D",
-          "text": "Lỗi ArithmeticException"
+          "text": "1"
+        }
+      ],
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Quy tắc XOR: Hai bit giống nhau thì ra 0, khác nhau ra 1. Bất kỳ số nào XOR với chính nó đều triệt tiêu toàn bộ các bit về 0 (`x ^ x == 0`)."
+    },
+    {
+      "number": 10,
+      "question": "Khi gán giá trị nguyên lớn bằng chữ số, cú pháp nào sau đây giúp mã nguồn dễ đọc hơn được giới thiệu từ Java 7?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "int val = 1,000,000;"
+        },
+        {
+          "key": "B",
+          "text": "int val = 1_000_000;"
+        },
+        {
+          "key": "C",
+          "text": "int val = 1.000.000;"
+        },
+        {
+          "key": "D",
+          "text": "int val = 1'000'000;"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Cả hai toán hạng `10` và `4` đều là số nguyên (`int`), nên phép chia là phép chia lấy phần nguyên (integer division), cho kết quả là `2`."
+      "explanation": "Dấu gạch dưới `_` được phép đặt giữa các chữ số để phân tách hàng nghìn hoặc nhóm byte mà không làm thay đổi giá trị của số."
+    },
+    {
+      "number": 11,
+      "question": "Đoạn code sau in ra kết quả gì?\n```java\nint x = 2;\nswitch (x) {\n    case 1: System.out.print(\"1\");\n    case 2: System.out.print(\"2\");\n    case 3: System.out.print(\"3\");\n    default: System.out.print(\"D\");\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "2"
+        },
+        {
+          "key": "B",
+          "text": "23D"
+        },
+        {
+          "key": "C",
+          "text": "23"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch thiếu break"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong cấu hình switch cổ điển với dấu hai chấm `:`, nếu không có lệnh `break`, code sẽ tiếp tục trôi xuống (*fall-through*) thực thi toàn bộ các nhánh phía dưới từ điểm khớp (case 2 -> 3 -> default)."
+    },
+    {
+      "number": 12,
+      "question": "Đặc điểm nào dưới đây là ĐÚNG đối với vòng lặp `for-each` (Enhanced for loop) trong Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Có thể dùng để duyệt ngược danh sách từ cuối lên đầu"
+        },
+        {
+          "key": "B",
+          "text": "Nó hoạt động trên mọi đối tượng cài đặt interface `java.lang.Iterable` hoặc mảng"
+        },
+        {
+          "key": "C",
+          "text": "Cho phép xoá phần tử trực tiếp bằng list.remove() an toàn"
+        },
+        {
+          "key": "D",
+          "text": "Tự động cung cấp biến chỉ số index i"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Vòng lặp `for (T item : collection)` được chuyển đổi ở mức bytecode thành một vòng lặp sử dụng `Iterator` cho các lớp triển khai `Iterable`, hoặc dùng vòng lặp for chỉ số cho mảng."
+    },
+    {
+      "number": 13,
+      "question": "Kết quả của phép chia lấy dư số âm: `-10 % 3` trong Java là bao nhiêu?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "-1"
+        },
+        {
+          "key": "C",
+          "text": "2"
+        },
+        {
+          "key": "D",
+          "text": "-2"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Quy tắc phép chia lấy dư `%` trong Java: Dấu của kết quả luôn trùng với dấu của toán bị chia (vế trái). `-10 = 3 * (-3) + (-1)`, do đó kết quả là `-1`."
+    },
+    {
+      "number": 14,
+      "question": "Từ khoá `yield` trong Switch Expression được sử dụng trong ngữ cảnh nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Nhường CPU cho luồng khác"
+        },
+        {
+          "key": "B",
+          "text": "Trả về giá trị từ một khối lệnh case có nhiều dòng (nằm trong cặp ngoặc nhọn `{ }`)"
+        },
+        {
+          "key": "C",
+          "text": "Tương đương với lệnh return thoát khỏi hàm"
+        },
+        {
+          "key": "D",
+          "text": "Tạm dừng vòng lặp vô tận"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khi một case trong switch expression cần thực hiện logic phức tạp gồm nhiều dòng lệnh trong khối `{ }`, từ khoá `yield <value>;` được dùng để ấn định giá trị trả về của cả khối switch."
     },
     {
       "number": 15,
-      "question": "Muốn biểu thức `10 / 4` cho kết quả chính xác `2.5`, ta cần viết thế nào?",
+      "question": "Biểu thức nhị phân `~0` (NOT bitwise của số 0 kiểu int 32-bit) cho giá trị thập phân bằng bao nhiêu?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "10 / 4.0 (hoặc (double) 10 / 4)"
+          "text": "0"
         },
         {
           "key": "B",
-          "text": "float(10 / 4)"
+          "text": "1"
         },
         {
           "key": "C",
-          "text": "(int) 10.0 / 4"
+          "text": "-1"
         },
         {
           "key": "D",
-          "text": "10 // 4"
+          "text": "2147483647"
         }
       ],
       "correctAnswers": [
-        "A"
+        "C"
       ],
-      "explanation": "Chỉ cần 1 trong 2 toán hạng có kiểu dấu phẩy động (như `4.0` hoặc ép kiểu `(double) 10`), Java sẽ tự động nâng cấp phép toán sang kiểu `double`."
+      "explanation": "Số 0 dạng 32-bit là 32 số 0. Toán tử `~` đảo toàn bộ thành 32 số 1 (`0xFFFFFFFF`). Trong hệ bù 2 (Two's complement), dãy 32 số 1 chính là biểu diễn của số `-1`."
     },
     {
       "number": 16,
-      "question": "Biểu thức `\"Blog\" + 1 + 2` cho kết quả chuỗi nào?",
+      "question": "Lệnh `continue outerLabel;` có tác dụng gì trong Java?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "\"Blog3\""
+          "text": "Thoát hoàn toàn khỏi chương trình"
         },
         {
           "key": "B",
-          "text": "\"Blog12\""
+          "text": "Bỏ qua phần còn lại của vòng lặp hiện tại và nhảy tới bước lặp tiếp theo của vòng lặp được gắn nhãn `outerLabel`"
         },
         {
           "key": "C",
-          "text": "Lỗi biên dịch không cộng được số với chuỗi"
+          "text": "Khởi động lại toàn bộ các biến trong hàm"
         },
         {
           "key": "D",
-          "text": "\"Blog\""
+          "text": "Chuyển quyền điều khiển sang khối catch"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Toán tử `+` thực hiện từ trái sang phải. `\"Blog\" + 1` thành `\"Blog1\"`, sau đó `\"Blog1\" + 2` thành `\"Blog12\"`."
+      "explanation": "Labeled `continue` cho phép bỏ qua bước lặp hiện tại của vòng lặp ngoài cùng được đánh nhãn, rất hữu dụng khi duyệt mảng 2 chiều hoặc ma trận phức tạp."
     },
     {
       "number": 17,
-      "question": "Biểu thức `1 + 2 + \"Tech\"` cho kết quả chuỗi nào?",
+      "question": "Phát biểu nào sau đây là ĐÚNG về từ khoá `final` khi áp dụng cho một biến tham chiếu đối tượng (ví dụ: `final List<String> list = new ArrayList<>();`)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "\"3Tech\""
+          "text": "Danh sách trở thành bất biến, không thể gọi `list.add()` để thêm phần tử"
         },
         {
           "key": "B",
-          "text": "\"12Tech\""
+          "text": "Biến tham chiếu `list` không thể trỏ sang đối tượng danh sách khác, nhưng nội dung bên trong đối tượng vẫn có thể sửa đổi bình thường"
         },
         {
           "key": "C",
-          "text": "\"Tech3\""
+          "text": "Toàn bộ các phần tử trong danh sách tự động biến thành hằng số"
         },
         {
           "key": "D",
-          "text": "Lỗi cú pháp"
-        }
-      ],
-      "correctAnswers": [
-        "A"
-      ],
-      "explanation": "`1 + 2` thực hiện phép cộng số học trước ra `3`, sau đó `3 + \"Tech\"` nối chuỗi thành `\"3Tech\"`."
-    },
-    {
-      "number": 18,
-      "question": "Ký tự Unicode trong Java được lưu trữ bằng kiểu dữ liệu nào và kích thước bao nhiêu?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "byte - 1 byte"
-        },
-        {
-          "key": "B",
-          "text": "char - 2 bytes (16-bit unsigned)"
-        },
-        {
-          "key": "C",
-          "text": "char - 1 byte ASCII"
-        },
-        {
-          "key": "D",
-          "text": "string - 4 bytes"
+          "text": "Danh sách tự động được giải phóng khỏi Heap"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Kiểu `char` trong Java chiếm 16-bit (2 bytes) unsigned theo chuẩn UTF-16 code unit, cho phép biểu diễn các ký tự đa ngôn ngữ."
+      "explanation": "`final` trên biến tham chiếu chỉ cố định địa chỉ con trỏ ô nhớ (không thể `list = new OtherList()`), chứ KHÔNG làm cho nội dung đối tượng mà nó trỏ tới trở thành bất biến."
+    },
+    {
+      "number": 18,
+      "question": "Trong phép toán gán kết hợp: `short s = 5; s += 10;`, điều gì diễn ra ngầm định bên dưới?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Lỗi biên dịch vì 5 + 10 ra kiểu int"
+        },
+        {
+          "key": "B",
+          "text": "Java tự động thực hiện ép kiểu thu hẹp ngầm định: `s = (short)(s + 10)`"
+        },
+        {
+          "key": "C",
+          "text": "Biến s tự động biến thành kiểu int vĩnh viễn"
+        },
+        {
+          "key": "D",
+          "text": "Giá trị của s không đổi"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Toán tử gán phức hợp (`+=`, `-=`, `*=`, ...) trong Java tự động chèn phép ép kiểu tường minh về kiểu của vế trái: `E1 op= E2` tương đương `E1 = (T)(E1 op E2)`."
     },
     {
       "number": 19,
-      "question": "Vòng lặp nào sau đây sẽ gây ra lỗi biên dịch (compile error)?",
+      "question": "Khoảng giá trị của kiểu ký tự `char` trong Java là gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "for(;;){}"
+          "text": "-128 đến 127"
         },
         {
           "key": "B",
-          "text": "while(true){}"
+          "text": "-32,768 đến 32,767"
         },
         {
           "key": "C",
-          "text": "while(1){}"
+          "text": "0 đến 65,535 (16-bit unsigned Unicode)"
         },
         {
           "key": "D",
-          "text": "do {} while(true);"
+          "text": "0 đến 255 (ASCII)"
         }
       ],
       "correctAnswers": [
         "C"
       ],
-      "explanation": "Trong Java, điều kiện trong câu lệnh `if`, `while` bắt buộc phải là kiểu `boolean`. Số nguyên `1` không tự động chuyển thành boolean như trong C/C++."
+      "explanation": "Kiểu `char` là kiểu dữ liệu nguyên thuỷ duy nhất trong Java là số nguyên không dấu (unsigned), có kích thước 16-bit nhận giá trị từ 0 (`'\\u0000'`) đến 65535 (`'\\uffff'`)."
     },
     {
       "number": 20,
-      "question": "Phạm vi hoạt động (scope) của biến khai báo trong câu lệnh `for (int i = 0; i < 10; i++)` là ở đâu?",
+      "question": "Đoạn code sau có biên dịch thành công không?\n```java\nvar a = 10;\nvar b = \"Tech\";\na = b;\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Toàn bộ class chứa phương thức"
+          "text": "Thành công vì var là kiểu động (Dynamic typing) giống JavaScript"
         },
         {
           "key": "B",
-          "text": "Toàn bộ phương thức chứa vòng lặp for"
+          "text": "Lỗi biên dịch: Java là ngôn ngữ định kiểu tĩnh (Statically-typed), biến `a` đã được suy luận là `int` nên không thể gán giá trị chuỗi `String`"
         },
         {
           "key": "C",
-          "text": "Chỉ tồn tại cục bộ bên trong khối vòng lặp for"
+          "text": "Chỉ phát sinh lỗi ClassCastException lúc chạy"
         },
         {
           "key": "D",
-          "text": "Tồn tại sau vòng for cho đến khi gặp lệnh return"
+          "text": "Tự động ép kiểu chuỗi thành số 0"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "Biến khởi tạo trong phần header của vòng lặp `for` có phạm vi bị giới hạn cục bộ trong chính vòng lặp đó."
+      "explanation": "`var` trong Java hoàn toàn không phải dynamic typing. Kiểu dữ liệu được ấn định vĩnh viễn tại compile-time dựa vào biểu thức khởi tạo. Do `a` có kiểu `int`, việc gán chuỗi `b` sẽ báo lỗi kiểu không tương thích."
     }
   ]
 }

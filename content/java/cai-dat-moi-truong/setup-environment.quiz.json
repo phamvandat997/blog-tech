@@ -1,552 +1,554 @@
 {
-  "title": "Quiz: Cài Đặt Môi Trường & Công Cụ Phát Triển Java",
+  "title": "Quiz: Cài Đặt Môi Trường, JVM Internals & Build Tools",
   "tags": [
     "Java",
     "Setup",
-    "JDK",
+    "JDK21",
     "JVM",
-    "Maven"
+    "Maven",
+    "Gradle",
+    "ClassLoader"
   ],
   "quizzes": [
     {
       "number": 1,
-      "question": "Thành phần nào trong hệ sinh thái Java chịu trách nhiệm trực tiếp thực thi bytecode?",
+      "question": "Trong kiến trúc JVM, tầng ClassLoader nào chịu trách nhiệm nạp các lớp Java nền tảng cốt lõi nằm trong module `java.base` (như `java.lang.Object`, `java.lang.String`)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "JDK (Java Development Kit)"
+          "text": "Application ClassLoader"
         },
         {
           "key": "B",
-          "text": "JVM (Java Virtual Machine)"
+          "text": "Bootstrap ClassLoader"
         },
         {
           "key": "C",
-          "text": "JRE Thư viện mở rộng"
+          "text": "Platform ClassLoader"
         },
         {
           "key": "D",
-          "text": "Trình biên dịch javac"
+          "text": "System ClassLoader"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "JVM (Java Virtual Machine) là máy ảo nạp và thông dịch/JIT-compile mã bytecode (.class) thành mã máy của hệ điều hành sở tại."
+      "explanation": "Bootstrap ClassLoader (viết bằng mã native C/C++) là classloader gốc cao nhất trong hệ thống phân cấp uỷ thác (Delegation Model), chịu trách nhiệm nạp các lớp lõi trong `java.base` và thư viện thời gian chạy chuẩn của JDK."
     },
     {
       "number": 2,
-      "question": "Sự khác biệt cơ bản nhất giữa JDK và JRE là gì?",
+      "question": "Mô hình ủy thác (Delegation Model) của ClassLoader trong Java hoạt động theo thứ tự nào khi một lớp được yêu cầu nạp?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "JDK chỉ dùng để chạy ứng dụng, JRE để biên dịch mã nguồn"
+          "text": "Application -> Platform -> Bootstrap, tự nạp trước khi hỏi lớp cha"
         },
         {
           "key": "B",
-          "text": "JRE chứa trình biên dịch javac, còn JDK thì không"
+          "text": "Uỷ thác ngược từ con lên cha cao nhất trước; nếu cha không tìm thấy class thì con mới tự quét và nạp"
         },
         {
           "key": "C",
-          "text": "JDK bao gồm JRE cộng thêm các công cụ phát triển (như javac, jdb, jconsole)"
+          "text": "Nạp ngẫu nhiên ở ClassLoader nào có sẵn trong bộ nhớ cache"
         },
         {
           "key": "D",
-          "text": "Không có điểm khác biệt nào, hai khái niệm là một"
+          "text": "Chỉ duy nhất một ClassLoader nạp toàn bộ mọi class của ứng dụng"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "JDK là bộ công cụ phát triển đầy đủ chứa JRE cùng các tiện ích dành cho lập trình viên như javac, jar, javadoc, jdb."
+      "explanation": "Khi nhận yêu cầu nạp lớp, ClassLoader con uỷ thác yêu cầu lên ClassLoader cha trước. Chỉ khi các ClassLoader cha (lên đến Bootstrap) không tìm thấy lớp trong phạm vi của mình, lớp con mới tự tìm và nạp class đó vào bộ nhớ."
     },
     {
       "number": 3,
-      "question": "Lệnh dòng lệnh nào được sử dụng để biên dịch file mã nguồn `App.java` thành bytecode?",
+      "question": "Vùng nhớ `Metaspace` trong JVM (từ Java 8 trở đi) có đặc điểm nào khác biệt căn bản so với vùng nhớ `PermGen` cũ?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "java App.java"
+          "text": "Nằm trong vùng nhớ Heap và chịu sự kiểm soát dung lượng cố định của cờ -Xmx"
         },
         {
           "key": "B",
-          "text": "javac App.java"
+          "text": "Sử dụng bộ nhớ Native ngoài RAM của hệ điều hành, có khả năng tự động co giãn theo dung lượng RAM vật lý"
         },
         {
           "key": "C",
-          "text": "javap App.class"
+          "text": "Chỉ lưu trữ các đối tượng String literals"
         },
         {
           "key": "D",
-          "text": "compile App.java"
+          "text": "Bị xoá hoàn toàn khỏi kiến trúc JVM và gộp vào Stack"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`javac` (Java Compiler) là lệnh biên dịch file mã nguồn `.java` thành file bytecode `.class`."
+      "explanation": "Metaspace lưu trữ metadata của các class và bytecode phương thức. Khác với PermGen bị giới hạn bởi kích thước cố định gây lỗi `java.lang.OutOfMemoryError: PermGen space`, Metaspace nằm ở Native Memory và tự động mở rộng theo nhu cầu của OS."
     },
     {
       "number": 4,
-      "question": "Mục đích của biến môi trường `JAVA_HOME` là gì?",
+      "question": "Lệnh dòng lệnh JDK nào được dùng để kiểm tra thông tin Stack Trace của các Thread đang chạy nhằm phát hiện tình trạng Deadlock trong ứng dụng?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Chỉ định thư mục chứa mã nguồn dự án Java của bạn"
+          "text": "jstat"
         },
         {
           "key": "B",
-          "text": "Trỏ đến thư mục cài đặt gốc của JDK để các công cụ như Maven, Gradle, IDE nhận diện"
+          "text": "jstack"
         },
         {
           "key": "C",
-          "text": "Quy định dung lượng RAM tối đa cấp cho JVM"
+          "text": "jmap"
         },
         {
           "key": "D",
-          "text": "Khai báo thư mục chứa file tạm thời của Java"
+          "text": "jps"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`JAVA_HOME` là biến môi trường chuẩn trỏ tới đường dẫn thư mục cài đặt JDK, được nhiều công cụ build và phần mềm bên thứ 3 sử dụng."
+      "explanation": "`jstack <PID>` in ra toàn bộ trạng thái và stack trace của các thread trong tiến trình JVM, tự động phân tích và cảnh báo nếu có deadlock xảy ra giữa các luồng."
     },
     {
       "number": 5,
-      "question": "Tập tin được tạo ra sau khi biên dịch mã nguồn Java có phần mở rộng là gì?",
+      "question": "Tại sao trong cấu hình biến môi trường, người ta thường khai báo `JAVA_HOME` riêng và sau đó mới đưa `%JAVA_HOME%\\bin` vào `PATH`?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": ".exe"
+          "text": "Vì hệ điều hành không cho phép gõ trực tiếp đường dẫn dài vào PATH"
         },
         {
           "key": "B",
-          "text": ".byte"
+          "text": "Để các công cụ của bên thứ ba (Maven, Gradle, Tomcat, IDE) có thể dễ dàng đọc giá trị JAVA_HOME và khi cần đổi bản JDK chỉ phải sửa ở 1 nơi duy nhất"
         },
         {
           "key": "C",
-          "text": ".class"
+          "text": "Bắt buộc theo chuẩn ngôn ngữ C++"
         },
         {
           "key": "D",
-          "text": ".obj"
+          "text": "Để tránh bị virus xoá file javac"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "Trình biên dịch Java tạo ra file bytecode có đuôi `.class` chứa mã nhị phân trung gian độc lập phần cứng."
+      "explanation": "Biến `JAVA_HOME` là quy ước chuẩn toàn cầu để các build tool và application server định vị đúng bản cài JDK. Việc cấu hình tách biệt giúp việc chuyển đổi phiên bản JDK diễn ra nhanh chóng mà không làm xáo trộn biến PATH."
     },
     {
       "number": 6,
-      "question": "Khái niệm 'Write Once, Run Anywhere' (WORA) của Java đạt được nhờ vào yếu tố nào?",
+      "question": "Lệnh `javac -d out src/Main.java` có tác dụng gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Trình biên dịch C++ ngầm bên dưới"
+          "text": "Xoá file Main.java trong thư mục out"
         },
         {
           "key": "B",
-          "text": "Mã nguồn Java được thông dịch trực tiếp bởi trình duyệt"
+          "text": "Biên dịch file Main.java và đặt file bytecode .class vào thư mục đích chỉ định là `out`"
         },
         {
           "key": "C",
-          "text": "Sự trung gian của bytecode và máy ảo JVM trên từng hệ điều hành cụ thể"
+          "text": "Chạy chương trình và hiển thị kết quả debug ra màn hình out"
         },
         {
           "key": "D",
-          "text": "Mọi hệ điều hành đều hỗ trợ sẵn tập lệnh x86 giống nhau"
+          "text": "Giải nén mã nguồn từ file jar"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "Bytecode được tạo ra độc lập với hệ điều hành, và mỗi hệ điều hành sở hữu một bản cài đặt JVM riêng để chuyển đổi bytecode đó thành mã máy tương ứng."
+      "explanation": "Cờ `-d <directory>` trong `javac` chỉ định thư mục đích (*destination*) nơi các file `.class` sau khi biên dịch (kèm theo cấu trúc cây package tương ứng) sẽ được xuất ra."
     },
     {
       "number": 7,
-      "question": "Phiên bản Java nào dưới đây là bản LTS (Long-Term Support)?",
+      "question": "Trong Maven, phạm vi phụ thuộc (Dependency Scope) nào chỉ cung cấp thư viện lúc biên dịch và chạy kiểm thử nhưng KHÔNG được đóng gói vào sản phẩm cuối (JAR/WAR)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Java 19"
+          "text": "compile"
         },
         {
           "key": "B",
-          "text": "Java 20"
+          "text": "test"
         },
         {
           "key": "C",
-          "text": "Java 21"
+          "text": "runtime"
         },
         {
           "key": "D",
-          "text": "Java 22"
+          "text": "system"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "Java 21 phát hành tháng 09/2023 là phiên bản hỗ trợ dài hạn (LTS). Các bản 19, 20, 22 là bản tính năng ngắn hạn (6 tháng)."
+      "explanation": "Scope `<scope>test</scope>` (như JUnit, Mockito) chỉ phục vụ quá trình biên dịch và chạy unit test trong thư mục `src/test/java`, hoàn toàn bị loại bỏ khi đóng gói ứng dụng (package/distribute)."
     },
     {
       "number": 8,
-      "question": "Trong Apache Maven, file cấu hình chính quản lý thông tin dự án và dependencies có tên là gì?",
+      "question": "Trong công cụ quản lý SDKMAN!, lệnh nào dùng để tạm thời chuyển sang sử dụng Java 21 chỉ trong cửa sổ terminal hiện tại mà không làm thay đổi phiên bản mặc định của máy?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "package.json"
+          "text": "sdk default java 21.0.2-tem"
         },
         {
           "key": "B",
-          "text": "build.xml"
+          "text": "sdk use java 21.0.2-tem"
         },
         {
           "key": "C",
-          "text": "pom.xml"
+          "text": "sdk change java 21"
         },
         {
           "key": "D",
-          "text": "settings.gradle"
+          "text": "sdk switch 21"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "`pom.xml` (Project Object Model) là file cấu hình XML cốt lõi của mọi dự án Maven."
+      "explanation": "`sdk use <candidate> <version>` thiết lập phiên bản chỉ áp dụng cho phiên làm việc của terminal hiện tại; trong khi `sdk default` sẽ đặt làm phiên bản mặc định toàn hệ thống."
     },
     {
       "number": 9,
-      "question": "Cấu trúc thư mục mã nguồn chuẩn theo quy ước của Maven và Gradle là gì?",
+      "question": "File `mvnw` (Maven Wrapper) và `gradlew` (Gradle Wrapper) có lợi ích cốt lõi nào trong quy trình CI/CD và làm việc nhóm?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "src/code và src/tests"
+          "text": "Tăng gấp đôi tốc độ mạng khi tải thư viện"
         },
         {
           "key": "B",
-          "text": "src/main/java và src/test/java"
+          "text": "Đảm bảo mọi lập trình viên và máy chủ build tự động dùng chính xác cùng một phiên bản build tool cố định mà không cần cài đặt Maven/Gradle thủ công từ trước"
         },
         {
           "key": "C",
-          "text": "app/java và app/test"
+          "text": "Mã hoá toàn bộ mã nguồn chống dịch ngược"
         },
         {
           "key": "D",
-          "text": "source/main và source/test"
+          "text": "Tự động sửa lỗi cú pháp Java"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Quy ước chuẩn (*Convention over Configuration*) đặt mã nguồn ứng dụng tại `src/main/java` và mã kiểm thử tại `src/test/java`."
+      "explanation": "Wrapper scripts tự động kiểm tra và tải đúng bản build tool được khai báo trong dự án (ví dụ Maven 3.9.6 hay Gradle 8.5), loại trừ hoàn toàn các lỗi sai lệch môi trường (\"It works on my machine\")."
     },
     {
       "number": 10,
-      "question": "JIT Compiler (Just-In-Time) bên trong JVM có vai trò gì?",
+      "question": "Giai đoạn 'Verification' (Xác minh) trong quá trình Linking của ClassLoader thực hiện nhiệm vụ gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Biên dịch file `.java` thành file `.class`"
+          "text": "Kiểm tra bản quyền phần mềm Oracle"
         },
         {
           "key": "B",
-          "text": "Biên dịch các đoạn bytecode thường xuyên được gọi (hotspots) thành mã máy trực tiếp để tăng tốc độ"
+          "text": "Quét toàn bộ bytecode để đảm bảo mã tuân thủ cấu trúc của JVM specification, không có hành vi can thiệp trái phép bộ nhớ hoặc thao tác con trỏ bất hợp pháp"
         },
         {
           "key": "C",
-          "text": "Kiểm tra lỗi ngữ pháp mã nguồn trước khi lưu file"
+          "text": "Gán giá trị khởi tạo cho biến static"
         },
         {
           "key": "D",
-          "text": "Quản lý và giải phóng bộ nhớ RAM"
+          "text": "Xoá các comment trong code"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "JIT Compiler theo dõi mã thực thi, nhận diện các đoạn mã chạy nhiều lần ('hot spots') và dịch chúng sang mã máy trực tiếp để tối ưu hiệu năng."
+      "explanation": "Bytecode Verifier là lá chắn bảo mật sống còn của JVM. Nó kiểm tra để đảm bảo file .class không bị giả mạo hay chèn các lệnh gây lỗi tràn stack, vi phạm access modifier hoặc ép kiểu không an toàn."
     },
     {
       "number": 11,
-      "question": "Khi chạy lệnh `java HelloWorld`, điều gì xảy ra nếu file `HelloWorld.class` nằm trong thư mục hiện tại nhưng biến `CLASSPATH` không chứa dấu `.`?",
+      "question": "Thành phần nào của JVM chịu trách nhiệm theo dõi tần suất gọi phương thức và biên dịch các đoạn bytecode chạy nhiều lần (Hotspots) thành mã máy trực tiếp?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "JVM vẫn tự động tìm thấy nếu không chỉ định gì khác"
+          "text": "Interpreter"
         },
         {
           "key": "B",
-          "text": "JVM có thể báo lỗi `Could not find or load main class HelloWorld`"
+          "text": "JIT Compiler (C1 / C2 Compiler)"
         },
         {
           "key": "C",
-          "text": "JVM tự động xoá file .class"
+          "text": "Garbage Collector"
         },
         {
           "key": "D",
-          "text": "Chương trình sẽ tự động mở IDE"
+          "text": "Class Verifier"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Nếu biến CLASSPATH được đặt nhưng không bao gồm thư mục hiện tại (`.`), JVM sẽ không tìm thấy class trong thư mục đang đứng trừ khi thêm cờ `-cp .`."
+      "explanation": "JIT (Just-In-Time) Compiler biên dịch các đoạn mã được gọi thường xuyên (hot spots) sang native machine code và lưu vào Code Cache, giúp Java đạt tốc độ gần như tương đương với C++ sau giai đoạn khởi động (warm-up)."
     },
     {
       "number": 12,
-      "question": "Kể từ Java 11, tính năng nào cho phép lập trình viên chạy trực tiếp file mã nguồn đơn lẻ mà không cần gọi lệnh `javac` trước?",
+      "question": "Trong Maven, khi thực thi lệnh `mvn verify`, thứ tự các phase nào sau đây được đảm bảo chạy?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Single-File Source-Code Programs (lệnh: java App.java)"
+          "text": "Chỉ chạy verify và kết thúc ngay"
         },
         {
           "key": "B",
-          "text": "Java Scripting Engine"
+          "text": "validate -> compile -> test -> package -> verify"
         },
         {
           "key": "C",
-          "text": "GraalVM Native Image"
+          "text": "clean -> verify -> install"
         },
         {
           "key": "D",
-          "text": "JShell Tool"
+          "text": "compile -> verify -> package"
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "Kể từ Java 11 (JEP 330), bạn có thể chạy thẳng `java Main.java`, JVM sẽ tự động biên dịch trong bộ nhớ và thực thi ngay lập tức."
+      "explanation": "Vòng đời mặc định của Maven là tuần tự. Bất kỳ phase nào được gọi thì tất cả các phase đứng trước nó trong chu kỳ (validate, compile, test, package) đều sẽ tự động được chạy trước."
     },
     {
       "number": 13,
-      "question": "Công cụ REPL (Read-Eval-Print Loop) tương tác dòng lệnh được tích hợp sẵn từ Java 9 là gì?",
+      "question": "Khi gõ lệnh `jshell` trên terminal của JDK 21, lập trình viên nhận được môi trường gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "jconsole"
+          "text": "Trình quản lý cơ sở dữ liệu SQL"
         },
         {
           "key": "B",
-          "text": "jshell"
+          "text": "Môi trường REPL (Read-Eval-Print Loop) thực thi ngay lập tức các câu lệnh, biểu thức và phương thức Java mà không cần tạo class hay hàm main()"
         },
         {
           "key": "C",
-          "text": "javap"
+          "text": "Trình vẽ biểu đồ bộ nhớ Heap"
         },
         {
           "key": "D",
-          "text": "jdb"
+          "text": "Giao diện quản trị Spring Boot"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`jshell` là công cụ REPL của Java cho phép thử nghiệm nhanh các biểu thức, câu lệnh và phương thức Java mà không cần tạo class hay method main."
+      "explanation": "`jshell` (JEP 222) là công cụ dòng lệnh REPL tích hợp của Java, cho phép gõ code và thấy kết quả ngay, rất tiện lợi để thử nghiệm API, cú pháp hoặc thuật toán."
     },
     {
       "number": 14,
-      "question": "Khi cấu hình biến `PATH` trên hệ điều hành, tại sao cần đưa thư mục `bin` của JDK vào `PATH`?",
+      "question": "Trong cấu hình IntelliJ IDEA, tùy chọn 'Language Level' khác với 'Project SDK' ở điểm nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Để tăng tốc độ đọc ghi đĩa cứng"
+          "text": "Hai thông số này là một"
         },
         {
           "key": "B",
-          "text": "Để có thể gọi các lệnh như `java`, `javac`, `jar` từ bất kỳ thư mục nào trên terminal/command prompt"
+          "text": "Project SDK là bản cài JDK dùng để biên dịch; Language Level quy định cú pháp tính năng Java được phép dùng trong code (ví dụ dùng JDK 21 nhưng code ở chuẩn Java 17)"
         },
         {
           "key": "C",
-          "text": "Để cho phép ứng dụng Java truy cập internet"
+          "text": "Language Level quy định ngôn ngữ giao diện tiếng Anh hay tiếng Việt"
         },
         {
           "key": "D",
-          "text": "Để mã hoá các file mã nguồn"
+          "text": "Language Level chỉ dùng cho dự án Android"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Biến PATH giúp hệ điều hành tìm kiếm các file thực thi nhị phân. Đưa `%JAVA_HOME%\\bin` vào PATH giúp thực thi `javac` hay `java` ở bất cứ đâu."
+      "explanation": "Project SDK là bộ công cụ JDK vật lý cài trên máy, còn Language Level là mức tính năng cú pháp mà IDE cho phép và compiler tuân thủ (ví dụ tương thích ngược với môi trường production chạy Java cũ)."
     },
     {
       "number": 15,
-      "question": "Trong Gradle, ngôn ngữ nào thường được sử dụng để viết file kịch bản build hiện đại?",
+      "question": "Lệnh `jcmd <PID> GC.heap_info` dùng để làm gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Python hoặc Ruby"
+          "text": "Xoá sạch bộ nhớ Heap ngay lập tức"
         },
         {
           "key": "B",
-          "text": "Groovy hoặc Kotlin DSL"
+          "text": "Xem thông tin chi tiết về dung lượng bộ nhớ Heap, mức độ sử dụng của các thế hệ Eden, Survivor, Old Gen"
         },
         {
           "key": "C",
-          "text": "XML thuần"
+          "text": "Tắt máy chủ Java"
         },
         {
           "key": "D",
-          "text": "C++ hoặc Rust"
+          "text": "Kiểm tra tốc độ đọc đĩa cứng"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Gradle hỗ trợ Groovy DSL (`build.gradle`) và Kotlin DSL (`build.gradle.kts`), trong đó Kotlin DSL ngày càng được khuyến nghị vì hỗ trợ gợi ý code mạnh mẽ."
+      "explanation": "`jcmd` là công cụ chẩn đoán đa năng chuẩn của JDK. Lệnh `GC.heap_info` hiển thị không gian cấp phát và dung lượng thực tế đang dùng của từng thế hệ trong Heap."
     },
     {
       "number": 16,
-      "question": "Lệnh Maven nào dùng để dọn dẹp các file sinh ra từ lần build trước và đóng gói lại ứng dụng thành file JAR/WAR?",
+      "question": "File `pom.xml` trong Maven có một thẻ `<packaging>` nhận các giá trị nào sau đây?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "mvn clean package"
+          "text": "jar, war, pom"
         },
         {
           "key": "B",
-          "text": "mvn compile run"
+          "text": "exe, dmg, deb"
         },
         {
           "key": "C",
-          "text": "mvn build new"
+          "text": "zip, rar, 7z"
         },
         {
           "key": "D",
-          "text": "mvn refresh all"
+          "text": "class, java, byte"
         }
       ],
       "correctAnswers": [
         "A"
       ],
-      "explanation": "`mvn clean package` sẽ xoá sạch thư mục `target/` cũ (clean) rồi biên dịch, chạy test và đóng gói ứng dụng (package)."
+      "explanation": "Thẻ `<packaging>` xác định định dạng đầu ra của dự án: `jar` (ứng dụng chuẩn/thư viện), `war` (ứng dụng web chạy trên web server), hoặc `pom` (dự án cha quản lý đa module)."
     },
     {
       "number": 17,
-      "question": "Trong IntelliJ IDEA, phím tắt mặc định phổ biến để chạy chương trình hiện tại trên Windows/Linux là gì?",
+      "question": "Tính năng 'Single-File Source-Code Programs' (chạy `java HelloWorld.java` trực tiếp) có điểm giới hạn nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Ctrl + S"
+          "text": "Chỉ dùng được cho file đơn lẻ, không thể biên dịch tự động các class khác nếu chúng nằm trong nhiều file riêng biệt mà không chỉ định classpath"
         },
         {
           "key": "B",
-          "text": "Shift + F10 (hoặc Ctrl + Shift + F10)"
+          "text": "Không thể sử dụng bất kỳ thư viện nào của Java chuẩn"
         },
         {
           "key": "C",
-          "text": "Alt + F4"
+          "text": "Chỉ chạy được tối đa 5 giây"
         },
         {
           "key": "D",
-          "text": "Ctrl + Shift + Delete"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Trong IntelliJ IDEA, `Shift + F10` dùng để chạy cấu hình gần nhất, và `Ctrl + Shift + F10` chạy class/main đang mở."
-    },
-    {
-      "number": 18,
-      "question": "Bản phân phối Adoptium Eclipse Temurin có ưu thế gì nổi bật?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Chỉ hoạt động trên Windows 32-bit"
-        },
-        {
-          "key": "B",
-          "text": "Là bản phân phối mã nguồn mở chất lượng cao, miễn phí, vượt qua bộ kiểm thử Java SE TCK của Eclipse Foundation"
-        },
-        {
-          "key": "C",
-          "text": "Bắt buộc phải trả phí bản quyền hàng tháng cho cá nhân"
-        },
-        {
-          "key": "D",
-          "text": "Không bao gồm bộ dọn rác tự động (Garbage Collector)"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Eclipse Temurin từ Adoptium là bản build OpenJDK được bảo trợ bởi các tập đoàn lớn, miễn phí, đạt chuẩn TCK và được sử dụng rộng rãi toàn cầu."
-    },
-    {
-      "number": 19,
-      "question": "Khái niệm `Garbage Collection` (GC) trong JVM chịu trách nhiệm gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Tự động phát hiện và giải phóng vùng nhớ Heap không còn được tham chiếu"
-        },
-        {
-          "key": "B",
-          "text": "Xoá các dòng comment thừa trong file mã nguồn"
-        },
-        {
-          "key": "C",
-          "text": "Dọn dẹp lịch sử commit của Git"
-        },
-        {
-          "key": "D",
-          "text": "Tối ưu hóa các truy vấn cơ sở dữ liệu"
+          "text": "Bắt buộc phải cài đặt Maven trước"
         }
       ],
       "correctAnswers": [
         "A"
       ],
-      "explanation": "Garbage Collector là tiến trình nền tự động thu hồi bộ nhớ của các đối tượng không còn được sử dụng trong Heap, giúp lập trình viên không cần giải phóng bộ nhớ thủ công như C/C++."
+      "explanation": "Tính năng chạy trực tiếp file `.java` biên dịch trong bộ nhớ RAM, rất tiện cho script nhanh hoặc học tập, nhưng không sinh ra file `.class` trên đĩa và không quản lý được các dự án đa module phức tạp."
     },
     {
-      "number": 20,
-      "question": "File `mvnw` và `gradlew` trong thư mục dự án đại diện cho điều gì?",
+      "number": 18,
+      "question": "Cờ tham số JVM `-Xms512m -Xmx4096m` có ý nghĩa gì khi khởi động ứng dụng Java?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Các file virus độc hại cần xoá ngay"
+          "text": "Quy định số lượng luồng tối thiểu là 512 và tối đa là 4096"
         },
         {
           "key": "B",
-          "text": "Wrapper scripts cho phép build dự án với phiên bản build tool cố định mà máy trạm không cần cài sẵn Maven/Gradle toàn cục"
+          "text": "Cấp phát dung lượng bộ nhớ Heap khởi điểm là 512MB và giới hạn tối đa không vượt quá 4096MB (4GB)"
         },
         {
           "key": "C",
-          "text": "File chứa mật khẩu cơ sở dữ liệu của dự án"
+          "text": "Giới hạn tốc độ mạng kết nối vào ứng dụng"
         },
         {
           "key": "D",
-          "text": "Trình tạo giao diện đồ hoạ cho dự án"
+          "text": "Quy định dung lượng bộ nhớ Metaspace"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Maven Wrapper (`mvnw`) và Gradle Wrapper (`gradlew`) tự động tải và kích hoạt phiên bản build tool được chỉ định trong dự án, đảm bảo tính nhất quán trên mọi máy trạm và CI/CD."
+      "explanation": "`-Xms` (Initial Heap Size) định nghĩa dung lượng RAM cấp phát cho Heap lúc bật ứng dụng; `-Xmx` (Maximum Heap Size) là trần tối đa bộ nhớ Heap mà JVM được phép chiếm dụng."
+    },
+    {
+      "number": 19,
+      "question": "Trong Gradle, lệnh `gradle build --scan` cung cấp lợi ích gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Quét virus cho máy tính"
+        },
+        {
+          "key": "B",
+          "text": "Tạo một báo cáo phân tích chi tiết trực quan (Build Scan) về thời gian chạy của từng task, tài nguyên tiêu tốn và các lỗi phát sinh trên nền web"
+        },
+        {
+          "key": "C",
+          "text": "Xoá sạch mã nguồn lỗi"
+        },
+        {
+          "key": "D",
+          "text": "Tìm kiếm các file trùng lặp"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Gradle Build Scan là dịch vụ phân tích chuyên sâu giúp lập trình viên xác định chính xác task nào gây nghẽn cổ chai và nguyên nhân khiến bản build bị chậm."
+    },
+    {
+      "number": 20,
+      "question": "Đoạn mã sau khi chạy lệnh `javac` sẽ tạo ra bao nhiêu file `.class` trên đĩa cứng?\n```java\npublic class Outer {\n    class Inner {}\n    static class Nested {}\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "1 file duy nhất (Outer.class)"
+        },
+        {
+          "key": "B",
+          "text": "3 file: Outer.class, Outer$Inner.class và Outer$Nested.class"
+        },
+        {
+          "key": "C",
+          "text": "2 file: Outer.class và Inner.class"
+        },
+        {
+          "key": "D",
+          "text": "Không tạo ra file nào do lỗi cú pháp"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "JVM biểu diễn mỗi class (kể cả inner class và static nested class) bằng một file `.class` riêng biệt trên hệ thống tập tin, sử dụng dấu `$` để phân tách tên lớp ngoài và lớp trong."
     }
   ]
 }

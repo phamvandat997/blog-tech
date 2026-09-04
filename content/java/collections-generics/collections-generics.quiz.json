@@ -1,376 +1,108 @@
 {
-  "title": "Quiz: Java Collections Framework & Generics",
+  "title": "Quiz: Collections Framework & Generics Chuyên Sâu",
   "tags": [
     "Java",
     "Collections",
     "Generics",
     "HashMap",
-    "ArrayList"
+    "ArrayList",
+    "DataStructures",
+    "TypeErasure"
   ],
   "quizzes": [
     {
       "number": 1,
-      "question": "Interface nào là gốc của `List`, `Set` và `Queue` trong Java Collections Framework?",
+      "question": "Trong `HashMap` của Java, tại sao dung lượng của mảng bảng băm (`table.length`) luôn bắt buộc phải là một số luỹ thừa của 2 ($2^n$)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "java.util.Map"
+          "text": "Để tăng dung lượng bộ nhớ Heap của JVM"
         },
         {
           "key": "B",
-          "text": "java.util.Collection"
+          "text": "Để cho phép thay thế phép chia lấy dư tốn kém `hash % length` bằng phép toán bitwise `(length - 1) & hash`, giúp tính toán chỉ số bucket với tốc độ phần cứng cực đại"
         },
         {
           "key": "C",
-          "text": "java.util.AbstractList"
+          "text": "Vì mã hashcode luôn là số chẵn"
         },
         {
           "key": "D",
-          "text": "java.util.Arrays"
+          "text": "Do giới hạn của hệ điều hành 64-bit"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`Collection` là root interface của List, Set và Queue. `Map` không kế thừa từ Collection do có cấu trúc key-value riêng."
+      "explanation": "Khi $n$ là luỹ thừa của 2, $n - 1$ sẽ có dạng nhị phân là các số 1 liên tiếp (`01111...`). Lúc này `hash & (n - 1)` tương đương chính xác với `hash % n` nhưng được xử lý bằng cổng logic AND ở cấp CPU chỉ tốn 1 chu kỳ máy."
     },
     {
       "number": 2,
-      "question": "Độ phức tạp thời gian trung bình (Time Complexity) khi truy xuất một phần tử theo index trong `ArrayList` là bao nhiêu?",
+      "question": "Khi số phần tử trong một bucket của `HashMap` đạt bao nhiêu thì nó sẽ chuyển đổi từ danh sách liên kết đơn sang Cây Đỏ-Đen (Red-Black Tree)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "O(n)"
+          "text": "Ngưỡng 4 phần tử"
         },
         {
           "key": "B",
-          "text": "O(1)"
+          "text": "Ngưỡng 8 phần tử (kèm theo điều kiện dung lượng bảng >= 64)"
         },
         {
           "key": "C",
-          "text": "O(log n)"
+          "text": "Ngưỡng 16 phần tử"
         },
         {
           "key": "D",
-          "text": "O(n^2)"
+          "text": "Ngưỡng 32 phần tử"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Vì `ArrayList` được lưu trữ trên mảng động tuần tự, việc truy xuất `get(index)` đạt tốc độ ngẫu nhiên tức thì O(1)."
+      "explanation": "Hằng số `TREEIFY_THRESHOLD = 8` quy định khi bucket có từ 8 node trở lên và tổng dung lượng mảng `MIN_TREEIFY_CAPACITY >= 64`, bucket sẽ chuyển sang Red-Black Tree để giảm độ phức tạp tìm kiếm từ O(n) xuống O(log n)."
     },
     {
       "number": 3,
-      "question": "Khi chèn hoặc xoá phần tử ở vị trí đầu tiên (index 0) liên tục, cấu trúc nào sau đây hiệu quả hơn?",
+      "question": "Khi một `ArrayList` có dung lượng hiện tại là 20 phần tử bị đầy, lần thêm phần tử tiếp theo sẽ tự động mở rộng dung lượng mới của mảng lên bao nhiêu phần tử?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "ArrayList"
+          "text": "40 (gấp đôi)"
         },
         {
           "key": "B",
-          "text": "LinkedList"
+          "text": "30 (tăng 50%: oldCapacity + (oldCapacity >> 1))"
         },
         {
           "key": "C",
-          "text": "Vector"
+          "text": "25"
         },
         {
           "key": "D",
-          "text": "Array thông thường"
+          "text": "35"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Trong `LinkedList`, chèn ở đầu chỉ cần cập nhật con trỏ Node `head` với chi phí O(1). Với `ArrayList`, mọi phần tử phải bị dịch chuyển sang phải một vị trí (O(n))."
+      "explanation": "Công thức tăng dung lượng chuẩn của OpenJDK: `newCapacity = oldCapacity + (oldCapacity >> 1)`. Với 20 phần tử: `20 + (20 >> 1) = 20 + 10 = 30` phần tử."
     },
     {
       "number": 4,
-      "question": "Cấu trúc nào đảm bảo các phần tử luôn được tự động sắp xếp theo thứ tự tự nhiên (Natural Ordering) hoặc theo một `Comparator`?",
+      "question": "Cấu trúc dữ liệu nào được khuyến nghị sử dụng thay thế cho lớp `java.util.Stack` cổ xưa khi cần cài đặt ngăn xếp (LIFO) trong môi trường đơn luồng?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "HashSet"
+          "text": "Vector"
         },
         {
           "key": "B",
-          "text": "LinkedHashSet"
-        },
-        {
-          "key": "C",
-          "text": "TreeSet"
-        },
-        {
-          "key": "D",
-          "text": "ArrayList"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "`TreeSet` (cùng `TreeMap`) triển khai dựa trên cây Đỏ-Đen (NavigableSet) tự động duy trì thứ tự sắp xếp của phần tử."
-    },
-    {
-      "number": 5,
-      "question": "Theo hợp đồng (contract) giữa `equals()` và `hashCode()` trong Java, điều nào sau đây là BẮT BUỘC?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Nếu hai đối tượng có cùng hashCode, chúng bắt buộc phải equals() == true"
-        },
-        {
-          "key": "B",
-          "text": "Nếu hai đối tượng equals() == true, chúng bắt buộc phải có cùng giá trị hashCode()"
-        },
-        {
-          "key": "C",
-          "text": "Mỗi đối tượng phải có một hashCode duy nhất toàn hệ thống"
-        },
-        {
-          "key": "D",
-          "text": "Không cần thiết phải ghi đè hashCode() khi đã có equals()"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Quy tắc bắt buộc: Nếu `obj1.equals(obj2)` là true thì `obj1.hashCode() == obj2.hashCode()`. Chiều ngược lại có thể trùng mã băm do va chạm (collision)."
-    },
-    {
-      "number": 6,
-      "question": "Trong Java 8+, khi một bucket trong `HashMap` bị xung đột băm vượt quá ngưỡng bao nhiêu phần tử (với kích thước mảng đủ lớn) thì bucket đó chuyển sang dạng Red-Black Tree?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "4"
-        },
-        {
-          "key": "B",
-          "text": "8"
-        },
-        {
-          "key": "C",
-          "text": "16"
-        },
-        {
-          "key": "D",
-          "text": "32"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Hằng số `TREEIFY_THRESHOLD = 8`. Khi bucket có từ 8 phần tử và tổng dung lượng map >= 64, bucket sẽ chuyển sang Red-Black Tree để cải thiện tìm kiếm từ O(n) về O(log n)."
-    },
-    {
-      "number": 7,
-      "question": "Nguyên tắc 'PECS' trong Java Generics là viết tắt của cụm từ nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Private Extends, Consumer Static"
-        },
-        {
-          "key": "B",
-          "text": "Producer Extends, Consumer Super"
-        },
-        {
-          "key": "C",
-          "text": "Protected Encapsulation, Class Super"
-        },
-        {
-          "key": "D",
-          "text": "Parallel Execution, Concurrent Streams"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "PECS: Producer Extends, Consumer Super. Nếu tập hợp sản xuất ra dữ liệu (chỉ đọc) dùng `? extends T`; nếu tập hợp tiêu thụ dữ liệu (ghi vào) dùng `? super T`."
-    },
-    {
-      "number": 8,
-      "question": "Hiện tượng 'Type Erasure' trong Java Generics diễn ra tại thời điểm nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Khi ứng dụng đang chạy (Runtime)"
-        },
-        {
-          "key": "B",
-          "text": "Khi biên dịch mã nguồn sang bytecode (Compile-time)"
-        },
-        {
-          "key": "C",
-          "text": "Khi Garbage Collector kích hoạt"
-        },
-        {
-          "key": "D",
-          "text": "Khi nạp class vào ClassLoader"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Java sử dụng cơ chế xóa kiểu (Type Erasure) tại compile time để tương thích ngược. Trình biên dịch xóa toàn bộ tham số kiểu generic và thay bằng `Object` hoặc bound tương ứng."
-    },
-    {
-      "number": 9,
-      "question": "Ngoại lệ `ConcurrentModificationException` thường xảy ra trong tình huống nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Hai luồng cùng truy cập file"
-        },
-        {
-          "key": "B",
-          "text": "Sửa đổi (thêm/xoá) cấu trúc của Collection trong khi đang duyệt nó bằng iterator/for-each mà không dùng phương thức `iterator.remove()`"
-        },
-        {
-          "key": "C",
-          "text": "Ép kiểu sai giữa hai Collection"
-        },
-        {
-          "key": "D",
-          "text": "Vượt quá bộ nhớ Heap"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Cơ chế Fail-Fast của Iterator theo dõi biến `modCount`. Nếu phát hiện collection bị thay đổi phần tử trong lúc lặp, nó ném ngay `ConcurrentModificationException`."
-    },
-    {
-      "number": 10,
-      "question": "Sự khác biệt cơ bản giữa `Comparable` và `Comparator` là gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "`Comparable` nằm trong class đối tượng định nghĩa thứ tự tự nhiên (compareTo); `Comparator` là lớp/hàm độc lập định nghĩa chiến lược sắp xếp tuỳ biến (compare)"
-        },
-        {
-          "key": "B",
-          "text": "`Comparable` sắp xếp giảm dần, `Comparator` sắp xếp tăng dần"
-        },
-        {
-          "key": "C",
-          "text": "`Comparator` chỉ dùng cho số nguyên"
-        },
-        {
-          "key": "D",
-          "text": "Cả hai hoàn toàn giống nhau"
-        }
-      ],
-      "correctAnswers": [
-        "A"
-      ],
-      "explanation": "`Comparable<T>` yêu cầu class cài đặt hàm `compareTo(T o)` (internal). `Comparator<T>` cho phép tạo nhiều chiến lược so sánh bên ngoài mà không cần sửa code class gốc."
-    },
-    {
-      "number": 11,
-      "question": "Khối dữ liệu nào dưới đây cho phép lưu trữ giá trị `null` làm Key?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "TreeMap"
-        },
-        {
-          "key": "B",
-          "text": "ConcurrentHashMap"
-        },
-        {
-          "key": "C",
-          "text": "HashMap"
-        },
-        {
-          "key": "D",
-          "text": "Hashtable"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "`HashMap` cho phép đúng 1 key `null` (luôn nằm ở bucket 0). `TreeMap`, `Hashtable` và `ConcurrentHashMap` cấm hoàn toàn key `null`."
-    },
-    {
-      "number": 12,
-      "question": "Phương thức `List.of(...)` được giới thiệu từ Java 9 trả về danh sách có đặc tính gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Một danh sách bất biến (Unmodifiable/Immutable), không cho phép thêm/xoá/sửa và cấm phần tử null"
-        },
-        {
-          "key": "B",
-          "text": "Một ArrayList thông thường"
-        },
-        {
-          "key": "C",
-          "text": "Một danh sách đồng bộ hoá đa luồng"
-        },
-        {
-          "key": "D",
-          "text": "Một LinkedList"
-        }
-      ],
-      "correctAnswers": [
-        "A"
-      ],
-      "explanation": "`List.of(...)`, `Set.of(...)`, `Map.of(...)` tạo ra các collection bất biến. Cố tình gọi `add()` hay truyền `null` sẽ ném ngoại lệ ngay lập tức."
-    },
-    {
-      "number": 13,
-      "question": "Đoạn code sau có hợp lệ không?\n```java\nList<Object> list = new ArrayList<String>();\n```",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Hợp lệ vì String là con của Object"
-        },
-        {
-          "key": "B",
-          "text": "Lỗi biên dịch (Incompatible types) vì Generics trong Java là bất biến (invariant)"
-        },
-        {
-          "key": "C",
-          "text": "Chỉ phát sinh lỗi khi chạy runtime"
-        },
-        {
-          "key": "D",
-          "text": "Hợp lệ nếu ép kiểu"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Generics có tính bất biến (Invariant): Dù `String` là con của `Object`, `List<String>` KHÔNG PHẢI là con của `List<Object>`. Muốn tham chiếu tổng quát phải dùng `List<?>`."
-    },
-    {
-      "number": 14,
-      "question": "Cấu trúc dữ liệu nào hoạt động theo nguyên lý LIFO (Last In First Out)?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Queue"
-        },
-        {
-          "key": "B",
-          "text": "Deque (hoặc ArrayDeque / Stack)"
+          "text": "ArrayDeque"
         },
         {
           "key": "C",
@@ -384,169 +116,439 @@
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Cấu trúc ngăn xếp (Stack) tuân theo LIFO. Trong Java hiện đại, khuyến nghị sử dụng `ArrayDeque` thay cho lớp cổ `Stack`."
+      "explanation": "`Stack` kế thừa từ `Vector` và đồng bộ hoá mọi hàm qua `synchronized`, gây overhead không đáng có. `ArrayDeque` triển khai mảng vòng (Circular Array Buffer) với hiệu năng vượt trội và tính linh hoạt cao."
+    },
+    {
+      "number": 5,
+      "question": "Trong nguyên tắc PECS, nếu bạn muốn viết một phương thức chỉ đọc các số từ danh sách truyền vào để tính tổng, khai báo nào sau đây là chuẩn xác nhất?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "public double sum(List<Number> list)"
+        },
+        {
+          "key": "B",
+          "text": "public double sum(List<? extends Number> list)"
+        },
+        {
+          "key": "C",
+          "text": "public double sum(List<? super Number> list)"
+        },
+        {
+          "key": "D",
+          "text": "public double sum(List<?> list)"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Danh sách ở đây đóng vai trò Producer (cung cấp dữ liệu để hàm đọc ra). Theo PECS, Producer dùng `? extends T`, cho phép người dùng truyền vào `List<Integer>`, `List<Double>` hay bất kỳ kiểu con nào của `Number`."
+    },
+    {
+      "number": 6,
+      "question": "Khái niệm 'Bridge Method' trong Java Generics do trình biên dịch tự động sinh ra nhằm mục đích gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Kết nối hai database với nhau"
+        },
+        {
+          "key": "B",
+          "text": "Bảo toàn tính đa hình thời gian chạy (Polymorphism) khi lớp con kế thừa hoặc cài đặt một lớp/interface generic đã cụ thể hoá kiểu dữ liệu"
+        },
+        {
+          "key": "C",
+          "text": "Tăng tốc độ Garbage Collection"
+        },
+        {
+          "key": "D",
+          "text": "Chống dịch ngược file .class"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Do Type Erasure xoá kiểu thành `Object`, trình biên dịch buộc phải sinh thêm một phương thức cầu nối nhân tạo (Synthetic Bridge Method) nhận tham số `Object` để liên kết đúng với phương thức nhận kiểu cụ thể của lớp con."
+    },
+    {
+      "number": 7,
+      "question": "Tại sao giá trị `Load Factor = 0.75` lại được chọn làm giá trị mặc định cho `HashMap`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Vì quy định của hệ nhị phân"
+        },
+        {
+          "key": "B",
+          "text": "Là kết quả thực nghiệm tối ưu hoá sự đánh đổi (trade-off) giữa chi phí không gian bộ nhớ (Space) và tốc độ tra cứu thời gian (Time)"
+        },
+        {
+          "key": "C",
+          "text": "Do hạn chế của thuật toán chia bù 2"
+        },
+        {
+          "key": "D",
+          "text": "Để tương thích với ngôn ngữ C"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu Load Factor quá cao (ví dụ 1.0), bộ nhớ tiết kiệm hơn nhưng xung đột băm tăng vọt làm tra cứu chậm. Nếu quá thấp (ví dụ 0.5), tra cứu nhanh nhưng lãng phí bộ nhớ và resize liên tục. 0.75 là điểm cân bằng toán học tối ưu."
+    },
+    {
+      "number": 8,
+      "question": "Đoạn code sau có hợp lệ không trong Java?\n```java\nList<String>[] arrayOfLists = new List<String>[10];\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Hợp lệ, tạo ra mảng 10 danh sách"
+        },
+        {
+          "key": "B",
+          "text": "Lỗi biên dịch: Cannot create a generic array of List<String> (do tính chất biến đổi kiểu của mảng xung đột với Type Erasure của Generics dẫn đến Heap Pollution)"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ chạy được trên Java 8"
+        },
+        {
+          "key": "D",
+          "text": "Cần thêm từ khoá final"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mảng trong Java có tính chất Covariant và Reified (biết rõ kiểu lúc chạy), trong khi Generics có tính Invariant và Erased (xoá kiểu lúc chạy). Việc kết hợp cả hai bị Java cấm để ngăn chặn lỗi nhiễm bẩn bộ nhớ Heap (Heap Pollution)."
+    },
+    {
+      "number": 9,
+      "question": "Lớp `IdentityHashMap` khác `HashMap` thông thường ở điểm nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Nó chỉ lưu các số nguyên ID"
+        },
+        {
+          "key": "B",
+          "text": "Nó so sánh Key dựa trên tham chiếu địa chỉ bộ nhớ (`==`) thay vì dùng phương thức `equals()`"
+        },
+        {
+          "key": "C",
+          "text": "Nó tự động mã hoá dữ liệu"
+        },
+        {
+          "key": "D",
+          "text": "Nó không cho phép chứa giá trị null"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`IdentityHashMap` vi phạm hợp đồng Map thông thường một cách có chủ đích: nó coi 2 key là bằng nhau khi và chỉ khi `k1 == k2` (cùng trỏ tới 1 ô nhớ), thường dùng trong Serialization hoặc tuần tự hoá đồ thị đối tượng."
+    },
+    {
+      "number": 10,
+      "question": "Khi thực thi đoạn mã sau, chuyện gì sẽ xảy ra?\n```java\nList<String> list = new ArrayList<>(List.of(\"A\", \"B\", \"C\"));\nfor (String s : list) {\n    if (\"B\".equals(s)) {\n        list.remove(s);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Phần tử \"B\" được xoá thành công, danh sách còn lại [\"A\", \"C\"]"
+        },
+        {
+          "key": "B",
+          "text": "Ném ngoại lệ java.util.ConcurrentModificationException tại runtime do cơ chế Fail-Fast của Iterator"
+        },
+        {
+          "key": "C",
+          "text": "Vòng lặp chạy vô tận"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi biên dịch"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Vòng lặp for-each dùng Iterator ngầm bên dưới. Việc gọi `list.remove()` làm biến `modCount` bị tăng lên, không khớp với `expectedModCount` của Iterator, kích hoạt cơ chế Fail-Fast ném ngay `ConcurrentModificationException`."
+    },
+    {
+      "number": 11,
+      "question": "Phương thức an toàn nhất để xoá phần tử trong lúc đang duyệt qua một Collection là gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Sử dụng phương thức `remove()` trực tiếp của đối tượng `Iterator` (`iterator.remove()`) hoặc dùng `list.removeIf(Predicate)`"
+        },
+        {
+          "key": "B",
+          "text": "Đặt biến chạy lùi"
+        },
+        {
+          "key": "C",
+          "text": "Bọc khối for trong synchronized"
+        },
+        {
+          "key": "D",
+          "text": "Ép kiểu sang LinkedList"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`Iterator.remove()` tự động cập nhật lại `expectedModCount` đồng bộ với `modCount`, do đó không gây ra lỗi. Từ Java 8, `collection.removeIf(...)` là cú pháp tiện lợi và tối ưu nhất."
+    },
+    {
+      "number": 12,
+      "question": "Lớp `CopyOnWriteArrayList` thích hợp sử dụng nhất trong trường hợp nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ứng dụng thực hiện ghi dữ liệu liên tục hàng nghìn lần mỗi giây"
+        },
+        {
+          "key": "B",
+          "text": "Ứng dụng đa luồng có tần suất ĐỌC rất lớn nhưng tần suất GHI/SỬA rất hiếm hoi (ví dụ: danh sách Event Listeners)"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ dùng cho ứng dụng đơn luồng"
+        },
+        {
+          "key": "D",
+          "text": "Khi cần tiết kiệm bộ nhớ RAM"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Mỗi thao tác ghi (add, set, remove) trên `CopyOnWriteArrayList` đều tạo ra một bản sao mới toàn bộ của mảng nền tảng. Do đó nó cực kỳ tốn kém cho việc ghi, nhưng các luồng đọc thì hoàn toàn không cần lock, rất nhanh."
+    },
+    {
+      "number": 13,
+      "question": "Hàm `Collections.synchronizedList(list)` khác `CopyOnWriteArrayList` ở điểm mấu chốt nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`Collections.synchronizedList` sử dụng cơ chế khoá chung mutex cho mọi thao tác đọc và ghi, khiến các luồng đọc cũng phải chờ nhau"
+        },
+        {
+          "key": "B",
+          "text": "`Collections.synchronizedList` không an toàn đa luồng"
+        },
+        {
+          "key": "C",
+          "text": "`CopyOnWriteArrayList` không cho phép tìm kiếm"
+        },
+        {
+          "key": "D",
+          "text": "Hai cấu trúc giống hệt nhau"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`Collections.synchronizedList` bọc danh sách bằng một monitor lock duy nhất, mọi lệnh `get()` hay `add()` đều bị nghẽn nếu có luồng khác đang truy cập. Ngược lại `CopyOnWriteArrayList` đọc không khoá (lock-free)."
+    },
+    {
+      "number": 14,
+      "question": "Tại sao trong `HashMap`, phương thức băm `hash(key)` lại thực hiện phép toán `h ^ (h >>> 16)`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Để đảo ngược dấu của số âm"
+        },
+        {
+          "key": "B",
+          "text": "Để xáo trộn các bit bậc cao (16 bit đầu) xuống các bit bậc thấp (16 bit sau), giảm thiểu xung đột khi mảng table có kích thước nhỏ chỉ dùng vài bit cuối"
+        },
+        {
+          "key": "C",
+          "text": "Để biến đổi số nguyên thành chuỗi"
+        },
+        {
+          "key": "D",
+          "text": "Do quy định của thuật toán SHA-256"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khi kích thước mảng nhỏ (ví dụ 16, chỉ dùng 4 bit cuối để tính index), nếu các đối tượng chỉ khác nhau ở các bit cao, chúng sẽ rơi vào cùng 1 bucket. Việc XOR với `h >>> 16` giúp các bit cao tham gia vào việc phân tán index."
     },
     {
       "number": 15,
-      "question": "Khi tạo một mảng generic như `T[] arr = new T[10];`, điều gì xảy ra?",
+      "question": "Một đối tượng được dùng làm Key trong `HashMap` cần tuân thủ điều kiện vàng nào để tránh mất mát dữ liệu?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Mảng được tạo bình thường"
+          "text": "Phải là kiểu dữ liệu nguyên thuỷ"
         },
         {
           "key": "B",
-          "text": "Lỗi biên dịch (Cannot create a generic array of T) do Type Erasure không xác định được kiểu tại runtime"
+          "text": "Nên là đối tượng BẤT BIẾN (Immutable) để giá trị `hashCode()` không bị thay đổi sau khi đã đưa vào map"
         },
         {
           "key": "C",
-          "text": "JVM tự chuyển thành mảng int[]"
+          "text": "Bắt buộc phải kế thừa Serializable"
         },
         {
           "key": "D",
-          "text": "Mảng tự động gán kích thước 0"
+          "text": "Phải có kích thước nhỏ hơn 1KB"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Do Type Erasure, thông tin kiểu `T` bị xoá lúc runtime nên JVM không thể biết chính xác loại mảng cần cấp phát, do đó Java cấm `new T[]`."
+      "explanation": "Nếu đối tượng Key là mutable và bị sửa đổi thuộc tính, `hashCode()` của nó sẽ thay đổi. Khi gọi `map.get(key)`, HashMap sẽ tìm ở bucket sai vị trí ban đầu và không bao giờ tìm thấy đối tượng đó nữa."
     },
     {
       "number": 16,
-      "question": "Phương thức `Collections.unmodifiableList(list)` mang lại tính năng gì?",
+      "question": "Phương thức `Collections.binarySearch(...)` yêu cầu danh sách truyền vào phải thoả mãn điều kiện gì trước khi gọi?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Tạo bản sao sâu (deep-copy) bất biến hoàn toàn"
+          "text": "Danh sách phải rỗng"
         },
         {
           "key": "B",
-          "text": "Tạo một lớp vỏ bọc (wrapper view) ngăn sửa đổi qua biến mới; nếu list gốc bị thay đổi thì view vẫn thấy sự thay đổi đó"
+          "text": "Danh sách bắt buộc phải được sắp xếp theo thứ tự tăng dần tương ứng"
         },
         {
           "key": "C",
-          "text": "Mã hoá danh sách"
+          "text": "Danh sách phải là kiểu LinkedList"
         },
         {
           "key": "D",
-          "text": "Giải phóng bộ nhớ của list"
+          "text": "Danh sách phải chứa ít nhất 1000 phần tử"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`Collections.unmodifiableList` chỉ bọc lại (view) collection gốc. Mọi lệnh sửa trên view ném `UnsupportedOperationException`, nhưng sửa trên list gốc thì view vẫn bị ảnh hưởng."
+      "explanation": "Thuật toán tìm kiếm nhị phân (Binary Search) vận hành trên nguyên lý chia đôi không gian tìm kiếm, đòi hỏi danh sách đầu vào bắt buộc phải được sắp xếp từ trước."
     },
     {
       "number": 17,
-      "question": "Đặc điểm của `PriorityQueue` trong Java là gì?",
+      "question": "Điều gì xảy ra khi bạn gọi `List.of(1, 2, null)` trong Java 9+?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Lấy phần tử ra theo thứ tự chèn FIFO thuần tuý"
+          "text": "Tạo danh sách bình thường chứa null ở cuối"
         },
         {
           "key": "B",
-          "text": "Lấy phần tử có mức độ ưu tiên cao nhất trước (dựa trên Min-Heap mặc định)"
+          "text": "Ném ngoại lệ java.lang.NullPointerException ngay lập tức"
         },
         {
           "key": "C",
-          "text": "Không cho phép so sánh phần tử"
+          "text": "Tự động thay thế null bằng số 0"
         },
         {
           "key": "D",
-          "text": "Tự động sắp xếp lại toàn bộ danh sách mỗi khi thêm"
+          "text": "Bỏ qua phần tử null"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`PriorityQueue` là hàng đợi ưu tiên triển khai dưới dạng cấu trúc cây nhị phân Min-Heap, phần tử đầu hàng đợi luôn là phần tử nhỏ nhất theo thứ tự so sánh."
+      "explanation": "Các phương thức static factory hiện đại (`List.of`, `Set.of`, `Map.of`) áp dụng thiết kế an toàn nghiêm ngặt: cấm hoàn toàn phần tử `null` và ném NPE ngay khi phát hiện."
     },
     {
       "number": 18,
-      "question": "Khi khai báo `Map<String, Integer> map = new HashMap<>();`, cú pháp `<>` được gọi là gì?",
+      "question": "Điểm khác biệt cơ bản giữa `LinkedHashMap` và `HashMap` là gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Arrow Operator"
+          "text": "`LinkedHashMap` chậm hơn gấp 10 lần"
         },
         {
           "key": "B",
-          "text": "Diamond Operator (Java 7+)"
+          "text": "`LinkedHashMap` duy trì một danh sách liên kết đôi xuyên suốt mọi phần tử, giúp bảo tồn thứ tự chèn (Insertion Order) hoặc thứ tự truy cập (Access Order - làm cache LRU)"
         },
         {
           "key": "C",
-          "text": "Lambda Token"
+          "text": "`LinkedHashMap` không dùng bảng băm"
         },
         {
           "key": "D",
-          "text": "Type Cast Token"
+          "text": "`LinkedHashMap` chỉ chạy được trên Android"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`<>` là Diamond Operator được giới thiệu từ Java 7, cho phép trình biên dịch tự suy luận kiểu generic ở constructor dựa trên vế trái."
+      "explanation": "`LinkedHashMap` kế thừa `HashMap` nhưng bổ sung danh sách liên kết đôi giữa các Entry, cho phép duyệt qua các phần tử đúng theo thứ tự đưa vào hoặc dùng làm bộ đệm Least Recently Used (LRU) cache."
     },
     {
       "number": 19,
-      "question": "Trong `ConcurrentHashMap`, tại sao không sử dụng một khoá tổng thể `synchronized` cho toàn bộ map như `Collections.synchronizedMap`?",
+      "question": "Trong cú pháp Generic, `List<? extends Number>` có thể thêm (add) phần tử nào vào danh sách?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Vì ConcurrentHashMap không phải thread-safe"
+          "text": "Thêm được Integer và Double"
         },
         {
           "key": "B",
-          "text": "Để nâng cao thông lượng và hiệu năng, cho phép nhiều luồng đọc đồng thời và chỉ khoá cục bộ ở cấp bucket khi ghi"
+          "text": "CHỈ THÊM ĐƯỢC giá trị `null`, không thể thêm bất kỳ đối tượng số nào"
         },
         {
           "key": "C",
-          "text": "Do cú pháp Java không cho phép"
+          "text": "Thêm được bất kỳ đối tượng Object nào"
         },
         {
           "key": "D",
-          "text": "Để tiết kiệm dung lượng file .class"
+          "text": "Thêm được số 0"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`ConcurrentHashMap` sử dụng kỹ thuật CAS (Compare-And-Swap) và khoá ở mức Node/Bucket đầu tiên thay vì toàn bộ bảng, giúp hàng trăm luồng đọc ghi đồng thời với độ trễ thấp."
+      "explanation": "Vì trình biên dịch không thể biết chính xác `? extends Number` lúc chạy thực tế là `List<Integer>`, `List<Double>` hay kiểu con nào khác, việc cho phép `add(new Integer(1))` có thể làm vỡ tính toàn vẹn của `List<Double>`. Do đó compiler cấm ghi, chỉ cho phép thêm `null`."
     },
     {
       "number": 20,
-      "question": "Đoạn mã sau in ra kết quả gì?\n```java\nSet<String> set = new HashSet<>();\nset.add(\"A\");\nset.add(\"B\");\nset.add(\"A\");\nSystem.out.println(set.size());\n```",
+      "question": "Phương thức `Arrays.asList(arr)` trả về một danh sách có đặc tính gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "1"
+          "text": "Một ArrayList độc lập hoàn toàn với mảng arr"
         },
         {
           "key": "B",
-          "text": "2"
+          "text": "Một danh sách có kích thước cố định bọc trực tiếp mảng `arr` (sửa danh sách làm thay đổi mảng gốc và ngược lại, nhưng không được phép thêm hoặc xoá phần tử)"
         },
         {
           "key": "C",
-          "text": "3"
+          "text": "Một danh sách bất biến unmodifiable"
         },
         {
           "key": "D",
-          "text": "Lỗi runtime khi thêm phần tử trùng"
+          "text": "Một LinkedList"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`Set` không cho phép các phần tử trùng lặp. Lần gọi `set.add(\"A\")` thứ hai sẽ trả về `false` và không thêm phần tử, nên kích thước là 2 (\"A\" và \"B\")."
+      "explanation": "`Arrays.asList` trả về một view bọc mảng nguyên thuỷ (`java.util.Arrays.ArrayList`). Sửa giá trị phần tử sẽ phản chiếu vào mảng gốc, nhưng gọi `add()` hay `remove()` sẽ ném `UnsupportedOperationException`."
     }
   ]
 }

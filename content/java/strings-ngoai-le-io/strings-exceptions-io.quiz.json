@@ -1,52 +1,53 @@
 {
-  "title": "Quiz: Chuỗi, Ngoại Lệ & File I/O Trong Java",
+  "title": "Quiz: Chuỗi, Ngoại Lệ & File I/O Chuyên Sâu",
   "tags": [
     "Java",
     "String",
     "Exceptions",
     "IO",
-    "NIO2"
+    "NIO2",
+    "TryWithResources"
   ],
   "quizzes": [
     {
       "number": 1,
-      "question": "Tính chất 'bất biến' (immutability) của lớp `String` trong Java có nghĩa là gì?",
+      "question": "Tính năng 'Compact Strings' được giới thiệu từ Java 9 tối ưu hoá bộ nhớ của lớp `String` như thế nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Không thể gán lại biến tham chiếu String sang đối tượng khác"
+          "text": "Nén chuỗi bằng thuật toán GZIP"
         },
         {
           "key": "B",
-          "text": "Sau khi tạo, dữ liệu chuỗi ký tự bên trong đối tượng không thể bị thay đổi"
+          "text": "Thay thế mảng `char[]` bằng mảng `byte[]` kèm theo cờ `coder`, nếu chuỗi chỉ gồm ký tự Latin-1 thì chỉ tốn 1 byte cho mỗi ký tự thay vì 2 bytes"
         },
         {
           "key": "C",
-          "text": "Chuỗi chỉ lưu được các ký tự số"
+          "text": "Giới hạn độ dài tối đa của chuỗi là 256 ký tự"
         },
         {
           "key": "D",
-          "text": "Chỉ có thể tạo String thông qua toán tử new"
+          "text": "Xoá bỏ các ký tự khoảng trắng tự động"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Bất biến nghĩa là trạng thái của đối tượng không thể thay đổi sau khi khởi tạo. Bất kỳ phép biến đổi nào trên String đều sinh ra một đối tượng String mới."
+      "explanation": "Trước Java 9, `String` dùng `char[]` (2 bytes/ký tự UTF-16). Java 9 chuyển sang `byte[]` kết hợp cờ coder: các chuỗi ký tự ASCII/Latin-1 chỉ tốn 1 byte/ký tự, giúp tiết kiệm tới 50% RAM cho các đối tượng chuỗi."
     },
     {
       "number": 2,
-      "question": "Đoạn code sau in ra kết quả gì?\n```java\nString a = \"Hello\";\nString b = \"Hello\";\nSystem.out.println(a == b);\n```",
+      "question": "Đoạn code sau in ra kết quả gì?\n```java\nString s1 = \"Hello\";\nString s2 = new String(\"Hello\").intern();\nSystem.out.println(s1 == s2);\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "true"
+          "text": "false"
         },
         {
           "key": "B",
-          "text": "false"
+          "text": "true"
         },
         {
           "key": "C",
@@ -58,202 +59,472 @@
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "Cả hai chuỗi đều là string literal giống nhau, JVM tái sử dụng cùng một thể hiện duy nhất trong String Constant Pool nên `a == b` là `true`."
+      "explanation": "Hàm `.intern()` tìm kiếm trong String Constant Pool: do chuỗi `\"Hello\"` đã có sẵn trong Pool từ literal `s1`, nó trả về chính tham chiếu trong Pool đó. Do đó `s1 == s2` cho kết quả `true`."
     },
     {
       "number": 3,
-      "question": "Đoạn code sau in ra kết quả gì?\n```java\nString a = \"Hello\";\nString b = new String(\"Hello\");\nSystem.out.println(a == b);\nSystem.out.println(a.equals(b));\n```",
+      "question": "Dung lượng bộ đệm (capacity) mặc định ban đầu của một đối tượng `StringBuilder` khi khởi tạo bằng constructor không tham số (`new StringBuilder()`) là bao nhiêu ký tự?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "true, true"
+          "text": "0"
         },
         {
           "key": "B",
-          "text": "false, true"
+          "text": "16"
         },
         {
           "key": "C",
-          "text": "false, false"
+          "text": "32"
         },
         {
           "key": "D",
-          "text": "true, false"
+          "text": "64"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`new String(...)` luôn tạo ra một đối tượng mới độc lập trên Heap khác địa chỉ tham chiếu với String Pool (`a == b` là false). Tuy nhiên nội dung chuỗi giống nhau nên `equals()` trả về `true`."
+      "explanation": "Mặc định `new StringBuilder()` cấp phát bộ đệm ban đầu có kích thước 16 ký tự. Khi chuỗi vượt quá dung lượng này, nó sẽ tự động tăng kích thước theo công thức `(oldCapacity * 2) + 2`."
     },
     {
       "number": 4,
-      "question": "Để nối chuỗi liên tục hàng nghìn lần trong một luồng duy nhất (single-thread), lựa chọn nào tối ưu hiệu năng nhất?",
+      "question": "Trong câu lệnh Try-With-Resources có nhiều tài nguyên được khai báo, thứ tự gọi phương thức `close()` của các tài nguyên diễn ra như thế nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Toán tử cộng chuỗi `+` lặp lại"
+          "text": "Theo thứ tự ngẫu nhiên"
         },
         {
           "key": "B",
-          "text": "StringBuffer"
+          "text": "Theo thứ tự khai báo từ trái sang phải"
         },
         {
           "key": "C",
-          "text": "StringBuilder"
+          "text": "Theo thứ tự ngược lại với thứ tự khai báo (ngăn xếp LIFO)"
         },
         {
           "key": "D",
-          "text": "String.concat()"
+          "text": "Chỉ tài nguyên cuối cùng được đóng"
         }
       ],
       "correctAnswers": [
         "C"
       ],
-      "explanation": "`StringBuilder` là mutable và không đồng bộ hoá (non-thread-safe), giúp thực hiện thao tác nối chuỗi nhanh nhất mà không phải chịu overhead của synchronization."
+      "explanation": "Tài nguyên được đóng theo thứ tự đảo ngược: tài nguyên khai báo sau sẽ được `close()` trước, đảm bảo an toàn như mô hình mở và đóng bọc nhau (wrapper streams)."
     },
     {
       "number": 5,
-      "question": "Phương thức `intern()` của lớp `String` có tác dụng gì?",
+      "question": "Điều gì xảy ra khi cả khối `try` ném ra ngoại lệ A và phương thức `close()` của tài nguyên cũng ném ra ngoại lệ B?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Chuyển chuỗi thành mảng số nguyên"
+          "text": "Ngoại lệ A bị nuốt mất, chỉ ném ngoại lệ B ra ngoài"
         },
         {
           "key": "B",
-          "text": "Tìm kiếm hoặc đưa chuỗi vào String Constant Pool và trả về tham chiếu từ Pool"
+          "text": "Ngoại lệ A được ném ra ngoài, còn ngoại lệ B được đính kèm vào A dưới dạng ngoại lệ bị kìm nén (Suppressed Exception)"
         },
         {
           "key": "C",
-          "text": "Đo độ dài chuỗi bằng byte"
+          "text": "Hệ thống JVM bị sập"
         },
         {
           "key": "D",
-          "text": "Mã hoá chuỗi sang chuẩn Base64"
+          "text": "Không ngoại lệ nào được ném ra"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`s.intern()` kiểm tra xem chuỗi có nội dung tương đương trong String Pool chưa; nếu có thì trả về tham chiếu đó, nếu chưa thì thêm chuỗi vào Pool."
+      "explanation": "Java bảo toàn ngoại lệ ban đầu từ khối logic `try` (ngoại lệ A). Ngoại lệ thứ hai phát sinh từ `close()` (B) sẽ được bổ sung vào danh sách Suppressed của A (truy xuất qua `A.getSuppressed()`)."
     },
     {
       "number": 6,
-      "question": "Trong hệ thống cấp bậc ngoại lệ, lớp cha trực tiếp của mọi lỗi và ngoại lệ có thể ném ra (throw) là gì?",
+      "question": "Tại sao trong Java, các đối tượng `Error` (như `OutOfMemoryError`, `StackOverflowError`) không được khuyến khích bắt bằng khối `catch (Error e)`?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "java.lang.Exception"
+          "text": "Vì Java cấm bắt Error tại compile time"
         },
         {
           "key": "B",
-          "text": "java.lang.Error"
+          "text": "Vì Error biểu thị các sự cố nghiêm trọng của tầng phần cứng hoặc máy ảo JVM mà ứng dụng không còn trạng thái bộ nhớ an toàn để có thể phục hồi tin cậy"
         },
         {
           "key": "C",
-          "text": "java.lang.Throwable"
+          "text": "Vì Error chỉ là cảnh báo warning"
         },
         {
           "key": "D",
-          "text": "java.lang.RuntimeException"
+          "text": "Bắt Error làm giảm tốc độ Garbage Collector"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "`Throwable` là lớp gốc tối cao mà từ đó phân nhánh thành `Error` và `Exception`."
+      "explanation": "`Error` là các lỗi thảm hoạ từ hệ thống (hết bộ nhớ, hỏng class loader). Việc cố gắng catch và tiếp tục chạy chương trình thường khiến dữ liệu bị hỏng nặng hơn."
     },
     {
       "number": 7,
-      "question": "Ngoại lệ nào sau đây thuộc nhóm 'Checked Exception'?",
+      "question": "Kỹ thuật 'Exception Chaining' (Chuỗi ngoại lệ) bằng cách truyền `cause` vào constructor (`new CustomException(\"Message\", cause)`) mang lại lợi ích gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "NullPointerException"
+          "text": "Tự động gửi email báo lỗi"
         },
         {
           "key": "B",
-          "text": "ArrayIndexOutOfBoundsException"
+          "text": "Giữ lại toàn bộ vết tích và nguyên nhân gốc (Root Cause) của ngoại lệ cấp thấp ban đầu trong Stack Trace để dễ dàng truy vết và chẩn đoán"
         },
         {
           "key": "C",
-          "text": "IOException"
+          "text": "Chuyển đổi Checked Exception thành mã lỗi HTTP"
         },
         {
           "key": "D",
-          "text": "ArithmeticException"
+          "text": "Xoá các class nhạy cảm khỏi log"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "`IOException` là Checked Exception (kế thừa trực tiếp từ `Exception`), buộc lập trình viên phải bắt hoặc ném ra bằng `throws`."
+      "explanation": "Exception Chaining cho phép bọc ngoại lệ cấp thấp (như `SQLException`) thành ngoại lệ tầng nghiệp vụ (`ServiceException`) mà vẫn bảo toàn 100% nguyên nhân gốc (root cause stacktrace)."
     },
     {
       "number": 8,
-      "question": "Ngoại lệ nào sau đây là 'Unchecked Exception'?",
+      "question": "Đoạn code sau in ra kết quả gì?\n```java\ntry {\n    throw new RuntimeException(\"A\");\n} catch (RuntimeException e) {\n    throw new RuntimeException(\"B\");\n} finally {\n    System.out.print(\"F\");\n}\n```",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "SQLException"
+          "text": "Chỉ ném lỗi A, không in F"
         },
         {
           "key": "B",
-          "text": "ClassNotFoundException"
+          "text": "In ra F và ném ra ngoại lệ RuntimeException(\"B\")"
         },
         {
           "key": "C",
-          "text": "IllegalArgumentException"
+          "text": "In ra F và nuốt sạch ngoại lệ"
         },
         {
           "key": "D",
-          "text": "FileNotFoundException"
+          "text": "Lỗi biên dịch"
         }
       ],
       "correctAnswers": [
-        "C"
+        "B"
       ],
-      "explanation": "`IllegalArgumentException` kế thừa từ `RuntimeException`, do đó là Unchecked Exception không bắt buộc try-catch."
+      "explanation": "Khối `finally` luôn được thực thi trước khi ngoại lệ B văng ra khỏi phương thức. Do đó chữ `F` được in ra màn hình trước, sau đó RuntimeException(\"B\") mới thoát ra."
     },
     {
       "number": 9,
-      "question": "Khối lệnh `finally` trong cấu trúc `try-catch-finally` KHÔNG ĐƯỢC THỰC THI trong trường hợp nào sau đây?",
+      "question": "Trong gói `java.nio.file.Files`, phương thức nào cho phép di chuyển file với tính năng nguyên tử (Atomic Move)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Có lệnh return trong khối try"
+          "text": "Files.move(src, dest, StandardCopyOption.ATOMIC_MOVE)"
         },
         {
           "key": "B",
-          "text": "Có ngoại lệ chưa được bắt trong khối catch"
+          "text": "Files.atomicMove(src, dest)"
         },
         {
           "key": "C",
-          "text": "Chương trình gọi lệnh `System.exit(0)` trước đó"
+          "text": "Files.copyAndRemove(src, dest)"
         },
         {
           "key": "D",
-          "text": "Khối try thực thi hoàn toàn trơn tru không lỗi"
+          "text": "Files.rename(src, dest)"
         }
       ],
       "correctAnswers": [
-        "C"
+        "A"
       ],
-      "explanation": "Khi `System.exit(...)` được gọi, tiến trình máy ảo JVM bị dừng ngay lập tức, khối `finally` sẽ không kịp thực thi."
+      "explanation": "Tuỳ chọn `StandardCopyOption.ATOMIC_MOVE` đảm bảo việc đổi tên/di chuyển file trên cùng một phân vùng ổ đĩa diễn ra tức thời như một thao tác nguyên tử ở cấp hệ điều hành."
     },
     {
       "number": 10,
-      "question": "Đoạn mã sau trả về kết quả gì?\n```java\nint test() {\n    try {\n        return 1;\n    } finally {\n        return 2;\n    }\n}\n```",
+      "question": "Phương thức `Files.lines(path)` trả về một `Stream<String>`. Tại sao bắt buộc phải đóng Stream này trong khối try-with-resources?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Vì Stream sẽ ném ngoại lệ nếu không đóng"
+        },
+        {
+          "key": "B",
+          "text": "Để đảm bảo file handle (con trỏ tệp) bên dưới hệ điều hành được giải phóng ngay khi hoàn thành, tránh rò rỉ tài nguyên (file descriptor leak)"
+        },
+        {
+          "key": "C",
+          "text": "Để xoá nội dung file sau khi đọc"
+        },
+        {
+          "key": "D",
+          "text": "Không bắt buộc phải đóng"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`Files.lines(path)` mở một file handle trực tiếp tới hệ thống tập tin. Interface `Stream` kế thừa `AutoCloseable`, do đó cần đặt trong try-with-resources để tự động đóng file handle."
+    },
+    {
+      "number": 11,
+      "question": "Lớp `StringBuffer` khác `StringBuilder` ở đặc tính cốt lõi nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`StringBuffer` là bất biến còn `StringBuilder` thì không"
+        },
+        {
+          "key": "B",
+          "text": "Các phương thức của `StringBuffer` đều được đồng bộ hoá (`synchronized`), đảm bảo an toàn đa luồng nhưng tốc độ chậm hơn `StringBuilder`"
+        },
+        {
+          "key": "C",
+          "text": "`StringBuffer` chỉ dùng được cho tiếng Việt"
+        },
+        {
+          "key": "D",
+          "text": "`StringBuilder` chỉ chạy được trên Java 8"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`StringBuffer` ra đời từ Java 1.0 với các hàm có `synchronized` nên thread-safe nhưng chịu overhead khóa; `StringBuilder` ra đời ở Java 5 bỏ đồng bộ để đạt hiệu năng tối đa cho đơn luồng."
+    },
+    {
+      "number": 12,
+      "question": "Phương thức `String.repeat(int count)` (Java 11+) có tác dụng gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Lặp lại chuỗi đó `count` lần và trả về một String mới"
+        },
+        {
+          "key": "B",
+          "text": "In chuỗi ra màn hình count lần"
+        },
+        {
+          "key": "C",
+          "text": "Kiểm tra xem chuỗi có lặp lại từ nào count lần không"
+        },
+        {
+          "key": "D",
+          "text": "Cắt chuỗi thành mảng count phần tử"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`\"Java \".repeat(3)` trả về `\"Java Java Java \"`. Phương thức tiện ích này được tối ưu hoá ở mức mảng byte nội bộ của JDK 11."
+    },
+    {
+      "number": 13,
+      "question": "Điều gì xảy ra khi chia số nguyên cho 0 (`10 / 0`) so với chia số thực cho 0 (`10.0 / 0.0`) trong Java?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Cả hai đều ném ArithmeticException"
+        },
+        {
+          "key": "B",
+          "text": "`10 / 0` ném ArithmeticException; `10.0 / 0.0` trả về giá trị đặc biệt `Double.NaN` (hoặc Infinity) mà không ném ngoại lệ"
+        },
+        {
+          "key": "C",
+          "text": "Cả hai đều trả về 0"
+        },
+        {
+          "key": "D",
+          "text": "Cả hai đều trả về Infinity"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Số nguyên chia 0 là phép toán không xác định trong số học nên ném `ArithmeticException`. Số thực tuân theo chuẩn IEEE 754 nên trả về `Infinity` (số dương/0) hoặc `NaN` (0.0/0.0)."
+    },
+    {
+      "number": 14,
+      "question": "Phương thức `String.isBlank()` khác phương thức `String.isEmpty()` (Java 11+) ở điểm nào?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "`isEmpty()` chỉ kiểm tra độ dài length == 0; `isBlank()` kiểm tra chuỗi rỗng hoặc chuỗi CHỈ CHỨA CÁC KÝ TỰ KHOẢNG TRẮNG"
+        },
+        {
+          "key": "B",
+          "text": "`isBlank()` ném lỗi nếu chuỗi null"
+        },
+        {
+          "key": "C",
+          "text": "Hai phương thức này hoàn toàn giống nhau"
+        },
+        {
+          "key": "D",
+          "text": "`isEmpty()` xoá khoảng trắng trước khi kiểm tra"
+        }
+      ],
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "`\"   \".isEmpty()` trả về `false` (vì length = 3). Nhưng `\"   \".isBlank()` trả về `true` vì nó chỉ chứa các ký tự trắng (whitespace)."
+    },
+    {
+      "number": 15,
+      "question": "Khi ghi đè một phương thức có khai báo `throws IOException` ở interface, lớp con cài đặt phương thức đó có được phép BỎ HOÀN TOÀN khai báo `throws` không?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không được, bắt buộc phải giữ nguyên"
+        },
+        {
+          "key": "B",
+          "text": "Được phép, lớp con có quyền xử lý triệt để ngoại lệ và không ném bất kỳ Checked Exception nào ra ngoài"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ được bỏ nếu thêm từ khoá final"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ được bỏ nếu chuyển sang Spring"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Lớp con có thể thu hẹp danh sách ngoại lệ ném ra hoặc không ném ngoại lệ nào cả. Nó chỉ bị cấm ném thêm ngoại lệ Checked mới hoặc rộng hơn."
+    },
+    {
+      "number": 16,
+      "question": "Lớp `java.io.BufferedReader` mang lại ưu thế gì vượt trội so với `java.io.FileReader` truyền thống?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Tự động dịch ngôn ngữ"
+        },
+        {
+          "key": "B",
+          "text": "Sử dụng bộ đệm (Buffer) để giảm bớt số lần đọc ghi trực tiếp từ đĩa cứng vật lý và hỗ trợ phương thức `readLine()` đọc từng dòng"
+        },
+        {
+          "key": "C",
+          "text": "Tự động đóng file mà không cần close()"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ đọc được file nhị phân"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Truy cập I/O đĩa cứng rất chậm. `BufferedReader` nạp sẵn một khối byte vào bộ đệm RAM để tái sử dụng, giúp tăng tốc độ đọc dữ liệu hàng chục lần."
+    },
+    {
+      "number": 17,
+      "question": "Mẫu thiết kế (Design Pattern) nào được áp dụng phổ biến nhất trong thư viện `java.io` (ví dụ: `new BufferedReader(new FileReader(...))` )?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Singleton Pattern"
+        },
+        {
+          "key": "B",
+          "text": "Decorator Pattern"
+        },
+        {
+          "key": "C",
+          "text": "Observer Pattern"
+        },
+        {
+          "key": "D",
+          "text": "Factory Method Pattern"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Hệ thống `java.io` là ví dụ kinh điển của **Decorator Pattern**: bao bọc một Stream cơ bản bằng các lớp Stream bọc ngoài để bổ sung tính năng (đệm, đếm dòng, nén dữ liệu)."
+    },
+    {
+      "number": 18,
+      "question": "Khối lệnh `catch (ExceptionA | ExceptionB e)` có hạn chế nào về mối quan hệ kế thừa giữa `ExceptionA` và `ExceptionB`?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Không có hạn chế nào"
+        },
+        {
+          "key": "B",
+          "text": "Không được có quan hệ kế thừa cha-con giữa ExceptionA và ExceptionB (nếu có sẽ báo lỗi biên dịch thừa thãi)"
+        },
+        {
+          "key": "C",
+          "text": "Bắt buộc cả hai phải là Unchecked Exception"
+        },
+        {
+          "key": "D",
+          "text": "Bắt buộc phải có thêm finally"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu `ExceptionB` kế thừa từ `ExceptionA`, việc viết `catch (ExceptionA | ExceptionB e)` sẽ gây lỗi compile time: `The exception ExceptionB is already caught by the alternative ExceptionA`."
+    },
+    {
+      "number": 19,
+      "question": "Tính năng 'WatchService' trong gói `java.nio.file` dùng để làm gì?",
+      "isMulti": false,
+      "options": [
+        {
+          "key": "A",
+          "text": "Đo thời gian chạy của CPU"
+        },
+        {
+          "key": "B",
+          "text": "Theo dõi và nhận thông báo theo thời gian thực về các sự kiện thay đổi của thư mục (tạo mới, sửa đổi, xoá file)"
+        },
+        {
+          "key": "C",
+          "text": "Giám sát pin máy tính"
+        },
+        {
+          "key": "D",
+          "text": "Quản lý tiến trình thread"
+        }
+      ],
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "`WatchService` đăng ký theo dõi thư mục ở cấp hệ điều hành, tự động bắn sự kiện `ENTRY_CREATE`, `ENTRY_MODIFY`, `ENTRY_DELETE` khi có file bị thay đổi."
+    },
+    {
+      "number": 20,
+      "question": "Đoạn code sau in ra kết quả gì?\n```java\nString s = \"A B C\";\nString[] parts = s.split(\"\\\\s+\");\nSystem.out.println(parts.length);\n```",
       "isMulti": false,
       "options": [
         {
@@ -262,291 +533,21 @@
         },
         {
           "key": "B",
-          "text": "2"
+          "text": "3"
         },
         {
           "key": "C",
-          "text": "Lỗi biên dịch do 2 lệnh return"
+          "text": "5"
         },
         {
           "key": "D",
-          "text": "Không xác định"
+          "text": "Lỗi biên dịch Regex"
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Lệnh `return` trong khối `finally` sẽ ghi đè lên bất kỳ giá trị trả về nào trước đó trong khối `try` hoặc `catch`."
-    },
-    {
-      "number": 11,
-      "question": "Trong cú pháp 'Try-With-Resources' (Java 7+), đối tượng khai báo trong ngoặc tròn phải cài đặt (implement) interface nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "java.io.Serializable"
-        },
-        {
-          "key": "B",
-          "text": "java.lang.AutoCloseable (hoặc java.io.Closeable)"
-        },
-        {
-          "key": "C",
-          "text": "java.lang.Runnable"
-        },
-        {
-          "key": "D",
-          "text": "java.lang.Cloneable"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Mọi tài nguyên quản lý bởi try-with-resources phải hiện thực interface `AutoCloseable`, cung cấp phương thức `close()` tự động được gọi."
-    },
-    {
-      "number": 12,
-      "question": "Khi sử dụng Multi-Catch block (`catch (IOException | SQLException e)`), biến ngoại lệ `e` có tính chất gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Nó có thể được gán lại bằng một ngoại lệ mới"
-        },
-        {
-          "key": "B",
-          "text": "Nó ngầm định là `final` và không thể bị gán lại"
-        },
-        {
-          "key": "C",
-          "text": "Nó tự động chuyển thành kiểu Object"
-        },
-        {
-          "key": "D",
-          "text": "Nó chỉ bắt được lỗi SQLException"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Trong multi-catch block, tham số ngoại lệ `e` mặc định là `final`, việc cố tình gán `e = new IOException()` sẽ gây lỗi biên dịch."
-    },
-    {
-      "number": 13,
-      "question": "Lớp tiện ích nào trong gói `java.nio.file` cung cấp phương thức tĩnh `writeString()` và `readString()` (Java 11+)?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "java.io.File"
-        },
-        {
-          "key": "B",
-          "text": "java.nio.file.Paths"
-        },
-        {
-          "key": "C",
-          "text": "java.nio.file.Files"
-        },
-        {
-          "key": "D",
-          "text": "java.io.FileUtils"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "`Files.writeString()` và `Files.readString()` là các hàm tĩnh cực kỳ tiện lợi được bổ sung trong `java.nio.file.Files` từ Java 11."
-    },
-    {
-      "number": 14,
-      "question": "Để tạo một đối tượng `Path` trong Java 11+ một cách ngắn gọn, cú pháp nào được khuyến nghị?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "new Path(\"data.txt\")"
-        },
-        {
-          "key": "B",
-          "text": "Path.of(\"data.txt\")"
-        },
-        {
-          "key": "C",
-          "text": "Path.create(\"data.txt\")"
-        },
-        {
-          "key": "D",
-          "text": "File.toPath(\"data.txt\")"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "`Path.of(\"path/to/file\")` là phương thức static factory hiện đại thay thế cho `Paths.get(...)` từ Java 11."
-    },
-    {
-      "number": 15,
-      "question": "Tính năng 'Suppressed Exceptions' trong Try-with-resources giải quyết vấn đề gì?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Tự động tắt log của các exception nhẹ"
-        },
-        {
-          "key": "B",
-          "text": "Bảo toàn ngoại lệ ban đầu trong khối try khi quá trình gọi `close()` cũng phát sinh ngoại lệ"
-        },
-        {
-          "key": "C",
-          "text": "Xoá sạch ngoại lệ khỏi stacktrace"
-        },
-        {
-          "key": "D",
-          "text": "Chuyển Checked Exception thành Unchecked Exception"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Nếu cả khối `try` và lệnh `close()` đều ném ngoại lệ, ngoại lệ của `try` sẽ được ưu tiên ném ra ngoài, còn ngoại lệ của `close()` được đính kèm vào dạng 'Suppressed'."
-    },
-    {
-      "number": 16,
-      "question": "Phương thức `String.trim()` khác với `String.strip()` (Java 11+) ở điểm nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "`trim()` chỉ xoá ký tự trắng ASCII (<= U+0020), còn `strip()` nhận diện toàn bộ ký tự trắng theo chuẩn Unicode"
-        },
-        {
-          "key": "B",
-          "text": "`strip()` chỉ cắt ký tự ở đầu chuỗi"
-        },
-        {
-          "key": "C",
-          "text": "`trim()` thay đổi trực tiếp chuỗi gốc"
-        },
-        {
-          "key": "D",
-          "text": "Hai phương thức hoàn toàn giống hệt nhau"
-        }
-      ],
-      "correctAnswers": [
-        "A"
-      ],
-      "explanation": "`strip()` là phiên bản thông minh hơn theo chuẩn Unicode, nhận diện và loại bỏ chuẩn xác các khoảng trắng đa ngôn ngữ."
-    },
-    {
-      "number": 17,
-      "question": "Khi đọc file lớn dung lượng hàng gigabyte, phương pháp nào sau đây giúp tránh lỗi `OutOfMemoryError`?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "Files.readAllBytes(path)"
-        },
-        {
-          "key": "B",
-          "text": "Files.readString(path)"
-        },
-        {
-          "key": "C",
-          "text": "Files.lines(path) bằng Stream xử lý lười (lazy-evaluated)"
-        },
-        {
-          "key": "D",
-          "text": "Files.readAllLines(path)"
-        }
-      ],
-      "correctAnswers": [
-        "C"
-      ],
-      "explanation": "`Files.lines(path)` trả về một `Stream<String>` đọc dữ liệu theo dòng một cách lười (lazy), không nạp toàn bộ file vào RAM cùng lúc."
-    },
-    {
-      "number": 18,
-      "question": "Đoạn code sau in ra gì?\n```java\nString s = \"Java\";\ns.concat(\" 21\");\nSystem.out.println(s);\n```",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "\"Java 21\""
-        },
-        {
-          "key": "B",
-          "text": "\"Java\""
-        },
-        {
-          "key": "C",
-          "text": "null"
-        },
-        {
-          "key": "D",
-          "text": "Lỗi biên dịch"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Do String là immutable, `s.concat(\" 21\")` trả về chuỗi mới nhưng không được gán lại vào `s`. Vì vậy `s` vẫn giữ nguyên là `\"Java\"`."
-    },
-    {
-      "number": 19,
-      "question": "Từ khoá `throws` khác từ khoá `throw` như thế nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "`throw` dùng ở khai báo method; `throws` dùng để ném ngoại lệ cụ thể"
-        },
-        {
-          "key": "B",
-          "text": "`throws` dùng ở chữ ký phương thức để báo hiệu ngoại lệ có thể xảy ra; `throw` dùng trong thân hàm để chủ động ném ra một đối tượng ngoại lệ"
-        },
-        {
-          "key": "C",
-          "text": "Không có điểm khác nhau"
-        },
-        {
-          "key": "D",
-          "text": "`throws` chỉ dùng với RuntimeException"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "`throw new CustomException();` chủ động tạo và quăng lỗi; `void method() throws IOException` khai báo cảnh báo ngoại lệ ở chữ ký phương thức."
-    },
-    {
-      "number": 20,
-      "question": "Để tạo một ngoại lệ tuỳ biến (Custom Exception) thuộc loại Checked Exception, class cần kế thừa từ lớp nào?",
-      "isMulti": false,
-      "options": [
-        {
-          "key": "A",
-          "text": "java.lang.RuntimeException"
-        },
-        {
-          "key": "B",
-          "text": "java.lang.Exception"
-        },
-        {
-          "key": "C",
-          "text": "java.lang.Error"
-        },
-        {
-          "key": "D",
-          "text": "java.lang.Throwable"
-        }
-      ],
-      "correctAnswers": [
-        "B"
-      ],
-      "explanation": "Kế thừa trực tiếp từ `java.lang.Exception` sẽ tạo ra một Checked Exception; kế thừa từ `RuntimeException` sẽ tạo ra Unchecked Exception."
+      "explanation": "Biểu thức chính quy `\\s+` khớp với một hoặc nhiều ký tự khoảng trắng liên tiếp. Chuỗi được phân tách thành 3 phần tử: `[\"A\", \"B\", \"C\"]`."
     }
   ]
 }

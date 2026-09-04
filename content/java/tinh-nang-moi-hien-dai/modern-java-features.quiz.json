@@ -1,553 +1,554 @@
 {
-  "title": "Quiz: Tính Năng Java Hiện Đại (Java 8 - 21+)",
+  "title": "Quiz: Java Hiện Đại & Best Practices Chuyên Sâu",
   "tags": [
     "Java",
-    "Modern-Java",
-    "Records",
-    "Pattern-Matching",
+    "ModernJava",
     "Java21",
-    "Clean-Code"
+    "Records",
+    "PatternMatching",
+    "SealedClasses",
+    "CleanArchitecture"
   ],
   "quizzes": [
     {
       "number": 1,
-      "question": "Mục đích chính của tính năng `Record` (chính thức từ Java 16) là gì?",
+      "question": "Khi khai báo một `record Point(int x, int y)` trong Java, trình biên dịch `javac` tự động thực hiện những điều nào dưới đây ở cấp độ bytecode?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Tăng tốc độ truy vấn cơ sở dữ liệu"
+          "text": "Tạo một class thông thường có thể kế thừa và tự động sinh các hàm `getX()` và `getY()`."
         },
         {
           "key": "B",
-          "text": "Tạo các lớp chứa dữ liệu bất biến (immutable data carrier) ngắn gọn, tự động sinh constructor, getters, equals, hashCode và toString"
+          "text": "Tạo một class `final` kế thừa trực tiếp từ `java.lang.Record`, khai báo các trường `private final`, sinh canonical constructor, các accessor methods là `x()` và `y()`, cùng các hàm `equals()`, `hashCode()`, và `toString()`."
         },
         {
           "key": "C",
-          "text": "Thay thế hoàn toàn cấu trúc Interface"
+          "text": "Chỉ tạo ra một cấu trúc struct trong bộ nhớ native mà không tạo ra class Java."
         },
         {
           "key": "D",
-          "text": "Cho phép đa kế thừa lớp"
+          "text": "Cho phép các lớp khác kế thừa tự do từ `Point`."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Record giúp loại bỏ hàng chục dòng boilerplate code cho các POJO/DTO bất biến bằng cách tự động sinh mã chuẩn mực tại compile-time."
+      "explanation": "Theo đặc tả JEP 395, mỗi record khi biên dịch sẽ trở thành một final class kế thừa từ java.lang.Record. Tất cả các components trở thành các trường private final. Trình biên dịch tự động sinh Canonical Constructor, các accessor methods có tên trùng với component (ví dụ x() và y(), không có tiền tố get), đồng thời sinh cài đặt chuẩn xác cho equals(), hashCode(), và toString()."
     },
     {
       "number": 2,
-      "question": "Các trường (fields) được khai báo trong tiêu đề của một Record có đặc tính mặc định nào?",
+      "question": "Cơ chế **Compact Constructor** trong Java Record có đặc điểm nào dưới đây?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "public static"
+          "text": "Nó bắt buộc phải nhận vào danh sách tham số đầy đủ giống như class thông thường."
         },
         {
           "key": "B",
-          "text": "private final"
+          "text": "Nó lược bỏ danh sách tham số `public Point { ... }`, cho phép lập trình viên kiểm tra xác thực (validation) hoặc biến đổi tham số ẩn trước khi chúng được gán ngầm định vào các trường `final`."
         },
         {
           "key": "C",
-          "text": "protected volatile"
+          "text": "Nó chỉ chạy một lần duy nhất khi ứng dụng khởi động."
         },
         {
           "key": "D",
-          "text": "default mutable"
+          "text": "Nó biến tất cả các trường dữ liệu thành kiểu `public`."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Mọi component của Record đều tự động là `private final`, đảm bảo tính bất biến toàn vẹn của đối tượng."
+      "explanation": "Compact Constructor cho phép khai báo constructor mà không cần lặp lại danh sách tham số (ví dụ: `public Point { ... }`). Bên trong khối lệnh này, các tham số ẩn đại diện cho components có thể được xác thực (check null, check range) hoặc gán lại giá trị chuẩn hoá. Kết thúc khối lệnh, các trường private final của record mới tự động được gán giá trị."
     },
     {
       "number": 3,
-      "question": "Tên phương thức getter để truy xuất thuộc tính `name` trong `record Person(String name, int age)` là gì?",
+      "question": "Tính năng **Pattern Matching cho `instanceof`** giúp ích gì trong việc viết mã sạch và an toàn kiểu dữ liệu?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "getName()"
+          "text": "Tự động chuyển đổi kiểu dữ liệu mà không cần kiểm tra tính tương thích."
         },
         {
           "key": "B",
-          "text": "name()"
+          "text": "Kết hợp phép kiểm tra kiểu và việc khai báo biến gắn kết (binding variable) trong cùng một bước (ví dụ: `if (obj instanceof String s)`), loại bỏ hoàn toàn thao tác ép kiểu tường minh `(String) obj` dễ gây lỗi."
         },
         {
           "key": "C",
-          "text": "fetchName()"
+          "text": "Tăng tốc độ Garbage Collection lên gấp đôi."
         },
         {
           "key": "D",
-          "text": "personName()"
+          "text": "Bắt buộc mọi đối tượng phải implement interface Serializable."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Record sử dụng quy ước đặt tên getter trùng khớp với tên trường (`name()`), thay vì tiền tố `get` như JavaBean truyền thống."
+      "explanation": "Trước đây, lập trình viên phải kiểm tra `if (obj instanceof String)` rồi sau đó viết dòng ép kiểu tường minh `String s = (String) obj;`. Với Pattern Matching cho `instanceof`, biến `s` được khai báo và gán tự động ngay trong biểu thức điều kiện nếu phép kiểm tra đúng, đồng thời phạm vi (scope) của biến `s` chỉ tồn tại ở những nơi mà điều kiện chắc chắn thoả mãn."
     },
     {
       "number": 4,
-      "question": "Một `Record` trong Java có thể kế thừa (extends) từ một class khác được không?",
+      "question": "Trong Pattern Matching cho `switch` (Java 21 LTS), mệnh đề **`when`** được sử dụng với mục đích gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Có thể kế thừa từ bất kỳ class nào"
+          "text": "Để khai báo thời gian thực thi của tác vụ bất đồng bộ."
         },
         {
           "key": "B",
-          "text": "Không, vì mọi Record ngầm định đã kế thừa trực tiếp từ `java.lang.Record` và Java không hỗ trợ đa kế thừa class"
+          "text": "Đóng vai trò là một điều kiện bảo vệ (Guarded Pattern), cho phép bổ sung thêm một biểu thức logic boolean sau pattern để lọc các trường hợp cụ thể (ví dụ: `case String s when s.length() > 10`)."
         },
         {
           "key": "C",
-          "text": "Chỉ có thể kế thừa từ Abstract Class"
+          "text": "Để thay thế cho từ khoá `break` nhằm ngăn chặn fall-through."
         },
         {
           "key": "D",
-          "text": "Có thể kế thừa nếu class cha là final"
+          "text": "Để chuyển đổi luồng thực thi sang một Thread khác."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Mọi record đều mở rộng từ `java.lang.Record` và ngầm định là `final`, do đó không thể kế thừa bất kỳ class nào khác (nhưng có thể implements nhiều interface)."
+      "explanation": "Mệnh đề `when` bổ sung thêm điều kiện phụ cho pattern trong case. Một case pattern chỉ được coi là khớp khi cả hai điều kiện thoả mãn: đối tượng khớp với kiểu dữ liệu của pattern VÀ biểu thức boolean sau `when` trả về `true`. Ví dụ: `case String s when !s.isBlank() -> ...`."
     },
     {
       "number": 5,
-      "question": "Ký tự phân cách để bắt đầu và kết thúc một 'Text Block' (Java 15+) là gì?",
+      "question": "Tính năng **Record Patterns** (JEP 440 trong Java 21) mang lại khả năng nào sau đây cho lập trình viên?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Dấu ngoặc đơn đôi ''"
+          "text": "Cho phép bóc tách (destructuring/deconstruction) các trường thành phần của một record trực tiếp trong câu lệnh `instanceof` hoặc `switch` mà không cần gọi các hàm accessor."
         },
         {
           "key": "B",
-          "text": "Ba dấu nháy kép (\"\"\")"
+          "text": "Tự động dịch các file XML thành file JSON."
         },
         {
           "key": "C",
-          "text": "Dấu backtick (```)"
+          "text": "Cho phép thay đổi giá trị của các trường `final` bên trong record sau khi đã khởi tạo."
         },
         {
           "key": "D",
-          "text": "Thẻ <text></text>"
+          "text": "Xoá bỏ hoàn toàn bộ thu dọn rác GC cho các đối tượng record."
         }
       ],
       "correctAnswers": [
-        "B"
+        "A"
       ],
-      "explanation": "Text Block sử dụng ba dấu nháy kép `\"\"\"` mở đầu (sau đó phải xuống dòng) và ba dấu nháy kép đóng để biểu diễn chuỗi nhiều dòng."
+      "explanation": "JEP 440 giới thiệu Record Patterns cho phép 'phân rã' một record thành các components của nó ngay trong pattern. Ví dụ: `if (obj instanceof Point(int x, int y))` sẽ tự động kiểm tra xem `obj` có phải là `Point` hay không, và nếu phải thì trích xuất ngay lập tức hai biến nguyên thuỷ `x` và `y`, kể cả khi lồng nhau nhiều tầng như `Circle(Point(int x, int y), int r)`."
     },
     {
       "number": 6,
-      "question": "Trong Pattern Matching for switch (Java 21), từ khoá `when` được dùng cho mục đích gì?",
+      "question": "Một lớp trực tiếp kế thừa từ một `sealed class` bắt buộc phải được khai báo với một trong những từ khoá nào dưới đây?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Đặt hẹn giờ thực thi lệnh"
+          "text": "Chỉ có thể là `static` hoặc `abstract`."
         },
         {
           "key": "B",
-          "text": "Thêm một biểu thức điều kiện bổ sung (guard pattern) cho một case cụ thể"
+          "text": "Bắt buộc phải là một trong ba từ khoá: `final`, `sealed`, hoặc `non-sealed`."
         },
         {
           "key": "C",
-          "text": "Chuyển sang case tiếp theo"
+          "text": "Chỉ có thể là `transient` hoặc `volatile`."
         },
         {
           "key": "D",
-          "text": "Bắt ngoại lệ"
+          "text": "Không cần từ khoá nào, mọi lớp con đều tự động được phép mở rộng tự do."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`when` (trước đây là `&&`) đóng vai trò là mệnh đề bảo vệ (guarded pattern): `case String s when s.length() > 5 -> ...`."
+      "explanation": "Đặc tả Sealed Classes quy định mọi lớp con trực tiếp kế thừa từ sealed class phải chỉ rõ chính sách kế thừa tiếp theo của nó: `final` (không cho phép mở rộng thêm nữa), `sealed` (tiếp tục giới hạn các lớp con tiếp theo), hoặc `non-sealed` (mở rộng tự do cho bất kỳ lớp nào kế thừa)."
     },
     {
       "number": 7,
-      "question": "Trước Java 21, việc xử lý giá trị `null` trong biểu thức `switch (obj)` thường dẫn tới kết quả gì nếu không kiểm tra từ trước?",
+      "question": "Tại sao khi sử dụng `switch expression` trên một hệ phân cấp các đối tượng bắt nguồn từ một `sealed interface`, chúng ta thường **KHÔNG CẦN** viết nhánh `default`?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Tự động nhảy vào case default"
+          "text": "Vì nhánh `default` bị cấm hoàn toàn trong cú pháp Java 21."
         },
         {
           "key": "B",
-          "text": "Ném ngoại lệ NullPointerException ngay lập tức"
+          "text": "Vì trình biên dịch `javac` nắm được danh sách toàn bộ các lớp con được phép (`permits`) kế thừa từ sealed interface; nếu tất cả các lớp con đó đều đã được xử lý trong các nhánh `case`, tính toàn vẹn (exhaustiveness) đã được đảm bảo tuyệt đối tại thời điểm biên dịch."
         },
         {
           "key": "C",
-          "text": "Bỏ qua toàn bộ khối switch"
+          "text": "Vì JVM sẽ tự động trả về giá trị `null` nếu không có case nào khớp."
         },
         {
           "key": "D",
-          "text": "Lỗi biên dịch"
+          "text": "Vì tất cả các switch expression đều tự động bỏ qua các trường hợp còn thiếu."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Trước Java 21, truyền `null` vào switch luôn ném NPE. Java 21 cho phép khai báo trực tiếp `case null -> ...` một cách tường minh và an toàn."
+      "explanation": "Tính năng Exhaustiveness checking của trình biên dịch Java dựa trên danh sách đóng kín của `sealed`. Nếu `javac` phát hiện lập trình viên đã viết đầy đủ các nhánh cho toàn bộ các subtype được chỉ định trong mệnh đề `permits`, biểu thức switch được chứng minh là vét cạn 100%, do đó nhánh `default` trở nên dư thừa. Nếu thiếu một subtype, javac sẽ báo lỗi compile ngay lập tức."
     },
     {
       "number": 8,
-      "question": "Tính năng 'Sequenced Collections' (Java 21) bổ sung các phương thức đồng nhất nào để thao tác ở hai đầu danh sách?",
+      "question": "Ba giao diện cốt lõi nào được giới thiệu trong Java 21 để giải quyết vấn đề thiếu đồng nhất trong việc truy xuất phần tử đầu và cuối của tập hợp có thứ tự (**Sequenced Collections**)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "pushFirst() và popLast()"
+          "text": "`OrderedList`, `OrderedSet`, `OrderedMap`."
         },
         {
           "key": "B",
-          "text": "getFirst(), getLast(), addFirst(), addLast(), removeFirst(), removeLast()"
+          "text": "`SequencedCollection`, `SequencedSet`, `SequencedMap`."
         },
         {
           "key": "C",
-          "text": "top() và bottom()"
+          "text": "`FirstLastList`, `FirstLastSet`, `FirstLastMap`."
         },
         {
           "key": "D",
-          "text": "head() và tail()"
+          "text": "`IndexCollection`, `IndexSet`, `IndexMap`."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`SequencedCollection` chuẩn hoá các thao tác lấy/thêm/xoá phần tử đầu và cuối cho List, Deque và SortedSet."
+      "explanation": "Java 21 bổ sung 3 interfaces chuẩn hoá vào Java Collections Framework: `SequencedCollection<E>`, `SequencedSet<E>`, và `SequencedMap<K, V>`. Chúng cung cấp các hàm thống nhất như `getFirst()`, `getLast()`, `addFirst()`, `addLast()`, `removeFirst()`, `removeLast()`, và `reversed()`."
     },
     {
       "number": 9,
-      "question": "Phương thức `reversed()` trong `SequencedCollection` (Java 21) có đặc điểm hiệu năng thế nào?",
+      "question": "Phương thức `reversed()` trên một `SequencedCollection` trong Java 21 có đặc điểm nào về mặt hiệu năng và hành vi?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Tốn O(n) vì phải đảo ngược toàn bộ mảng trong bộ nhớ"
+          "text": "Nó tạo ra một bản sao mảng mới và sao chép toàn bộ phần tử ngược lại tốn $O(n)$ thời gian và bộ nhớ."
         },
         {
           "key": "B",
-          "text": "Tốn O(1) vì nó trả về một view đảo ngược trỏ tới cùng dữ liệu gốc mà không sao chép phần tử"
+          "text": "Nó trả về một khung nhìn đảo ngược (reversed view) trong độ phức tạp thời gian $O(1)$; mọi thay đổi trên view này sẽ phản ánh trực tiếp vào collection gốc và ngược lại."
         },
         {
           "key": "C",
-          "text": "Tốn O(n log n) do thuật toán sắp xếp"
+          "text": "Nó đảo lộn trực tiếp vị trí các phần tử trong danh sách gốc làm mất dữ liệu ban đầu."
         },
         {
           "key": "D",
-          "text": "Tạo ra bản sao sâu (deep clone)"
+          "text": "Nó chỉ có thể gọi được một lần duy nhất trên mỗi đối tượng collection."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "`reversed()` trả về một cấu trúc view đảo ngược tức thì với độ phức tạp O(1), không tốn thêm bộ nhớ RAM để sao chép dữ liệu."
+      "explanation": "Phương thức `reversed()` cung cấp một góc nhìn đảo ngược (reverse-ordered view) của tập hợp hiện tại với chi phí cực thấp O(1) time complexity mà không hề sao chép các phần tử vật lý trong bộ nhớ. Vì là view nên mọi thao tác ghi/đọc trên view đều tác động trực tiếp lên collection nền tảng bên dưới."
     },
     {
       "number": 10,
-      "question": "Trong Record, khái niệm 'Compact Constructor' có đặc điểm cú pháp nổi bật nào?",
+      "question": "Quy tắc xử lý khoảng trắng thụt lề (Indentation) của trình biên dịch đối với **Text Blocks** (`\"\"\"...\"\"\"`) trong Java diễn ra như thế nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Không có cặp dấu ngoặc đơn chứa danh sách tham số `( )`"
+          "text": "Giữ nguyên toàn bộ mọi khoảng trắng ở đầu mỗi dòng mà không cắt bỏ bất kỳ ký tự nào."
         },
         {
           "key": "B",
-          "text": "Không có cặp dấu ngoặc nhọn `{ }`"
+          "text": "Trình biên dịch tính toán khoảng trắng ngẫu nhiên (Incidental Whitespace) bằng cách tìm độ thụt lề chung nhỏ nhất của tất cả các dòng không rỗng, và tự động cắt bỏ phần thụt lề chung này."
         },
         {
           "key": "C",
-          "text": "Bắt buộc phải gọi `super()`"
+          "text": "Xoá bỏ tất cả các khoảng trắng trong toàn bộ văn bản."
         },
         {
           "key": "D",
-          "text": "Phải có tiền tố static"
+          "text": "Tự động thay thế dấu cách bằng dấu tab `\\t`."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "Ví dụ `public User { Objects.requireNonNull(name); }` - không cần danh sách tham số `(String name...)`, giúp code thẩm tra dữ liệu cực kỳ gọn."
+      "explanation": "Java Text Blocks phân biệt giữa Essential Whitespace (khoảng trắng có chủ đích của văn bản) và Incidental Whitespace (khoảng trắng dùng để căn lề mã nguồn trong IDE). Javac sẽ quét toàn bộ các dòng không rỗng (non-empty lines) để tìm ra số lượng khoảng trắng thụt lề tối thiểu chung (common white space prefix) và tước bỏ phần này khỏi chuỗi kết quả."
     },
     {
       "number": 11,
-      "question": "Nguyên lý 'Single Responsibility Principle' (Chữ S trong SOLID) khuyên lập trình viên điều gì?",
+      "question": "Trong cú pháp Text Block của Java, ký tự thoát `\\` đặt ở cuối một dòng văn bản có tác dụng gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Một class chỉ nên có một lý do duy nhất để thay đổi (chỉ đảm nhận một trách nhiệm)"
+          "text": "Báo lỗi cú pháp vì dấu gạch chéo ngược không được phép đứng cuối dòng."
         },
         {
           "key": "B",
-          "text": "Mỗi file chỉ được chứa một dòng code"
+          "text": "Triệt tiêu ký tự xuống dòng (line continuation), nối liền dòng hiện tại với dòng kế tiếp mà không sinh mã `\\n`."
         },
         {
           "key": "C",
-          "text": "Mỗi phương thức chỉ được gọi 1 lần"
+          "text": "Chèn thêm một dấu cách trắng vào cuối dòng."
         },
         {
           "key": "D",
-          "text": "Ứng dụng chỉ được chạy đơn luồng"
+          "text": "Tự động in hoa toàn bộ các chữ cái trên dòng đó."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "SRP yêu cầu một lớp chỉ nên tập trung vào một nhiệm vụ chuyên biệt để tăng tính module và hạn chế tác động lan truyền khi sửa code."
+      "explanation": "Ký tự thoát `\\` ở cuối dòng trong Text Block đóng vai trò là ký hiệu nối dòng (line continuation). Nó cho phép lập trình viên ngắt một câu văn dài ra nhiều dòng trong trình soạn thảo mã nguồn cho dễ đọc, nhưng khi chuỗi được dịch, ký tự xuống dòng bị triệt tiêu hoàn toàn và dòng chữ vẫn nối liền thành một dòng liên tục."
     },
     {
       "number": 12,
-      "question": "Nguyên lý 'Open/Closed Principle' (Chữ O trong SOLID) định nghĩa thế nào?",
+      "question": "Khi sử dụng cú pháp mũi tên `case X ->` trong **Switch Expressions**, điều nào dưới đây là ĐÚNG?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Mã nguồn phải được đóng gói thành file .zip"
+          "text": "Vẫn xảy ra hiện tượng trôi nhánh (fall-through) và bắt buộc phải dùng lệnh `break`."
         },
         {
           "key": "B",
-          "text": "Các thực thể phần mềm nên mở cho việc mở rộng (Open for extension) nhưng đóng cho việc sửa đổi (Closed for modification)"
+          "text": "Hoàn toàn không xảy ra hiện tượng fall-through; mỗi nhánh chỉ thực thi duy nhất biểu thức hoặc khối lệnh tương ứng mà không cần `break`, và có thể trả về giá trị qua từ khoá `yield` nếu dùng khối ngoặc nhọn `{}`."
         },
         {
           "key": "C",
-          "text": "Chỉ sử dụng mã nguồn mở"
+          "text": "Chỉ hỗ trợ tối đa 3 nhánh case."
         },
         {
           "key": "D",
-          "text": "Luôn mở tất cả các cổng kết nối mạng"
+          "text": "Không thể ném Exception bên trong các nhánh."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "OCP khuyến khích thiết kế dựa trên interface/abstract class để khi thêm tính năng mới, ta chỉ cần tạo class mới kế thừa thay vì đập đi xây lại code cũ."
+      "explanation": "Cú pháp arrow `->` trong switch expression loại bỏ hoàn toàn cạm bẫy 'fall-through' kinh điển của switch statement cũ, vì vậy không cần dùng từ khoá `break`. Nếu nhánh case là một biểu thức đơn, giá trị biểu thức được trả về ngay. Nếu là một khối lệnh phức tạp bọc trong `{ ... }`, lập trình viên dùng từ khoá `yield` để trả về giá trị."
     },
     {
       "number": 13,
-      "question": "Nguyên lý 'Liskov Substitution Principle' (Chữ L trong SOLID) yêu cầu điều gì?",
+      "question": "Tại sao **Scoped Values** (JEP 446) lại được xem là sự thay thế ưu việt cho `ThreadLocal` trong môi trường ứng dụng sử dụng hàng triệu Virtual Threads?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Các đối tượng của lớp con phải có thể thay thế hoàn toàn các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình"
+          "text": "`ScopedValues` cho phép ghi đè biến toàn cục của hệ điều hành."
         },
         {
           "key": "B",
-          "text": "Lớp con phải ghi đè toàn bộ phương thức của lớp cha"
+          "text": "`ScopedValue` có tính chất bất biến (immutable), dữ liệu chỉ tồn tại gắn liền với một phạm vi thực thi giới hạn (bounded lexical scope) qua `where().run()`, loại bỏ nguy cơ rò rỉ bộ nhớ và chia sẻ dữ liệu an toàn, nhẹ nhàng giữa luồng cha và các luồng con ảo."
         },
         {
           "key": "C",
-          "text": "Không được sử dụng tính kế thừa"
+          "text": "`ScopedValues` tự động nén dữ liệu thành file ZIP."
         },
         {
           "key": "D",
-          "text": "Tất cả các biến phải là private"
+          "text": "`ScopedValues` chỉ có thể lưu trữ số nguyên nguyên thuỷ."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "LSP đảm bảo rằng lớp con phải tuân thủ hợp đồng hành vi của lớp cha, không được ném ngoại lệ bất ngờ hay vi phạm ràng buộc của cha."
+      "explanation": "`ThreadLocal` có nhiều nhược điểm chí mạng khi dùng với Virtual Threads: dữ liệu có thể bị sửa đổi tuỳ tiện (mutable), chi phí nhân bản lớn, và đặc biệt dễ gây Memory Leak nếu quên gọi `remove()`. Ngược lại, `ScopedValue` là bất biến (immutable), chỉ tồn tại trong phạm vi được định nghĩa tường minh (ví dụ trong một lambda execution), tự động giải phóng khi hoàn tất và hỗ trợ chia sẻ kế thừa tối ưu giữa các Virtual Threads."
     },
     {
       "number": 14,
-      "question": "Nguyên lý 'Dependency Inversion Principle' (Chữ D trong SOLID) là nền tảng của kỹ thuật phổ biến nào trong Spring Framework?",
+      "question": "Giao diện **Foreign Function & Memory API** (FFM - JEP 454 trong Java 22+) thay thế các thao tác con trỏ nguy hiểm của `sun.misc.Unsafe` bằng cấu trúc an toàn nào?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Garbage Collection"
+          "text": "`java.util.Vector` và `Stack`."
         },
         {
           "key": "B",
-          "text": "Dependency Injection (Inversion of Control - IoC)"
+          "text": "`Arena` quản lý vòng đời bộ nhớ off-heap và `MemorySegment` đại diện cho các vùng nhớ liên tục được kiểm tra biên an toàn (spatial and temporal bounds)."
         },
         {
           "key": "C",
-          "text": "Method Overloading"
+          "text": "`FileChannel` và `ByteBuffer`."
         },
         {
           "key": "D",
-          "text": "Multi-threading"
+          "text": "`ThreadLocal` và `AtomicReference`."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "DIP tách rời sự phụ thuộc trực tiếp giữa các class cụ thể, uỷ thác cho Spring Container inject các bean dựa trên Interface trừu tượng."
+      "explanation": "FFM API sử dụng `Arena` để kiểm soát thời gian tồn tại (temporal safety) của bộ nhớ ngoài heap (off-heap memory) và giải phóng tất định. `MemorySegment` đại diện cho khối bộ nhớ với các cơ chế kiểm tra giới hạn không gian (spatial safety - chống tràn bộ nhớ), đảm bảo không bao giờ xảy ra lỗi truy cập vùng nhớ rác hoặc use-after-free."
     },
     {
       "number": 15,
-      "question": "Tính năng 'Unnamed Patterns and Variables' (ký tự `_`) chính thức từ Java 22 cho phép làm gì?",
+      "question": "Ưu điểm vượt trội lớn nhất của FFM API (JEP 454) khi giao tiếp với các thư viện bản địa C/C++ so với Java Native Interface (JNI) truyền thống là gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Dùng dấu gạch dưới `_` để bỏ qua các biến hoặc tham số không cần sử dụng đến (ví dụ trong catch block hoặc lambda)"
+          "text": "Không cần phải viết mã C stubs trung gian, không cần biên dịch file header `.h` bằng `javah`, mà có thể liên kết và gọi trực tiếp các hàm C thông qua pure Java code sử dụng `Linker` và `MethodHandle`."
         },
         {
           "key": "B",
-          "text": "Đổi tên class tự động"
+          "text": "Tự động dịch mã C thành mã bytecode Java."
         },
         {
           "key": "C",
-          "text": "Tạo biến toàn cục"
+          "text": "Chỉ chạy được trên vi điều khiển nhúng 8-bit."
         },
         {
           "key": "D",
-          "text": "Tăng dung lượng RAM"
+          "text": "Cho phép mã C tự động kế thừa các class Java."
         }
       ],
       "correctAnswers": [
         "A"
       ],
-      "explanation": "Ví dụ `catch (Exception _)` hoặc `(k, _) -> ...` thể hiện rõ biến đó không được dùng, giúp code sạch và compiler không cảnh báo unused variable."
+      "explanation": "Với JNI, lập trình viên bắt buộc phải viết mã C/C++ keo trung gian (glue code/stubs), cấu hình trình biên dịch gcc/clang phức tạp cho từng hệ điều hành. Với FFM API, lập trình viên hoàn toàn ngồi trong môi trường Java thuần tuý, dùng `Linker.nativeLinker()` và `SymbolLookup` để lấy con trỏ hàm native và gọi nó trực tiếp qua `MethodHandle`, tinh gọn và an toàn vượt bậc."
     },
     {
       "number": 16,
-      "question": "Kể từ Java 9, tính năng Java Platform Module System (Project Jigsaw) sử dụng file nào để định nghĩa module?",
+      "question": "Nguyên lý **Single Responsibility Principle (SRP)** trong bộ nguyên lý SOLID phát biểu rằng:",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "module-info.java"
+          "text": "Một class chỉ được phép chứa duy nhất một phương thức `public`."
         },
         {
           "key": "B",
-          "text": "package-info.java"
+          "text": "Một class hoặc module chỉ nên có duy nhất một lý do để thay đổi, tức là chỉ phục vụ duy nhất một nhóm tác nhân/đối tượng có trách nhiệm cụ thể trong hệ thống."
         },
         {
           "key": "C",
-          "text": "module.xml"
+          "text": "Mỗi cơ sở dữ liệu chỉ được phép chứa một bảng duy nhất."
         },
         {
           "key": "D",
-          "text": "jigsaw.json"
+          "text": "Ứng dụng chỉ được chạy trên một luồng đơn lẻ."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "`module-info.java` đặt ở thư mục gốc chứa các khai báo `module <name> { requires ...; exports ...; }`."
+      "explanation": "Theo Robert C. Martin (Uncle Bob), SRP không có nghĩa là một class chỉ làm một hàm, mà là: 'A module should have one, and only one, reason to change' — nghĩa là nó chỉ nên chịu trách nhiệm trước một tác nhân (actor/stakeholder) duy nhất. Ví dụ, một class không thể vừa chứa logic tính lương của phòng kế toán vừa chứa logic hiển thị HTML cho phòng truyền thông."
     },
     {
       "number": 17,
-      "question": "Tính năng 'Scoped Values' (Java 20+ Preview / 21 Incubator) được thiết kế nhằm thay thế cho công nghệ nào trong môi trường Virtual Threads?",
+      "question": "Làm thế nào việc kết hợp giữa **Sealed Interfaces** và **Pattern Matching for switch** trong Java hiện đại lại hiện thực hoá hoàn hảo **Open/Closed Principle (OCP)** đối với các quy tắc nghiệp vụ hướng hàm?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "ThreadLocal"
+          "text": "Bằng cách cấm tất cả các lập trình viên thêm class mới vào hệ thống."
         },
         {
           "key": "B",
-          "text": "ArrayList"
+          "text": "Bằng cách đóng kín mô hình dữ liệu lõi thông qua sealed types, nhưng cho phép mở rộng không giới hạn các hành vi, giải thuật nghiệp vụ mới bằng các hàm xử lý pattern matching mà không cần phải chỉnh sửa hay làm phình to các class dữ liệu ban đầu."
         },
         {
           "key": "C",
-          "text": "HashMap"
+          "text": "Bằng cách biến toàn bộ ứng dụng thành mã nguồn mở."
         },
         {
           "key": "D",
-          "text": "Garbage Collector"
+          "text": "Bằng cách gộp tất cả các file mã nguồn vào một file duy nhất."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "`ScopedValue` cung cấp cơ chế chia sẻ dữ liệu bất biến an toàn, nhẹ hơn và tối ưu hơn nhiều so với `ThreadLocal` khi có hàng triệu Virtual Threads."
+      "explanation": "Trong tư duy Data-Oriented Programming, dữ liệu và hành vi được tách rời. Sealed interfaces đóng kín tập hợp các dạng dữ liệu hợp lệ (Closed for modification). Khi cần bổ sung thêm các tính năng nghiệp vụ mới (ví dụ tính thuế, xuất báo cáo XML, kiểm tra gian lận), ta chỉ cần viết thêm một hàm mới sử dụng switch pattern matching mà không cần phải can thiệp hay sửa đổi bất kỳ dòng mã nào trong các class dữ liệu hiện có (Open for extension)."
     },
     {
       "number": 18,
-      "question": "Đoạn code sau có hợp lệ không trong Java 21?\n```java\nrecord Point(int x, int y) {}\nObject obj = new Point(10, 20);\nif (obj instanceof Point(int a, int b)) {\n    System.out.println(a + b);\n}\n```",
+      "question": "Vi phạm nguyên lý **Liskov Substitution Principle (LSP)** xảy ra trong trường hợp nào dưới đây?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Hợp lệ, đây là tính năng Record Patterns (JEP 440) giúp deconstruct trực tiếp các trường của record"
+          "text": "Lớp con ghi đè phương thức của lớp cha và thực hiện trả về kết quả đúng theo giao kèo."
         },
         {
           "key": "B",
-          "text": "Lỗi biên dịch vì không được dùng ngoặc đơn trong instanceof"
+          "text": "Lớp con thắt chặt các điều kiện tiền đề (preconditions), ném ra các ngoại lệ runtime bất thường mà lớp cha không hề quy định, hoặc làm suy yếu các cam kết kết quả đầu ra (postconditions), khiến cho việc thay thế đối tượng lớp cha bằng lớp con làm hỏng chương trình."
         },
         {
           "key": "C",
-          "text": "Chỉ chạy được trên Java 8"
+          "text": "Lớp con được khai báo là `final`."
         },
         {
           "key": "D",
-          "text": "Ném lỗi ClassCastException"
+          "text": "Lớp con có nhiều trường dữ liệu hơn lớp cha."
         }
       ],
       "correctAnswers": [
-        "A"
+        "B"
       ],
-      "explanation": "Record Patterns trong Java 21 cho phép phân rã (deconstruct) các thành phần của record trực tiếp trong biểu thức pattern matching."
+      "explanation": "Nguyên lý LSP quy định: các đối tượng của lớp con phải có thể thay thế hoàn toàn cho các đối tượng lớp cha mà không làm thay đổi tính đúng đắn của chương trình. Nếu lớp con đòi hỏi điều kiện đầu vào khắt khe hơn (ví dụ không cho phép số âm trong khi lớp cha cho phép) hoặc ném `UnsupportedOperationException`, giao kèo hợp đồng bị phá vỡ và vi phạm LSP nghiêm trọng."
     },
     {
       "number": 19,
-      "question": "Trong Clean Code, độ dài lý tưởng khuyến nghị của một phương thức (method) là bao nhiêu?",
+      "question": "Mục tiêu cốt lõi của nguyên lý **Interface Segregation Principle (ISP)** là gì?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Càng dài càng tốt (trên 500 dòng)"
+          "text": "Bắt buộc mọi interface phải có ít nhất 10 phương thức trừu tượng."
         },
         {
           "key": "B",
-          "text": "Ngắn gọn, lý tưởng từ 5 đến 20 dòng và chỉ làm duy nhất một việc (Do one thing well)"
+          "text": "Ngăn chặn việc thiết kế các interface 'béo bở' (Fat Interfaces) chứa quá nhiều phương thức không liên quan, thay vào đó chia nhỏ thành các interface hẹp, có tính gắn kết cao để các client không bị ép phụ thuộc vào những phương thức mà chúng không cần dùng."
         },
         {
           "key": "C",
-          "text": "Bắt buộc chính xác 50 dòng"
+          "text": "Ép buộc tất cả các class chỉ được implement đúng một interface duy nhất."
         },
         {
           "key": "D",
-          "text": "Không quan trọng, gộp hết vào main()"
+          "text": "Ẩn hoàn toàn các interface khỏi bộ nạp lớp ClassLoader."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Triết lý Clean Code của Uncle Bob nhấn mạnh hàm phải nhỏ gọn, có tính tự diễn giải và chỉ thực hiện duy nhất một chức năng rõ ràng."
+      "explanation": "ISP phát biểu: 'Clients should not be forced to depend upon interfaces that they do not use'. Thay vì tạo một interface khổng lồ `Machine` chứa cả `print()`, `scan()`, `fax()`, ta nên chia nhỏ thành `Printer`, `Scanner`, `FaxMachine`. Một máy in đơn giản chỉ cần implement `Printer`, tránh việc phải cài đặt rỗng các hàm `scan()` và `fax()` một cách vô nghĩa."
     },
     {
       "number": 20,
-      "question": "Tính năng 'Foreign Function & Memory API' (Java 22 LTS - Project Panama) mang lại lợi ích gì?",
+      "question": "Trong kiến trúc phần mềm Clean Architecture, nguyên lý **Dependency Inversion Principle (DIP)** được áp dụng như thế nào giữa tầng Business Logic (Use Cases) và tầng Infrastructure (Database/External APIs)?",
       "isMulti": false,
       "options": [
         {
           "key": "A",
-          "text": "Thay thế hoàn toàn ngôn ngữ Python"
+          "text": "Tầng Business Logic gọi trực tiếp các thư viện JDBC/Hibernate để query dữ liệu."
         },
         {
           "key": "B",
-          "text": "Cho phép chương trình Java tương tác trực tiếp với mã máy C/C++ và bộ nhớ ngoài Heap (Off-Heap) an toàn, hiệu quả mà không cần JNI cồng kềnh"
+          "text": "Tầng Business Logic định nghĩa các trừu tượng (Output Ports/Repository Interfaces) quy định dữ liệu cần lấy; tầng Infrastructure ở vòng ngoài (Adapters) sẽ phụ thuộc ngược vào Use Case để triển khai các interface đó, chiều mũi tên phụ thuộc luôn hướng vào trung tâm miền nghiệp vụ."
         },
         {
           "key": "C",
-          "text": "Tự động dịch mã Java sang Javascript"
+          "text": "Cơ sở dữ liệu sẽ tự động sinh mã Java cho tầng Use Case."
         },
         {
           "key": "D",
-          "text": "Chỉ dùng để kết nối mạng"
+          "text": "Mọi logic nghiệp vụ đều được viết trực tiếp dưới dạng Stored Procedure trong Database."
         }
       ],
       "correctAnswers": [
         "B"
       ],
-      "explanation": "Project Panama thay thế hoàn toàn Java Native Interface (JNI) cổ xưa, giúp gọi thư viện native C/C++ với hiệu năng vượt trội và tính an toàn cao."
+      "explanation": "DIP đảo ngược chiều phụ thuộc: thay vì tầng nghiệp vụ cấp cao phụ thuộc vào thư viện cơ sở dữ liệu cấp thấp, tầng nghiệp vụ tự định nghĩa giao diện (Port/Interface) mà nó mong muốn (ví dụ `UserRepository`). Tầng cơ sở dữ liệu (Adapter) bắt buộc phải implement interface này. Kết quả là logic nghiệp vụ hoàn toàn độc lập, có thể dễ dàng thay thế MySQL bằng MongoDB hoặc Mock trong unit test mà không phải sửa một dòng code nghiệp vụ nào."
     }
   ]
 }
