@@ -102,7 +102,7 @@ function renderFeaturedSection() {
 
   root.hidden = false;
   root.innerHTML = `
-    <div class="flex items-center justify-between gap-4 mb-4">
+    <div class="featured-header flex items-center justify-between gap-4 mb-4" id="featured-header">
       <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
         Bài Viết Nổi Bật Dành Cho Bạn
       </h2>
@@ -130,15 +130,44 @@ function setupFeaturedCarousel() {
   const prevBtn = qs("#featured-prev");
   const nextBtn = qs("#featured-next");
   const nav = qs("#featured-nav");
+  const headerEl = qs("#featured-header");
   if (!carousel || !prevBtn || !nextBtn) return;
 
+  let lastCanScroll = null;
+
   const updateButtons = () => {
-    // Không đủ số lượng item để cuộn (scrollWidth <= clientWidth) -> ẩn 2 nút điều hướng
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-    const canScroll = maxScroll > 15;
-    if (nav) nav.style.display = canScroll ? "flex" : "none";
-    prevBtn.disabled = carousel.scrollLeft <= 10;
-    nextBtn.disabled = carousel.scrollLeft >= maxScroll - 10;
+    const cards = carousel.querySelectorAll(".featured-card");
+    if (!cards.length) return;
+
+    let totalCardsWidth = 0;
+    cards.forEach((c) => {
+      totalCardsWidth += c.offsetWidth;
+    });
+    totalCardsWidth += (cards.length - 1) * 20; // Khoảng cách gap-5 (20px)
+
+    const containerWidth = carousel.clientWidth;
+    // canScroll: chỉ cuộn khi tổng độ rộng các thẻ thực sự tràn qua vùng hiển thị
+    const canScroll = totalCardsWidth > containerWidth + 8;
+
+    if (canScroll !== lastCanScroll) {
+      lastCanScroll = canScroll;
+      if (canScroll) {
+        carousel.classList.remove("is-centered");
+        if (headerEl) headerEl.classList.remove("is-centered");
+        if (nav) nav.style.display = "flex";
+      } else {
+        carousel.classList.add("is-centered");
+        if (headerEl) headerEl.classList.add("is-centered");
+        if (nav) nav.style.display = "none";
+        carousel.scrollLeft = 0;
+      }
+    }
+
+    if (canScroll) {
+      prevBtn.disabled = carousel.scrollLeft <= 10;
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      nextBtn.disabled = carousel.scrollLeft >= maxScroll - 10;
+    }
   };
 
   prevBtn.addEventListener("click", () => {
@@ -155,9 +184,15 @@ function setupFeaturedCarousel() {
 
   carousel.addEventListener("scroll", updateButtons, { passive: true });
   window.addEventListener("resize", updateButtons);
+
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(updateButtons);
+    ro.observe(carousel);
+  }
+
   updateButtons();
   requestAnimationFrame(updateButtons);
-  setTimeout(updateButtons, 100);
+  setTimeout(updateButtons, 150);
 }
 
 function renderLanding() {

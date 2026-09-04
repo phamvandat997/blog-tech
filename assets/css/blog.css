@@ -1855,6 +1855,24 @@ body.is-preview.no-toc .reader-shell { grid-template-columns: minmax(0, 1fr); }
   display: none;
 }
 
+.featured-carousel.is-centered {
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.featured-header {
+  transition: justify-content var(--transition-fast);
+}
+
+.featured-header.is-centered {
+  justify-content: center;
+  text-align: center;
+}
+
+.featured-header.is-centered h2 {
+  text-align: center;
+}
+
 .featured-carousel-btn {
   width: 38px;
   height: 38px;
