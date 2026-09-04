@@ -8,6 +8,7 @@ import { BackToTop } from '../components/layout/BackToTop';
 import { QuizCard } from '../components/quiz/QuizCard';
 import { QuizPlayer } from '../components/quiz/QuizPlayer';
 import { QuizTagCarousel } from '../components/quiz/QuizTagCarousel';
+import { SocialShare } from '../components/common/SocialShare';
 import { EmptyState } from '../components/common/EmptyState';
 
 export function QuizPage() {
@@ -170,9 +171,16 @@ export function QuizPage() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">
             Ngân Hàng Câu Hỏi &amp; Đề Thi Thử
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed mb-4">
             Chọn một bài học bên dưới để bắt đầu làm bài trắc nghiệm. Sau khi nộp bài, hệ thống sẽ tự động chấm điểm và cung cấp phần giải thích chi tiết cho từng câu hỏi.
           </p>
+          <div className="flex justify-center">
+            <SocialShare
+              title="Ngân Hàng Câu Hỏi & Luyện Tập Trắc Nghiệm | Blog Tech"
+              description="Hệ thống câu hỏi trắc nghiệm kỹ thuật chuyên sâu, giải thích chi tiết và chấm điểm tự động."
+              variant="compact"
+            />
+          </div>
         </div>
 
         {/* Toolbar: Section Tabs + Tag Carousel */}

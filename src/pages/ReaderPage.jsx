@@ -275,11 +275,6 @@ export function ReaderPage() {
               <div style={{ fontSize: `${fontSize}%` }}>
                 <MarkdownViewer html={bodyHtml} isDark={isDark} />
 
-                {/* Chia sẻ bài viết mạng xã hội */}
-                {currentDoc && !isPreview && (
-                  <SocialShare doc={currentDoc} variant="card" />
-                )}
-
                 {/* Bình luận qua GitHub Discussions */}
                 {currentDoc && !isPreview && (
                   <DocComments docId={currentDoc.id} isDark={isDark} />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuiz } from '../../hooks/useQuiz';
 import { useCatalog } from '../../hooks/useCatalog';
 import { QuizQuestionCard } from './QuizQuestionCard';
+import { SocialShare } from '../common/SocialShare';
 
 export function QuizPlayer({ doc, bank, isPreview = false, onBack }) {
   const { sections } = useCatalog();
@@ -125,9 +126,17 @@ export function QuizPlayer({ doc, bank, isPreview = false, onBack }) {
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0 mb-2">
             {bank.title || doc.title}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 m-0 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 m-0 leading-relaxed mb-3">
             Chọn đáp án cho từng câu hỏi, sau đó bấm Kiểm tra hoặc Chấm toàn bộ để xem lời giải chi tiết.
           </p>
+          {!isPreview && (
+            <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+              <SocialShare
+                title={`Luyện tập trắc nghiệm: ${bank.title || doc.title}`}
+                variant="compact"
+              />
+            </div>
+          )}
         </div>
 
         <div className="quiz-actions-toolbar flex items-center gap-2.5 flex-wrap">
