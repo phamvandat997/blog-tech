@@ -220,6 +220,8 @@ function initQuizManager() {
   }
 }
 
+let customSelectEventsBound = false;
+
 /**
  * Điền danh sách các bài viết lý thuyết vào dropdown
  */
@@ -232,6 +234,7 @@ function initDocSelector() {
 
   if (!docs.length) {
     select.innerHTML = '<option value="">(Chưa có bài viết lý thuyết nào trong hệ thống)</option>';
+    renderCustomDocDropdown();
     return;
   }
 
@@ -260,6 +263,247 @@ function initDocSelector() {
     select.value = QUIZ_TEMPLATE.docId;
   }
   updateDocLinkInfo();
+  renderCustomDocDropdown();
+}
+
+/**
+ * Render giao diện dropdown tùy chỉnh cao cấp thay thế native select
+ */
+function renderCustomDocDropdown() {
+  const listEl = qs("#quiz-custom-select-list");
+  const select = qs("#quiz-doc-select");
+  if (!listEl || !select) return;
+
+  const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
+  const sections = typeof ALL_SECTIONS !== "undefined" ? ALL_SECTIONS : (typeof SECTIONS !== "undefined" ? SECTIONS : []);
+
+  if (!docs.length) {
+    listEl.innerHTML = '<div class="p-4 text-center text-xs text-slate-400">(Chưa có bài viết lý thuyết nào trong hệ thống)</div>';
+    bindCustomSelectEvents();
+    syncCustomDocSelect();
+    return;
+  }
+
+  let html = "";
+  sections.forEach((sec) => {
+    const secDocs = docs.filter((d) => d.section === sec.id);
+    if (!secDocs.length) return;
+
+    html += `<div class="quiz-custom-optgroup" data-group="${attr(sec.id)}">`;
+    html += `<div class="quiz-custom-optgroup-title">📚 ${escapeHtml(sec.name)} (${secDocs.length} bài)</div>`;
+    secDocs.forEach((doc) => {
+      const hasQ = (doc.questions || 0) > 0;
+      const isSelected = select.value === doc.id;
+      html += `
+        <div class="quiz-custom-option ${isSelected ? "is-selected" : ""}"
+             role="option"
+             aria-selected="${isSelected}"
+             data-doc-id="${attr(doc.id)}"
+             data-section="${attr(doc.section)}"
+             data-category="${attr(doc.category)}"
+             data-slug="${attr(doc.slug)}"
+             data-title="${attr(doc.title)}">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <span class="text-xs opacity-75">${isSelected ? "✓" : "•"}</span>
+            <span class="truncate font-medium text-xs sm:text-sm">${escapeHtml(doc.title)}</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <span class="text-[0.68rem] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono">${escapeHtml(doc.category)}</span>
+            ${hasQ
+              ? `<span class="quiz-custom-option-badge-done">✓ ${doc.questions} câu</span>`
+              : `<span class="quiz-custom-option-badge-none">Chưa có quiz</span>`
+            }
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  });
+
+  listEl.innerHTML = html;
+  bindCustomSelectEvents();
+  syncCustomDocSelect();
+}
+
+/**
+ * Đồng bộ nhãn hiển thị trên trigger button theo giá trị hiện tại của select
+ */
+function syncCustomDocSelect() {
+  const select = qs("#quiz-doc-select");
+  const valEl = qs("#quiz-custom-select-val");
+  const listEl = qs("#quiz-custom-select-list");
+  if (!select || !valEl) return;
+
+  const docId = select.value;
+  const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
+  const doc = docs.find((d) => d.id === docId);
+
+  // Cập nhật trạng thái active trong danh sách
+  if (listEl) {
+    listEl.querySelectorAll(".quiz-custom-option").forEach((opt) => {
+      const active = opt.dataset.docId === docId;
+      opt.classList.toggle("is-selected", active);
+      opt.setAttribute("aria-selected", active ? "true" : "false");
+      const mark = opt.querySelector(".opacity-75");
+      if (mark) mark.textContent = active ? "✓" : "•";
+    });
+  }
+
+  if (!doc) {
+    valEl.innerHTML = `
+      <span class="text-base text-slate-400">📖</span>
+      <span class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium truncate">-- Chọn bài viết lý thuyết để liên kết --</span>
+    `;
+    return;
+  }
+
+  const hasQ = (doc.questions || 0) > 0;
+  valEl.innerHTML = `
+    <div class="flex items-center gap-2 flex-1 min-w-0">
+      <span class="text-base">📖</span>
+      <span class="px-1.5 py-0.5 rounded text-[0.68rem] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 flex-shrink-0">${escapeHtml(doc.section)} / ${escapeHtml(doc.category)}</span>
+      <span class="font-bold text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">${escapeHtml(doc.title)}</span>
+      ${hasQ
+        ? `<span class="ml-auto mr-1 quiz-custom-option-badge-done flex-shrink-0">✓ ${doc.questions} câu</span>`
+        : `<span class="ml-auto mr-1 quiz-custom-option-badge-none flex-shrink-0">Chưa có quiz</span>`
+      }
+    </div>
+  `;
+}
+
+/**
+ * Gắn sự kiện cho dropdown tùy chỉnh (Mở/đóng, tìm kiếm, chọn bài)
+ */
+function bindCustomSelectEvents() {
+  if (customSelectEventsBound) return;
+  customSelectEventsBound = true;
+
+  const container = qs("#quiz-custom-select");
+  const triggerBtn = qs("#quiz-custom-select-btn");
+  const menu = qs("#quiz-custom-select-menu");
+  const searchInput = qs("#quiz-custom-select-search");
+  const clearBtn = qs("#quiz-custom-select-clear");
+  const listEl = qs("#quiz-custom-select-list");
+  const select = qs("#quiz-doc-select");
+
+  if (!container || !triggerBtn || !menu || !listEl) return;
+
+  function openMenu() {
+    menu.hidden = false;
+    container.classList.add("is-open");
+    triggerBtn.setAttribute("aria-expanded", "true");
+    if (searchInput) {
+      searchInput.value = "";
+      filterOptions("");
+      setTimeout(() => searchInput.focus(), 50);
+    }
+  }
+
+  function closeMenu() {
+    menu.hidden = true;
+    container.classList.remove("is-open");
+    triggerBtn.setAttribute("aria-expanded", "false");
+  }
+
+  triggerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (menu.hidden) {
+      openMenu();
+    } else {
+      closeMenu();
+    }
+  });
+
+  // Tìm kiếm bài viết trong dropdown
+  function filterOptions(q) {
+    const query = (q || "").trim().toLowerCase();
+    if (clearBtn) clearBtn.hidden = !query;
+
+    const groups = listEl.querySelectorAll(".quiz-custom-optgroup");
+    let totalVisible = 0;
+
+    groups.forEach((grp) => {
+      const options = grp.querySelectorAll(".quiz-custom-option");
+      let grpVisible = 0;
+      options.forEach((opt) => {
+        const title = (opt.dataset.title || "").toLowerCase();
+        const category = (opt.dataset.category || "").toLowerCase();
+        const slug = (opt.dataset.slug || "").toLowerCase();
+        const match = !query || title.includes(query) || category.includes(query) || slug.includes(query);
+        opt.style.display = match ? "flex" : "none";
+        if (match) {
+          grpVisible++;
+          totalVisible++;
+        }
+      });
+      grp.style.display = grpVisible > 0 ? "block" : "none";
+    });
+
+    let emptyMsg = listEl.querySelector(".quiz-custom-select-empty");
+    if (totalVisible === 0) {
+      if (!emptyMsg) {
+        emptyMsg = document.createElement("div");
+        emptyMsg.className = "quiz-custom-select-empty p-4 text-center text-xs text-slate-400";
+        emptyMsg.textContent = "🔍 Không tìm thấy bài viết nào phù hợp";
+        listEl.appendChild(emptyMsg);
+      }
+      emptyMsg.style.display = "block";
+    } else if (emptyMsg) {
+      emptyMsg.style.display = "none";
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      filterOptions(searchInput.value);
+    });
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeMenu();
+        triggerBtn.focus();
+      }
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      if (searchInput) {
+        searchInput.value = "";
+        filterOptions("");
+        searchInput.focus();
+      }
+    });
+  }
+
+  // Chọn option
+  listEl.addEventListener("click", (e) => {
+    const option = e.target.closest(".quiz-custom-option");
+    if (!option) return;
+
+    const docId = option.dataset.docId;
+    if (select) {
+      select.value = docId;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    syncCustomDocSelect();
+    closeMenu();
+    triggerBtn.focus();
+  });
+
+  // Đóng khi click ngoài
+  document.addEventListener("click", (e) => {
+    if (!container.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  // Đóng khi bấm Esc
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !menu.hidden) {
+      closeMenu();
+      triggerBtn.focus();
+    }
+  });
 }
 
 /**
@@ -272,6 +516,8 @@ function updateDocLinkInfo() {
   const docId = select.value;
   const docs = typeof ALL_DOCUMENTS !== "undefined" ? ALL_DOCUMENTS : (typeof DOCUMENTS !== "undefined" ? DOCUMENTS : []);
   const doc = docs.find((d) => d.id === docId);
+
+  syncCustomDocSelect();
 
   if (!doc) return;
 

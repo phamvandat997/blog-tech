@@ -329,12 +329,37 @@
           <input type="text" id="quiz-title" placeholder="VD: Chapter 1: OOP Approach - Part 1 (24 Practice Questions)" required>
         </label>
 
-        <label class="admin-field mb-4">
-          <span class="admin-label">Chọn bài viết lý thuyết <b class="req">*</b></span>
-          <span class="admin-select">
-            <select id="quiz-doc-select" required></select>
-          </span>
-        </label>
+        <div class="admin-field mb-4" id="quiz-doc-field">
+          <label class="admin-label" for="quiz-custom-select-btn">Chọn bài viết lý thuyết <b class="req">*</b></label>
+          <select id="quiz-doc-select" class="sr-only" tabindex="-1" aria-hidden="true"></select>
+
+          <!-- Custom Dropdown / Combobox -->
+          <div class="quiz-custom-select" id="quiz-custom-select">
+            <button type="button" class="quiz-custom-select-trigger" id="quiz-custom-select-btn" aria-haspopup="listbox" aria-expanded="false">
+              <div class="quiz-custom-select-val" id="quiz-custom-select-val">
+                <span class="text-base text-slate-400">📖</span>
+                <span class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium truncate">-- Chọn bài viết lý thuyết để liên kết --</span>
+              </div>
+              <span class="quiz-custom-select-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Floating Menu -->
+            <div class="quiz-custom-select-menu" id="quiz-custom-select-menu" hidden>
+              <div class="quiz-custom-select-search-wrap">
+                <span class="text-slate-400 text-xs">🔍</span>
+                <input type="text" id="quiz-custom-select-search" class="quiz-custom-select-search-input" placeholder="Tìm theo tên bài, chuyên mục, slug..." autocomplete="off">
+                <button type="button" id="quiz-custom-select-clear" class="quiz-custom-select-clear-btn" hidden title="Xóa tìm kiếm">✕</button>
+              </div>
+              <div class="quiz-custom-select-list" id="quiz-custom-select-list" role="listbox">
+                <!-- Sẽ được điền tự động bằng JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="admin-field mb-4" id="quiz-tags-group">
           <span class="admin-label">Thẻ phân loại bài quiz (Tags)</span>
