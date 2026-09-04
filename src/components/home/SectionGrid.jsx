@@ -12,7 +12,19 @@ export function SectionGrid() {
   const { sections, docs } = useCatalog();
   const { completedDocs } = useDocProgress();
 
-  if (!sections.length) return null;
+  if (!sections.length) {
+    return (
+      <div id="sections-root" className="w-full lg:w-[60%] lg:max-w-[60%] mx-auto py-10 text-center">
+        <div className="p-8 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xs">
+          <span className="text-4xl mb-3 block">📚</span>
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">Chưa có chủ đề nào</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+            Hệ thống đang sẵn sàng. Bạn có thể bắt đầu tạo chủ đề và bài viết mới từ trang quản trị hoặc thư mục <code>content/</code>.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="sections-root" className="w-full lg:w-[60%] lg:max-w-[60%] mx-auto space-y-10">
