@@ -20,6 +20,7 @@ const ENTRIES = [
   "favicon.svg",
   "assets",
   "generated",
+  "src",
 ];
 
 function sizeOf(target) {

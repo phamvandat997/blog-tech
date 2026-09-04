@@ -84,6 +84,39 @@ function main() {
     fs.writeFileSync(path.join(OUT, "sitemap.xml"), buildSitemap(siteUrl, sections, meta));
   }
 
+  // 5. Sinh dữ liệu JSON cho React SPA trong src/generated/
+  const SRC_GEN = path.join(ROOT, "src", "generated");
+  fs.rmSync(SRC_GEN, { recursive: true, force: true });
+  fs.mkdirSync(SRC_GEN, { recursive: true });
+
+  const writeJson = (dir, rel, obj) => {
+    const full = path.join(dir, rel);
+    fs.mkdirSync(path.dirname(full), { recursive: true });
+    fs.writeFileSync(full, JSON.stringify(obj, null, 2));
+  };
+
+  writeJson(SRC_GEN, "catalog.json", { sections, documents: meta });
+  writeJson(SRC_GEN, "quizBank.json", quizBank);
+
+  for (const doc of docs) {
+    writeJson(SRC_GEN, `docs/${doc.contentFile}.json`, {
+      id: doc.id,
+      title: doc.title,
+      section: doc.section,
+      category: doc.category,
+      slug: doc.slug,
+      readingMinutes: doc.readingMinutes,
+      questions: doc.questions,
+      body: doc._body,
+    });
+  }
+
+  // 6. Đồng bộ sang public/generated để Vite phục vụ static asset
+  const PUB_GEN = path.join(ROOT, "public", "generated");
+  fs.rmSync(PUB_GEN, { recursive: true, force: true });
+  fs.mkdirSync(path.dirname(PUB_GEN), { recursive: true });
+  fs.cpSync(OUT, PUB_GEN, { recursive: true });
+
   const totalQuestions = docs.reduce((n, d) => n + (d.questions || 0), 0);
   console.log(`✓ ${sections.length} mảng · ${docs.length} bài · ${totalQuestions} câu quiz`);
   console.log(`✓ generated/catalog.js  ${(Buffer.byteLength(JSON.stringify(meta)) / 1024).toFixed(0)} KB`);
