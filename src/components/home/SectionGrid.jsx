@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCatalog } from '../../hooks/useCatalog';
-import { useDocProgress } from '../../hooks/useDocProgress';
 
 const KIND_GROUPS = [
   { kind: 'language', title: 'Ngôn ngữ' },
@@ -10,7 +9,6 @@ const KIND_GROUPS = [
 
 export function SectionGrid() {
   const { sections, docs } = useCatalog();
-  const { completedDocs } = useDocProgress();
 
   if (!sections.length) {
     return (
@@ -42,7 +40,6 @@ export function SectionGrid() {
             <div className="section-cards grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {groupSections.map((section) => {
                 const secDocs = docs.filter((d) => d.section === section.id);
-                const completedCount = secDocs.filter((d) => completedDocs.has(d.id)).length;
                 const metaText = secDocs.length ? `${secDocs.length} bài viết` : 'Sắp có nội dung';
 
                 return (
@@ -57,11 +54,6 @@ export function SectionGrid() {
                         <h3 className="section-card-name text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors m-0">
                           {section.name}
                         </h3>
-                        {secDocs.length > 0 && completedCount > 0 && (
-                          <span className="section-card-progress inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
-                            ✓ {completedCount}/{secDocs.length} ({Math.round((completedCount / secDocs.length) * 100)}%)
-                          </span>
-                        )}
                       </div>
                       <p className="section-card-tagline text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 leading-relaxed">
                         {section.tagline}

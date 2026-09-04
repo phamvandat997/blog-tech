@@ -1,11 +1,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useCatalog } from '../../hooks/useCatalog';
-import { useDocProgress } from '../../hooks/useDocProgress';
 
 export function FeaturedCarousel() {
   const { docs, sections } = useCatalog();
-  const { isCompleted } = useDocProgress();
 
   const carouselRef = useRef(null);
   const [canScroll, setCanScroll] = useState(false);
@@ -118,7 +116,6 @@ export function FeaturedCarousel() {
           {featuredList.map((doc) => {
             const section = sections.find((s) => s.id === doc.section);
             const sectionColor = section?.color || '#6366f1';
-            const completed = isCompleted(doc.id);
 
             return (
               <Link
@@ -147,11 +144,6 @@ export function FeaturedCarousel() {
                       {doc.questions > 0 && (
                         <span className="inline-flex items-center gap-1 text-[0.7rem] font-extrabold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60">
                           🎯 {doc.questions} quiz
-                        </span>
-                      )}
-                      {completed && (
-                        <span className="inline-flex items-center gap-1 text-[0.7rem] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
-                          ✓ Đã học
                         </span>
                       )}
                     </div>

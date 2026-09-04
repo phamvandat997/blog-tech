@@ -10,7 +10,6 @@ import { ReadingProgressBar } from '../components/reader/ReadingProgressBar';
 import { TableOfContents } from '../components/reader/TableOfContents';
 import { MarkdownViewer } from '../components/reader/MarkdownViewer';
 import { renderMarkdownWithHeadings } from '../services/markdown';
-import { DocCompletionButton } from '../components/reader/DocCompletionButton';
 import { RelatedDocs } from '../components/reader/RelatedDocs';
 import { DocComments } from '../components/reader/DocComments';
 import { EmptyState } from '../components/common/EmptyState';
@@ -22,7 +21,6 @@ export function ReaderPage() {
   const routeParams = useParams();
   const { isDark } = useTheme();
   const { docs, getSection, getDocByRoute } = useCatalog();
-  const { isCompleted, toggleCompleted } = useDocProgress();
 
   const isPreview = searchParams.get('preview') === '1';
   const sectionParam = routeParams.section || searchParams.get('s');
@@ -274,14 +272,6 @@ export function ReaderPage() {
               <div style={{ fontSize: `${fontSize}%` }}>
                 <MarkdownViewer html={bodyHtml} isDark={isDark} />
 
-                {/* Completion Check Button */}
-                {currentDoc && !isPreview && (
-                  <DocCompletionButton
-                    isCompleted={isCompleted(currentDoc.id)}
-                    onToggle={() => toggleCompleted(currentDoc.id)}
-                  />
-                )}
-
                 {/* Bình luận qua GitHub Discussions */}
                 {currentDoc && !isPreview && (
                   <DocComments docId={currentDoc.id} isDark={isDark} />
@@ -295,7 +285,7 @@ export function ReaderPage() {
               hạ nó xuống dưới bài viết. */}
           {currentDoc && !isPreview && !isZenMode && (
             <div className="related-column">
-              <RelatedDocs currentDoc={currentDoc} allDocs={docs} isDocCompleted={isCompleted} />
+              <RelatedDocs currentDoc={currentDoc} allDocs={docs} />
             </div>
           )}
         </div>

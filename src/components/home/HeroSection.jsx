@@ -1,17 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCatalog } from '../../hooks/useCatalog';
-import { useDocProgress } from '../../hooks/useDocProgress';
 
 export function HeroSection() {
   const { docs, sections } = useCatalog();
-  const { completedDocs } = useDocProgress();
 
   const totalDocs = docs.length;
   const totalSections = sections.length;
   const totalQuizzes = docs.reduce((sum, d) => sum + (d.questions || 0), 0);
-  const completedCount = docs.filter((d) => completedDocs.has(d.id)).length;
-  const progressPercent = totalDocs > 0 ? Math.round((completedCount / totalDocs) * 100) : 0;
 
   return (
     <section className="hero-section relative text-center py-8 sm:py-12 px-4 sm:px-6 mb-12 w-full lg:w-[60%] lg:max-w-[60%] mx-auto">
@@ -89,18 +85,6 @@ export function HeroSection() {
           </span>
           <span className="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400">
             Mảng công nghệ
-          </span>
-        </div>
-        <div
-          className="hero-stat-item flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/70 shadow-xs hover:-translate-y-0.5 hover:border-indigo-500/60 transition-all"
-          id="hero-stat-progress"
-        >
-          <span className="hero-stat-icon text-xl">🎯</span>
-          <span className="hero-stat-val text-lg font-black text-indigo-600 dark:text-indigo-400" id="hero-progress-val">
-            {progressPercent}%
-          </span>
-          <span className="hero-stat-lbl text-xs font-semibold text-slate-500 dark:text-slate-400" id="hero-progress-lbl">
-            {completedCount}/{totalDocs} bài đã hoàn thành
           </span>
         </div>
         {totalQuizzes > 0 && (
