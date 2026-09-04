@@ -19,52 +19,6 @@ order: 1
 phase: "Chương 1"
 tags: [Java, OOP, OCP, Class, Object, Package, Constructor, Nested Class]
 ---
-
-## Nội dung chương
-
-- [Giới thiệu về lập trình hướng đối tượng](#heading-giới-thiệu-về-lập-trình-hướng-đối-tượng)
-    - [Object và Class](#heading-object-và-class)
-    - [Các nguyên lý OOP ở mức cao hơn](#heading-các-nguyên-lý-oop-ở-mức-cao-hơn)
-- [Vòng đời của object trong Java](#heading-vòng-đời-của-object-trong-java)
-    - [Gán lại tham chiếu](#heading-gán-lại-tham-chiếu)
-    - [Garbage Collection](#heading-garbage-collection)
-- [Keyword (Từ khoá)](#heading-keyword-từ-khoá)
-- [Comment (Chú thích)](#heading-comment-chú-thích)
-- [Tổ chức class thành package](#heading-tổ-chức-class-thành-package)
-    - [Tạo một package](#heading-tạo-một-package)
-    - [Sử dụng câu lệnh import](#heading-sử-dụng-câu-lệnh-import)
-    - [Các trường hợp đặc biệt và thực hành tốt](#heading-các-trường-hợp-đặc-biệt-và-thực-hành-tốt)
-    - [Import dư thừa](#heading-import-dư-thừa)
-    - [Kiểm soát truy cập](#heading-kiểm-soát-truy-cập)
-- [Access Modifier](#heading-access-modifier)
-- [Khai báo class](#heading-khai-báo-class)
-- [Static member và instance member](#heading-static-member-và-instance-member)
-- [Khai báo field](#heading-khai-báo-field)
-    - [Truy cập và sửa đổi field](#heading-truy-cập-và-sửa-đổi-field)
-- [Khai báo method](#heading-khai-báo-method)
-    - [Method signature](#heading-method-signature)
-    - [Gọi method](#heading-gọi-method)
-    - [Dùng access modifier với method](#heading-dùng-access-modifier-với-method)
-    - [Truyền đối số giữa các method](#heading-truyền-đối-số-giữa-các-method)
-    - [Method overloading (nạp chồng method)](#heading-method-overloading-nạp-chồng-method)
-    - [Varargs](#heading-varargs)
-    - [Method `main`](#heading-method-main)
-- [Constructor và initializer](#heading-constructor-và-initializer)
-    - [Constructor](#heading-constructor)
-    - [Instance initializer](#heading-instance-initializer)
-    - [Static initializer](#heading-static-initializer)
-    - [Thứ tự khởi tạo](#heading-thứ-tự-khởi-tạo)
-- [Kế thừa từ `java.lang.Object`](#heading-kế-thừa-từ-javalangobject)
-- [Nested class (Lớp lồng nhau)](#heading-nested-class-lớp-lồng-nhau)
-    - [Static nested class](#heading-static-nested-class)
-    - [Non-static nested class (Inner class)](#heading-non-static-nested-class-inner-class)
-    - [Local class](#heading-local-class)
-    - [Anonymous class](#heading-anonymous-class)
-- [Class và file mã nguồn](#heading-class-và-file-mã-nguồn)
-- [Các điểm chính](#heading-các-điểm-chính)
-- [Câu hỏi luyện tập](#heading-câu-hỏi-luyện-tập)
-
----
 ## Giới thiệu về lập trình hướng đối tượng
 
 Đúng như tên gọi, lập trình hướng đối tượng (object-oriented programming — OOP) là một mô hình lập trình xoay quanh khái niệm **object** (đối tượng). Thay vì tổ chức chương trình quanh các thủ tục và hàm (như lập trình thủ tục), OOP tổ chức mã nguồn thành các object đại diện cho những thực thể trong thế giới thực, chứa cả dữ liệu (attribute — thuộc tính) lẫn hành vi (method — phương thức). Cách tiếp cận này mang lại vài lợi ích:
