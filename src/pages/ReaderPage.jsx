@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link, useParams } from 'react-router-dom';
 import { useCatalog } from '../hooks/useCatalog';
-import { useDocProgress } from '../hooks/useDocProgress';
+import { SocialShare } from '../components/reader/SocialShare';
 import { useTheme } from '../hooks/useTheme';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
@@ -243,9 +243,12 @@ export function ReaderPage() {
                 {currentDoc.title}
               </h1>
 
-              <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                {currentDoc.updatedDate && <span>📅 Cập nhật: {currentDoc.updatedDate}</span>}
-                <span>⏱️ ~{currentDoc.readingMinutes || 5} phút đọc</span>
+              <div className="flex items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap">
+                  {currentDoc.updatedDate && <span>📅 Cập nhật: {currentDoc.updatedDate}</span>}
+                  <span>⏱️ ~{currentDoc.readingMinutes || 5} phút đọc</span>
+                </div>
+                {!isPreview && <SocialShare doc={currentDoc} variant="compact" />}
               </div>
 
               {currentDoc.tags && currentDoc.tags.length > 0 && (
@@ -271,6 +274,11 @@ export function ReaderPage() {
             ) : (
               <div style={{ fontSize: `${fontSize}%` }}>
                 <MarkdownViewer html={bodyHtml} isDark={isDark} />
+
+                {/* Chia sẻ bài viết mạng xã hội */}
+                {currentDoc && !isPreview && (
+                  <SocialShare doc={currentDoc} variant="card" />
+                )}
 
                 {/* Bình luận qua GitHub Discussions */}
                 {currentDoc && !isPreview && (
