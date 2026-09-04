@@ -14,7 +14,6 @@ import { DocCompletionButton } from '../components/reader/DocCompletionButton';
 import { RelatedDocs } from '../components/reader/RelatedDocs';
 import { DocComments } from '../components/reader/DocComments';
 import { EmptyState } from '../components/common/EmptyState';
-import { showToast } from '../components/common/Toast';
 
 import { fetchDocData } from '../services/docs';
 
@@ -106,44 +105,6 @@ export function ReaderPage() {
     }
   }, [currentDoc, currentSection]);
 
-  // Font size handlers
-  const handleDecFontSize = () => {
-    const SIZES = [85, 100, 115, 130, 145];
-    const idx = SIZES.indexOf(fontSize);
-    if (idx > 0) {
-      setFontSize(SIZES[idx - 1]);
-      showToast(`Cỡ chữ: ${SIZES[idx - 1]}%`);
-    } else {
-      showToast('Đã ở mức cỡ chữ nhỏ nhất (85%)');
-    }
-  };
-
-  const handleIncFontSize = () => {
-    const SIZES = [85, 100, 115, 130, 145];
-    const idx = SIZES.indexOf(fontSize);
-    if (idx < SIZES.length - 1) {
-      setFontSize(SIZES[idx + 1]);
-      showToast(`Cỡ chữ: ${SIZES[idx + 1]}%`);
-    } else {
-      showToast('Đã ở mức cỡ chữ lớn nhất (145%)');
-    }
-  };
-
-  const toggleZen = () => {
-    setIsZenMode((prev) => {
-      const next = !prev;
-      showToast(next ? '🧘 Đã bật chế độ tập trung' : 'Đã thoát chế độ tập trung');
-      return next;
-    });
-  };
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href).then(
-      () => showToast('✓ Đã sao chép liên kết bài viết!'),
-      () => showToast('Không thể sao chép liên kết')
-    );
-  };
-
   // Bỏ H1 đầu bài vì tiêu đề đã nằm ở header trang.
   const cleanBody = useMemo(
     () => (docContent || '').replace(/^\s*#[^\n]*\r?\n?/, ''),
@@ -215,14 +176,6 @@ export function ReaderPage() {
               <span aria-hidden="true">›</span>
               <span className="text-slate-800 dark:text-slate-200 truncate min-w-0">{currentDoc.title}</span>
             </div>
-
-            <Link
-              to={`/hub?s=${currentSection.id}&c=${currentDoc.category}`}
-              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap shrink-0"
-            >
-              <span className="hidden sm:inline">⬅ Về danh mục</span>
-              <span className="sm:hidden" aria-label="Về danh mục">⬅ Danh mục</span>
-            </Link>
           </div>
         )}
 
@@ -271,43 +224,16 @@ export function ReaderPage() {
                   )}
                 </div>
 
-                {/* Reader Controls Toolbar */}
-                <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <button
-                    type="button"
-                    onClick={handleDecFontSize}
-                    className="px-2 py-1 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded cursor-pointer"
-                    title="Giảm cỡ chữ"
+                {/* Về danh mục */}
+                {currentSection && currentDoc.category && (
+                  <Link
+                    to={`/hub?s=${currentSection.id}&c=${currentDoc.category}`}
+                    className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap shrink-0 flex items-center gap-1"
                   >
-                    A-
-                  </button>
-                  <span className="text-[0.68rem] font-bold text-slate-400 px-1">{fontSize}%</span>
-                  <button
-                    type="button"
-                    onClick={handleIncFontSize}
-                    className="px-2 py-1 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded cursor-pointer"
-                    title="Tăng cỡ chữ"
-                  >
-                    A+
-                  </button>
-                  <div className="h-3 w-px bg-slate-300 dark:bg-slate-700 mx-1" />
-                  <button
-                    type="button"
-                    onClick={toggleZen}
-                    className="p-1 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded cursor-pointer"
-                    title={isZenMode ? 'Thoát chế độ tập trung (Z)' : 'Chế độ tập trung (Z)'}
-                  >
-                    {isZenMode ? '✕' : '🧘'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="p-1 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded cursor-pointer"
-                    title="Sao chép liên kết"
-                  >
-                    🔗
-                  </button>
-                </div>
+                    <span className="hidden sm:inline">⬅ Về danh mục</span>
+                    <span className="sm:hidden" aria-label="Về danh mục">⬅ Danh mục</span>
+                  </Link>
+                )}
               </div>
 
               {/* text-balance chia đều chữ giữa các dòng, max-w giữ cho tiêu đề
