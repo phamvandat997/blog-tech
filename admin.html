@@ -335,13 +335,16 @@
 
       <!-- CARD 1: LIÊN KẾT BÀI VIẾT LÝ THUYẾT -->
       <section class="admin-card">
-        <h2 class="admin-card-title flex items-center gap-2">
+        <h2 class="admin-card-title flex items-center gap-2 flex-wrap">
           <span>🔗</span>
           <span>Liên Kết Tới Tài Liệu Lý Thuyết</span>
+          <span class="admin-tooltip-wrap" tabindex="0" aria-describedby="tooltip-quiz-link">
+            <span class="admin-tooltip-trigger" aria-hidden="true">ℹ️</span>
+            <span class="admin-tooltip-bubble" id="tooltip-quiz-link" role="tooltip">
+              Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại <code>content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>.
+            </span>
+          </span>
         </h2>
-        <p class="admin-card-note">
-          Chọn bài viết lý thuyết trong hệ thống mà bộ câu hỏi trắc nghiệm này bổ trợ. File quiz sẽ được liên kết và lưu tương ứng tại <code>content/&lt;mảng&gt;/&lt;chuyên mục&gt;/&lt;slug&gt;.quiz.json</code>.
-        </p>
 
         <div class="admin-row">
           <label class="admin-field" style="flex: 2;">
