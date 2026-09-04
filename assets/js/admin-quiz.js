@@ -732,6 +732,10 @@ function bindQuizManagerEvents() {
       qsa("[data-quiz-pane]").forEach((p) => {
         p.hidden = p.dataset.quizPane !== tab;
       });
+      const editorActions = qs("#quiz-editor-actions");
+      if (editorActions) {
+        editorActions.style.display = tab === "json" ? "flex" : "none";
+      }
       if (tab === "preview") {
         updateQuizLiveStats();
       }

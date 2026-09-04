@@ -337,20 +337,10 @@
 
       <!-- CARD 2: TIÊU ĐỀ & NỘI DUNG QUIZ -->
       <section class="admin-card">
-        <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
-          <h2 class="admin-card-title m-0 flex items-center gap-2">
-            <span>📝</span>
-            <span>Nội Dung Câu Hỏi Trắc Nghiệm</span>
-          </h2>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-load-sample" type="button" title="Điền dữ liệu mẫu chuẩn">
-              ✨ Nạp template mẫu vào ô soạn
-            </button>
-            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-format-json" type="button" title="Format làm đẹp mã JSON">
-              🪄 Format JSON
-            </button>
-          </div>
-        </div>
+        <h2 class="admin-card-title flex items-center gap-2">
+          <span>📝</span>
+          <span>Nội Dung Câu Hỏi Trắc Nghiệm</span>
+        </h2>
 
         <label class="admin-field mb-4">
           <span class="admin-label">Tiêu đề bài trắc nghiệm <b class="req">*</b></span>
@@ -392,14 +382,24 @@
           </div>
         </div>
 
-        <div class="admin-tabs" id="quiz-editor-tabs">
-          <button type="button" class="admin-tab active" data-quiz-tab="json">Mã JSON</button>
-          <button type="button" class="admin-tab" data-quiz-tab="preview">Xem trước câu hỏi</button>
+        <div class="admin-tabs-bar" id="quiz-tabs-bar">
+          <div class="admin-tabs" id="quiz-editor-tabs">
+            <button type="button" class="admin-tab active" data-quiz-tab="json">Mã JSON</button>
+            <button type="button" class="admin-tab" data-quiz-tab="preview">Xem trước câu hỏi</button>
+          </div>
+          <div class="flex items-center gap-2 pb-1.5 flex-wrap" id="quiz-editor-actions">
+            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-load-sample" type="button" title="Điền dữ liệu mẫu chuẩn">
+              ✨ Nạp template mẫu vào ô soạn
+            </button>
+            <button class="admin-btn-secondary text-xs font-bold py-1 px-2.5" id="btn-format-json" type="button" title="Format làm đẹp mã JSON">
+              🪄 Format JSON
+            </button>
+          </div>
         </div>
 
         <div class="admin-panes" id="quiz-panes">
           <div class="admin-pane" data-quiz-pane="json">
-            <textarea id="quiz-json-content" class="admin-textarea font-mono text-xs leading-relaxed" spellcheck="false" rows="18" placeholder="Dán hoặc gõ nội dung JSON câu hỏi tại đây, hoặc bấm 'Tải Template Mẫu' / 'Upload File Quiz'..."></textarea>
+            <textarea id="quiz-json-content" class="admin-textarea font-mono text-xs leading-relaxed" spellcheck="false" rows="18" placeholder="Dán hoặc gõ nội dung JSON câu hỏi tại đây..."></textarea>
           </div>
           <div class="admin-pane" data-quiz-pane="preview" hidden>
             <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4 max-h-[500px] overflow-y-auto" id="quiz-questions-preview"></div>
