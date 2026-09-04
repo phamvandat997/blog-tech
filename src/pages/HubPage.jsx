@@ -26,7 +26,7 @@ export function HubPage() {
 
   useEffect(() => {
     if (currentSection) {
-      document.title = `${currentSection.name} — Blog Tech`;
+      document.title = `${currentSection.name} — TechMentor Pro`;
     }
   }, [currentSection]);
 

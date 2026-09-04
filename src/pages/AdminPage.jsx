@@ -247,7 +247,7 @@ export function AdminPage() {
     const pr = await gh.createPullRequest({
       head: bName,
       title: `${isEdit ? 'Cập nhật' : 'Thêm'} bài viết: ${title}`,
-      body: `### Thay đổi từ trang Admin Blog Tech\n\n- **Đường dẫn**: \`${filePath}\`\n- **Tiêu đề**: ${title}\n- **Chuyên mục**: \`${section}/${category}\``,
+      body: `### Thay đổi từ trang Admin TechMentor Pro\n\n- **Đường dẫn**: \`${filePath}\`\n- **Tiêu đề**: ${title}\n- **Chuyên mục**: \`${section}/${category}\``,
     });
 
     await assignReviewers(pr);
@@ -377,7 +377,7 @@ export function AdminPage() {
     const pr = await gh.createPullRequest({
       head: bName,
       title: `Cập nhật câu hỏi quiz: ${doc.title}`,
-      body: `### Cập nhật Quiz từ Admin Blog Tech\n\n- **Bài viết**: \`${doc.id}\`\n- **File Quiz**: \`${quizPath}\`\n- **Số câu hỏi**: ${quizPayload.quizzes?.length || 0}`,
+      body: `### Cập nhật Quiz từ Admin TechMentor Pro\n\n- **Bài viết**: \`${doc.id}\`\n- **File Quiz**: \`${quizPath}\`\n- **Số câu hỏi**: ${quizPayload.quizzes?.length || 0}`,
     });
 
     await assignReviewers(pr);

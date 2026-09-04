@@ -11,12 +11,12 @@ export function AdminNavbar({ view, onChangeView, user, onLogout }) {
         {/* Brand */}
         <Link to="/" className="brand flex items-center gap-3 no-underline group">
           <div className="brand-logo">
-            <img src="/assets/images/logo.svg" alt="Blog Tech Logo" className="brand-logo-img" />
+            <img src="/assets/images/logo.svg" alt="TechMentor Pro Logo" className="brand-logo-img" />
           </div>
           <div className="brand-text">
             <div className="brand-title flex items-center text-base font-black tracking-tight leading-tight m-0">
-              <span className="text-indigo-600 dark:text-indigo-400">Blog</span>
-              <span className="text-slate-900 dark:text-white ml-1">Tech</span>
+              <span className="text-indigo-600 dark:text-indigo-400">TechMentor</span>
+              <span className="text-slate-900 dark:text-white ml-1.5 font-black">Pro</span>
               <span className="ml-2 text-[0.68rem] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
                 Admin
               </span>

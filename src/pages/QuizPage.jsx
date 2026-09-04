@@ -25,7 +25,7 @@ export function QuizPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    document.title = 'Luyện tập trắc nghiệm & Ngân hàng câu hỏi | Blog Tech';
+    document.title = 'Luyện tập trắc nghiệm & Ngân hàng câu hỏi | TechMentor Pro';
   }, []);
 
   const docsWithQuiz = useMemo(() => {
@@ -176,7 +176,7 @@ export function QuizPage() {
           </p>
           <div className="flex justify-center">
             <SocialShare
-              title="Ngân Hàng Câu Hỏi & Luyện Tập Trắc Nghiệm | Blog Tech"
+              title="Ngân Hàng Câu Hỏi & Luyện Tập Trắc Nghiệm | TechMentor Pro"
               description="Hệ thống câu hỏi trắc nghiệm kỹ thuật chuyên sâu, giải thích chi tiết và chấm điểm tự động."
               variant="compact"
             />

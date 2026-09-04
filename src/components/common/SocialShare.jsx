@@ -11,7 +11,7 @@ export function SocialShare({
 }) {
   const [copied, setCopied] = useState(false);
 
-  const shareTitle = title || (doc?.title ? `${doc.title} | Blog Tech` : 'Blog Tech');
+  const shareTitle = title || (doc?.title ? `${doc.title} | TechMentor Pro` : 'TechMentor Pro');
   const shareSummary = description || doc?.description || doc?.subtitle || shareTitle;
 
   if (!doc && !title) return null;

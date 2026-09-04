@@ -9,7 +9,7 @@ import { SectionGrid } from '../components/home/SectionGrid';
 
 export function HomePage() {
   useEffect(() => {
-    document.title = 'Blog Tech — Chia sẻ kiến thức lập trình';
+    document.title = 'TechMentor Pro — Chia sẻ kiến thức lập trình';
   }, []);
 
   return (

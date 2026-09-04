@@ -1,4 +1,4 @@
-// Quản lý LocalStorage & SessionStorage tập trung cho toàn bộ ứng dụng Blog Tech
+// Quản lý LocalStorage & SessionStorage tập trung cho toàn bộ ứng dụng TechMentor Pro
 
 const KEYS = {
   THEME: "blog.theme",

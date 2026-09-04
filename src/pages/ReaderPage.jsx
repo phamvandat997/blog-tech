@@ -99,7 +99,7 @@ export function ReaderPage() {
   // Set document title
   useEffect(() => {
     if (currentDoc) {
-      document.title = `${currentDoc.title} | ${currentSection?.name || 'Blog Tech'}`;
+      document.title = `${currentDoc.title} | ${currentSection?.name || 'TechMentor Pro'}`;
     }
   }, [currentDoc, currentSection]);
 
