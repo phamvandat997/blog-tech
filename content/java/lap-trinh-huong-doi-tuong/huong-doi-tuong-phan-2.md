@@ -19,33 +19,6 @@ order: 2
 phase: "Chương 2"
 tags: [Java, OOP, OCP, Inheritance, Polymorphism, Interface, Encapsulation, var]
 ---
-
-## Nội dung chương
-
-- [Biến](#heading-biến)
-    - [Phạm vi của biến](#heading-phạm-vi-của-biến)
-    - [Khai báo biến](#heading-khai-báo-biến)
-    - [Suy luận kiểu biến (var)](#heading-suy-luận-kiểu-biến-var)
-- [Inheritance (Kế thừa)](#heading-inheritance-kế-thừa)
-    - [Giới thiệu về inheritance](#heading-giới-thiệu-về-inheritance)
-    - [Abstract class](#heading-abstract-class)
-    - [Interface](#heading-interface)
-    - [Sealed class](#heading-sealed-class)
-    - [Tham chiếu `this`](#heading-tham-chiếu-this)
-    - [Tham chiếu `super`](#heading-tham-chiếu-super)
-- [Polymorphism (Đa hình)](#heading-polymorphism-đa-hình)
-    - [Giới thiệu về polymorphism](#heading-giới-thiệu-về-polymorphism)
-    - [Các quy tắc overriding](#heading-các-quy-tắc-overriding)
-    - [Truy cập object Java](#heading-truy-cập-object-java)
-    - [Ép kiểu (Type casting)](#heading-ép-kiểu-type-casting)
-    - [Toán tử `instanceof`](#heading-toán-tử-instanceof)
-- [Encapsulation (Đóng gói)](#heading-encapsulation-đóng-gói)
-    - [Encapsulation là gì?](#heading-encapsulation-là-gì)
-    - [Object immutable (bất biến)](#heading-object-immutable-bất-biến)
-- [Các điểm chính](#heading-các-điểm-chính)
-- [Câu hỏi luyện tập](#heading-câu-hỏi-luyện-tập)
-
----
 ## Biến
 
 ### Phạm vi của biến
