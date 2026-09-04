@@ -51,14 +51,20 @@ export function HeroSection() {
           <span>Luyện Quiz Ngay</span>
           <span className="text-[0.7rem] px-2 py-0.5 rounded-full bg-white/20 font-mono">121+ câu</span>
         </Link>
-        <a
-          href="#featured-root"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/60 shadow-xs hover:-translate-y-0.5 transition-all no-underline"
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('featured-root');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-700/60 shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <span>📚</span>
           <span>Khám Phá Bài Viết</span>
           <span>➔</span>
-        </a>
+        </button>
       </div>
 
       {/* Hero Statistics Bar */}

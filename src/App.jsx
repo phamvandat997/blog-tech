@@ -6,10 +6,12 @@ import { QuizPage } from './pages/QuizPage';
 import { AdminPage } from './pages/AdminPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { Toast } from './components/common/Toast';
+import { ScrollToTop } from './components/common/ScrollToTop';
 
 export function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         {/* Home */}
         <Route path="/" element={<HomePage />} />
