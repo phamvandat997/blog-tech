@@ -1,0 +1,75 @@
+{
+  "title": "Quiz: Functional Interface và Lambda Expression",
+  "tags": ["Java", "OCP", "Lambda", "Functional Interface", "Method Reference", "Predicate", "Function", "Consumer", "Supplier"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Những phát biểu nào sau đây đúng về functional interface trong Java? (Chọn tất cả đáp án đúng.)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "Một functional interface có nhiều `abstract` method." },
+        { "key": "B", "text": "Một functional interface có default method và `static` method." },
+        { "key": "C", "text": "Annotation `@FunctionalInterface` là bắt buộc để khai báo một functional interface." },
+        { "key": "D", "text": "Lambda expression dùng được để tạo instance của functional interface." }
+      ],
+      "correctAnswers": ["B", "D"],
+      "explanation": "B đúng: functional interface được phép có bao nhiêu default method và static method tuỳ ý — chỉ abstract method mới bị giới hạn ở đúng một. D đúng: đó chính là mục đích của functional interface. A sai vì chỉ được có **một** abstract method. C sai: annotation `@FunctionalInterface` chỉ là tuỳ chọn, giúp trình biên dịch kiểm tra và làm rõ ý định."
+    },
+    {
+      "number": 2,
+      "question": "Lambda expression nào sau đây cài đặt đúng interface `Comparator<String>`?\n\n```java\nComparator<String> comparator = /* lambda expression */;\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`(s1, s2) -> s1.compareTo(s2)`" },
+        { "key": "B", "text": "`(String s1, s2) -> s1.compareTo(s2)`" },
+        { "key": "C", "text": "`s1, s2 -> s1.compareTo(s2)`" },
+        { "key": "D", "text": "`(s1, s2) -> return s1.compareTo(s2);`" },
+        { "key": "E", "text": "`(s1, s2) -> { s1.compareTo(s2); }`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: hai tham số suy luận kiểu, thân là một biểu thức nên giá trị của nó được trả về ngầm định. B sai vì không được trộn tham số có kiểu tường minh với tham số suy luận. C sai vì lambda nhiều tham số bắt buộc phải có ngoặc đơn. D sai vì `return` chỉ dùng được trong thân dạng khối `{ }`. E sai vì thân dạng khối phải có `return` tường minh, ở đây method `compare` cần trả về `int` nhưng khối không trả về gì."
+    },
+    {
+      "number": 3,
+      "question": "Lambda interface có sẵn nào của Java biểu diễn một hàm nhận hai đối số và tạo ra một kết quả?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`java.util.function.Function`" },
+        { "key": "B", "text": "`java.util.function.BiFunction`" },
+        { "key": "C", "text": "`java.util.function.Supplier`" },
+        { "key": "D", "text": "`java.util.function.Consumer`" },
+        { "key": "E", "text": "`java.util.function.Predicate`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "`BiFunction<T, U, R>` có mô tả hàm `(T, U) -> R`: nhận hai đối số và trả về kết quả. `Function<T, R>` chỉ nhận một đối số. `Supplier<T>` không nhận đối số nào. `Consumer<T>` nhận một đối số nhưng không trả về gì. `Predicate<T>` nhận một đối số và trả về `boolean`."
+    },
+    {
+      "number": 4,
+      "question": "Đoạn mã sau in ra gì?\n\n```java\nFunction<Integer, Integer> multiplyByTwo = x -> x * 2;\nFunction<Integer, Integer> addThree = x -> x + 3;\n\nFunction<Integer, Integer> combinedFunction = multiplyByTwo.andThen(addThree);\n\nSystem.out.println(combinedFunction.apply(5));\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`13`" },
+        { "key": "B", "text": "`16`" },
+        { "key": "C", "text": "`10`" },
+        { "key": "D", "text": "`11`" },
+        { "key": "E", "text": "`8`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "`andThen` áp dụng hàm gọi nó **trước**, rồi mới tới hàm truyền vào: `multiplyByTwo(5)` = 10, sau đó `addThree(10)` = 13. Nếu dùng `compose` thay cho `andThen`, thứ tự sẽ đảo lại: `addThree(5)` = 8 rồi `multiplyByTwo(8)` = 16."
+    },
+    {
+      "number": 5,
+      "question": "Method reference nào thay thế đúng cho lambda `str -> Integer.parseInt(str)` gán cho `Function<String, Integer>`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`String::valueOf`" },
+        { "key": "B", "text": "`Integer::valueOf`" },
+        { "key": "C", "text": "`Integer::parseInt`" },
+        { "key": "D", "text": "`String::parseInt`" },
+        { "key": "E", "text": "`Integer::toString`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: đây là method reference tới static method, tương ứng trực tiếp với `str -> Integer.parseInt(str)`. B (`Integer::valueOf`) tuy cũng biên dịch được và cho kết quả tương đương nhưng trả về `Integer` qua một method khác, không phải bản thay thế trực tiếp của lambda đã cho. A và E sai kiểu trả về (đều cho `String`). D sai vì class `String` không có method `parseInt`."
+    }
+  ]
+}

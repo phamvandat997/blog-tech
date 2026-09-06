@@ -1,0 +1,201 @@
+{
+  "title": "Quiz: Date/Time API",
+  "tags": ["Java", "OCP", "Date/Time API", "LocalDate", "Instant", "Duration", "ZonedDateTime", "DateTimeFormatter"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Cách nào sau đây là cách hợp lệ để tạo một object `LocalDate`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`LocalDate.of(2014);`" },
+        { "key": "B", "text": "`LocalDate.with(2014, 1, 30);`" },
+        { "key": "C", "text": "`LocalDate.of(2014, 0, 30);`" },
+        { "key": "D", "text": "`LocalDate.now().plusDays(5);`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `LocalDate.now()` lấy ngày hiện tại, rồi `plusDays(5)` tạo ra một `LocalDate` mới cách 5 ngày. A sai vì `LocalDate.of()` cần đủ năm, tháng và ngày — chỉ truyền năm sẽ lỗi biên dịch. B sai vì `LocalDate` không có method `with()` nhận ba tham số int; method đúng là `LocalDate.of(int year, int month, int dayOfMonth)`. C sai vì tháng trong `LocalDate` được đánh số từ 1 đến 12, truyền 0 sẽ ném `DateTimeException`."
+    },
+    {
+      "number": 2,
+      "question": "Kết quả của việc thực thi dòng `LocalDate.of(2014, 1, 2).atTime(14, 30, 59, 999999)` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Một instance `LocalDate` biểu diễn `2014-01-02`" },
+        { "key": "B", "text": "Một instance `LocalTime` biểu diễn `14:30:59:999999`" },
+        { "key": "C", "text": "Một instance `LocalDateTime` biểu diễn `2014-01-02 14:30:59:999999`" },
+        { "key": "D", "text": "Một exception được ném ra" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `atTime` kết hợp `LocalDate` với giờ, phút, giây và nano-giây được truyền vào để tạo ra một `LocalDateTime`. A và B sai vì `atTime` không trả về `LocalDate` hay `LocalTime`. D sai vì 14 giờ, 30 phút, 59 giây và 999999 nano-giây đều là những giá trị hợp lệ nên không có exception nào được ném ra."
+    },
+    {
+      "number": 3,
+      "question": "Những giá trị `ChronoUnit` nào sau đây là hợp lệ với `LocalTime`? (Chọn tất cả phương án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`YEAR`" },
+        { "key": "B", "text": "`NANOS`" },
+        { "key": "C", "text": "`DAY`" },
+        { "key": "D", "text": "`HALF_DAYS`" }
+      ],
+      "correctAnswers": ["B", "D"],
+      "explanation": "B đúng vì `LocalTime` có độ chính xác nano-giây nên `NANOS` là đơn vị hợp lệ. D đúng vì một ngày chia được thành hai nửa 12 giờ (AM và PM), nên `HALF_DAYS` dùng được với `LocalTime`. A và C sai vì `LocalTime` chỉ biểu diễn giờ trong ngày, không có thông tin ngày tháng, nên `YEAR` và `DAY` không áp dụng được."
+    },
+    {
+      "number": 4,
+      "question": "Những phát biểu nào sau đây là đúng? (Chọn tất cả phương án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`java.time.Period` implement `java.time.temporal.Temporal`" },
+        { "key": "B", "text": "`java.time.Instant` implement `java.time.temporal.Temporal`" },
+        { "key": "C", "text": "`LocalDate` và `LocalTime` là thread-safe" },
+        { "key": "D", "text": "`LocalDateTime.now()` sẽ trả về thời gian hiện tại theo múi giờ UTC" }
+      ],
+      "correctAnswers": ["B", "C"],
+      "explanation": "B đúng: `Instant` biểu diễn một thời điểm trên trục thời gian và implement `Temporal`. C đúng: mọi class cốt lõi của Java Time (`LocalDate`, `LocalTime`, `LocalDateTime`, `Instant`…) đều immutable và thread-safe. A sai vì `Period` biểu diễn khoảng thời gian giữa hai ngày và implement `TemporalAmount`, không phải `Temporal`. D sai vì `LocalDateTime.now()` dùng đồng hồ hệ thống theo múi giờ mặc định; muốn giờ UTC phải dùng `LocalDateTime.now(ZoneOffset.UTC)` hoặc `Instant.now()`."
+    },
+    {
+      "number": 5,
+      "question": "Cách nào sau đây là cách hợp lệ để lấy phần nano-giây của một object `Instant` được tham chiếu bởi `i`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`int nanos = i.getNano();`" },
+        { "key": "B", "text": "`long nanos = i.get(ChronoField.NANOS);`" },
+        { "key": "C", "text": "`long nanos = i.get(ChronoUnit.NANOS);`" },
+        { "key": "D", "text": "`int nanos = i.getEpochNano();`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `Instant` có method `getNano()` trả về phần nano-giây dưới dạng `int`. B sai vì `ChronoField` không có hằng `NANOS`; giá trị đúng là `ChronoField.NANO_OF_SECOND`. C sai vì `ChronoUnit` dùng cho duration và period chứ không phải cho field của một temporal object. D sai vì `Instant` chỉ có `getEpochSecond()`, không có `getEpochNano()`."
+    },
+    {
+      "number": 6,
+      "question": "Kết quả của việc in `Period.between(LocalDate.of(2025, 3, 20), LocalDate.of(2025, 2, 20))` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`P29D`" },
+        { "key": "B", "text": "`P-29D`" },
+        { "key": "C", "text": "`P1M`" },
+        { "key": "D", "text": "`P-1M`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `Period.between` lấy ngày kết thúc trừ ngày bắt đầu. Ở đây ngày bắt đầu (2025-03-20) nằm sau ngày kết thúc (2025-02-20) nên kết quả âm; `Period` đếm số tháng trọn vẹn trước rồi mới đến số ngày còn lại, và chênh lệch đúng bằng một tháng nên kết quả là `P-1M`. A và C sai vì kết quả phải mang dấu âm. B sai vì phần chênh lệch được quy về tháng trọn vẹn chứ không phải 29 ngày."
+    },
+    {
+      "number": 7,
+      "question": "Kết quả của việc in `Duration.between(LocalDateTime.of(2025, 3, 20, 18, 0), LocalTime.of(18, 5))` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`PT5M`" },
+        { "key": "B", "text": "`PT-5M`" },
+        { "key": "C", "text": "`PT300S`" },
+        { "key": "D", "text": "Một exception được ném ra" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: có sự không khớp kiểu giữa `LocalDateTime` và `LocalTime`. Duration được tính dựa trên kiểu của tham số đầu tiên; chỉ khi tham số đầu là `LocalTime` và tham số sau là `LocalDateTime` thì mới chuyển đổi được, còn trường hợp ngược lại sẽ ném exception. A, B và C sai vì chúng chỉ đúng nếu hai tham số cùng kiểu tương thích."
+    },
+    {
+      "number": 8,
+      "question": "Những giá trị `ChronoField` nào sau đây là hợp lệ với `LocalDate`? (Chọn tất cả phương án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`DAY_OF_WEEK`" },
+        { "key": "B", "text": "`HOUR_OF_DAY`" },
+        { "key": "C", "text": "`DAY_OF_MONTH`" },
+        { "key": "D", "text": "`MILLI_OF_SECOND`" }
+      ],
+      "correctAnswers": ["A", "C"],
+      "explanation": "A đúng: `DAY_OF_WEEK` biểu diễn thứ trong tuần, từ 1 (thứ Hai) đến 7 (Chủ nhật), lấy được từ một `LocalDate`. C đúng: `DAY_OF_MONTH` là ngày trong tháng, cũng lấy được từ `LocalDate`. B và D sai vì `HOUR_OF_DAY` và `MILLI_OF_SECOND` thuộc về thành phần thời gian (`LocalTime`, `LocalDateTime`), còn `LocalDate` chỉ chứa thành phần ngày tháng."
+    },
+    {
+      "number": 9,
+      "question": "Cách nào sau đây là cách hợp lệ để tạo một object `ZoneId`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`ZoneId.ofHours(2);`" },
+        { "key": "B", "text": "`ZoneId.of(\"2\");`" },
+        { "key": "C", "text": "`ZoneId.of(\"-1\");`" },
+        { "key": "D", "text": "`ZoneId.of(\"America/Canada\");`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `ZoneId.of(\"-1\")` hợp lệ vì chuỗi bắt đầu bằng dấu `-` nên được parse thành một `ZoneOffset`. A sai vì `ofHours(int)` thuộc class `ZoneOffset` chứ không phải `ZoneId`. B sai vì `\"2\"` không có dấu `+`/`-` và cũng không phải zone ID theo khu vực. D sai vì zone ID theo khu vực phải có định dạng `\"Area/City\"`, ví dụ `\"America/Montreal\"`, chứ không phải `\"Area/Country\"`."
+    },
+    {
+      "number": 10,
+      "question": "Kết quả của việc thực thi `ZoneOffset offset = ZoneOffset.of(\"Z\"); System.out.println(offset.get(ChronoField.HOUR_OF_DAY));` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`0`" },
+        { "key": "B", "text": "`1`" },
+        { "key": "C", "text": "`12:00`" },
+        { "key": "D", "text": "Một exception được ném ra" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `ZoneOffset` không hỗ trợ field `ChronoField.HOUR_OF_DAY`. Giá trị `ChronoField` duy nhất được chấp nhận là `OFFSET_SECONDS`, mọi giá trị khác đều ném exception. A, B và C sai vì `ZoneOffset` biểu diễn độ lệch tính bằng giây, không phải giờ trong ngày."
+    },
+    {
+      "number": 11,
+      "question": "Giả sử múi giờ địa phương là `+2:00`, kết quả của `ZonedDateTime.of(2025, 02, 28, 5, 0, 0, 0, ZoneId.of(\"+05:00\")).toLocalTime()` khi in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`05:00`" },
+        { "key": "B", "text": "`17:00`" },
+        { "key": "C", "text": "`02:00`" },
+        { "key": "D", "text": "`03:00`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `ZonedDateTime.of(...)` tạo instance với đúng ngày, giờ và offset +05:00 được chỉ định; `toLocalTime()` trả về phần giờ cục bộ của chính instance đó, tức `05:00`, vì đoạn mã không thực hiện chuyển đổi sang múi giờ địa phương +02:00. B sai vì đó là kết quả nếu có chuyển đổi múi giờ. C và D sai vì không tương ứng với bất kỳ phép tính hợp lý nào từ dữ liệu đã cho."
+    },
+    {
+      "number": 12,
+      "question": "Giả sử DST bắt đầu vào ngày 4/10/2025 lúc 0:00:00, kết quả của `ZonedDateTime.of(2025, 10, 4, 0, 0, 0, 0, ZoneId.of(\"America/Asuncion\")).plus(Duration.ofHours(1))` khi in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`2025-10-04T00:00-03:00[America/Asuncion]`" },
+        { "key": "B", "text": "`2025-10-04T01:00-03:00[America/Asuncion]`" },
+        { "key": "C", "text": "`2025-10-04T02:00-03:00[America/Asuncion]`" },
+        { "key": "D", "text": "`2025-10-03T23:00-03:00[America/Asuncion]`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: thời điểm ban đầu là `2025-10-04T00:00-03:00`. Khi cộng thêm một `Duration` một giờ và DST bắt đầu ngay tại `2025-10-04T00:00`, đồng hồ được vặn tiến nên giờ 01:00 bị bỏ qua và kết quả là `2025-10-04T02:00-03:00[America/Asuncion]`. A sai vì có cộng thêm một giờ. B sai vì không tính đến bước nhảy DST. D sai vì đây là phép trừ chứ không phải phép cộng."
+    },
+    {
+      "number": 13,
+      "question": "Phát biểu nào sau đây là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`java.time.ZoneOffset` là subclass của `java.time.ZoneId`." },
+        { "key": "B", "text": "`java.time.Instant` lấy được từ `java.time.ZonedDateTime`." },
+        { "key": "C", "text": "`java.time.ZoneOffset` quản lý được DST." },
+        { "key": "D", "text": "`java.time.OffsetDateTime` biểu diễn một thời điểm trong múi giờ UTC." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `Instant` lấy được từ `ZonedDateTime` bằng method `toInstant()`. A sai theo cách diễn đạt của đề: `ZoneOffset` là một final class extends `ZoneId` chứ không được coi là subclass có thể mở rộng thêm. C sai vì `ZoneOffset` chỉ biểu diễn một offset cố định so với UTC và không quản lý DST; DST do `ZoneId` theo khu vực quản lý. D sai vì `OffsetDateTime` mang một offset bất kỳ so với UTC, không nhất thiết là chính múi giờ UTC."
+    },
+    {
+      "number": 14,
+      "question": "Kết quả của việc format `LocalDateTime.of(2025, 5, 7, 16, 0)` bằng `DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.ENGLISH)` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`5/7/15 4:00 PM`" },
+        { "key": "B", "text": "`5/7/15`" },
+        { "key": "C", "text": "`4:00 PM`" },
+        { "key": "D", "text": "`4:00:00 PM`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `ofLocalizedTime(FormatStyle.SHORT)` chỉ format phần giờ theo style ngắn, nên với `16:00` và `Locale.ENGLISH` kết quả là `4:00 PM`. A và B sai vì formatter này không xuất phần ngày. D sai vì style `SHORT` không bao gồm giây."
+    },
+    {
+      "number": 15,
+      "question": "Phát biểu nào sau đây là đúng về `DateTimeFormatter.ofPattern(\"HH:mm:ss X\")` và `OffsetDateTime.parse(\"11:50:20 Z\", formatter)`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Pattern `HH:mm:ss X` không hợp lệ." },
+        { "key": "B", "text": "Một `OffsetDateTime` được tạo thành công." },
+        { "key": "C", "text": "`Z` là một offset không hợp lệ." },
+        { "key": "D", "text": "Một exception được ném ra lúc runtime." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: chuỗi `\"11:50:20 Z\"` thiếu phần ngày, trong khi `OffsetDateTime` cần cả ngày, giờ và offset, nên một `DateTimeParseException` được ném ra lúc runtime. A sai vì pattern `HH:mm:ss X` hoàn toàn hợp lệ. B sai vì việc parse thất bại. C sai vì `Z` là offset hợp lệ, biểu diễn UTC."
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "title": "Quiz: Xử lý lỗi và ngoại lệ",
+  "tags": ["Java", "OCP", "Exception", "try-catch", "finally", "try-with-resources", "Error Handling"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Phát biểu nào sau đây mô tả đúng một checked exception trong Java?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Checked exception là loại exception kế thừa từ class `java.lang.RuntimeException`." },
+        { "key": "B", "text": "Checked exception phải được bắt hoặc được khai báo trong signature của method bằng keyword `throws`." },
+        { "key": "C", "text": "Checked exception là lỗi thường do môi trường chạy ứng dụng gây ra và ứng dụng không xử lý được." },
+        { "key": "D", "text": "Checked exception được Java Virtual Machine ném ra khi xảy ra lỗi nghiêm trọng, chẳng hạn lỗi hết bộ nhớ." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: trình biên dịch buộc bạn phải hoặc bắt checked exception bằng `try-catch`, hoặc khai báo nó trong mệnh đề `throws` của method. A sai vì exception kế thừa `RuntimeException` là **unchecked**. C và D mô tả `Error` — những vấn đề nghiêm trọng mà ứng dụng không nên cố bắt, chứ không phải checked exception."
+    },
+    {
+      "number": 2,
+      "question": "Đoạn mã sau định nghĩa `CustomException extends Exception`, ném nó từ `methodThatThrowsException()` (có khai báo `throws CustomException`), và bắt nó trong `main` bằng `try-catch`. Nhận định nào đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Đoạn mã định nghĩa một checked exception tự định nghĩa và ném, xử lý nó đúng cách." },
+        { "key": "B", "text": "Đoạn mã định nghĩa một unchecked exception tự định nghĩa." },
+        { "key": "C", "text": "Đoạn mã không biên dịch được vì exception tự định nghĩa không được khai báo đúng trong signature của method." },
+        { "key": "D", "text": "Đoạn mã biên dịch được nhưng sẽ không ném exception tự định nghĩa lúc chạy." }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: kế thừa `Exception` (chứ không phải `RuntimeException`) tạo ra một checked exception; method khai báo `throws CustomException` đúng quy tắc, và `main` bắt nó bằng khối `catch` phù hợp. B sai vì đây là checked chứ không phải unchecked. C sai vì signature đã khai báo đúng. D sai vì `throw` được thực thi vô điều kiện."
+    },
+    {
+      "number": 3,
+      "question": "Cho class sau, kết quả là gì?\n\n```java\npublic class Main {\n    protected static int myMethod() {\n        try {\n            throw new RuntimeException();\n        } catch(RuntimeException e) {\n             return 1;\n        } finally {\n             return 2;\n        }\n    }\n    public static void main(String[] args) {\n        System.out.println(myMethod());\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`1`" },
+        { "key": "B", "text": "`2`" },
+        { "key": "C", "text": "Biên dịch thất bại" },
+        { "key": "D", "text": "Một exception xảy ra lúc chạy" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "Khối `catch` chuẩn bị trả về 1, nhưng khối `finally` luôn chạy trước khi method thực sự trả về. Vì `finally` chứa `return 2`, giá trị này **ghi đè** giá trị trả về của khối `catch`. Đây là lý do không nên đặt `return` trong `finally`: nó âm thầm nuốt cả giá trị trả về lẫn exception."
+    },
+    {
+      "number": 4,
+      "question": "Cho class sau, phát biểu nào đúng?\n\n```java\npublic class Main {\n    public static void main(String[] args) {\n        try {\n            // Do nothing\n        } finally {\n            // Do nothing\n        }\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Đoạn mã không biên dịch được." },
+        { "key": "B", "text": "Đoạn mã sẽ biên dịch được nếu ta thêm khối `catch`." },
+        { "key": "C", "text": "Đoạn mã sẽ biên dịch được nếu ta bỏ khối `finally`." },
+        { "key": "D", "text": "Đoạn mã biên dịch được như hiện tại." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: khối `try` hợp lệ khi đi kèm `catch`, `finally`, hoặc cả hai. Ở đây `try-finally` không có `catch` là hoàn toàn hợp lệ. Ngược lại, một khối `try` **đứng một mình** (không `catch` cũng không `finally`) mới gây lỗi biên dịch — nên phương án C sai."
+    },
+    {
+      "number": 5,
+      "question": "Những phát biểu nào sau đây đúng? (Chọn tất cả đáp án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "Trong `try-with-resources`, khối `catch` là bắt buộc." },
+        { "key": "B", "text": "Keyword `throws` được dùng để ném một exception." },
+        { "key": "C", "text": "Trong khối `try-with-resources`, nếu bạn khai báo nhiều hơn một tài nguyên, chúng phải được phân tách bởi dấu chấm phẩy." },
+        { "key": "D", "text": "Nếu một khối `catch` được định nghĩa cho exception mà mã trong khối `try` không thể ném ra, một lỗi biên dịch sẽ được sinh ra." }
+      ],
+      "correctAnswers": ["C", "D"],
+      "explanation": "C đúng: nhiều tài nguyên trong `try-with-resources` được phân tách bằng dấu chấm phẩy và đóng theo thứ tự ngược khai báo. D đúng với checked exception: bắt một checked exception mà khối `try` không thể ném gây lỗi biên dịch. A sai vì `try-with-resources` không bắt buộc có `catch`. B sai: `throws` chỉ **khai báo** exception trong signature, còn `throw` mới là câu lệnh ném exception."
+    },
+    {
+      "number": 6,
+      "question": "Cho class sau, kết quả là gì?\n\n```java\nclass Connection implements java.io.Closeable {\n    public void close() throws IOException {\n        throw new IOException(\"Close Exception\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        try (Connection c = new Connection()) {\n            throw new RuntimeException(\"RuntimeException\");\n        } catch (IOException e) {\n            System.err.println(e.getMessage());\n        }\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Close Exception`" },
+        { "key": "B", "text": "`RuntimeException`" },
+        { "key": "C", "text": "`RuntimeException` rồi tới `CloseException`" },
+        { "key": "D", "text": "Biên dịch thất bại" },
+        { "key": "E", "text": "Stack trace của một exception không được bắt sẽ được in ra" }
+      ],
+      "correctAnswers": ["E"],
+      "explanation": "Khối `try` ném `RuntimeException`, và `IOException` từ `close()` bị lấn át (suppressed) rồi gắn vào đó. Khối `catch` chỉ bắt `IOException` nên không bắt được `RuntimeException`. Exception này lan lên `main` mà không ai xử lý, nên JVM in stack trace của nó (kèm dòng `Suppressed: ... Close Exception`)."
+    },
+    {
+      "number": 7,
+      "question": "Những exception nào sau đây là lớp con trực tiếp của `RuntimeException`? (Chọn tất cả đáp án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`java.io.FileNotFoundException`" },
+        { "key": "B", "text": "`java.lang.ArithmeticException`" },
+        { "key": "C", "text": "`java.lang.ClassCastException`" },
+        { "key": "D", "text": "`java.lang.InterruptedException`" }
+      ],
+      "correctAnswers": ["B", "C"],
+      "explanation": "`ArithmeticException` và `ClassCastException` đều kế thừa trực tiếp `RuntimeException` nên là unchecked exception. `FileNotFoundException` là lớp con của `IOException` (checked). `InterruptedException` kế thừa trực tiếp `Exception` nên cũng là checked exception."
+    },
+    {
+      "number": 8,
+      "question": "Cho đoạn mã sau, kết quả là gì?\n\n```java\nclass MyResource implements AutoCloseable {\n    public void close() {\n        throw new RuntimeException(\"Close Exception\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        try (MyResource resource = new MyResource()) {\n            throw new RuntimeException(\"Try Block Exception\");\n        } catch (RuntimeException e) {\n            Throwable[] suppressed = e.getSuppressed();\n            if (suppressed.length > 0) {\n                for (Throwable t : suppressed) {\n                    System.out.println(\"Suppressed: \" + t.getMessage());\n                }\n            } else {\n                System.out.println(e.getMessage());\n            }\n        }\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Chỉ `\"Try Block Exception\"` được in ra." },
+        { "key": "B", "text": "Chỉ `\"Close Exception\"` được in ra." },
+        { "key": "C", "text": "Cả `\"Try Block Exception\"` và `\"Close Exception\"` đều được in ra." },
+        { "key": "D", "text": "`\"Suppressed: Close Exception\"` được in ra." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "Exception chính là `\"Try Block Exception\"` (ném từ khối `try`), còn exception từ `close()` bị lấn át và gắn vào nó. Khối `catch` bắt được exception chính, và vì `getSuppressed()` trả về mảng có một phần tử nên nhánh `if` chạy, in ra `Suppressed: Close Exception`."
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Quiz: Điều khiển luồng chương trình",
+  "tags": ["Java", "OCP", "if", "switch", "Pattern Matching", "Loop", "break", "continue"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Chương trình sau in ra gì?\n\n```java\npublic class IfStatementTest {\n    public static void main(String[] args) {\n        int x = 10;\n        if (x > 5) {\n            if (x < 20) {\n                System.out.println(\"x is between 5 and 20\");\n            }\n        } else {\n            System.out.println(\"x is 5 or less\");\n        }\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`x is between 5 and 20`" },
+        { "key": "B", "text": "`x is 5 or less`" },
+        { "key": "C", "text": "`x is greater than 20`" },
+        { "key": "D", "text": "Chương trình không biên dịch được" },
+        { "key": "E", "text": "Chương trình biên dịch được nhưng không in ra gì" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "`x` bằng 10 nên điều kiện `x > 5` là `true`, chương trình đi vào khối `if` ngoài. Bên trong, `x < 20` cũng là `true` nên câu lệnh in chạy. Khối `else` chỉ chạy khi `x <= 5`, không phải trường hợp này."
+    },
+    {
+      "number": 2,
+      "question": "Cho `record Person(String name, int age) {}` và `record Employee(int id, Person person) {}`, với `Employee emp = new Employee(1001, new Person(\"Alice\", 30));`. Phương án nào dùng record pattern matching đúng cách trong câu lệnh `if` để trích và in tên cùng tuổi của `Person` trong Java 21?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\nif (emp instanceof Employee) {\n    var (id, Person(name, age)) = emp;\n    System.out.println(name + \" is \" + age + \" years old.\");\n}\n```" },
+        { "key": "B", "text": "```java\nif (emp instanceof Employee(_, Person(var name, var age))) {\n    System.out.println(name + \" is \" + age + \" years old.\");\n}\n```" },
+        { "key": "C", "text": "```java\nif (emp instanceof Employee e) {\n    System.out.println(e.person().name() + \" is \" + e.person().age() + \" years old.\");\n}\n```" },
+        { "key": "D", "text": "```java\nif (emp instanceof Employee(var id, Person(var name, var age))) {\n    System.out.println(name + \" is \" + age + \" years old.\");\n}\n```" },
+        { "key": "E", "text": "```java\nif (emp instanceof Employee(var id, var person)) {\n    System.out.println(person.name() + \" is \" + person.age() + \" years old.\");\n}\n```" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D dùng record pattern **lồng nhau** đúng cú pháp Java 21: `Employee(var id, Person(var name, var age))` vừa kiểm tra kiểu vừa tách trực tiếp `name` và `age` ra biến pattern. A sai vì Java không có cú pháp destructuring dạng `var (a, b) = ...`. B dùng unnamed pattern `_`, chưa phải tính năng chính thức trong Java 21. C không dùng record pattern mà gọi accessor method. E tuy biên dịch được nhưng cũng không tách rời `Person` bằng pattern lồng nhau như đề bài yêu cầu."
+    },
+    {
+      "number": 3,
+      "question": "Trong chương trình sau, đoạn mã nào biên dịch không lỗi?\n\n```java\nint x = 10;\nif (x > 5) { int y = x * 2; }\n// Đoạn 1\nSystem.out.println(y);\n\nif (x < 20) { int z = x + 5; }\n// Đoạn 2\nz += 5;\n\nint a = 5;\nif (a > 0) { a = 15; }\n// Đoạn 3\nSystem.out.println(a);\n\nif (x > 0) {\n    int b = x + 3;\n    if (b > 15) { b -= 2; }\n}\n// Đoạn 4\nSystem.out.println(b);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Đoạn mã 1" },
+        { "key": "B", "text": "Đoạn mã 2" },
+        { "key": "C", "text": "Đoạn mã 3" },
+        { "key": "D", "text": "Không đoạn nào ở trên" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "Chỉ đoạn 3 hợp lệ: biến `a` được khai báo **bên ngoài** khối `if` nên vẫn nằm trong phạm vi sau khối đó. Đoạn 1, 2 và 4 đều lỗi biên dịch vì `y`, `z` và `b` được khai báo bên trong khối `if`, phạm vi của chúng kết thúc ở dấu `}` đóng khối."
+    },
+    {
+      "number": 4,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint dayOfWeek = 3;\nString dayType;\nswitch (dayOfWeek) {\n    case 1:\n    case 7:\n        dayType = \"Weekend\";\n        break;\n    case 2:\n    case 3:\n    case 4:\n    case 5:\n    case 6:\n        dayType = \"Weekday\";\n        break;\n    default:\n        dayType = \"Invalid day\";\n}\nSystem.out.println(dayType);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Weekend`" },
+        { "key": "B", "text": "`Invalid day`" },
+        { "key": "C", "text": "`Weekday`" },
+        { "key": "D", "text": "Chương trình không biên dịch được" },
+        { "key": "E", "text": "Chương trình biên dịch được nhưng không in ra gì" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "`dayOfWeek` bằng 3 nên khớp `case 3`. Vì các case 2, 3, 4, 5, 6 xếp liền nhau không có `break` ở giữa, chúng cùng chia sẻ một khối mã gán `dayType = \"Weekday\"`. Sau đó `break` thoát khỏi switch."
+    },
+    {
+      "number": 5,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint score = 85;\nString grade = switch (score) {\n    case 90, 100 -> \"A\";\n    case 80, 89 -> \"B\";\n    case 70, 79 -> \"C\";\n    case 60, 69 -> \"D\";\n    default -> \"F\";\n};\nSystem.out.println(grade);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`A`" },
+        { "key": "B", "text": "`F`" },
+        { "key": "C", "text": "Chương trình không biên dịch được" },
+        { "key": "D", "text": "`B`" },
+        { "key": "E", "text": "Chương trình biên dịch được nhưng không in ra gì" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "Nhãn case trong switch liệt kê những **giá trị rời rạc**, không phải khoảng giá trị. `case 80, 89` chỉ khớp đúng 80 hoặc 89, chứ không khớp mọi số từ 80 tới 89. Vì 85 không khớp nhãn nào, nhánh `default` chạy và in ra `F`."
+    },
+    {
+      "number": 6,
+      "question": "Cho `sealed interface Vehicle permits CarType {}` và `enum CarType implements Vehicle { SEDAN, SUV, HATCHBACK, CONVERTIBLE }`, dùng trong `switch(v)` với `v` kiểu `Vehicle`. Nhóm câu lệnh `case` nào hợp lệ trong Java 21?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\ncase CarType.SEDAN, CarType.HATCHBACK -> ...\ncase CarType.SUV -> ...\ncase CarType.CONVERTIBLE -> ...\n```" },
+        { "key": "B", "text": "```java\ncase SEDAN, HATCHBACK -> ...\ncase SUV -> ...\ncase CONVERTIBLE -> ...\n```" },
+        { "key": "C", "text": "```java\ncase CarType.SEDAN || CarType.HATCHBACK -> ...\ncase CarType.SUV -> ...\ncase CarType.CONVERTIBLE -> ...\n```" },
+        { "key": "D", "text": "```java\ncase Vehicle.SEDAN, Vehicle.HATCHBACK -> ...\ncase Vehicle.SUV -> ...\ncase Vehicle.CONVERTIBLE -> ...\n```" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: vì biểu thức chọn có kiểu `Vehicle` (không phải kiểu enum), Java 21 yêu cầu dùng **tên đầy đủ** của hằng số enum như `CarType.SEDAN`. B sai vì tên đơn giản chỉ dùng được khi biểu thức chọn thuộc chính kiểu enum đó. C sai cú pháp: nhiều giá trị trong một case phân tách bằng dấu phẩy chứ không phải `||`. D sai vì `SEDAN` là hằng số của `CarType`, không phải của `Vehicle`."
+    },
+    {
+      "number": 7,
+      "question": "Cho `sealed interface Shape permits Circle, Square, Triangle {}` cùng ba record tương ứng, và `double area = switch (shape) { ... };`. Nhóm câu lệnh `case` nào cài đặt đúng pattern matching cho cây phân cấp `Shape`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\ncase Circle c -> ...;\ncase Square s -> ...;\ncase null -> 0;\n```" },
+        { "key": "B", "text": "```java\ndefault -> 0;\ncase Circle c -> ...;\ncase Square s -> ...;\ncase Triangle t -> ...;\n```" },
+        { "key": "C", "text": "```java\ncase Shape s when s instanceof Circle -> ...;\ncase Shape s when s instanceof Square -> ...;\ncase Shape s when s instanceof Triangle -> ...;\n```" },
+        { "key": "D", "text": "```java\ncase Circle c -> Math.PI * c.radius() * c.radius();\ncase Square s -> s.side() * s.side();\ncase Triangle t -> 0.5 * t.base() * t.height();\n```" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: phủ đủ cả ba lớp con được `permits` của sealed interface nên biểu thức switch là đầy đủ (exhaustive), không cần `default`. A thiếu `Triangle` nên không đầy đủ. B thiếu `Triangle` trong phần liệt kê hữu ích và đặt `default` lên đầu — dù `default` được phép đứng bất kỳ đâu, mẫu này vẫn khiến switch không tận dụng được kiểm tra tính đầy đủ. C không phải pattern matching thật sự mà chỉ ép kiểu thủ công, và `case Shape s` đầu tiên đã khớp vô điều kiện khiến các case sau không thể tới được."
+    },
+    {
+      "number": 8,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint count = 0;\nouterLoop:\nwhile (count < 5) {\n    while (true) {\n        count++;\n        if (count == 3) {\n            break outerLoop;\n        }\n    }\n}\nSystem.out.println(count);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`2`" },
+        { "key": "B", "text": "`3`" },
+        { "key": "C", "text": "`4`" },
+        { "key": "D", "text": "`5`" },
+        { "key": "E", "text": "Chương trình không biên dịch được" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "Vòng lặp trong tăng `count` lên 1, rồi 2, rồi 3. Khi `count` bằng 3, `break outerLoop;` thoát khỏi **cả hai** vòng lặp nhờ nhãn. Giá trị `count` lúc này là 3."
+    },
+    {
+      "number": 9,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint sum = 0;\nfor (int i = 1; i <= 5; i++) {\n    sum += i;\n}\nSystem.out.println(sum);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`5`" },
+        { "key": "B", "text": "`10`" },
+        { "key": "C", "text": "`15`" },
+        { "key": "D", "text": "`20`" },
+        { "key": "E", "text": "Chương trình không biên dịch được" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "Vòng lặp chạy với `i` lần lượt bằng 1, 2, 3, 4, 5 (điều kiện là `i <= 5` nên bao gồm cả 5). Tổng là 1 + 2 + 3 + 4 + 5 = 15."
+    },
+    {
+      "number": 10,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint[] numbers = {1, 2, 3, 4, 5};\nint sum = 0;\nfor (int num : numbers) {\n    if (num % 2 == 0) {\n        continue;\n    }\n    sum += num;\n}\nSystem.out.println(sum);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`9`" },
+        { "key": "B", "text": "`10`" },
+        { "key": "C", "text": "`12`" },
+        { "key": "D", "text": "`15`" },
+        { "key": "E", "text": "Chương trình không biên dịch được" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "Câu lệnh `continue` bỏ qua các số chẵn (2 và 4), nên chỉ những số lẻ được cộng vào `sum`: 1 + 3 + 5 = 9."
+    }
+  ]
+}

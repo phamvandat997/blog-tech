@@ -1,0 +1,97 @@
+{
+  "title": "Quiz: Làm việc với Record và Enum",
+  "tags": ["Java", "OCP", "Record", "Enum", "Immutable", "Constructor"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Xét định nghĩa record sau:\n\n```java\npublic record Employee(String name, int age) {}\n```\n\nPhát biểu nào sau đây đúng về record `Employee`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Record `Employee` định nghĩa tường minh một constructor public để khởi tạo các field của nó." },
+        { "key": "B", "text": "Field `name` và `age` gán lại được giá trị mới sau khi object `Employee` được tạo." },
+        { "key": "C", "text": "Record `Employee` ngầm tạo ra một constructor public và các field `private final` cho `name` và `age`." },
+        { "key": "D", "text": "Bắt buộc phải định nghĩa getter cho field `name` và `age` trong record `Employee`." }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: record tự động sinh canonical constructor `public` cùng các field `private final`, nên bạn không phải viết mã rườm rà cho constructor, getter hay việc đảm bảo bất biến. A sai vì constructor được sinh ngầm chứ không khai báo tường minh. B sai vì field của record là `final`, không gán lại được. D sai vì record đã tự sinh accessor method (`name()`, `age()`), bạn không cần — và cũng không nên — viết getter riêng."
+    },
+    {
+      "number": 2,
+      "question": "Cho định nghĩa record dưới đây:\n\n```java\npublic record Account(String id, double balance) {}\n```\n\nPhát biểu nào mô tả chính xác tính bất biến của record?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Field `balance` sửa được bằng một method setter public bên trong record `Account`." },
+        { "key": "B", "text": "Một khi object `Account` được tạo, `id` và `balance` của nó không thể thay đổi." },
+        { "key": "C", "text": "Tính bất biến của record bị vượt qua được bằng cách định nghĩa method setter tuỳ biến cho field `id` và `balance`." },
+        { "key": "D", "text": "Record cho phép sửa giá trị field nếu truy cập trực tiếp, không cần dùng method setter." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: record bất biến theo thiết kế — field là `private final` và không có setter, nên giá trị không đổi được sau khi object được tạo. A và C sai vì record không cho phép định nghĩa setter cho component của nó. D sai vì field là `private` và `final` nên không truy cập hay sửa trực tiếp từ bên ngoài được."
+    },
+    {
+      "number": 3,
+      "question": "Xét khai báo record sau:\n\n```java\npublic record Product(int id, String name, double price) {}\n```\n\nBạn khởi tạo đúng một instance của record `Product` như thế nào?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Product p = new Product();`" },
+        { "key": "B", "text": "`Product p = Product(101, \"Coffee\", 15.99);`" },
+        { "key": "C", "text": "`Product p = {101, \"Coffee\", 15.99};`" },
+        { "key": "D", "text": "`Product p = new Product(101, \"Coffee\", 15.99);`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: record được khởi tạo bằng keyword `new` cùng canonical constructor, truyền đủ mọi component đã khai báo. A sai vì record không có constructor không tham số. B sai cú pháp: thiếu `new`. C sai vì cú pháp ngoặc nhọn là dành cho khởi tạo mảng, không dùng cho object."
+    },
+    {
+      "number": 4,
+      "question": "Xét record cần implement interface `Comparable` để sắp xếp theo một field:\n\n```java\npublic record Item(int id, String name, double price) implements Comparable<Item> {\n    public int compareTo(Item other) {\n        return Double.compare(this.price, other.price);\n    }\n}\n```\n\nPhát biểu nào mô tả đúng cách tuỳ biến record bằng việc cài đặt interface?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Record không implement được interface vì chúng là `final` và bất biến theo thiết kế, điều này ngăn mọi hình thức tuỳ biến hành vi." },
+        { "key": "B", "text": "Record này cài đặt đúng interface `Comparable`, cho phép sắp xếp các object `Item` dựa trên `price`." },
+        { "key": "C", "text": "Việc cài đặt interface trong record bị giới hạn chỉ ở functional interface do bản chất bất biến của chúng." },
+        { "key": "D", "text": "Method `compareTo` không override được trong record vì kiểu record không hỗ trợ override method." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: record implement được interface bình thường và override được method của interface — ở đây `compareTo` cho phép sắp xếp `Item` theo `price`. A sai: `final` chỉ ngăn việc extends class, không ngăn implement interface. C sai: không có giới hạn nào chỉ cho phép functional interface. D sai: record hoàn toàn override được method từ interface mà nó implement."
+    },
+    {
+      "number": 5,
+      "question": "Xét các cách khai báo enum trong Java. Những khai báo nào sau đây hợp lệ? (Chọn tất cả đáp án đúng.)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "```java\npublic enum Day {\n    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY\n}\n```" },
+        { "key": "B", "text": "```java\nenum Month {\n    private JANUARY, FEBRUARY, MARCH, ... DECEMBER;\n}\n```" },
+        { "key": "C", "text": "```java\nprotected enum Season {\n    WINTER, SPRING, SUMMER, FALL\n}\n```" },
+        { "key": "D", "text": "```java\nenum Status {\n    ACTIVE, INACTIVE, DELETED;\n\n    public void printStatus() {\n        System.out.println(\"Current status: \" + this);\n    }\n}\n```" }
+      ],
+      "correctAnswers": ["A", "D"],
+      "explanation": "A hợp lệ: đây là cú pháp khai báo enum chuẩn, modifier `public` khiến enum truy cập được từ mọi class. D hợp lệ: enum chứa được method, field, constructor và implement được interface. B sai: hằng số enum ngầm định là `public static final` và không được gắn access modifier. C sai: enum cấp cao (top-level) chỉ được là `public` hoặc package-private, không được `protected` hay `private`."
+    },
+    {
+      "number": 6,
+      "question": "Xét khai báo enum sau:\n\n```java\npublic enum Color {\n    RED, GREEN, BLUE;\n}\n```\n\nKết quả của lời gọi `Color.GREEN.ordinal()` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`1`" },
+        { "key": "B", "text": "`2`" },
+        { "key": "C", "text": "`0`" },
+        { "key": "D", "text": "`Color.GREEN`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "Method `ordinal()` trả về vị trí của hằng số theo thứ tự khai báo, bắt đầu đếm từ `0`. `GREEN` là hằng số thứ hai nên ordinal của nó là `1`. `RED` có ordinal `0`, `BLUE` có ordinal `2`. Đáp án D sai vì `ordinal()` trả về `int`, không phải chính hằng số enum."
+    },
+    {
+      "number": 7,
+      "question": "Xét một enum cần cung cấp method tuỳ biến để hiển thị thông điệp dựa trên hằng số enum. Cài đặt nào sau đây định nghĩa đúng một enum như vậy?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\npublic enum Size {\n    SMALL, MEDIUM, LARGE;\n    public static void printSize() {\n        System.out.println(\"The size is \" + this.name());\n    }\n}\n```" },
+        { "key": "B", "text": "```java\nenum Flavor {\n    CHOCOLATE, VANILLA, STRAWBERRY;\n    void printFlavor() {\n        System.out.println(\"Flavor: \" + Flavor.name);\n    }\n}\n```" },
+        { "key": "C", "text": "```java\nprotected enum Direction {\n    NORTH, SOUTH, EAST, WEST;\n    private printDirection() {\n        System.out.println(\"Going \" + this.toString());\n    }\n}\n```" },
+        { "key": "D", "text": "```java\npublic enum Season {\n    WINTER, SPRING, SUMMER, FALL;\n    public void printSeason() {\n        System.out.println(\"The season is \" + this.name());\n    }\n}\n```" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: method `printSeason()` là `public`, không static, và dùng `this.name()` để lấy tên hằng số hiện tại. A sai vì method `static` không dùng được tham chiếu `this`. B sai vì `name` là thuộc tính `private`, chỉ truy cập được qua method `this.name()`. C sai vì hai lý do: enum cấp cao không được khai báo `protected`, và method `printDirection()` thiếu kiểu trả về."
+    }
+  ]
+}

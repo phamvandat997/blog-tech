@@ -1,0 +1,75 @@
+{
+  "title": "Quiz: Làm việc với dữ liệu",
+  "tags": ["Java", "OCP", "Primitive", "Wrapper", "Operator", "String", "StringBuilder", "Text Block", "Math"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Phát biểu nào sau đây về kiểu dữ liệu nguyên thuỷ và kiểu tham chiếu trong Java là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Một `double` gán trực tiếp được cho một `float` mà không cần ép kiểu." },
+        { "key": "B", "text": "Một `boolean` ép kiểu được sang `int`." },
+        { "key": "C", "text": "Một `String` gán được cho biến tham chiếu kiểu `Object`." },
+        { "key": "D", "text": "`char` là kiểu dữ liệu tham chiếu." },
+        { "key": "E", "text": "Một `int` lưu được giá trị `long` mà không cần ép kiểu tường minh." }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `String` là một instance của `Object` nên gán được cho biến tham chiếu kiểu `Object` (upcasting). A sai vì `double` có dải và độ chính xác lớn hơn `float`, cần ép kiểu tường minh. B sai vì `boolean` không tương thích với `int` trong Java. D sai vì `char` là kiểu nguyên thuỷ. E sai vì `long` có dải lớn hơn `int`, cần ép kiểu tường minh."
+    },
+    {
+      "number": 2,
+      "question": "Đoạn mã sau in ra gì?\n\n```java\npublic class OperatorTest {\n    public static void main(String[] args) {\n        int a = 5;\n        int b = 10;\n        int c = 15;\n        int result = a + b * c / a - b;\n        System.out.println(result);\n    }\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`25`" },
+        { "key": "B", "text": "`35`" },
+        { "key": "C", "text": "`20`" },
+        { "key": "D", "text": "`15`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "Nhân và chia có độ ưu tiên cao hơn cộng và trừ, và được tính từ trái sang phải: `b * c` = `10 * 15` = `150`, rồi `150 / a` = `150 / 5` = `30`. Sau đó cộng và trừ, cũng từ trái sang phải: `a + 30` = `5 + 30` = `35`, rồi `35 - b` = `35 - 10` = `25`."
+    },
+    {
+      "number": 3,
+      "question": "Phát biểu nào sau đây về `String` và `StringBuilder` là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Object `StringBuilder` là bất biến." },
+        { "key": "B", "text": "Object `String` sửa được sau khi tạo." },
+        { "key": "C", "text": "`StringBuilder` được đồng bộ hoá và an toàn với đa luồng." },
+        { "key": "D", "text": "`StringBuilder` cung cấp các method cho một dãy ký tự khả biến." },
+        { "key": "E", "text": "`String` và `StringBuilder` có đặc tính hiệu năng như nhau khi thao tác chuỗi." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `StringBuilder` là dãy ký tự khả biến, cho phép sửa object mà không tạo instance mới. A sai vì `StringBuilder` khả biến. B sai vì `String` bất biến — mọi phép sửa đều tạo `String` mới. C sai: `StringBuilder` không đồng bộ hoá; cần thread-safe thì dùng `StringBuffer`. E sai vì `StringBuilder` nhìn chung hiệu quả hơn nhiều cho việc thao tác chuỗi lặp đi lặp lại."
+    },
+    {
+      "number": 4,
+      "question": "Những phát biểu nào sau đây về text block là đúng? (Chọn tất cả đáp án đúng.)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "Text block trải được nhiều dòng mà không cần dãy escape cho ký tự xuống dòng." },
+        { "key": "B", "text": "Text block giữ nguyên chính xác định dạng, kể cả khoảng trắng, đúng như mã được viết." },
+        { "key": "C", "text": "Text block chỉ dùng được bên trong method." },
+        { "key": "D", "text": "Text block tự động cắt khoảng trắng đầu và cuối của từng dòng." },
+        { "key": "E", "text": "Text block đòi hỏi mức thụt lề tối thiểu là một dấu cách." }
+      ],
+      "correctAnswers": ["A", "B"],
+      "explanation": "A và B đúng: text block trải nhiều dòng mà không cần `\\n`, và giữ nguyên định dạng cùng khoảng trắng như đã viết. C sai: text block dùng được ở bất cứ đâu `String` dùng được, kể cả field của class hay tham số method. D sai: text block không tự cắt khoảng trắng của từng dòng — nó chỉ loại bỏ phần khoảng trắng **chung** ở đầu, dựa trên vị trí dấu đóng. E sai: không có yêu cầu về mức thụt lề tối thiểu."
+    },
+    {
+      "number": 5,
+      "question": "Phát biểu nào sau đây về class `Math` là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Method `Math.round()` trả về `double`." },
+        { "key": "B", "text": "Method `Math.random()` trả về một số nguyên ngẫu nhiên." },
+        { "key": "C", "text": "Method `Math.max()` chỉ dùng được với số nguyên." },
+        { "key": "D", "text": "Method `Math.pow()` trả về kết quả của việc nâng đối số thứ nhất lên luỹ thừa đối số thứ hai." },
+        { "key": "E", "text": "Method `Math.abs()` chỉ dùng được với số dương." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `Math.pow(a, b)` trả về a mũ b, cả hai đối số đều kiểu `double`. A sai: `Math.round()` trả về `long` khi nhận `double` và `int` khi nhận `float`. B sai: `Math.random()` trả về `double` trong khoảng [0.0, 1.0). C sai: `Math.max()` được nạp chồng cho `int`, `long`, `float` và `double`. E sai: `Math.abs()` dùng được với cả số âm — đó chính là mục đích của nó."
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "title": "Quiz: Java Platform Module System",
+  "tags": ["Java", "OCP", "JPMS", "Module", "module-info", "jdeps", "jlink", "jmod"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Những loại nào sau đây là loại module trong Java Platform Module System (JPMS)? (Chọn tất cả phương án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "Automatic module" },
+        { "key": "B", "text": "Default module" },
+        { "key": "C", "text": "Unnamed module" },
+        { "key": "D", "text": "Core module" },
+        { "key": "E", "text": "Primary module" }
+      ],
+      "correctAnswers": ["A", "C"],
+      "explanation": "JPMS định nghĩa ba loại module: named module, automatic module và unnamed module. A và C nằm trong số đó. B, D và E không phải khái niệm của JPMS — không có loại module nào tên \"Default\", \"Core\" hay \"Primary\"."
+    },
+    {
+      "number": 2,
+      "question": "Cách nào sau đây là cách đúng để khai báo một module tên `com.example`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`module com.example { export com.example.api; }`" },
+        { "key": "B", "text": "`declare module com.example { }`" },
+        { "key": "C", "text": "`create module com.example { requires java.base; }`" },
+        { "key": "D", "text": "`module com.example { }`" },
+        { "key": "E", "text": "`module com.example requires java.base;`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: khai báo module tối thiểu hợp lệ chỉ cần từ khoá `module`, tên module và một khối rỗng. A sai vì từ khoá đúng là `exports`, không phải `export`. B và C sai vì `declare` và `create` không phải từ khoá của JPMS. E sai vì thân module phải nằm trong cặp ngoặc nhọn."
+    },
+    {
+      "number": 3,
+      "question": "Câu lệnh nào giới hạn đúng quyền truy cập tới package `com.example.internal` sao cho chỉ module `com.example.client` truy cập được?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`module com.example { exports com.example.internal to com.example.client; }`" },
+        { "key": "B", "text": "`module com.example { opens com.example.internal to com.example.client; }`" },
+        { "key": "C", "text": "`module com.example { requires com.example.internal; }`" },
+        { "key": "D", "text": "`module com.example { provides com.example.internal to com.example.client; }`" },
+        { "key": "E", "text": "`module com.example { uses com.example.internal; }`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `exports ... to` là qualified export, cho phép truy cập lúc biên dịch và runtime nhưng chỉ với những module được nêu tên. B sai vì `opens` chỉ cấp quyền truy cập bằng reflection lúc runtime, không cấp quyền truy cập lúc biên dịch. C sai vì `requires` khai báo dependency chứ không cấp quyền. D sai vì `provides` dùng cho service và cần mệnh đề `with`. E sai vì `uses` khai báo việc tiêu thụ một service."
+    },
+    {
+      "number": 4,
+      "question": "Với khai báo `module com.example { exports com.example.api; opens com.example.internal to com.example.client; }`, phát biểu nào đúng về việc `com.example.client` dùng deep reflection lên package `com.example.api`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Module `com.example.client` truy cập được `com.example.api` bằng deep reflection." },
+        { "key": "B", "text": "Module `com.example.client` không truy cập được `com.example.api` bằng deep reflection." },
+        { "key": "C", "text": "Package `com.example.api` được mở cho mọi module dùng deep reflection." },
+        { "key": "D", "text": "Package `com.example.internal` được export cho module `com.example.client`." },
+        { "key": "E", "text": "Package `com.example.api` được export cho `com.example.client` để dùng deep reflection." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `exports` chỉ cấp quyền truy cập thông thường lúc biên dịch và runtime; deep reflection đòi hỏi `opens`, mà ở đây chỉ `com.example.internal` được mở. C sai vì `api` không hề được `opens`. D sai vì `internal` được `opens`, không phải `exports`. A và E sai vì nhầm lẫn giữa export và open."
+    },
+    {
+      "number": 5,
+      "question": "Phát biểu nào sau đây là đúng về các module Java cốt lõi?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Module `java.base` cung cấp Swing và AWT để xây giao diện đồ hoạ." },
+        { "key": "B", "text": "Module `java.logging` chịu trách nhiệm xử lý collection như list, set và map." },
+        { "key": "C", "text": "Module `java.desktop` cung cấp các class để cài đặt stream nhập/xuất chuẩn." },
+        { "key": "D", "text": "Module `java.xml` chứa các class để xử lý tài liệu XML." },
+        { "key": "E", "text": "Module `java.naming` cung cấp API để truy cập và xử lý annotation." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `java.xml` chứa các API xử lý XML. A sai vì Swing và AWT nằm trong `java.desktop`. B sai vì collection thuộc `java.base`; `java.logging` là Java Logging API. C sai vì stream nhập/xuất chuẩn nằm trong `java.base`. E sai vì `java.naming` cung cấp JNDI, còn annotation thuộc `java.base`."
+    },
+    {
+      "number": 6,
+      "question": "Câu lệnh nào biên dịch đúng module nằm trong thư mục `src/com.example` và xuất ra thư mục `out`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`javac -d out src/com.example/module-info.java src/com.example/com/example/*.java`" },
+        { "key": "B", "text": "`javac -sourcepath src -d out com.example/module-info.java com.example/com/example/*.java`" },
+        { "key": "C", "text": "`javac -d out --module-source-path src -m com.example`" },
+        { "key": "D", "text": "`javac -modulepath out -d src src/com.example/module-info.java src/com.example/com/example/*.java`" },
+        { "key": "E", "text": "`javac --module-path src --module com.example -d out`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `--module-source-path src` cùng `-m com.example` biên dịch module `com.example` trong `src` và xuất class ra `out`. A sai vì không dùng `--module-source-path` và không nêu tên module bằng `-m`. B sai vì `-sourcepath` không dùng cho biên dịch module. D sai vì đặt sai tuỳ chọn `-modulepath` và hoán đổi thư mục nguồn với thư mục đích. E sai vì dùng `--module-path` thay cho `--module-source-path`."
+    },
+    {
+      "number": 7,
+      "question": "Với cấu trúc `src/com.foo` và `src/com.bar`, mỗi thư mục có `module-info.java` riêng, lệnh nào biên dịch đúng cả hai module?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`javac --module-source-path src -d out $(find src -name \"*.java\")`" },
+        { "key": "B", "text": "`javac -d out --module com.foo,com.bar --module-source-path src`" },
+        { "key": "C", "text": "`javac -sourcepath src -d out src/com.foo/module-info.java src/com.foo/com/foo/*.java src/com.bar/module-info.java src/com.bar/com/bar/*.java`" },
+        { "key": "D", "text": "`javac -modulepath src -d out src/com.foo/*.java src/com.bar/*.java`" },
+        { "key": "E", "text": "`javac --module-source-path src/com.foo,src/com.bar -d out`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: chỉ định `--module-source-path src` rồi truyền mọi file Java tìm được trong thư mục nguồn sẽ biên dịch đúng cả hai module. B sai vì tuỳ chọn `--module` không nhận nhiều module phân tách bằng dấu phẩy trong ngữ cảnh này. C sai vì không dùng `--module-source-path` và dài dòng không cần thiết. D sai vì dùng sai `-modulepath`. E sai vì `--module-source-path` phải trỏ tới thư mục gốc `src`, không phải từng thư mục module."
+    },
+    {
+      "number": 8,
+      "question": "Câu lệnh nào chỉ định đúng một service provider implementation cho service `com.example.Service` trong `module-info.java` của module `com.provider`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`requires com.example.Service with com.provider.ServiceImpl;`" },
+        { "key": "B", "text": "`exports com.example.Service with com.provider.ServiceImpl;`" },
+        { "key": "C", "text": "`provides com.example.Service with com.provider.ServiceImpl;`" },
+        { "key": "D", "text": "`uses com.example.Service with com.provider.ServiceImpl;`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: cú pháp `provides <service> with <implementation>` là cách khai báo module cung cấp một implementation của service. A sai vì `requires` khai báo dependency module và không có mệnh đề `with`. B sai vì `exports` dùng cho package. D sai vì `uses` khai báo module tiêu thụ service và cũng không có mệnh đề `with`."
+    },
+    {
+      "number": 9,
+      "question": "Câu lệnh nào mô tả đúng module `com.example` bằng tuỳ chọn `--describe-module`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`java --describe-module com.example/module-info.java`" },
+        { "key": "B", "text": "`javac --describe-module com.example`" },
+        { "key": "C", "text": "`jar --describe-module com.example`" },
+        { "key": "D", "text": "`java --describe-module com.example`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `java --describe-module <tên module>` in ra chi tiết của module. A sai vì tham số phải là tên module chứ không phải đường dẫn tới `module-info.java`. B sai vì `javac` không có tuỳ chọn `--describe-module`. C sai vì `jar --describe-module` cần một file JAR chỉ định qua `--file`, không nhận tên module."
+    },
+    {
+      "number": 10,
+      "question": "Câu lệnh nào dùng `jdeps` đúng cách để phân tích dependency của file `example.jar`? (Chọn tất cả phương án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`jdeps --list-deps example.jar`" },
+        { "key": "B", "text": "`jdeps -verbose example.jar`" },
+        { "key": "C", "text": "`jdeps -s example.jar`" },
+        { "key": "D", "text": "`jdeps --check example.jar`" }
+      ],
+      "correctAnswers": ["B", "C"],
+      "explanation": "B đúng: `-verbose` in mọi dependency ở mức class. C đúng: `-s` in bản tóm tắt dependency. A và D sai theo cách dùng trong câu hỏi: `--list-deps` và `--check` không áp dụng trực tiếp cho một file JAR như vậy (`--check` nhận tên module)."
+    },
+    {
+      "number": 11,
+      "question": "Câu lệnh nào tạo đúng một file JMOD từ nội dung thư mục `mods/com.example`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`jmod create --class-path mods/com.example --output com.example.jmod`" },
+        { "key": "B", "text": "`jmod --create --class-path mods/com.example --output com.example.jmod`" },
+        { "key": "C", "text": "`jmod --create --dir mods/com.example --output com.example.jmod`" },
+        { "key": "D", "text": "`jmod create --dir mods/com.example --output com.example.jmod`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `create` là chế độ hoạt động (không có hai dấu gạch ngang) và `--class-path` chỉ định nơi chứa class cần đưa vào file JMOD. B và C sai vì `create` không phải tuỳ chọn dạng `--create`. C và D sai vì `--dir` dùng cho chế độ `extract` để chỉ định nơi đặt file được trích xuất, không phải nguồn class."
+    },
+    {
+      "number": 12,
+      "question": "Câu lệnh nào tạo đúng runtime image tuỳ chỉnh bằng `jlink` với module `java.base` và `com.example`, xuất ra thư mục `myimage`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`jlink --module-path java.base:com.example --output myimage`" },
+        { "key": "B", "text": "`jlink --module-path mods --add-modules java.base,com.example --output myimage`" },
+        { "key": "C", "text": "`jlink --add-modules java.base,com.example --image myimage`" },
+        { "key": "D", "text": "`jlink --modules java.base,com.example --dir myimage`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `--module-path` trỏ tới nơi tìm module, `--add-modules` liệt kê module cần đưa vào, còn `--output` chỉ định thư mục đích. A sai vì `--module-path` nhận đường dẫn thư mục chứ không phải tên module. C sai vì không có tuỳ chọn `--image`. D sai vì `jlink` không có tuỳ chọn `--modules` hay `--dir`."
+    },
+    {
+      "number": 13,
+      "question": "Phát biểu nào đúng về việc chuyển một ứng dụng cũ sang JPMS bằng unnamed module và automatic module?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Một unnamed module phụ thuộc được vào named module và những unnamed module khác." },
+        { "key": "B", "text": "Automatic module phải có file `module-info.java` mới đặt được lên module path." },
+        { "key": "C", "text": "Unnamed module export được package của nó cho named module bằng `module-info.java`." },
+        { "key": "D", "text": "Automatic module được tạo ra khi một file JAR không có `module-info.java` được đặt lên module path, và nó đọc được mọi module khác." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: đặt một JAR phi module lên module path khiến nó trở thành automatic module; nó đọc được mọi module khác và export mọi package của mình. B sai vì có `module-info.java` thì nó đã là named module. C sai vì unnamed module không có `module-info.java` để khai báo export. A sai theo cách diễn đạt của đề: named module không đọc được unnamed module, nên đây không phải phát biểu mô tả đúng cơ chế chuyển đổi."
+    }
+  ]
+}

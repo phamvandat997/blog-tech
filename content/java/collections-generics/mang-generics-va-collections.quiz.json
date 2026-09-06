@@ -1,0 +1,130 @@
+{
+  "title": "Quiz: Mảng, Generics và Collections",
+  "tags": ["Java", "OCP", "Array", "Generics", "Collections", "List", "Set", "Map", "Deque", "Comparator"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Chương trình sau in ra gì?\n\n```java\nint[][] arr = new int[2][3];\nfor (int i = 0; i < arr.length; i++) {\n    for (int j = 0; j < arr[i].length; j++) {\n        arr[i][j] = i + j;\n    }\n}\n// rồi in từng hàng\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```\n0 0 0 \n0 0 0 \n```" },
+        { "key": "B", "text": "```\n0 1 2 \n0 1 2 \n```" },
+        { "key": "C", "text": "```\n0 0 0 \n1 1 1 \n```" },
+        { "key": "D", "text": "```\n0 1 2 \n1 2 3 \n```" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "Mỗi ô nhận giá trị `i + j`. Hàng đầu (`i = 0`) cho 0+0, 0+1, 0+2 → `0 1 2`. Hàng thứ hai (`i = 1`) cho 1+0, 1+1, 1+2 → `1 2 3`."
+    },
+    {
+      "number": 2,
+      "question": "Định nghĩa method generic nào sau đây khai báo đúng một method trả về phần tử đầu tiên của mảng cho trước?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\npublic static T getFirstElement(T[] array) {\n    return array[0];\n}\n```" },
+        { "key": "B", "text": "```java\npublic static <T> T getFirstElement(T[] array) {\n    return array[0];\n}\n```" },
+        { "key": "C", "text": "```java\npublic static <T> getFirstElement(T[] array) {\n    return array[0];\n}\n```" },
+        { "key": "D", "text": "```java\npublic static <T> T[] getFirstElement(T[] array) {\n    return array[0];\n}\n```" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: tham số kiểu `<T>` được khai báo trước kiểu trả về, và kiểu trả về `T` khớp với phần tử của mảng. A sai vì thiếu khai báo `<T>` nên `T` không phải kiểu hợp lệ. C sai vì thiếu hẳn kiểu trả về. D sai vì khai báo trả về `T[]` (mảng) nhưng thân method lại trả về `array[0]` — một phần tử `T`."
+    },
+    {
+      "number": 3,
+      "question": "Kết quả của việc biên dịch và chạy đoạn mã sau là gì?\n\n```java\npublic static void printList(List<? extends Number> list) {\n    for (Number n : list) { System.out.print(n + \" \"); }\n    System.out.println();\n}\n\npublic static void main(String[] args) {\n    List<Integer> ints = Arrays.asList(1, 2, 3);\n    List<Double> doubles = Arrays.asList(1.1, 2.2, 3.3);\n    List<String> strings = Arrays.asList(\"one\", \"two\", \"three\");\n    \n    printList(ints);\n    printList(doubles);\n    printList(strings);\n}\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Mã biên dịch được và in ra cả ba danh sách, kể cả `one two three`" },
+        { "key": "B", "text": "Mã biên dịch được và chỉ in ra `1 2 3` rồi `1.1 2.2 3.3`" },
+        { "key": "C", "text": "Mã không biên dịch được do lỗi trong method `printList`." },
+        { "key": "D", "text": "Mã không biên dịch được do lỗi trong method `main`." },
+        { "key": "E", "text": "Mã biên dịch được nhưng ném exception lúc chạy." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "Method `printList` nhận `List<? extends Number>` nên chỉ chấp nhận danh sách của các kiểu con của `Number`. Lời gọi `printList(strings)` với `List<String>` gây lỗi biên dịch trong method `main`, vì `String` không phải kiểu con của `Number`. Bản thân `printList` được viết hoàn toàn hợp lệ."
+    },
+    {
+      "number": 4,
+      "question": "Chương trình sau in ra gì?\n\n```java\nList<String> list = new ArrayList<>(Arrays.asList(\"A\", \"B\", \"C\", \"D\"));\nlist.add(2, \"E\");\nSystem.out.println(list);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`[A, B, E, C, D]`" },
+        { "key": "B", "text": "`[A, E, B, C, D]`" },
+        { "key": "C", "text": "`[A, B, C, E, D]`" },
+        { "key": "D", "text": "`[A, B, C, D, E]`" },
+        { "key": "E", "text": "`[A, C, B, E, D]`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "`list.add(2, \"E\")` chèn `\"E\"` vào **chỉ số 2**, đẩy các phần tử từ chỉ số 2 trở đi lùi về sau. Danh sách ban đầu `[A, B, C, D]` trở thành `[A, B, E, C, D]`."
+    },
+    {
+      "number": 5,
+      "question": "Những phát biểu nào sau đây về interface `Set` là đúng? (Chọn tất cả đáp án đúng.)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`Set` cho phép phần tử trùng lặp." },
+        { "key": "B", "text": "Phần tử trong `Set` được giữ theo thứ tự chèn vào." },
+        { "key": "C", "text": "Interface `Set` có các method để thêm, xoá và kiểm tra sự tồn tại của phần tử." },
+        { "key": "D", "text": "Interface `Set` được cài đặt bởi những class như `HashSet`, `LinkedHashSet` và `TreeSet`." },
+        { "key": "E", "text": "`Set` đảm bảo hiệu năng hằng số cho các thao tác cơ bản (add, remove, contains)." }
+      ],
+      "correctAnswers": ["C", "D"],
+      "explanation": "C và D đúng: `Set` cung cấp `add`, `remove`, `contains`, và có ba cài đặt chính là `HashSet`, `LinkedHashSet`, `TreeSet`. A sai vì `Set` không cho phép phần tử trùng lặp. B sai vì chỉ `LinkedHashSet` giữ thứ tự chèn, `HashSet` thì không. E sai vì hiệu năng hằng số chỉ đúng với `HashSet`; `TreeSet` cho hiệu năng log(n)."
+    },
+    {
+      "number": 6,
+      "question": "Chương trình sau in ra gì?\n\n```java\nDeque<String> deque = new ArrayDeque<>();\ndeque.addFirst(\"A\");\ndeque.addLast(\"B\");\ndeque.addFirst(\"C\");\ndeque.addLast(\"D\");\n\nSystem.out.println(deque);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`[A, B, C, D]`" },
+        { "key": "B", "text": "`[C, B, A, D]`" },
+        { "key": "C", "text": "`[C, A, B, D]`" },
+        { "key": "D", "text": "`[D, B, A, C]`" },
+        { "key": "E", "text": "`[A, C, B, D]`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "Lần lượt: `addFirst(\"A\")` → `[A]`; `addLast(\"B\")` → `[A, B]`; `addFirst(\"C\")` → `[C, A, B]`; `addLast(\"D\")` → `[C, A, B, D]`. Deque in ra theo thứ tự từ đầu tới cuối."
+    },
+    {
+      "number": 7,
+      "question": "Chương trình sau in ra gì?\n\n```java\nMap<Integer, String> map = new HashMap<>();\nmap.put(1, \"A\");\nmap.put(2, \"B\");\nmap.put(3, \"C\");\nmap.put(2, \"D\");\n\nSystem.out.println(map);\n```",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`{1=A, 2=B, 3=C, 2=D}`" },
+        { "key": "B", "text": "`{1=A, 2=B, 3=C}`" },
+        { "key": "C", "text": "`{1=A, 2=D, 3=C, 2=D}`" },
+        { "key": "D", "text": "`{1=A, 2=D, 3=C}`" },
+        { "key": "E", "text": "`{1=A, 3=C, 2=B}`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "`Map` không cho phép khoá trùng lặp. Lời gọi `map.put(2, \"D\")` **ghi đè** giá trị cũ của khoá 2 (`\"B\"`) thành `\"D\"` chứ không tạo entry mới. Kết quả là map có 3 entry: `{1=A, 2=D, 3=C}`."
+    },
+    {
+      "number": 8,
+      "question": "Cho class `Person implements Comparable<Person>` với `compareTo` trả về `Integer.compare(this.age, other.age)`, và danh sách gồm Alice (30), Bob (25), Charlie (35) được sắp bằng `Collections.sort(people)`. Kết quả in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Alice 30 / Bob 25 / Charlie 35" },
+        { "key": "B", "text": "Charlie 35 / Alice 30 / Bob 25" },
+        { "key": "C", "text": "Bob 25 / Alice 30 / Charlie 35" },
+        { "key": "D", "text": "Bob 25 / Charlie 35 / Alice 30" },
+        { "key": "E", "text": "Alice 30 / Charlie 35 / Bob 25" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "Method `compareTo` sắp xếp `Person` theo tuổi **tăng dần**. Do đó thứ tự sau khi sắp là Bob (25), Alice (30), Charlie (35)."
+    },
+    {
+      "number": 9,
+      "question": "Cho class `Person` (không implement `Comparable`) và `AgeComparator` với `compare` trả về `Integer.compare(p1.getAge(), p2.getAge())`. Danh sách gồm Alice (30), Bob (25), Charlie (35) được sắp bằng `Collections.sort(people, new AgeComparator())`. Kết quả in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Bob 25 / Alice 30 / Charlie 35" },
+        { "key": "B", "text": "Charlie 35 / Alice 30 / Bob 25" },
+        { "key": "C", "text": "Alice 30 / Bob 25 / Charlie 35" },
+        { "key": "D", "text": "Bob 25 / Charlie 35 / Alice 30" },
+        { "key": "E", "text": "Alice 30 / Charlie 35 / Bob 25" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "`AgeComparator` so sánh theo tuổi tăng dần, nên `Collections.sort` sắp danh sách thành Bob (25), Alice (30), Charlie (35). Kết quả giống như khi dùng `Comparable` với cùng tiêu chí — khác biệt chỉ nằm ở chỗ logic so sánh được đặt trong một class riêng thay vì trong chính `Person`."
+    }
+  ]
+}

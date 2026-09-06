@@ -1,0 +1,104 @@
+{
+  "title": "Quiz: Localization",
+  "tags": ["Java", "OCP", "Localization", "Locale", "ResourceBundle", "MessageFormat", "NumberFormat", "DateTimeFormatter"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Với `locale1 = new Locale(\"fr\",\"CA\")`, `locale2 = new Locale(\"fr\",\"CA\",\"UNIX2024\")`, `locale3 = Locale.CANADA_FRENCH`, kết quả in ra ba phép `equals` rồi ba `getDisplayName(Locale.ENGLISH)` là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`true / true / true` rồi `French (Canada)` ba lần" },
+        { "key": "B", "text": "`false / true / false` rồi `French (Canada)`, `French (Canada, UNIX2024)`, `French (Canada)`" },
+        { "key": "C", "text": "`false / true / false` rồi `French (Canada)`, `French (Canada, UNIX2024)`, `Canadian French`" },
+        { "key": "D", "text": "`false / false / false` rồi `French (Canada)`, `French (Canada, UNIX2024)`, `Canadian French`" },
+        { "key": "E", "text": "Đoạn mã ném `IllegalArgumentException` vì `UNIX2024` không phải variant hợp lệ." }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `locale1.equals(locale2)` là `false` vì `locale2` có variant; `locale1.equals(locale3)` là `true` vì `Locale.CANADA_FRENCH` tương đương `new Locale(\"fr\",\"CA\")`; `locale2.equals(locale3)` là `false`. Về display name, `locale1` cho `French (Canada)`, `locale2` kèm cả variant, còn hằng `CANADA_FRENCH` có tên hiển thị riêng là `Canadian French`. A và D sai ở kết quả so sánh. B sai ở display name của `locale3`. E sai vì constructor `Locale` chấp nhận chuỗi variant bất kỳ mà không ném exception."
+    },
+    {
+      "number": 2,
+      "question": "Phát biểu nào sau đây về category của `Locale` là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Enum `Locale.Category` có ba giá trị: `DISPLAY`, `FORMAT` và `LANGUAGE`." },
+        { "key": "B", "text": "`Locale.setDefault(Locale.Category, Locale)` chỉ đặt được locale mặc định cho category `FORMAT`." },
+        { "key": "C", "text": "`Locale.getDefault(Locale.Category)` luôn trả về cùng một locale bất kể category." },
+        { "key": "D", "text": "Category `DISPLAY` ảnh hưởng tới ngôn ngữ hiển thị giao diện, còn `FORMAT` ảnh hưởng tới việc định dạng số, ngày và tiền tệ." },
+        { "key": "E", "text": "Category của Locale được giới thiệu ở Java 8 để thay thế các method `Locale` cũ." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: đó chính là mục đích phân biệt hai category. A sai vì enum chỉ có hai giá trị `DISPLAY` và `FORMAT`. B sai vì method này đặt được cho cả hai category. C sai vì hai category giữ giá trị riêng và trả về khác nhau khi đã được đặt khác nhau. E sai vì `Locale.Category` có từ Java 7 và bổ sung chứ không thay thế các method cũ."
+    },
+    {
+      "number": 3,
+      "question": "Phát biểu nào sau đây về Resource Bundle là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Resource bundle chỉ lưu được trong file `.properties`." },
+        { "key": "B", "text": "`ResourceBundle.getBundle()` luôn ném `MissingResourceException` nếu không tìm thấy bundle được yêu cầu." },
+        { "key": "C", "text": "Khi tìm resource bundle, Java chỉ xét locale được chỉ định và ngôn ngữ của nó." },
+        { "key": "D", "text": "Nếu không tìm thấy khoá trong bundle của locale cụ thể, Java sẽ tìm nó trong bundle của locale cha." },
+        { "key": "E", "text": "Resource bundle được nạp động lúc runtime nên sửa file `.properties` là ứng dụng đang chạy thấy ngay." }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: bundle có chuỗi cha (`MyBundle_es_ES` → `MyBundle_es` → `MyBundle`), và khoá không tìm thấy sẽ được tra ở bundle cha. A sai vì còn có `ListResourceBundle` cài đặt bằng class. B sai vì Java còn thử locale mặc định và bundle gốc trước khi ném exception. C sai vì quá trình tìm kiếm còn xét locale mặc định và bundle gốc. E sai vì bundle được cache, thay đổi file không tự phản ánh vào ứng dụng đang chạy."
+    },
+    {
+      "number": 4,
+      "question": "Đoạn mã ghi `Properties` ra file, gọi `props.clear()`, in `getProperty(\"color\",\"red\")`, rồi `load` lại từ file và in tiếp. Output là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`red` rồi `blue`" },
+        { "key": "B", "text": "`blue` rồi `blue`" },
+        { "key": "C", "text": "`red` rồi `red`" },
+        { "key": "D", "text": "Đoạn mã ném `FileNotFoundException`." },
+        { "key": "E", "text": "`null` rồi `blue`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: sau `props.clear()` object không còn thuộc tính nào nên `getProperty(\"color\",\"red\")` trả về giá trị mặc định `red`; sau khi `load` lại từ file, khoá `color` có giá trị `blue`. B sai vì bỏ qua tác dụng của `clear()`. C sai vì sau khi load thì giá trị đã có. D sai vì file vừa được ghi ngay trước đó. E sai vì đã truyền giá trị mặc định nên không trả về `null`."
+    },
+    {
+      "number": 5,
+      "question": "Với `MessageFormat` dùng mẫu `\"On {0, date, long}, {1} bought {2,number,integer} {3} for {4,number,currency}.\"` và `Locale.US`, phát biểu nào đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Đoạn mã ném `IllegalArgumentException` vì định dạng ngày không hợp lệ." },
+        { "key": "B", "text": "Output chứa ngày ở định dạng long, tên `\"Alice\"`, số 3, từ `\"apples\"` và giá theo định dạng tiền tệ Hoa Kỳ." },
+        { "key": "C", "text": "Định dạng `{2,number,integer}` sẽ hiển thị 3 thành `\"3.0\"`." },
+        { "key": "D", "text": "Đoạn mã không biên dịch được vì `MessageFormat` không nhận `Locale` trong constructor." },
+        { "key": "E", "text": "Định dạng `{4,number,currency}` luôn hiển thị giá bằng USD bất kể `Locale`." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: mẫu hợp lệ và mỗi chỗ giữ chỗ được thay bằng tham số tương ứng, định dạng theo `Locale.US`. A sai vì `date,long` là tổ hợp hợp lệ. C sai vì style `integer` hiển thị `3`, không có phần thập phân. D sai vì `MessageFormat(String, Locale)` là constructor hợp lệ. E sai vì `currency` phụ thuộc locale của formatter; ở đây là USD chỉ vì locale được đặt là `Locale.US`."
+    },
+    {
+      "number": 6,
+      "question": "Phát biểu nào sau đây về class `NumberFormat` là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`NumberFormat.getCurrencyInstance()` trả về formatter định dạng được giá trị tiền tệ theo quy ước của locale." },
+        { "key": "B", "text": "`NumberFormat` là class cụ thể, khởi tạo trực tiếp được bằng constructor." },
+        { "key": "C", "text": "`setMaximumFractionDigits()` chỉ nhận giá trị từ 0 đến 3." },
+        { "key": "D", "text": "Khi parse chuỗi, `NumberFormat` luôn ném `ParseException` nếu đầu vào không khớp chính xác định dạng mong đợi." },
+        { "key": "E", "text": "`NumberFormat` chỉ định dạng và parse được giá trị nguyên." }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `getCurrencyInstance()` trả về formatter tiền tệ theo locale (mặc định hoặc locale được truyền vào). B sai vì `NumberFormat` là abstract class, phải lấy instance qua factory method. C sai vì không có giới hạn 0–3 như vậy. D sai vì `parse` có thể parse được phần đầu hợp lệ của chuỗi mà không ném exception. E sai vì `NumberFormat` xử lý được cả số dấu phẩy động."
+    },
+    {
+      "number": 7,
+      "question": "Với formatter `DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm z VV\")` áp lên một `ZonedDateTime` ở `America/New_York` (15/6/2023 10:30) rồi chuyển sang `Asia/Tokyo` bằng `withZoneSameInstant`, output là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`2023-06-15 10:30 EDT America/New_York` và `2023-06-15 23:30 JST Asia/Tokyo`" },
+        { "key": "B", "text": "`2023-06-15 10:30 EDT New_York` và `2023-06-15 23:30 JST Tokyo`" },
+        { "key": "C", "text": "`2023-06-15 10:30 -04:00 America/New_York` và `2023-06-15 23:30 +09:00 Asia/Tokyo`" },
+        { "key": "D", "text": "`2023-06-15 10:30 America/New_York` và `2023-06-15 23:30 Asia/Tokyo`" },
+        { "key": "E", "text": "Đoạn mã ném `DateTimeException` vì mẫu của formatter không hợp lệ." }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `z` in tên múi giờ dạng viết tắt (`EDT`, `JST`) còn `VV` in ID múi giờ đầy đủ (`America/New_York`, `Asia/Tokyo`); `withZoneSameInstant` giữ nguyên thời điểm nên 10:30 EDT thành 23:30 JST. B sai vì `VV` in ID đầy đủ chứ không chỉ tên thành phố. C sai vì `z` in tên múi giờ chứ không phải offset. D sai vì thiếu phần do `z` sinh ra. E sai vì mẫu hoàn toàn hợp lệ với `ZonedDateTime`."
+    }
+  ]
+}

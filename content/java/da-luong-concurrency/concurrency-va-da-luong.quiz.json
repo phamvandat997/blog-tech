@@ -1,0 +1,125 @@
+{
+  "title": "Quiz: Concurrency và đa luồng",
+  "tags": ["Java", "OCP", "Thread", "Virtual Thread", "Concurrency", "synchronized", "Lock", "ExecutorService", "Parallel Stream"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Dòng mã nào tạo và khởi chạy đúng một virtual thread mới với `Runnable task` cho trước?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Thread thread = Thread.ofVirtual(); thread.start(task);`" },
+        { "key": "B", "text": "`Thread thread = Thread.ofVirtual().unstarted(task).run();`" },
+        { "key": "C", "text": "`Thread thread = Thread.ofVirtual().start(task);`" },
+        { "key": "D", "text": "`Thread thread = Thread.ofVirtual(); task.run();`" },
+        { "key": "E", "text": "`Thread thread = Thread.start(task);`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `Thread.ofVirtual()` trả về một `Thread.Builder.OfVirtual`, và `start(task)` tạo rồi khởi chạy virtual thread, trả về `Thread`. A sai vì `Thread.ofVirtual()` trả về builder chứ không phải `Thread`, và `Thread.start()` không nhận đối số. B sai vì `run()` trả về `void` và chạy tác vụ trên thread hiện tại chứ không tạo thread mới. D chỉ gọi `task.run()` trên thread chính. E sai vì `Thread` không có static method `start(Runnable)` (method đúng là `Thread.startVirtualThread(task)`)."
+    },
+    {
+      "number": 2,
+      "question": "Phương án nào dùng đúng khối `synchronized` để đảm bảo chỉ một thread tại một thời điểm tăng được biến `static int counter` trong class `Main`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`synchronized (this) { counter++; }`" },
+        { "key": "B", "text": "`synchronized (Main.class) { counter++; }`" },
+        { "key": "C", "text": "`synchronized (task) { counter++; }`" },
+        { "key": "D", "text": "`synchronized (counter) { counter++; }`" },
+        { "key": "E", "text": "`synchronized (System.out) { counter++; }`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `counter` là biến static nên lock phải gắn với chính class — `Main.class` là object lock đúng và dùng chung cho mọi thread. A sai vì `this` không dùng được trong ngữ cảnh static (lambda nằm trong `main`). C tuy biên dịch được nhưng cả hai thread cùng chạy một object `task` nên vẫn hoạt động — song đây không phải cách biểu đạt đúng ý định bảo vệ trạng thái của class. D sai vì `counter` là kiểu nguyên thuỷ `int`, không dùng làm lock được. E dùng một object không liên quan làm lock, hoạt động tình cờ nhưng là thực hành tồi."
+    },
+    {
+      "number": 3,
+      "question": "Phát biểu nào sau đây về các class atomic là đúng? (Chọn tất cả đáp án đúng)",
+      "isMulti": true,
+      "options": [
+        { "key": "A", "text": "`AtomicInteger` thuộc package `java.util.concurrent.atomic`, nhưng nó không cung cấp thao tác nguyên tử để tăng và giảm." },
+        { "key": "B", "text": "`AtomicReference` chỉ dùng được với kiểu tham chiếu, không dùng được với kiểu nguyên thuỷ." },
+        { "key": "C", "text": "`AtomicLong` hỗ trợ thao tác nguyên tử trên giá trị `long`, gồm cả method `getAndIncrement()` và `compareAndSet()`." },
+        { "key": "D", "text": "`AtomicBoolean` dùng được để thực hiện thao tác số học nguyên tử trên giá trị `boolean`." }
+      ],
+      "correctAnswers": ["B", "C"],
+      "explanation": "B đúng: `AtomicReference<V>` thao tác trên tham chiếu object, không dùng cho kiểu nguyên thuỷ (kiểu nguyên thuỷ có `AtomicInteger`, `AtomicLong`, `AtomicBoolean`). C đúng: `AtomicLong` có đủ `getAndIncrement()`, `compareAndSet()` và các thao tác nguyên tử khác. A sai vì `AtomicInteger` có `incrementAndGet()`, `decrementAndGet()`, v.v. D sai vì `boolean` không có phép số học; `AtomicBoolean` chỉ hỗ trợ `get`, `set`, `compareAndSet`, `getAndSet`."
+    },
+    {
+      "number": 4,
+      "question": "Đoạn mã nào dùng đúng interface `Lock` để đảm bảo truy cập an toàn luồng vào biến `count`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\nlock.lock();\ntry {\n    count++;\n} finally {\n    lock.unlock();\n}\n```" },
+        { "key": "B", "text": "```java\nlock.lock();\ncount++;\nlock.unlock();\n```" },
+        { "key": "C", "text": "```java\ntry {\n    lock.lock(() -> { count++; });\n} finally {\n    lock.unlock();\n}\n```" },
+        { "key": "D", "text": "```java\nsynchronized(lock) {\n    count++;\n}\n```" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: giành lock trước khối `try`, và giải phóng trong khối `finally` để lock luôn được trả lại kể cả khi có exception. B tuy chạy được ở trường hợp bình thường nhưng nếu `count++` ném exception thì `unlock()` không bao giờ chạy, dẫn tới deadlock. C sai vì `lock()` không nhận đối số lambda. D sai về ý: `synchronized(lock)` chỉ dùng object `lock` như một monitor thông thường, hoàn toàn không kích hoạt cơ chế của `ReentrantLock`."
+    },
+    {
+      "number": 5,
+      "question": "Đoạn mã nào minh hoạ đúng cách dùng `ExecutorService` với khối `try-with-resources`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\ntry (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {\n    executor.submit(() -> System.out.println(\"Task executed\"));\n}\n```" },
+        { "key": "B", "text": "```java\ntry (ExecutorService executor = ...) {\n    executor.submit(...);\n} finally {\n    executor.shutdown();\n}\n```" },
+        { "key": "C", "text": "```java\nExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();\ntry {\n    executor.submit(...);\n} finally {\n    executor.close();\n}\n```" },
+        { "key": "D", "text": "```java\ntry (var executor = ...) {\n    executor.submit(...);\n    executor.awaitTermination(1, TimeUnit.SECONDS);\n}\n```" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: từ Java 19, `ExecutorService` kế thừa `AutoCloseable`, nên `try-with-resources` tự gọi `close()` — method này chờ mọi tác vụ hoàn tất rồi đóng executor. B không biên dịch được vì biến `executor` khai báo trong phần tài nguyên không nằm trong phạm vi khối `finally`. C tuy chạy được nhưng không dùng `try-with-resources` như đề bài yêu cầu. D thừa `awaitTermination()` (việc chờ đã do `close()` lo) và method này còn ném `InterruptedException` chưa được xử lý."
+    },
+    {
+      "number": 6,
+      "question": "Đoạn mã nào minh hoạ đúng cách lấy kết quả từ một tác vụ `Callable<Integer>` bằng `ExecutorService` với `try-with-resources`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "```java\ntry (ExecutorService executor = ...) {\n    Future<Integer> future = executor.submit(task);\n    System.out.println(future.get());\n}\n```" },
+        { "key": "B", "text": "```java\ntry (var executor = ...) {\n    Future<Integer> future = executor.submit(task);\n    Integer result = future.get(1, TimeUnit.SECONDS);\n    System.out.println(result);\n}\n```" },
+        { "key": "C", "text": "```java\ntry (ExecutorService executor = ...) {\n    Future<Integer> future = executor.submit(task);\n    executor.shutdown();\n    System.out.println(future.get());\n}\n```" },
+        { "key": "D", "text": "```java\ntry (var executor = ...) {\n    Future<Integer> future = executor.submit(task);\n    try {\n        Integer result = future.get();\n        System.out.println(result);\n    } catch (InterruptedException | ExecutionException e) {\n        // Handle exceptions\n    }\n}\n```" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `future.get()` ném checked exception `InterruptedException` và `ExecutionException`, nên chúng phải được bắt (hoặc khai báo trong `throws`). D bắt cả hai bằng khối `try-catch` lồng bên trong. A, B và C đều gọi `get()` mà không xử lý những checked exception này nên không biên dịch được như đã viết."
+    },
+    {
+      "number": 7,
+      "question": "Phát biểu nào sau đây về concurrent collection của Java là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`ConcurrentHashMap` cho phép thao tác đọc và ghi đồng thời, và thao tác lấy dữ liệu không bị chặn ngay cả khi đang có cập nhật." },
+        { "key": "B", "text": "`CopyOnWriteArrayList` được tối ưu cho những tình huống có số thao tác ghi nhiều hơn hẳn số thao tác đọc." },
+        { "key": "C", "text": "`ConcurrentSkipListSet` không giữ phần tử theo thứ tự sắp xếp." },
+        { "key": "D", "text": "Những cài đặt `BlockingQueue` như `LinkedBlockingQueue` cho phép thêm và xoá phần tử đồng thời mà không cần bất kỳ cơ chế khoá nội bộ nào." }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `ConcurrentHashMap` dùng những kỹ thuật như CAS nên thao tác đọc không bị chặn kể cả khi đang có cập nhật. B sai — `CopyOnWriteArrayList` tạo bản sao mảng mỗi lần ghi nên chỉ phù hợp khi **đọc nhiều, ghi ít**. C sai vì `ConcurrentSkipListSet` giữ phần tử theo thứ tự sắp xếp (tương tự `TreeSet`). D sai vì `LinkedBlockingQueue` vẫn dùng khoá nội bộ để chặn phía sản xuất/tiêu thụ khi hàng đợi đầy hoặc rỗng."
+    },
+    {
+      "number": 8,
+      "question": "Phát biểu nào sau đây về parallel stream là đúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "Parallel stream luôn cải thiện hiệu năng chương trình nhờ tận dụng nhiều thread." },
+        { "key": "B", "text": "Parallel stream có thể dẫn tới kết quả sai nếu những thao tác được thực hiện không an toàn luồng." },
+        { "key": "C", "text": "Thứ tự phần tử trong parallel stream luôn được giữ nguyên so với stream gốc." },
+        { "key": "D", "text": "Dùng parallel stream đảm bảo các thao tác trên phần tử sẽ chạy theo một thứ tự cố định." }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: lambda stateful hay accumulator khả biến gây race condition và cho kết quả sai. A sai vì với stream nhỏ hoặc thao tác đơn giản, chi phí phân rã song song có thể lớn hơn lợi ích. C và D sai vì thứ tự trong parallel stream không được đảm bảo trừ khi ép buộc tường minh (ví dụ bằng `forEachOrdered`)."
+    },
+    {
+      "number": 9,
+      "question": "Đoạn mã nào minh hoạ đúng cách rút gọn một parallel stream để tính tổng các phần tử của `List.of(1, 2, 3, 4, 5, 6)`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`int sum = numbers.parallelStream().reduce(1, Integer::sum);`" },
+        { "key": "B", "text": "`int sum = numbers.parallelStream().reduce(0, Integer::sum);`" },
+        { "key": "C", "text": "`int sum = numbers.stream().reduce(0, Integer::sum);`" },
+        { "key": "D", "text": "`int sum = numbers.parallelStream().collect(reduce(0, Integer::sum));`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: giá trị đơn vị của phép cộng là `0`, và `Integer::sum` có tính kết hợp nên phép rút gọn song song cho kết quả đúng là 21. A sai vì giá trị đơn vị `1` sẽ bị cộng thêm vào mỗi phần cục bộ khi chạy song song, cho kết quả sai và không xác định. C tuy cho kết quả đúng nhưng dùng stream **tuần tự**, không đáp ứng yêu cầu đề bài. D sai cú pháp: `collect()` cần một `Collector`, và `reduce(...)` không phải static method dùng được như vậy."
+    }
+  ]
+}

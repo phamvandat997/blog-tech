@@ -1,0 +1,123 @@
+{
+  "title": "Quiz: File I/O",
+  "tags": ["Java", "OCP", "File I/O", "NIO.2", "Path", "Files", "Stream", "Serialization"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Kết quả của `Paths.get(\"/home/user\").resolve(Paths.get(\"documents/notes.txt\"))` khi in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`/home/user`" },
+        { "key": "B", "text": "`/home/user/documents`" },
+        { "key": "C", "text": "`/documents/notes.txt`" },
+        { "key": "D", "text": "`/home/user/documents/notes.txt`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: method `resolve` nối đường dẫn tương đối vào sau đường dẫn cơ sở, cho ra `/home/user/documents/notes.txt`. A sai vì `resolve` không chỉ trả về đường dẫn cơ sở. B sai vì `resolve` giữ nguyên toàn bộ đường dẫn tương đối được truyền vào chứ không chỉ một phần. C sai vì `resolve` kết hợp hai đường dẫn chứ không thay thế đường dẫn cơ sở."
+    },
+    {
+      "number": 2,
+      "question": "Kết quả của `Paths.get(\"/home/user/../documents/./notes.txt\").normalize()` khi in ra là gì?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`/home/user/../documents/./notes.txt`" },
+        { "key": "B", "text": "`/home/user/documents/notes.txt`" },
+        { "key": "C", "text": "`/home/documents/notes.txt`" },
+        { "key": "D", "text": "`/documents/notes.txt`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `normalize` loại bỏ `.` và xử lý `..` bằng cách lùi lên một cấp, nên `user` bị loại và kết quả là `/home/documents/notes.txt`. A sai vì `normalize` không giữ nguyên các phần tử dư thừa. B sai vì bỏ qua tác dụng của `..`. D sai vì `normalize` chỉ xử lý `.` và `..`, không xoá toàn bộ phần đầu của đường dẫn."
+    },
+    {
+      "number": 3,
+      "question": "Class nào sau đây được dùng để đọc character stream trong Java?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`FileOutputStream`" },
+        { "key": "B", "text": "`FileReader`" },
+        { "key": "C", "text": "`BufferedOutputStream`" },
+        { "key": "D", "text": "`ObjectInputStream`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `FileReader` kế thừa từ `Reader` và đọc ký tự từ một file văn bản. A và C sai vì đó là những output stream làm việc với byte. D sai vì `ObjectInputStream` là byte stream dùng để deserialize object, không phải character stream."
+    },
+    {
+      "number": 4,
+      "question": "Đoạn mã nào sao chép file đúng cách bằng class `Files`, đảm bảo file đích đã tồn tại sẽ bị ghi đè?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Files.copy(source, target, StandardCopyOption.ATOMIC_MOVE);`" },
+        { "key": "B", "text": "`Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);`" },
+        { "key": "C", "text": "`Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);`" },
+        { "key": "D", "text": "`Files.copy(source, target, StandardCopyOption.APPEND);`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `Files.copy` kèm `StandardCopyOption.REPLACE_EXISTING` đảm bảo file đích bị ghi đè nếu đã tồn tại. A sai vì `ATOMIC_MOVE` dùng cho thao tác di chuyển nguyên tử chứ không phải sao chép. B sai vì `Files.move` di chuyển/đổi tên file chứ không sao chép. D sai vì enum `StandardCopyOption` không có hằng `APPEND`."
+    },
+    {
+      "number": 5,
+      "question": "Đoạn mã nào đọc đúng toàn bộ các dòng từ một file vào một `List<String>` bằng `java.nio.file` API?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`List<String> lines = Files.readAllBytes(path);`" },
+        { "key": "B", "text": "`List<String> lines = Files.readString(path);`" },
+        { "key": "C", "text": "`List<String> lines = Files.lines(path);`" },
+        { "key": "D", "text": "`List<String> lines = Files.readAllLines(path);`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `Files.readAllLines(path)` trả về đúng một `List<String>` chứa mọi dòng của file. A sai vì `readAllBytes` trả về `byte[]`. B sai vì `readString` trả về một `String`. C sai vì `Files.lines` trả về `Stream<String>` chứ không phải `List<String>`, nên phép gán không biên dịch được."
+    },
+    {
+      "number": 6,
+      "question": "Đoạn mã nào ghi đúng một `List<String>` vào file bằng class `Files`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Files.write(path, lines);`" },
+        { "key": "B", "text": "`Files.writeString(path, lines);`" },
+        { "key": "C", "text": "`Files.writeLines(path, lines);`" },
+        { "key": "D", "text": "`Files.write(path, lines, StandardOpenOption.READ);`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `Files.write(path, lines)` ghi danh sách chuỗi vào file tại path chỉ định và tạo file nếu nó chưa tồn tại. B sai vì `Files.writeString` cần một `String` làm tham số thứ hai chứ không phải `List<String>`. C sai vì class `Files` không có method `writeLines`. D sai vì `StandardOpenOption.READ` dùng cho việc đọc, không hợp lệ khi ghi file."
+    },
+    {
+      "number": 7,
+      "question": "Method nào của `BasicFileAttributes` lấy thời điểm tạo của một file?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`attrs.lastModifiedTime();`" },
+        { "key": "B", "text": "`attrs.creationTime();`" },
+        { "key": "C", "text": "`attrs.lastAccessTime();`" },
+        { "key": "D", "text": "`attrs.size();`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `creationTime()` trả về thời điểm tạo file. A sai vì `lastModifiedTime()` trả về thời điểm sửa đổi gần nhất. C sai vì `lastAccessTime()` trả về thời điểm truy cập gần nhất. D sai vì `size()` trả về kích thước file tính bằng byte."
+    },
+    {
+      "number": 8,
+      "question": "Đoạn mã nào duyệt đúng một cây thư mục bằng method `Files.walkFileTree`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`visitFile` trả về `FileVisitResult.SKIP_SUBTREE`" },
+        { "key": "B", "text": "`visitFile` ném `new IOException(\"Error visiting file\")`" },
+        { "key": "C", "text": "`visitFile` in ra file rồi trả về `FileVisitResult.TERMINATE`" },
+        { "key": "D", "text": "Gọi `Files.walkFileTree(start, EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE, visitor)` với visitor ghi đè `visitFile`, `preVisitDirectory`, `visitFileFailed`, `postVisitDirectory` và đều trả về `FileVisitResult.CONTINUE`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: phiên bản đầy đủ của `walkFileTree` cùng visitor luôn trả về `CONTINUE` cho phép duyệt trọn vẹn cây thư mục và xử lý được cả lỗi khi thăm file. A sai vì `SKIP_SUBTREE` bỏ qua cả cây con nên không duyệt hết. B sai vì ném `IOException` trong `visitFile` sẽ làm dừng quá trình duyệt. C sai vì `TERMINATE` chấm dứt việc duyệt ngay sau file đầu tiên."
+    },
+    {
+      "number": 9,
+      "question": "Đoạn mã nào serialize đúng một object vào file?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Animal` implement `Serializable`, dùng `ObjectInputStream ois = new ObjectInputStream(new FileInputStream(...)); ois.writeObject(animal);`" },
+        { "key": "B", "text": "`Animal` implement `Serializable`, dùng `ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(...)); oos.writeObject(animal);`" },
+        { "key": "C", "text": "`Animal` không implement `Serializable`, dùng `ObjectOutputStream oos = ...; oos.writeObject(animal);`" },
+        { "key": "D", "text": "`Animal` implement `Serializable`, dùng `BufferedOutputStream bos = ...; bos.write(animal);`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: class implement `Serializable` và `ObjectOutputStream.writeObject()` ghi object vào file. A sai vì `ObjectInputStream` dùng để đọc và không có method `writeObject`. C sai vì class không implement `Serializable` nên sẽ ném `NotSerializableException` lúc runtime. D sai vì `BufferedOutputStream.write()` chỉ nhận byte hoặc mảng byte, không nhận object."
+    }
+  ]
+}

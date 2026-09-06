@@ -5,8 +5,39 @@
   "tagline": "Lộ trình làm chủ Java toàn diện từ cài đặt môi trường, cốt lõi đến tính năng hiện đại.",
   "categories": [
     {
+      "id": "nen-tang-co-ban",
+      "name": "Nền tảng căn bản",
+      "order": 1
+    },
+    {
       "id": "lap-trinh-huong-doi-tuong",
-      "name": "Lập trình hướng đối tượng (OOP)"
+      "name": "Lập trình hướng đối tượng (OOP)",
+      "order": 2
+    },
+    {
+      "id": "strings-ngoai-le-io",
+      "name": "Chuỗi, Ngoại lệ & File I/O",
+      "order": 3
+    },
+    {
+      "id": "collections-generics",
+      "name": "Collections & Generics",
+      "order": 4
+    },
+    {
+      "id": "lambda-streams",
+      "name": "Lambda & Stream API",
+      "order": 5
+    },
+    {
+      "id": "da-luong-concurrency",
+      "name": "Đa luồng & Concurrency",
+      "order": 6
+    },
+    {
+      "id": "tinh-nang-moi-hien-dai",
+      "name": "Tính năng Java hiện đại",
+      "order": 7
     }
   ]
 }

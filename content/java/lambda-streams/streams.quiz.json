@@ -1,0 +1,132 @@
+{
+  "title": "Quiz: Stream",
+  "tags": ["Java", "OCP", "Stream", "Optional", "filter", "map", "reduce", "Collectors", "flatMap"],
+  "quizzes": [
+    {
+      "number": 1,
+      "question": "Dòng mã nào minh hoạ việc dùng class `Optional` để xử lý một giá trị có thể `null` nhằm tránh exception? (Method `getValue()` trả về `null`.)",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Optional<String> optional = new Optional<>(value);`" },
+        { "key": "B", "text": "`Optional<String> optional = Optional.of(value);`" },
+        { "key": "C", "text": "`Optional<String> optional = Optional.ofNullable(value);`" },
+        { "key": "D", "text": "`Optional<String> optional = Optional.empty(value);`" },
+        { "key": "E", "text": "`Optional<String> optional = Optional.nullable(value);`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `Optional.ofNullable()` trả về `Optional` chứa giá trị nếu khác `null`, và trả về `Optional` rỗng nếu là `null`. B sai vì `Optional.of()` sẽ ném `NullPointerException` khi giá trị là `null`. A sai vì constructor của `Optional` là `private`. D sai vì `Optional.empty()` không nhận đối số. E sai vì không có method `Optional.nullable()`."
+    },
+    {
+      "number": 2,
+      "question": "Dòng mã nào minh hoạ đúng việc dùng một **thao tác kết thúc** (terminal operation) trên stream?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`stream.filter(s -> s.contains(\"A\"));`" },
+        { "key": "B", "text": "`stream.map(String::toLowerCase);`" },
+        { "key": "C", "text": "`stream.distinct();`" },
+        { "key": "D", "text": "`stream.limit(2);`" },
+        { "key": "E", "text": "`stream.collect(Collectors.toList());`" }
+      ],
+      "correctAnswers": ["E"],
+      "explanation": "E đúng: `collect()` trả về một `List` — tức thứ gì đó **không phải** stream — nên nó là thao tác kết thúc và kích hoạt việc xử lý pipeline. Các phương án còn lại (`filter`, `map`, `distinct`, `limit`) đều trả về `Stream` mới nên là thao tác trung gian và có tính lười biếng."
+    },
+    {
+      "number": 3,
+      "question": "Dòng mã nào dùng đúng primitive stream để tính tổng của mảng `int[] numbers = {1, 2, 3, 4, 5};`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`int sum = numbers.stream().sum();`" },
+        { "key": "B", "text": "`int sum = IntStream.range(0, numbers.length).sum();`" },
+        { "key": "C", "text": "`int sum = IntStream.from(numbers).sum();`" },
+        { "key": "D", "text": "`int sum = IntStream.of(numbers).sum();`" },
+        { "key": "E", "text": "`int sum = IntStream.range(numbers).sum();`" }
+      ],
+      "correctAnswers": ["D"],
+      "explanation": "D đúng: `IntStream.of(int[])` tạo một `IntStream` từ mảng, và `sum()` trả về tổng các phần tử. A sai vì mảng không có method `stream()` (phải dùng `Arrays.stream(numbers)`). B sai vì nó cộng các **chỉ số** 0..4 chứ không cộng giá trị. C và E sai vì `IntStream` không có method `from()`, còn `range()` cần hai tham số `int`."
+    },
+    {
+      "number": 4,
+      "question": "Dòng mã nào lọc đúng một stream để chỉ giữ những chuỗi có độ dài lớn hơn 3?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Stream<String> filteredStream = stream.filter(s -> s.length() > 3);`" },
+        { "key": "B", "text": "`Stream<String> filteredStream = stream.map(s -> s.length() > 3);`" },
+        { "key": "C", "text": "`Stream<String> filteredStream = stream.collect(Collectors.filtering(s -> s.length() > 3));`" },
+        { "key": "D", "text": "`Stream<String> filteredStream = stream.filtering(s -> s.length() > 3);`" },
+        { "key": "E", "text": "`Stream<String> filteredStream = stream.filterByLength(3);`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `filter()` nhận một `Predicate` và trả về `Stream` chỉ gồm những phần tử cho ra `true`. B sai vì `map()` sẽ biến stream thành `Stream<Boolean>` chứ không lọc. C sai vì `Collectors.filtering()` cần một downstream collector và `collect()` không trả về `Stream`. D và E sai vì `Stream` không có những method đó."
+    },
+    {
+      "number": 5,
+      "question": "Dòng mã nào ánh xạ đúng một stream các chuỗi thành độ dài của chúng?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Stream<String> lengthStream = stream.map(s -> s.length());`" },
+        { "key": "B", "text": "`Stream<String> lengthStream = stream.mapToInt(s -> s.length());`" },
+        { "key": "C", "text": "`Stream<Integer> lengthStream = stream.map(s -> s.length());`" },
+        { "key": "D", "text": "`IntStream lengthStream = stream.map(s -> s.length());`" },
+        { "key": "E", "text": "`Stream<String> lengthStream = stream.flatMap(s -> Stream.of(s.length()));`" }
+      ],
+      "correctAnswers": ["C"],
+      "explanation": "C đúng: `map(s -> s.length())` trên `Stream<String>` cho ra `Stream<Integer>` (kết quả `int` được autobox). A và E sai kiểu khai báo — kết quả không còn là `Stream<String>`. B sai vì `mapToInt()` trả về `IntStream`, không gán được cho `Stream<String>`. D sai vì `map()` trả về `Stream<Integer>` chứ không phải `IntStream` (muốn có `IntStream` phải dùng `mapToInt`)."
+    },
+    {
+      "number": 6,
+      "question": "Với `List.of(\"one\", \"two\", \"three\", \"four\", \"five\", \"six\")`, dòng mã nào bỏ qua 2 phần tử đầu rồi giới hạn còn 3 phần tử?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`stream.skip(2).limit(3);`" },
+        { "key": "B", "text": "`stream.limit(3).skip(2);`" },
+        { "key": "C", "text": "`stream.skip(3).limit(2);`" },
+        { "key": "D", "text": "`stream.limit(2).skip(3);`" },
+        { "key": "E", "text": "`stream.slice(2, 5);`" }
+      ],
+      "correctAnswers": ["A"],
+      "explanation": "A đúng: `skip(2)` bỏ `one`, `two`, rồi `limit(3)` lấy `three`, `four`, `five`. Thứ tự rất quan trọng — B lấy 3 phần tử đầu rồi mới bỏ 2, chỉ còn `three`. C bỏ 3 rồi lấy 2. D lấy 2 rồi bỏ 3, cho stream rỗng. E sai vì `Stream` không có method `slice()`."
+    },
+    {
+      "number": 7,
+      "question": "Dòng mã nào nối đúng hai stream `stream1` và `stream2`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`Stream.concat(stream1, stream2.collect(Collectors.toList()));`" },
+        { "key": "B", "text": "`Stream.concat(stream1, stream2);`" },
+        { "key": "C", "text": "`stream1.concat(stream2);`" },
+        { "key": "D", "text": "`stream1.merge(stream2);`" },
+        { "key": "E", "text": "`Stream.of(stream1, stream2);`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `Stream.concat()` là static method nhận **hai stream** và trả về stream nối. A sai vì đối số thứ hai là `List` chứ không phải `Stream`. C sai vì `concat` là static method của `Stream`, không phải instance method. D sai vì `Stream` không có method `merge()`. E tạo ra `Stream<Stream<String>>` chứ không nối — muốn nối phải thêm `.flatMap(s -> s)`."
+    },
+    {
+      "number": 8,
+      "question": "Dòng mã nào dùng `reduce` để tính đúng **tích** của mọi phần tử trong `List.of(1, 2, 3, 4, 5)`?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`int product = stream.reduce(1, (a, b) -> a + b);`" },
+        { "key": "B", "text": "`int product = stream.reduce((a, b) -> a * b);`" },
+        { "key": "C", "text": "`int product = stream.reduce(0, (a, b) -> a * b);`" },
+        { "key": "D", "text": "`Optional<Integer> product = stream.reduce(1, (a, b) -> a * b);`" },
+        { "key": "E", "text": "`int product = stream.reduce(1, (a, b) -> a * b, (a, b) -> a * b);`" }
+      ],
+      "correctAnswers": ["E"],
+      "explanation": "E đúng: dạng ba tham số nhận giá trị đơn vị `1`, hàm tích luỹ nhân, và hàm kết hợp; nó trả về `int` (qua unboxing) nên gán được cho `int product`. A sai vì cộng chứ không nhân. B sai kiểu: dạng một tham số trả về `Optional<Integer>`, không gán được cho `int`. C sai vì giá trị đơn vị `0` khiến mọi tích đều bằng 0. D sai kiểu: dạng hai tham số trả về `Integer` chứ không phải `Optional<Integer>`."
+    },
+    {
+      "number": 9,
+      "question": "Dòng mã nào thu thập các phần tử của stream vào một `Set` đồng thời **giữ nguyên thứ tự** ban đầu?",
+      "isMulti": false,
+      "options": [
+        { "key": "A", "text": "`stream.collect(Collectors.toSet());`" },
+        { "key": "B", "text": "`stream.collect(Collectors.toCollection(LinkedHashSet::new));`" },
+        { "key": "C", "text": "`stream.collect(Collectors.toCollection(TreeSet::new));`" },
+        { "key": "D", "text": "`stream.collect(Collectors.toList());`" },
+        { "key": "E", "text": "`stream.collect(Collectors.toMap());`" }
+      ],
+      "correctAnswers": ["B"],
+      "explanation": "B đúng: `LinkedHashSet` là `Set` duy trì thứ tự chèn, nên `toCollection(LinkedHashSet::new)` vừa loại trùng lặp vừa giữ thứ tự gốc. A sai vì `toSet()` không đảm bảo thứ tự nào. C sai vì `TreeSet` sắp xếp theo thứ tự tự nhiên chứ không giữ thứ tự chèn. D sai kiểu: trả về `List`. E sai vì `Collectors.toMap()` cần đối số và trả về `Map`."
+    }
+  ]
+}
