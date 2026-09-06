@@ -103,9 +103,10 @@ export function ReaderPage() {
     }
   }, [currentDoc, currentSection]);
 
-  // Bỏ H1 đầu bài vì tiêu đề đã nằm ở header trang.
+  // Bỏ H1 đầu bài vì tiêu đề đã nằm ở header trang. `(?!#)` là bắt buộc: thiếu nó
+  // thì bài mở đầu bằng `## ...` sẽ bị nuốt mất đề mục đầu tiên (cả trong mục lục).
   const cleanBody = useMemo(
-    () => (docContent || '').replace(/^\s*#[^\n]*\r?\n?/, ''),
+    () => (docContent || '').replace(/^\s*#(?!#)[^\n]*\r?\n?/, ''),
     [docContent]
   );
 
