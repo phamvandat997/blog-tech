@@ -518,7 +518,7 @@ Lưu ý toán tử bù (`~`) chỉ hoạt động với kiểu số nguyên, kh�
 Vài điểm tinh tế nữa cần cân nhắc:
 
 - Khi dùng `++x` và `x++`, thứ tự thao tác và tác dụng phụ có vai trò quan trọng. Xét ví dụ:
-  ```java 
+  ```java
   int x = 5;
   int y = ++x + x++; // y = 12, x = 7
   ```

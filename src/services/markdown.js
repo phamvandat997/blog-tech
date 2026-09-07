@@ -123,7 +123,9 @@ function renderInternal(md) {
   if (!md) return { html: "", headings };
 
   const blocks = [];
-  let text = md.replace(/```([\w+-]*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
+  // `[ \t]*` sau tên ngôn ngữ là bắt buộc: chỉ một dấu cách thừa ở cuối dòng mở
+  // fence cũng làm lệch cặp mở/đóng và nuốt trọn phần còn lại của bài.
+  let text = md.replace(/```([\w+-]*)[ \t]*\r?\n([\s\S]*?)```/g, (_, lang, code) => {
     const l = (lang || "").toLowerCase();
     if (l === "mermaid") {
       const trimmed = code.trim();
@@ -176,6 +178,13 @@ function renderInternal(md) {
     })
     .replace(/^#\s+(.*)$/gim, (_, t) => `<h1>${t}</h1>`);
 
+  // Tách code span TRƯỚC khi xử lý *nhấn mạnh* — đúng thứ tự ưu tiên của Markdown.
+  // Để nguyên thì một hàng bảng như `*=` … `a *= 5` sẽ bị regex in nghiêng khớp từ
+  // dấu * này sang dấu * kia và nuốt mất chính toán tử đang muốn minh hoạ.
+  // Đặt sau bước tạo heading để tiêu đề trong mục lục vẫn giữ dấu ` như cũ.
+  const inlineCode = [];
+  text = text.replace(/`([^`\n]+)`/g, (_, t) => `%%IC${inlineCode.push(t) - 1}%%`);
+
   text = text
     .replace(/^\s*(?:---|\*\*\*|___)\s*$/gim, "<hr>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
@@ -185,13 +194,20 @@ function renderInternal(md) {
     })
     .replace(/\*\*\*([^*]+)\*\*\*/g, (_, t) => `<b><i>${t}</i></b>`)
     .replace(/\*\*([^*]+)\*\*/g, (_, t) => `<b>${t}</b>`)
-    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, (_, pre, t) => `${pre}<i>${t}</i>`)
-    .replace(/`([^`\n]+)`/g, (_, t) => `<code>${t}</code>`);
+    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, (_, pre, t) => `${pre}<i>${t}</i>`);
+
+  text = text.replace(/%%IC(\d+)%%/g, (_, i) => `<code>${inlineCode[Number(i)]}</code>`);
 
   text = text.replace(/^\|(.+)\|[ \t]*$/gim, (row) => {
-    const cells = row.trim().slice(1, -1).split("|");
+    // `\|` là dấu | thuộc nội dung ô (toán tử `|`, `||`, `|=`), không phải vạch
+    // ngăn cột — giấu nó đi trước khi tách kẻo ô bị vỡ và mất luôn toán tử.
+    const cells = row.trim().slice(1, -1).replace(/\\\|/g, "%%PIPE%%").split("|");
     if (cells.some((c) => /^\s*:?-{2,}:?\s*$/.test(c))) return "%%TSEP%%";
-    return "<tr>" + cells.map((c) => `<td>${c.trim()}</td>`).join("") + "</tr>";
+    return (
+      "<tr>" +
+      cells.map((c) => `<td>${c.trim().replace(/%%PIPE%%/g, "|")}</td>`).join("") +
+      "</tr>"
+    );
   });
   text = text.replace(/<tr>(.*?)<\/tr>\s*%%TSEP%%\r?\n?/g, (_, row) => {
     const ths = row.replace(/<td>/g, "<th>").replace(/<\/td>/g, "</th>");

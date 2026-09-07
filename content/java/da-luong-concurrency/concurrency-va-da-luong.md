@@ -2051,7 +2051,7 @@ Set đồng thời, có sắp xếp, cung cấp chức năng tương tự `TreeS
     set.add("banana");
     set.add("orange");
     System.out.println(set); // [apple, banana, orange]
-    ```  
+    ```
 
 - `java.util.concurrent.CopyOnWriteArrayList<E>` và `java.util.concurrent.CopyOnWriteArraySet<E>`  
 Đây lần lượt là biến thể an toàn luồng của `ArrayList` và `HashSet`. Chúng đạt được thread-safety bằng cách tạo một bản sao mới của mảng bên dưới mỗi lần có thao tác ghi (add, set, remove, v.v.). Nghĩa là nhiều thread duyệt collection an toàn mà không cần đồng bộ hoá. Tuy nhiên, hành vi copy-on-write tốn đáng kể bộ nhớ nếu collection lớn và thao tác ghi diễn ra thường xuyên:
